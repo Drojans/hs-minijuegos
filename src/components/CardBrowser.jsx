@@ -1,0 +1,336 @@
+import { useEffect, useMemo, useState } from "react";
+import "./CardBrowser.css";
+
+const CLASS_LABELS = {
+  DEATHKNIGHT: "Caballero de la Muerte",
+  DEMONHUNTER: "Cazador de Demonios",
+  DRUID: "Druida",
+  HUNTER: "Cazador",
+  MAGE: "Mago",
+  PALADIN: "Paladín",
+  PRIEST: "Sacerdote",
+  ROGUE: "Pícaro",
+  SHAMAN: "Chamán",
+  WARLOCK: "Brujo",
+  WARRIOR: "Guerrero",
+  NEUTRAL: "Neutral",
+};
+
+const TYPE_LABELS = {
+  MINION: "Esbirro",
+  SPELL: "Hechizo",
+  WEAPON: "Arma",
+  HERO: "Héroe",
+  HERO_POWER: "Poder de héroe",
+  LOCATION: "Lugar",
+};
+
+const RARITY_LABELS = {
+  FREE: "Gratis",
+  COMMON: "Común",
+  RARE: "Rara",
+  EPIC: "Épica",
+  LEGENDARY: "Legendaria",
+};
+
+const CLASS_ORDER = [
+  "DEATHKNIGHT",
+  "DEMONHUNTER",
+  "DRUID",
+  "HUNTER",
+  "MAGE",
+  "PALADIN",
+  "PRIEST",
+  "ROGUE",
+  "SHAMAN",
+  "WARLOCK",
+  "WARRIOR",
+  "NEUTRAL",
+];
+
+const TYPE_ORDER = ["MINION", "SPELL", "WEAPON", "LOCATION", "HERO"];
+const RARITY_ORDER = ["FREE", "COMMON", "RARE", "EPIC", "LEGENDARY"];
+const COST_OPTIONS = ["ALL", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
+
+function translateCardClass(value) {
+  return CLASS_LABELS[value] ?? value ?? "Desconocida";
+}
+
+function translateType(value) {
+  return TYPE_LABELS[value] ?? value ?? "Desconocido";
+}
+
+function translateRarity(value) {
+  return RARITY_LABELS[value] ?? value ?? "Sin rareza";
+}
+
+function getThumbImage(card) {
+  return card?.imageThumb || card?.imageGame || card?.image || "";
+}
+
+function getDetailImage(card) {
+  return card?.imageDetail || card?.imageGame || card?.image || "";
+}
+
+function CardBrowser({ cards, loading, onBack }) {
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("ALL");
+  const [classFilter, setClassFilter] = useState("ALL");
+  const [rarityFilter, setRarityFilter] = useState("ALL");
+  const [costFilter, setCostFilter] = useState("ALL");
+  const [selectedCard, setSelectedCard] = useState(null);
+
+  const availableClasses = useMemo(() => {
+    const values = new Set(cards.map((card) => card.cardClass).filter(Boolean));
+    return CLASS_ORDER.filter((cardClass) => values.has(cardClass));
+  }, [cards]);
+
+  const availableTypes = useMemo(() => {
+    const values = new Set(cards.map((card) => card.type).filter(Boolean));
+    return TYPE_ORDER.filter((type) => values.has(type));
+  }, [cards]);
+
+  const availableRarities = useMemo(() => {
+    const values = new Set(cards.map((card) => card.rarity).filter(Boolean));
+    return RARITY_ORDER.filter((rarity) => values.has(rarity));
+  }, [cards]);
+
+  const filteredCards = useMemo(() => {
+    return cards.filter((card) => {
+      const searchText = `${card.name ?? ""} ${card.nameEn ?? ""} ${card.text ?? ""}`;
+      const matchesSearch = searchText.toLowerCase().includes(search.toLowerCase());
+      const matchesType = typeFilter === "ALL" || card.type === typeFilter;
+      const matchesClass = classFilter === "ALL" || card.cardClass === classFilter;
+      const matchesRarity = rarityFilter === "ALL" || card.rarity === rarityFilter;
+      const matchesCost =
+        costFilter === "ALL" ||
+        (costFilter === "10+" ? typeof card.cost === "number" && card.cost >= 10 : card.cost === Number(costFilter));
+
+      return matchesSearch && matchesType && matchesClass && matchesRarity && matchesCost;
+    });
+  }, [cards, search, typeFilter, classFilter, rarityFilter, costFilter]);
+
+  const visibleCards = filteredCards.slice(0, 60);
+
+  useEffect(() => {
+    if (!selectedCard) return;
+    const stillVisible = filteredCards.some((card) => card.id === selectedCard.id);
+    if (!stillVisible) setSelectedCard(null);
+  }, [filteredCards, selectedCard]);
+
+  function clearFilters() {
+    setSearch("");
+    setTypeFilter("ALL");
+    setClassFilter("ALL");
+    setRarityFilter("ALL");
+    setCostFilter("ALL");
+  }
+
+  return (
+    <main className="cb-page">
+      <header className="cb-hero">
+        <button className="cb-back-button" onClick={onBack}>← Inicio</button>
+
+        <div className="cb-hero-copy">
+          <p>Archivo de cartas</p>
+          <h1>Base de datos</h1>
+          <span>Explora tus cartas, filtra y abre cualquier carta para verla en grande.</span>
+        </div>
+
+        <div className="cb-counter">
+          <span>{loading ? "Cargando" : "Cartas"}</span>
+          <strong>{loading ? "..." : cards.length}</strong>
+        </div>
+      </header>
+
+      <section className="cb-layout">
+        <div className="cb-main-panel">
+          <div className="cb-filter-grid">
+            <label className="cb-field cb-search-field">
+              <span>Buscar</span>
+              <input
+                type="text"
+                placeholder="Nombre, texto o nombre inglés..."
+                value={search}
+                onChange={(event) => setSearch(event.target.value)}
+              />
+            </label>
+
+            <label className="cb-field cb-field-type">
+              <span>Tipo</span>
+              <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
+                <option value="ALL">Todos</option>
+                {availableTypes.map((type) => (
+                  <option key={type} value={type}>{translateType(type)}</option>
+                ))}
+              </select>
+            </label>
+
+            <label className="cb-field cb-field-class">
+              <span>Clase</span>
+              <select value={classFilter} onChange={(event) => setClassFilter(event.target.value)}>
+                <option value="ALL">Todas</option>
+                {availableClasses.map((cardClass) => (
+                  <option key={cardClass} value={cardClass}>{translateCardClass(cardClass)}</option>
+                ))}
+              </select>
+            </label>
+
+            <label className="cb-field cb-field-rarity">
+              <span>Rareza</span>
+              <select value={rarityFilter} onChange={(event) => setRarityFilter(event.target.value)}>
+                <option value="ALL">Todas</option>
+                {availableRarities.map((rarity) => (
+                  <option key={rarity} value={rarity}>{translateRarity(rarity)}</option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          <div className="cb-cost-row">
+            {COST_OPTIONS.map((cost) => (
+              <button
+                key={cost}
+                className={`cb-cost-chip ${costFilter === cost ? "is-active" : ""}`}
+                onClick={() => setCostFilter(cost)}
+              >
+                {cost === "ALL" ? "Todos" : cost}
+              </button>
+            ))}
+          </div>
+
+          <div className="cb-results-row">
+            <p>Mostrando <strong>{visibleCards.length}</strong> de <strong>{filteredCards.length}</strong> resultados</p>
+            <button className="cb-clear-button" onClick={clearFilters}>Limpiar filtros</button>
+          </div>
+
+          <div className="cb-card-grid">
+            {visibleCards.map((card) => (
+              <button
+                type="button"
+                className={`cb-card-tile ${selectedCard?.id === card.id ? "is-selected" : ""}`}
+                key={card.id}
+                onClick={() => setSelectedCard(card)}
+              >
+                <CardThumb card={card} />
+                <div className="cb-card-caption">
+                  <strong>{card.name}</strong>
+                  <span>{translateType(card.type)}</span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <CardDetailPanel card={selectedCard} onClose={() => setSelectedCard(null)} />
+      </section>
+    </main>
+  );
+}
+
+function CardThumb({ card }) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const src = getThumbImage(card);
+
+  useEffect(() => {
+    setLoaded(false);
+    setFailed(false);
+  }, [src]);
+
+  return (
+    <div className={`cb-thumb ${loaded ? "is-loaded" : ""} ${failed ? "is-failed" : ""}`}>
+      {!loaded && !failed && <span className="cb-image-placeholder">Cargando</span>}
+      {!failed ? (
+        <img
+          src={src}
+          alt={card.name}
+          loading="lazy"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span className="cb-image-placeholder">Sin imagen</span>
+      )}
+    </div>
+  );
+}
+
+function CardLargeImage({ card }) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const src = getDetailImage(card);
+
+  useEffect(() => {
+    setLoaded(false);
+    setFailed(false);
+  }, [src]);
+
+  return (
+    <div className={`cb-detail-image ${loaded ? "is-loaded" : ""} ${failed ? "is-failed" : ""}`}>
+      {!loaded && !failed && <span>Preparando carta...</span>}
+      {!failed ? (
+        <img
+          src={src}
+          alt={card.name}
+          loading="eager"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span>Imagen no disponible</span>
+      )}
+    </div>
+  );
+}
+
+function CardDetailPanel({ card, onClose }) {
+  if (!card) {
+    return (
+      <aside className="cb-detail-panel cb-detail-empty">
+        <div className="cb-empty-orb">+</div>
+        <h2>Selecciona una carta</h2>
+        <p>Haz click en cualquier carta del archivo para abrir su ficha ampliada.</p>
+      </aside>
+    );
+  }
+
+  return (
+    <aside className="cb-detail-panel">
+      <button className="cb-detail-close" onClick={onClose} aria-label="Cerrar detalle">×</button>
+      <CardLargeImage card={card} />
+
+      <div className="cb-detail-info">
+        <p className="cb-detail-kicker">Detalle de carta</p>
+        <h2>{card.name}</h2>
+        {card.nameEn && card.nameEn !== card.name && <p className="cb-detail-english">{card.nameEn}</p>}
+
+        <div className="cb-detail-tags">
+          <span>{translateCardClass(card.cardClass)}</span>
+          <span>{translateType(card.type)}</span>
+          <span>{translateRarity(card.rarity)}</span>
+        </div>
+
+        <div className="cb-detail-stats">
+          <div><span>Coste</span><strong>{card.cost ?? "?"}</strong></div>
+          <div><span>Ataque</span><strong>{card.attack ?? "—"}</strong></div>
+          <div><span>Vida</span><strong>{card.health ?? "—"}</strong></div>
+        </div>
+
+        <div className="cb-detail-text">
+          <span>Texto</span>
+          <p>{card.text || "Sin texto."}</p>
+        </div>
+
+        <dl className="cb-detail-meta">
+          <div><dt>Set</dt><dd>{card.set ?? "—"}</dd></div>
+          <div><dt>ID</dt><dd>{card.id ?? "—"}</dd></div>
+        </dl>
+      </div>
+    </aside>
+  );
+}
+
+export default CardBrowser;
