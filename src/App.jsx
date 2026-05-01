@@ -4,40 +4,30 @@ import GuessManaCost from "./games/GuessManaCost";
 import ImpostorGame from "./games/Impostor/ImpostorGame";
 import "./App.css";
 
-const MODES = [
+const HOME_MODES = [
   {
     id: "guessMana",
-    label: "Guess the Mana",
+    icon: "✦",
     title: "Adivina el coste",
-    description: "Tapa el cristal y acierta el coste real de la carta.",
-    difficulty: "Fácil",
-    rounds: "10 rondas",
+    description: "Observa la carta y selecciona su coste real de maná.",
     cta: "Jugar",
-    icon: "?",
-    tone: "blue",
-  },
-  {
-    id: "impostor",
-    label: "Find the Impostor",
-    title: "Encuentra el impostor",
-    description: "Encuentra las 5 cartas buenas sin caer en las trampas.",
-    difficulty: "Media",
-    rounds: "9 cartas",
-    cta: "Jugar",
-    icon: "✕",
-    tone: "gold",
     featured: true,
   },
   {
+    id: "impostor",
+    icon: "◈",
+    title: "Encuentra el impostor",
+    description: "Encuentra las cartas correctas y evita las trampas de cada ronda.",
+    cta: "Jugar",
+    featured: false,
+  },
+  {
     id: "cards",
-    label: "Card Library",
+    icon: "☰",
     title: "Base de datos",
-    description: "Busca, filtra y revisa la colección de cartas.",
-    difficulty: "Libre",
-    rounds: "Colección",
+    description: "Explora la colección, filtra cartas y ábrelas en grande.",
     cta: "Abrir",
-    icon: "◆",
-    tone: "violet",
+    featured: false,
   },
 ];
 
@@ -72,95 +62,37 @@ function App() {
   }
 
   return (
-    <main className="app-page app-inn-home">
-      <div className="app-inn-light app-inn-light-left" aria-hidden="true" />
-      <div className="app-inn-light app-inn-light-right" aria-hidden="true" />
+    <main className="app-page app-home-hearthstone">
+      <div className="app-home-bg-layer" aria-hidden="true" />
 
-      <section className="app-inn-shell">
-        <header className="app-inn-header">
-          <button className="app-logo-plaque" onClick={() => setCurrentView("home")} aria-label="Inicio">
-            <span className="app-logo-rune">◇</span>
-            <span className="app-logo-copy">
-              <strong>HS Minigame Inn</strong>
-              <em>Retos de cartas</em>
-            </span>
-          </button>
-
-          <nav className="app-parchment-nav" aria-label="Modos de juego">
-            <button onClick={() => setCurrentView("guessMana")} disabled={loading}>Coste</button>
-            <button onClick={() => setCurrentView("impostor")} disabled={loading}>Impostor</button>
-            <button onClick={() => setCurrentView("cards")} disabled={loading}>Cartas</button>
-          </nav>
-
-          <button
-            className="app-play-now"
-            disabled={loading}
-            onClick={() => setCurrentView("impostor")}
-          >
-            Jugar ahora
-          </button>
+      <section className="app-home-centered-shell">
+        <header className="app-home-centered-header">
+          <p className="app-home-kicker">Hearthstone fan minigames</p>
+          <h1>Hearthdle</h1>
+          <p className="app-home-subtitle">Adivina cartas de Hearthstone</p>
+          <h2>Selecciona un modo</h2>
         </header>
 
-        <section className="app-inn-stage" aria-labelledby="app-home-title">
-          <div className="app-stage-copy">
-            <p className="app-eyebrow">Taberna de minijuegos</p>
-            <h1 id="app-home-title">Elige tu reto</h1>
-            <p>
-              Tres modos rápidos para practicar memoria, coste, categorías y reconocimiento de cartas.
-            </p>
-          </div>
-
-          <div className="app-mode-showcase">
-            {MODES.map((mode) => (
-              <article
-                key={mode.id}
-                className={`app-game-tile app-game-tile-${mode.tone} ${
-                  mode.featured ? "is-featured" : ""
-                }`}
+        <section className="app-home-mode-grid" aria-label="Modos de juego">
+          {HOME_MODES.map((mode) => (
+            <article
+              key={mode.id}
+              className={`app-home-mode-card ${mode.featured ? "app-home-mode-card-featured" : ""}`}
+            >
+              <div className="app-home-mode-icon" aria-hidden="true">
+                {mode.icon}
+              </div>
+              <h3>{mode.title}</h3>
+              <p>{mode.description}</p>
+              <button
+                className="app-home-mode-button"
+                disabled={loading}
+                onClick={() => setCurrentView(mode.id)}
               >
-                <div className="app-tile-frame" aria-hidden="true" />
-                <div className="app-tile-header">
-                  <span>{mode.label}</span>
-                </div>
-
-                <div className="app-tile-preview" aria-hidden="true">
-                  <div className="app-preview-card app-preview-card-main">
-                    <span>{mode.icon}</span>
-                  </div>
-                  <div className="app-preview-card app-preview-card-side" />
-                  <div className="app-preview-spark app-preview-spark-one" />
-                  <div className="app-preview-spark app-preview-spark-two" />
-                </div>
-
-                <div className="app-tile-body">
-                  <h2>{mode.title}</h2>
-                  <p>{mode.description}</p>
-
-                  <div className="app-tile-meta">
-                    <span>{mode.difficulty}</span>
-                    <span>{mode.rounds}</span>
-                  </div>
-
-                  <button
-                    className="app-tile-button"
-                    disabled={loading}
-                    onClick={() => setCurrentView(mode.id)}
-                  >
-                    {loading ? "Cargando..." : mode.cta}
-                  </button>
-                </div>
-              </article>
-            ))}
-          </div>
-
-          <div className="app-table-dressing" aria-hidden="true">
-            <span className="app-gem app-gem-blue" />
-            <span className="app-gem app-gem-purple" />
-            <span className="app-coin app-coin-one" />
-            <span className="app-coin app-coin-two" />
-            <span className="app-card-stack" />
-            <span className="app-beer-mug" />
-          </div>
+                {loading ? "Cargando..." : mode.cta}
+              </button>
+            </article>
+          ))}
         </section>
       </section>
     </main>

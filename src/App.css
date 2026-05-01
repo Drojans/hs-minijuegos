@@ -16,28 +16,26 @@
 
 :root {
   color-scheme: dark;
-  --hs-bg-1: #120906;
-  --hs-bg-2: #25120b;
-  --hs-bg-3: #07111d;
-  --hs-panel: rgba(40, 25, 15, 0.88);
-  --hs-panel-2: rgba(14, 22, 35, 0.92);
-  --hs-border: rgba(227, 171, 87, 0.32);
-  --hs-border-strong: rgba(255, 214, 127, 0.62);
-  --hs-cyan: #74e7ff;
-  --hs-violet: #b06dff;
-  --hs-gold: #ffd36d;
-  --hs-gold-2: #b7742f;
-  --hs-red: #cc4932;
-  --hs-text: #fff5df;
-  --hs-muted: #dbc7a8;
-  --hs-shadow: 0 28px 80px rgba(0, 0, 0, 0.58);
+  --hs-bg-dark: #0f0906;
+  --hs-bg-brown: #20120a;
+  --hs-bg-panel: rgba(33, 19, 10, 0.92);
+  --hs-bg-panel-soft: rgba(29, 18, 11, 0.86);
+  --hs-gold: #f0b968;
+  --hs-gold-strong: #ffcf70;
+  --hs-gold-soft: #f9e1b4;
+  --hs-blue: #71d9ff;
+  --hs-text: #f7edd8;
+  --hs-muted: #d9c8ae;
+  --hs-border: rgba(216, 160, 86, 0.32);
+  --hs-border-strong: rgba(234, 182, 107, 0.58);
+  --hs-shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
 }
 
 html,
 body,
 #root {
-  min-height: 100%;
   width: 100%;
+  min-height: 100%;
 }
 
 #root {
@@ -51,12 +49,14 @@ body {
   margin: 0;
   overflow-x: hidden;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  background:
-    radial-gradient(circle at 12% 20%, rgba(255, 186, 82, 0.13), transparent 26%),
-    radial-gradient(circle at 82% 34%, rgba(91, 209, 255, 0.1), transparent 28%),
-    radial-gradient(circle at 72% 92%, rgba(124, 47, 255, 0.12), transparent 30%),
-    linear-gradient(135deg, #0b0707, #1b0d08 42%, #07111f 100%);
   color: var(--hs-text);
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 188, 84, 0.12), transparent 24%),
+    radial-gradient(circle at 16% 78%, rgba(82, 149, 255, 0.06), transparent 18%),
+    radial-gradient(circle at 84% 26%, rgba(169, 91, 255, 0.06), transparent 20%),
+    linear-gradient(90deg, rgba(255, 232, 183, 0.018) 0, rgba(255, 232, 183, 0.018) 50%, transparent 50%, transparent 100%),
+    linear-gradient(180deg, #20150e, #0d0908 58%, #160b15);
+  background-size: auto, auto, auto, 26px 26px, auto;
 }
 
 button,
@@ -70,714 +70,279 @@ button {
 }
 
 .app-page {
-  min-height: 100vh;
   width: 100%;
-  padding: clamp(18px, 2vw, 30px);
 }
 
-.app-inn-home {
+.app-home-hearthstone {
   position: relative;
-  overflow: hidden;
+  min-height: 100vh;
+  padding: 24px;
   display: flex;
-  align-items: stretch;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.app-inn-home::before {
-  content: "";
+.app-home-bg-layer {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(53, 25, 10, 0.52), transparent 18%, transparent 82%, rgba(7, 10, 19, 0.52)),
-    radial-gradient(circle at 50% 18%, rgba(255, 194, 96, 0.11), transparent 34%);
+    radial-gradient(ellipse at 50% 48%, rgba(255, 191, 94, 0.07), transparent 36%),
+    radial-gradient(circle at 50% 22%, rgba(255, 220, 143, 0.055), transparent 18%),
+    linear-gradient(180deg, transparent 0 70%, rgba(0, 0, 0, 0.24));
+  opacity: 0.95;
 }
 
-.app-inn-light {
+.app-home-bg-layer::before,
+.app-home-bg-layer::after {
+  content: "";
   position: absolute;
   pointer-events: none;
-  width: 360px;
-  height: 360px;
+}
+
+.app-home-bg-layer::before {
+  inset: 24px;
+  border-radius: 34px;
+  border: 1px solid rgba(240, 185, 104, 0.06);
+  box-shadow:
+    inset 0 0 90px rgba(0, 0, 0, 0.28),
+    inset 0 0 32px rgba(255, 193, 92, 0.03);
+}
+
+.app-home-bg-layer::after {
+  left: 50%;
+  top: 50%;
+  width: min(88vw, 1180px);
+  height: min(72vh, 760px);
+  transform: translate(-50%, -50%);
   border-radius: 999px;
-  filter: blur(4px);
-  opacity: 0.55;
+  background: radial-gradient(circle, rgba(255, 197, 96, 0.055), transparent 66%);
 }
 
-.app-inn-light-left {
-  left: -110px;
-  bottom: -120px;
-  background: radial-gradient(circle, rgba(255, 144, 45, 0.25), transparent 67%);
-}
-
-.app-inn-light-right {
-  right: -110px;
-  top: 70px;
-  background: radial-gradient(circle, rgba(101, 221, 255, 0.18), transparent 68%);
-}
-
-.app-inn-shell {
+.app-home-centered-shell {
   position: relative;
   z-index: 1;
-  width: min(98vw, 1660px);
-  min-height: calc(100vh - clamp(36px, 4vw, 60px));
-  margin: 0 auto;
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
-  gap: clamp(18px, 2vw, 28px);
-}
-
-.app-inn-header {
-  display: grid;
-  grid-template-columns: minmax(270px, 420px) minmax(380px, 1fr) minmax(140px, 190px);
-  gap: 18px;
-  align-items: center;
-}
-
-.app-logo-plaque,
-.app-parchment-nav,
-.app-play-now,
-.app-game-tile {
-  border: 1px solid rgba(255, 215, 139, 0.34);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.12),
-    0 18px 38px rgba(0, 0, 0, 0.38);
-}
-
-.app-logo-plaque {
-  position: relative;
-  min-height: 82px;
-  border-radius: 26px;
-  padding: 14px 18px;
+  width: min(100%, 1060px);
+  max-height: calc(100vh - 48px);
   display: flex;
-  align-items: center;
-  gap: 14px;
-  background:
-    linear-gradient(135deg, rgba(96, 48, 17, 0.92), rgba(32, 18, 12, 0.94)),
-    radial-gradient(circle at 25% 15%, rgba(255, 211, 109, 0.18), transparent 44%);
-  cursor: pointer;
-  text-align: left;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
 }
 
-.app-logo-plaque::before,
-.app-logo-plaque::after {
+.app-home-centered-header {
+  text-align: center;
+}
+
+.app-home-kicker,
+.app-home-subtitle,
+.app-home-centered-header h2,
+.app-home-mode-card p {
+  margin: 0;
+}
+
+.app-home-kicker {
+  margin-bottom: 8px;
+  color: #dcb787;
+  font-size: 0.84rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.app-home-centered-header h1,
+.app-home-centered-header h2,
+.app-home-mode-card h3,
+.app-home-mode-button {
+  font-family: "Belwe HS", Georgia, serif;
+}
+
+.app-home-centered-header h1 {
+  margin: 0;
+  color: #ffc51d;
+  font-size: clamp(3rem, 5vw, 4.5rem);
+  line-height: 0.95;
+  text-shadow:
+    0 2px 0 rgba(70, 34, 8, 0.94),
+    0 8px 22px rgba(0, 0, 0, 0.34),
+    0 0 20px rgba(255, 197, 54, 0.15);
+}
+
+.app-home-subtitle {
+  margin-top: 10px;
+  color: var(--hs-text);
+  font-size: clamp(1.02rem, 1.5vw, 1.4rem);
+  font-weight: 750;
+}
+
+.app-home-centered-header h2 {
+  margin-top: 32px;
+  color: var(--hs-gold-soft);
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 700;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.28);
+}
+
+.app-home-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  width: 100%;
+}
+
+.app-home-mode-card {
+  position: relative;
+  min-height: 256px;
+  padding: 24px 22px 20px;
+  border-radius: 20px;
+  border: 1px solid var(--hs-border);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 218, 142, 0.07), transparent 38%),
+    linear-gradient(180deg, rgba(46, 25, 11, 0.97), rgba(22, 12, 7, 0.96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.08),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.65),
+    var(--hs-shadow);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.app-home-mode-card::before,
+.app-home-mode-card::after {
   content: "";
   position: absolute;
-  top: 50%;
-  width: 13px;
-  height: 36px;
+  pointer-events: none;
+}
+
+.app-home-mode-card::before {
+  inset: 8px;
+  border-radius: 15px;
+  border: 1px solid rgba(255, 222, 154, 0.08);
+  box-shadow: inset 0 0 22px rgba(255, 205, 110, 0.035);
+}
+
+.app-home-mode-card::after {
+  top: 11px;
+  left: 11px;
+  right: 11px;
+  height: 4px;
   border-radius: 999px;
-  background: linear-gradient(180deg, #ffd979, #8b501f);
-  transform: translateY(-50%);
-  opacity: 0.9;
+  background: linear-gradient(90deg, transparent, rgba(255, 213, 121, 0.34), transparent);
+  opacity: 0.75;
 }
 
-.app-logo-plaque::before {
-  left: -7px;
+.app-home-mode-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--hs-border-strong);
+  filter: brightness(1.03);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.1),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.65),
+    0 24px 58px rgba(0, 0, 0, 0.52),
+    0 0 26px rgba(255, 197, 96, 0.08);
 }
 
-.app-logo-plaque::after {
-  right: -7px;
+.app-home-mode-card-featured {
+  border-color: rgba(245, 187, 100, 0.62);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 209, 107, 0.11), transparent 38%),
+    linear-gradient(180deg, rgba(57, 31, 13, 0.98), rgba(23, 12, 7, 0.96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.11),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.65),
+    0 22px 54px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(245, 187, 100, 0.12);
 }
 
-.app-logo-rune {
-  width: 52px;
-  height: 52px;
+.app-home-mode-icon {
+  position: relative;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  color: #081522;
+  margin-bottom: 18px;
+  border: 2px solid rgba(241, 185, 104, 0.36);
   background:
-    radial-gradient(circle at 32% 28%, #e6fbff, #49cdf4 45%, #11619c 73%);
-  font-size: 1.6rem;
-  font-weight: 950;
-  box-shadow: 0 0 24px rgba(93, 231, 255, 0.45);
-}
-
-.app-logo-copy {
-  display: grid;
-  gap: 1px;
-}
-
-.app-logo-copy strong {
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(1.35rem, 2vw, 2.1rem);
-  line-height: 1;
+    radial-gradient(circle at 36% 28%, rgba(255, 241, 190, 0.22), transparent 24%),
+    linear-gradient(180deg, rgba(89, 56, 24, 0.74), rgba(25, 16, 10, 0.86));
   color: var(--hs-gold);
-  text-shadow: 0 2px 0 #3b1708, 0 0 18px rgba(255, 213, 109, 0.22);
-}
-
-.app-logo-copy em {
-  color: #f3d6a8;
-  font-style: normal;
-  font-size: 0.9rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.app-parchment-nav {
-  justify-self: center;
-  width: min(100%, 720px);
-  min-height: 58px;
-  border-radius: 999px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 9px 16px;
-  background:
-    linear-gradient(180deg, #f1d6a4, #c8924e 47%, #8c5523),
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.4), transparent 42%);
-}
-
-.app-parchment-nav button {
-  border: 0;
-  border-radius: 999px;
-  padding: 9px 18px;
-  color: #321a09;
-  background: transparent;
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.08rem;
+  font-size: 1.55rem;
   font-weight: 900;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 235, 187, 0.16),
+    0 0 18px rgba(255, 197, 96, 0.09);
+}
+
+.app-home-mode-card h3 {
+  margin: 0;
+  color: var(--hs-gold);
+  font-size: clamp(1.45rem, 2vw, 1.95rem);
+  line-height: 1.06;
+  text-shadow:
+    0 2px 0 rgba(51, 24, 7, 0.72),
+    0 0 14px rgba(255, 196, 86, 0.08);
+}
+
+.app-home-mode-card p {
+  margin-top: 14px;
+  color: var(--hs-text);
+  line-height: 1.55;
+  font-size: 1rem;
+  max-width: 240px;
+  opacity: 0.95;
+}
+
+.app-home-mode-button {
+  margin-top: auto;
+  min-width: 124px;
+  border: 1px solid rgba(240, 185, 104, 0.58);
+  border-radius: 12px;
+  padding: 10px 20px;
+  background:
+    linear-gradient(180deg, rgba(102, 64, 27, 0.96), rgba(44, 24, 10, 0.98));
+  color: var(--hs-gold-soft);
+  font-size: 1.02rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.18s ease, background 0.18s ease;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 228, 176, 0.16),
+    0 8px 18px rgba(0, 0, 0, 0.2);
+  transition: filter 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
 }
 
-.app-parchment-nav button:hover:not(:disabled) {
+.app-home-mode-button:hover:not(:disabled) {
+  filter: brightness(1.09);
   transform: translateY(-1px);
-  background: rgba(255, 244, 215, 0.28);
 }
 
-.app-parchment-nav button:disabled,
-.app-play-now:disabled,
-.app-tile-button:disabled {
+.app-home-mode-button:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
 
-.app-play-now {
-  justify-self: end;
-  min-height: 58px;
-  border-radius: 20px;
-  padding: 0 22px;
-  border-color: rgba(111, 232, 255, 0.54);
-  color: #eaffff;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(174, 247, 255, 0.42), transparent 45%),
-    linear-gradient(180deg, #1789d0, #075397);
-  font-weight: 950;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 0 24px rgba(67, 213, 255, 0.28),
-    0 16px 34px rgba(0, 0, 0, 0.38);
-}
-
-.app-play-now:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    0 0 34px rgba(67, 213, 255, 0.42),
-    0 18px 38px rgba(0, 0, 0, 0.42);
-}
-
-.app-inn-stage {
-  position: relative;
-  min-height: 650px;
-  border-radius: 38px;
-  padding: clamp(24px, 3.5vw, 54px);
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 212, 121, 0.15), transparent 28%),
-    linear-gradient(180deg, rgba(52, 25, 13, 0.62), rgba(31, 15, 10, 0.86) 46%, rgba(21, 10, 7, 0.98) 100%);
-  border: 1px solid rgba(255, 211, 126, 0.24);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    inset 0 -20px 50px rgba(83, 37, 12, 0.52),
-    var(--hs-shadow);
-}
-
-.app-inn-stage::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.16;
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(90deg, rgba(255, 222, 161, 0.18) 0 2px, transparent 2px 104px),
-    linear-gradient(90deg, rgba(0, 0, 0, 0.2), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.23));
-}
-
-.app-inn-stage::after {
-  content: "";
-  position: absolute;
-  left: -4%;
-  right: -4%;
-  bottom: -72px;
-  height: 260px;
-  border-radius: 50% 50% 0 0 / 42% 42% 0 0;
-  background:
-    radial-gradient(circle at 22% 20%, rgba(255, 190, 83, 0.16), transparent 19%),
-    radial-gradient(circle at 80% 18%, rgba(118, 225, 255, 0.1), transparent 18%),
-    linear-gradient(180deg, #6d3514, #321306 70%);
-  border-top: 1px solid rgba(255, 212, 128, 0.32);
-  box-shadow: inset 0 18px 34px rgba(255, 205, 101, 0.11);
-  pointer-events: none;
-}
-
-.app-stage-copy {
-  position: relative;
-  z-index: 2;
-  width: min(760px, 88%);
-  margin: 0 auto 28px;
-  text-align: center;
-}
-
-.app-eyebrow {
-  margin: 0 0 8px;
-  color: var(--hs-cyan);
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  font-size: 0.78rem;
-  font-weight: 950;
-}
-
-.app-stage-copy h1 {
-  margin: 0;
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(2.8rem, 5vw, 5.8rem);
-  line-height: 0.92;
-  color: var(--hs-gold);
-  text-shadow:
-    0 3px 0 #341607,
-    0 0 24px rgba(255, 211, 109, 0.24);
-}
-
-.app-stage-copy p:not(.app-eyebrow) {
-  max-width: 700px;
-  margin: 12px auto 0;
-  color: #f0d8af;
-  line-height: 1.55;
-  font-size: clamp(0.98rem, 1.15vw, 1.12rem);
-}
-
-.app-mode-showcase {
-  position: relative;
-  z-index: 3;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(230px, 1fr));
-  gap: clamp(18px, 2vw, 34px);
-  align-items: stretch;
-  padding: 8px clamp(10px, 2vw, 28px) 110px;
-}
-
-.app-game-tile {
-  position: relative;
-  min-height: 430px;
-  border-radius: 28px;
-  padding: 12px;
-  color: var(--hs-text);
-  background:
-    linear-gradient(180deg, rgba(101, 53, 26, 0.95), rgba(35, 19, 14, 0.98));
-  overflow: visible;
-  transition: transform 0.22s ease, box-shadow 0.22s ease, filter 0.22s ease;
-}
-
-.app-game-tile:hover {
-  transform: translateY(-8px) rotate(-0.35deg);
-  filter: saturate(1.06);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    0 28px 54px rgba(0, 0, 0, 0.5),
-    0 0 34px rgba(255, 205, 84, 0.14);
-}
-
-.app-game-tile.is-featured {
-  transform: translateY(-8px);
-}
-
-.app-game-tile.is-featured:hover {
-  transform: translateY(-14px) rotate(0.25deg);
-}
-
-.app-tile-frame {
-  position: absolute;
-  inset: -7px;
-  border-radius: 34px;
-  background:
-    linear-gradient(135deg, rgba(255, 228, 137, 0.92), rgba(115, 60, 21, 0.85) 28%, rgba(255, 215, 109, 0.82) 48%, rgba(86, 39, 15, 0.9));
-  z-index: -1;
-  filter: drop-shadow(0 0 18px rgba(255, 197, 89, 0.18));
-}
-
-.app-game-tile-blue .app-tile-frame {
-  background: linear-gradient(135deg, rgba(116, 232, 255, 0.9), rgba(38, 83, 132, 0.86), rgba(255, 210, 102, 0.74));
-}
-
-.app-game-tile-violet .app-tile-frame {
-  background: linear-gradient(135deg, rgba(188, 104, 255, 0.9), rgba(72, 36, 121, 0.88), rgba(255, 210, 102, 0.76));
-}
-
-.app-tile-header {
-  min-height: 42px;
-  display: grid;
-  place-items: center;
-  border-radius: 18px 18px 10px 10px;
-  background:
-    linear-gradient(180deg, rgba(62, 25, 10, 0.96), rgba(20, 12, 9, 0.96));
-  border: 1px solid rgba(255, 220, 137, 0.24);
-}
-
-.app-tile-header span {
-  font-family: "Belwe HS", Georgia, serif;
-  color: #ffe2a6;
-  font-size: clamp(0.95rem, 1.1vw, 1.2rem);
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  text-shadow: 0 2px 0 #1b0d06;
-}
-
-.app-tile-preview {
-  position: relative;
-  height: 190px;
-  margin: 14px 8px 12px;
-  border-radius: 22px;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(116, 232, 255, 0.16), transparent 40%),
-    linear-gradient(180deg, rgba(8, 16, 27, 0.88), rgba(35, 18, 14, 0.92));
-  border: 1px solid rgba(255, 219, 144, 0.16);
-  overflow: hidden;
-}
-
-.app-preview-card {
-  position: absolute;
-  border-radius: 18px;
-  background:
-    radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.16), transparent 35%),
-    linear-gradient(180deg, #245b84, #22140f);
-  border: 2px solid rgba(255, 217, 126, 0.62);
-  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.34);
-}
-
-.app-preview-card-main {
-  left: 50%;
-  top: 22px;
-  width: 104px;
-  height: 142px;
-  transform: translateX(-50%) rotate(-4deg);
-  display: grid;
-  place-items: center;
-}
-
-.app-preview-card-main span {
-  width: 62px;
-  height: 62px;
-  display: grid;
-  place-items: center;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, #fff8c7, var(--hs-gold) 55%, #a46324);
-  color: #221005;
-  font-size: 2.1rem;
-  font-weight: 950;
-  box-shadow: 0 0 26px rgba(255, 208, 96, 0.42);
-}
-
-.app-preview-card-side {
-  right: 12%;
-  top: 42px;
-  width: 82px;
-  height: 112px;
-  transform: rotate(10deg);
-  opacity: 0.72;
-}
-
-.app-preview-spark {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--hs-cyan);
-  box-shadow: 0 0 18px currentColor;
-}
-
-.app-preview-spark-one {
-  left: 17%;
-  top: 24%;
-  color: var(--hs-cyan);
-}
-
-.app-preview-spark-two {
-  right: 18%;
-  bottom: 22%;
-  color: var(--hs-violet);
-}
-
-.app-tile-body {
-  display: grid;
-  gap: 10px;
-  padding: 0 8px 8px;
-  text-align: center;
-}
-
-.app-tile-body h2 {
-  margin: 0;
-  font-family: "Belwe HS", Georgia, serif;
-  color: #ffe5a9;
-  font-size: clamp(1.45rem, 1.85vw, 2rem);
-  line-height: 0.95;
-  text-shadow: 0 2px 0 #2b1207;
-}
-
-.app-tile-body p {
-  margin: 0;
-  min-height: 44px;
-  color: #e9d2af;
-  line-height: 1.45;
-  font-size: 0.95rem;
-}
-
-.app-tile-meta {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.app-tile-meta span {
-  border-radius: 999px;
-  padding: 6px 10px;
-  background: rgba(255, 219, 127, 0.09);
-  border: 1px solid rgba(255, 219, 127, 0.22);
-  color: #ffdf9d;
-  font-weight: 850;
-  font-size: 0.82rem;
-}
-
-.app-tile-button {
-  justify-self: center;
-  min-width: 132px;
-  border: 1px solid rgba(255, 237, 169, 0.4);
-  border-radius: 999px;
-  padding: 10px 18px;
-  color: #211104;
-  background:
-    linear-gradient(180deg, #ffde79, #cf862f 72%, #96551d);
-  font-weight: 950;
-  cursor: pointer;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.36),
-    0 10px 22px rgba(0, 0, 0, 0.28);
-  transition: transform 0.18s ease, filter 0.18s ease;
-}
-
-.app-tile-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.08);
-}
-
-.app-table-dressing {
-  position: absolute;
-  z-index: 4;
-  left: 0;
-  right: 0;
-  bottom: 34px;
-  height: 90px;
-  pointer-events: none;
-}
-
-.app-gem,
-.app-coin,
-.app-card-stack,
-.app-beer-mug {
-  position: absolute;
-  display: block;
-}
-
-.app-gem {
-  width: 22px;
-  height: 22px;
-  transform: rotate(45deg);
-  border-radius: 6px;
-  box-shadow: 0 0 20px currentColor;
-}
-
-.app-gem-blue {
-  left: 26%;
-  bottom: 34px;
-  color: rgba(101, 225, 255, 0.6);
-  background: linear-gradient(135deg, #b8fbff, #158fda);
-}
-
-.app-gem-purple {
-  left: 30%;
-  bottom: 18px;
-  color: rgba(177, 96, 255, 0.6);
-  background: linear-gradient(135deg, #f0b8ff, #7129ca);
-}
-
-.app-coin {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 34% 28%, #fff1a7, #d48a2d 62%, #7d3e14);
-  box-shadow: 0 8px 14px rgba(0, 0, 0, 0.26);
-}
-
-.app-coin-one {
-  right: 25%;
-  bottom: 22px;
-}
-
-.app-coin-two {
-  right: 21%;
-  bottom: 45px;
-}
-
-.app-card-stack {
-  left: 12%;
-  bottom: 22px;
-  width: 86px;
-  height: 58px;
-  border-radius: 12px;
-  transform: rotate(-10deg);
-  background:
-    linear-gradient(135deg, rgba(116, 232, 255, 0.16), rgba(93, 35, 133, 0.28)),
-    linear-gradient(180deg, #1d3e66, #17111d);
-  border: 2px solid rgba(255, 217, 126, 0.45);
-  box-shadow:
-    12px -8px 0 -3px #2b1b30,
-    13px -9px 0 -1px rgba(255, 217, 126, 0.45);
-}
-
-.app-beer-mug {
-  right: 12%;
-  bottom: 12px;
-  width: 54px;
-  height: 64px;
-  border-radius: 12px 12px 16px 16px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45), transparent 24%),
-    linear-gradient(180deg, #f4d688, #b86e25 70%);
-  border: 2px solid rgba(255, 231, 162, 0.48);
-}
-
-.app-beer-mug::after {
-  content: "";
-  position: absolute;
-  right: -19px;
-  top: 16px;
-  width: 22px;
-  height: 30px;
-  border: 5px solid rgba(255, 225, 150, 0.62);
-  border-left: 0;
-  border-radius: 0 16px 16px 0;
-}
-
-.app-button {
-  border-radius: 999px;
-  padding: 13px 22px;
-  font-size: 0.98rem;
-  font-weight: 850;
-  cursor: pointer;
-  transition: transform 0.18s ease, opacity 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
-}
-
-.app-button-primary {
-  border: 0;
-  color: #241405;
-  background: linear-gradient(135deg, #ffe38d, #c67b2b);
-  box-shadow: 0 12px 34px rgba(255, 190, 82, 0.24);
-}
-
-.app-button-secondary {
-  border: 1px solid rgba(255, 213, 106, 0.35);
-  color: var(--hs-text);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.app-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
-
-.app-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-@media (max-width: 1180px) {
-  .app-inn-header {
-    grid-template-columns: 1fr;
-  }
-
-  .app-logo-plaque,
-  .app-play-now {
-    justify-self: center;
-  }
-
-  .app-mode-showcase {
-    grid-template-columns: repeat(3, minmax(190px, 1fr));
-  }
-}
-
-@media (max-width: 880px) {
-  .app-page {
-    padding: 16px;
-  }
-
-  .app-inn-stage {
+@media (max-width: 980px) {
+  .app-home-hearthstone {
     min-height: auto;
-    padding: 24px 18px 120px;
+    padding: 22px 14px;
+    overflow: visible;
   }
 
-  .app-mode-showcase {
+  .app-home-centered-shell {
+    max-height: none;
+  }
+
+  .app-home-mode-grid {
     grid-template-columns: 1fr;
-    max-width: 430px;
-    margin: 0 auto;
-    padding-bottom: 80px;
   }
 
-  .app-game-tile,
-  .app-game-tile.is-featured {
-    min-height: 410px;
-    transform: none;
-  }
-
-  .app-game-tile:hover,
-  .app-game-tile.is-featured:hover {
-    transform: translateY(-4px);
-  }
-
-  .app-parchment-nav {
-    flex-wrap: wrap;
-    border-radius: 28px;
-  }
-}
-
-@media (max-width: 560px) {
-  .app-logo-plaque {
-    min-height: 74px;
-    width: 100%;
-  }
-
-  .app-logo-copy strong {
-    font-size: 1.42rem;
-  }
-
-  .app-stage-copy {
-    width: 100%;
-  }
-
-  .app-stage-copy h1 {
-    font-size: 2.75rem;
-  }
-
-  .app-parchment-nav button {
-    padding: 8px 12px;
-  }
-
-  .app-play-now {
-    width: 100%;
+  .app-home-mode-card {
+    min-height: 220px;
   }
 }

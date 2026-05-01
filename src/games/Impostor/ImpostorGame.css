@@ -671,3 +671,347 @@
   box-shadow: 0 0 18px rgba(255, 194, 84, 0.32);
 }
 /* === TAVERN RESKIN OVERRIDES END === */
+/* ==========================================================
+   DESKTOP 1920x1080 FIT PATCH — IMPOSTOR
+   Pegar al FINAL de src/games/Impostor/ImpostorGame.css.
+   Objetivo: que el tablero completo quepa en 1920x1080 sin scroll.
+   ========================================================== */
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  .im-page {
+    height: 100vh;
+    min-height: 100vh;
+    padding: 12px 18px 16px;
+    overflow: hidden;
+  }
+
+  .im-shell {
+    width: min(98vw, 1780px);
+    height: calc(100vh - 28px);
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .im-header {
+    grid-template-columns: 142px minmax(0, 1fr) 142px;
+    gap: 16px;
+    margin-bottom: 10px;
+    flex: 0 0 auto;
+  }
+
+  .im-secondary-button,
+  .im-primary-button {
+    padding: 10px 17px;
+    font-size: 0.9rem;
+  }
+
+  .im-title-block h1 {
+    font-size: clamp(2.2rem, 3.55vw, 3.8rem);
+  }
+
+  .im-title-block p:not(.im-eyebrow) {
+    margin-top: 6px;
+    font-size: 0.9rem;
+  }
+
+  .im-eyebrow {
+    margin-bottom: 6px;
+    font-size: 0.66rem;
+  }
+
+  .im-score-pill {
+    padding: 9px 13px;
+    border-radius: 18px;
+  }
+
+  .im-score-pill span {
+    font-size: 0.76rem;
+  }
+
+  .im-score-pill strong {
+    font-size: 0.98rem;
+  }
+
+  .im-progress-track {
+    height: 8px;
+    margin-bottom: 10px;
+    flex: 0 0 auto;
+  }
+
+  .im-game-layout {
+    grid-template-columns: 260px minmax(0, 1fr) 250px;
+    gap: 16px;
+    align-items: stretch;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .im-side-panel,
+  .im-action-panel {
+    position: static;
+    top: auto;
+    padding: 18px;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .im-side-panel h2,
+  .im-action-panel h2 {
+    font-size: 1.45rem;
+    line-height: 1.02;
+  }
+
+  .im-side-panel p,
+  .im-action-panel p {
+    font-size: 0.88rem;
+    line-height: 1.42;
+  }
+
+  .im-meta-box,
+  .im-help-box {
+    margin-top: 12px;
+    padding: 13px;
+    border-radius: 17px;
+  }
+
+  .im-meta-box span {
+    font-size: 0.74rem;
+  }
+
+  .im-meta-box strong {
+    font-size: 1.05rem;
+  }
+
+  .im-help-box p {
+    margin-top: 6px;
+  }
+
+  .im-board-panel {
+    padding: 16px 20px;
+    border-radius: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .im-board-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    column-gap: clamp(14px, 1.35vw, 26px);
+    row-gap: 16px;
+    align-items: center;
+    justify-items: center;
+  }
+
+  .im-card {
+    width: 100%;
+    min-height: min(31vh, 290px);
+    padding: 3px 0;
+  }
+
+  .im-board-grid .inc-card-shell {
+    max-width: min(100%, 205px);
+  }
+
+  .im-result-mark {
+    top: 7px;
+    right: 10px;
+    width: 44px;
+    height: 44px;
+    font-size: 1.75rem;
+  }
+
+  .im-card-stamp {
+    top: 8px;
+    right: 8px;
+    padding: 6px 9px;
+    font-size: 0.64rem;
+  }
+
+  .im-message-panel,
+  .im-end-screen {
+    padding: 34px 26px;
+  }
+}
+
+/* Pantallas 1080p pero algo más estrechas */
+@media (min-width: 1300px) and (max-width: 1499px) and (min-height: 800px) {
+  .im-page {
+    padding: 16px 14px 18px;
+  }
+
+  .im-shell {
+    width: min(98vw, 1400px);
+  }
+
+  .im-game-layout {
+    grid-template-columns: 245px minmax(0, 1fr) 235px;
+    gap: 14px;
+  }
+
+  .im-board-panel {
+    padding: 18px;
+  }
+
+  .im-board-grid {
+    column-gap: 18px;
+    row-gap: 22px;
+  }
+
+  .im-card {
+    min-height: 292px;
+  }
+
+  .im-board-grid .inc-card-shell {
+    max-width: 208px;
+  }
+}
+
+/* ==========================================================
+   HEARTHSTONE CLASSIC STYLE FINAL PATCH
+   Añadido automáticamente al final del archivo.
+   Mantiene layouts, tamaños, recortes, scroll y lógica existentes.
+   ========================================================== */
+
+:root {
+  --hs-page-bg-dark: #0f0906;
+  --hs-page-bg-brown: #20120a;
+  --hs-page-gold: #f0b968;
+  --hs-page-gold-strong: #ffcf70;
+  --hs-page-gold-soft: #f9e1b4;
+  --hs-page-blue: #77dfff;
+  --hs-page-text: #f7edd8;
+  --hs-page-muted: #d9c8ae;
+  --hs-page-border: rgba(216, 160, 86, 0.3);
+  --hs-page-border-strong: rgba(234, 182, 107, 0.5);
+  --hs-page-panel: rgba(33, 19, 10, 0.9);
+}
+
+.im-page {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 188, 84, 0.12), transparent 24%),
+    radial-gradient(circle at 16% 78%, rgba(82, 149, 255, 0.055), transparent 18%),
+    radial-gradient(circle at 84% 26%, rgba(169, 91, 255, 0.055), transparent 20%),
+    linear-gradient(90deg, rgba(255, 232, 183, 0.016) 0, rgba(255, 232, 183, 0.016) 50%, transparent 50%, transparent 100%),
+    linear-gradient(180deg, #20150e, #0d0908 58%, #160b15);
+  background-size: auto, auto, auto, 26px 26px, auto;
+}
+
+.im-title-block h1,
+.im-side-panel h2,
+.im-action-panel h2,
+.im-message-panel h1,
+.im-end-screen h1 {
+  font-family: "Belwe HS", Georgia, serif;
+  color: var(--hs-page-gold-soft);
+  text-shadow:
+    0 2px 0 rgba(70, 34, 8, 0.9),
+    0 8px 22px rgba(0, 0, 0, 0.3);
+}
+
+.im-eyebrow {
+  color: var(--hs-page-blue);
+}
+
+.im-title-block p:not(.im-eyebrow),
+.im-side-panel p,
+.im-action-panel p,
+.im-message-panel p,
+.im-end-screen p {
+  color: var(--hs-page-muted);
+}
+
+.im-side-panel,
+.im-board-panel,
+.im-action-panel,
+.im-message-panel,
+.im-end-screen {
+  border-color: var(--hs-page-border);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.06), transparent 34%),
+    linear-gradient(180deg, rgba(42, 24, 12, 0.94), rgba(12, 18, 29, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.07),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.55),
+    0 18px 50px rgba(0, 0, 0, 0.36);
+}
+
+.im-board-panel {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 205, 110, 0.055), transparent 36%),
+    linear-gradient(180deg, rgba(25, 16, 11, 0.94), rgba(7, 12, 22, 0.94));
+}
+
+.im-side-panel::before,
+.im-action-panel::before,
+.im-board-panel::before {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 222, 154, 0.055);
+  pointer-events: none;
+}
+
+.im-meta-box,
+.im-help-box {
+  border-color: rgba(216, 160, 86, 0.16);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.045), transparent 42%),
+    rgba(10, 18, 31, 0.5);
+}
+
+.im-help-box strong {
+  color: var(--hs-page-blue);
+}
+
+.im-help-box em,
+.im-meta-box strong,
+.im-score-pill strong,
+.im-end-score {
+  color: var(--hs-page-gold-strong);
+}
+
+.im-secondary-button,
+.im-primary-button {
+  font-family: "Belwe HS", Georgia, serif;
+}
+
+.im-secondary-button {
+  color: var(--hs-page-gold-soft);
+  border-color: rgba(240, 185, 104, 0.34);
+  background: linear-gradient(180deg, rgba(72, 48, 28, 0.78), rgba(18, 29, 49, 0.78));
+}
+
+.im-primary-button {
+  color: #2f1605;
+  background: linear-gradient(180deg, #ffe59c, #d99a40 58%, #91501d);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 22px rgba(217, 154, 64, 0.18);
+}
+
+.im-score-pill {
+  border-color: rgba(216, 160, 86, 0.22);
+  background: linear-gradient(180deg, rgba(39, 22, 10, 0.9), rgba(10, 18, 31, 0.78));
+}
+
+.im-progress-track {
+  background: linear-gradient(180deg, rgba(19, 11, 8, 0.88), rgba(37, 25, 17, 0.72));
+  border-color: rgba(216, 160, 86, 0.18);
+}
+
+.im-progress-fill {
+  background: linear-gradient(90deg, var(--hs-page-blue), var(--hs-page-gold-strong), #ff8a3d);
+}

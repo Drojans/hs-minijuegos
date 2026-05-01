@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useDeferredValue, useEffect, useMemo, useState } from "react";
 import "./CardBrowser.css";
 
 const CLASS_LABELS = {
@@ -51,6 +51,12 @@ const CLASS_ORDER = [
 const TYPE_ORDER = ["MINION", "SPELL", "WEAPON", "LOCATION", "HERO"];
 const RARITY_ORDER = ["FREE", "COMMON", "RARE", "EPIC", "LEGENDARY"];
 const COST_OPTIONS = ["ALL", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
+const INITIAL_VISIBLE_COUNT = 24;
+const LOAD_MORE_COUNT = 24;
+const THUMB_PRELOAD_COUNT = 12;
+
+const PRELOADED_BROWSER_IMAGES = new Set();
+const LOADED_BROWSER_IMAGES = new Set();
 
 function translateCardClass(value) {
   return CLASS_LABELS[value] ?? value ?? "Desconocida";
@@ -65,11 +71,29 @@ function translateRarity(value) {
 }
 
 function getThumbImage(card) {
-  return card?.imageRenderNormalized || card?.imageThumb || card?.imageGame || card?.image || "";
+  // La base de datos muestra hasta 60 cartas a la vez: aquí conviene usar miniaturas.
+  return card?.imageThumb || card?.imageGame || card?.image || card?.imageRenderNormalized || "";
 }
 
 function getDetailImage(card) {
-  return card?.imageRenderNormalized || card?.imageDetail || card?.imageGame || card?.image || "";
+  // En el detalle sí usamos el render normalizado si existe.
+  return card?.imageRenderNormalized || card?.imageDetail || card?.imageGame || card?.image || card?.imageThumb || "";
+}
+
+function preloadBrowserImage(src) {
+  if (!src || typeof window === "undefined" || PRELOADED_BROWSER_IMAGES.has(src)) return;
+
+  PRELOADED_BROWSER_IMAGES.add(src);
+
+  const image = new window.Image();
+  image.decoding = "async";
+
+  if ("fetchPriority" in image) {
+    image.fetchPriority = "low";
+  }
+
+  image.onload = () => LOADED_BROWSER_IMAGES.add(src);
+  image.src = src;
 }
 
 function CardBrowser({ cards, loading, onBack }) {
@@ -79,6 +103,21 @@ function CardBrowser({ cards, loading, onBack }) {
   const [rarityFilter, setRarityFilter] = useState("ALL");
   const [costFilter, setCostFilter] = useState("ALL");
   const [selectedCard, setSelectedCard] = useState(null);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
+  const deferredSearch = useDeferredValue(search.trim().toLowerCase());
+
+  const searchIndexById = useMemo(() => {
+    const index = new Map();
+
+    cards.forEach((card) => {
+      index.set(
+        card.id,
+        `${card.name ?? ""} ${card.nameEn ?? ""} ${card.text ?? ""}`.toLowerCase()
+      );
+    });
+
+    return index;
+  }, [cards]);
 
   const availableClasses = useMemo(() => {
     const values = new Set(cards.map((card) => card.cardClass).filter(Boolean));
@@ -97,8 +136,7 @@ function CardBrowser({ cards, loading, onBack }) {
 
   const filteredCards = useMemo(() => {
     return cards.filter((card) => {
-      const searchText = `${card.name ?? ""} ${card.nameEn ?? ""} ${card.text ?? ""}`;
-      const matchesSearch = searchText.toLowerCase().includes(search.toLowerCase());
+      const matchesSearch = !deferredSearch || (searchIndexById.get(card.id) ?? "").includes(deferredSearch);
       const matchesType = typeFilter === "ALL" || card.type === typeFilter;
       const matchesClass = classFilter === "ALL" || card.cardClass === classFilter;
       const matchesRarity = rarityFilter === "ALL" || card.rarity === rarityFilter;
@@ -108,15 +146,26 @@ function CardBrowser({ cards, loading, onBack }) {
 
       return matchesSearch && matchesType && matchesClass && matchesRarity && matchesCost;
     });
-  }, [cards, search, typeFilter, classFilter, rarityFilter, costFilter]);
+  }, [cards, deferredSearch, searchIndexById, typeFilter, classFilter, rarityFilter, costFilter]);
 
-  const visibleCards = filteredCards.slice(0, 60);
+  const visibleCards = filteredCards.slice(0, visibleCount);
+  const hasMoreCards = visibleCount < filteredCards.length;
 
   useEffect(() => {
     if (!selectedCard) return;
     const stillVisible = filteredCards.some((card) => card.id === selectedCard.id);
     if (!stillVisible) setSelectedCard(null);
   }, [filteredCards, selectedCard]);
+
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE_COUNT);
+  }, [deferredSearch, typeFilter, classFilter, rarityFilter, costFilter]);
+
+  useEffect(() => {
+    visibleCards.slice(0, THUMB_PRELOAD_COUNT).forEach((card) => {
+      preloadBrowserImage(getThumbImage(card));
+    });
+  }, [visibleCards]);
 
   function clearFilters() {
     setSearch("");
@@ -205,14 +254,14 @@ function CardBrowser({ cards, loading, onBack }) {
           </div>
 
           <div className="cb-card-grid">
-            {visibleCards.map((card) => (
+            {visibleCards.map((card, index) => (
               <button
                 type="button"
                 className={`cb-card-tile ${selectedCard?.id === card.id ? "is-selected" : ""}`}
                 key={card.id}
                 onClick={() => setSelectedCard(card)}
               >
-                <CardThumb card={card} />
+                <CardThumb card={card} priority={index < 8} />
                 <div className="cb-card-caption">
                   <strong>{card.name}</strong>
                   <span>{translateType(card.type)}</span>
@@ -220,6 +269,17 @@ function CardBrowser({ cards, loading, onBack }) {
               </button>
             ))}
           </div>
+
+          {hasMoreCards && (
+            <div style={{ display: "flex", justifyContent: "center", marginTop: 22 }}>
+              <button
+                className="cb-clear-button"
+                onClick={() => setVisibleCount((current) => current + LOAD_MORE_COUNT)}
+              >
+                Mostrar {Math.min(LOAD_MORE_COUNT, filteredCards.length - visibleCards.length)} más
+              </button>
+            </div>
+          )}
         </div>
 
         <CardDetailPanel card={selectedCard} onClose={() => setSelectedCard(null)} />
@@ -228,13 +288,13 @@ function CardBrowser({ cards, loading, onBack }) {
   );
 }
 
-function CardThumb({ card }) {
-  const [loaded, setLoaded] = useState(false);
-  const [failed, setFailed] = useState(false);
+function CardThumb({ card, priority = false }) {
   const src = getThumbImage(card);
+  const [loaded, setLoaded] = useState(() => Boolean(src && LOADED_BROWSER_IMAGES.has(src)));
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
-    setLoaded(false);
+    setLoaded(Boolean(src && LOADED_BROWSER_IMAGES.has(src)));
     setFailed(false);
   }, [src]);
 
@@ -245,9 +305,13 @@ function CardThumb({ card }) {
         <img
           src={src}
           alt={card.name}
-          loading="lazy"
+          loading={priority ? "eager" : "lazy"}
           decoding="async"
-          onLoad={() => setLoaded(true)}
+          fetchPriority={priority ? "high" : "low"}
+          onLoad={() => {
+            LOADED_BROWSER_IMAGES.add(src);
+            setLoaded(true);
+          }}
           onError={() => setFailed(true)}
         />
       ) : (

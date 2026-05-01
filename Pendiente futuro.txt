@@ -1,0 +1,24 @@
+# Pendiente futuro
+
+## Visual
+- Rework completo de home estilo taberna.
+- Loader bonito para Impostor.
+- Pulir responsive móvil.
+- Mejorar estilo de resultados.
+
+## Datos
+- Revisar API oficial Blizzard.
+- Verificar textos/nombres faltantes.
+- Revisar duplicados CORE/normal.
+
+## Impostor
+- Ajustar textos SVG de nombres.
+- Añadir más categorías.
+- Añadir dificultad.
+
+## Adivina el coste
+- Feedback más vistoso al acertar/fallar.
+- Mostrar resumen final más completo.
+
+## Nuevos minijuegos
+- ...

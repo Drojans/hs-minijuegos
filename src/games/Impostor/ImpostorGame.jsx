@@ -3,8 +3,8 @@ import ImpostorNeutralCard from "./ImpostorNeutralCard";
 import "./ImpostorGame.css";
 
 const MAX_ROUNDS = 10;
-const BOARD_SIZE = 9;
-const IMPOSTOR_COUNT = 4;
+const BOARD_SIZE = 10;
+const IMPOSTOR_COUNT = 5;
 const CORRECT_COUNT = BOARD_SIZE - IMPOSTOR_COUNT;
 const ALLOWED_TYPES = ["MINION", "SPELL", "WEAPON"];
 
@@ -54,6 +54,141 @@ const CLASS_CONDITIONS = [
 
 const RARITY_CONDITIONS = ["COMMON", "RARE", "EPIC", "LEGENDARY"];
 
+const TYPE_CONDITIONS = ["MINION", "SPELL", "WEAPON"];
+
+const RACE_LABELS = {
+  BEAST: "Bestia",
+  DEMON: "Demonio",
+  DRAGON: "Dragón",
+  DRAENEI: "Draenei",
+  ELEMENTAL: "Elemental",
+  MECHANICAL: "Meca",
+  MURLOC: "Múrloc",
+  NAGA: "Nagas",
+  PIRATE: "Pirata",
+  QUILBOAR: "Jabaespín",
+  TOTEM: "Tótem",
+  UNDEAD: "No-muerto",
+};
+
+const RACE_CONDITIONS = Object.keys(RACE_LABELS);
+
+const MECHANIC_LABELS = {
+  BATTLECRY: "Grito de batalla",
+  DEATHRATTLE: "Último aliento",
+  TAUNT: "Provocar",
+  DISCOVER: "Descubrir",
+  RUSH: "Embestir",
+  LIFESTEAL: "Robo de vida",
+  SECRET: "Secreto",
+  CHOOSE_ONE: "Elige una",
+  DIVINE_SHIELD: "Escudo divino",
+  COMBO: "Combo",
+  STEALTH: "Sigilo",
+  OVERLOAD: "Sobrecarga",
+  SPELLPOWER: "Daño con hechizos",
+  TRADEABLE: "Comerciable",
+  CHARGE: "Cargar",
+  SPELLBURST: "Ráfaga de hechizos",
+  WINDFURY: "Viento furioso",
+  ELUSIVE: "Elusivo",
+  CORRUPT: "Corruptible",
+  OUTCAST: "Proscrito",
+  REBORN: "Renacer",
+  POISONOUS: "Veneno",
+  FREEZE: "Congelar",
+  QUEST: "Misión",
+  INSPIRE: "Inspirar",
+  MAGNETIC: "Magnético",
+  DREDGE: "Dragado",
+  HONORABLE_KILL: "Muerte honorable",
+  FORGE: "Forja",
+  MINIATURIZE: "Miniaturizar",
+  FRENZY: "Frenesí",
+  MANATHIRST: "Sed de maná",
+  EXCAVATE: "Excavar",
+  QUICKDRAW: "Robo rápido",
+  ECHO: "Eco",
+  COLOSSAL: "Colosal",
+  TITAN: "Titán",
+  TWINSPELL: "Hechizo doble",
+  OVERHEAL: "Sobrecuración",
+};
+
+const MECHANIC_CONDITIONS = Object.keys(MECHANIC_LABELS);
+
+const TEXT_CONDITIONS = [
+  {
+    key: "text-damage",
+    title: "Cartas que infligen daño",
+    description: "Todas las cartas correctas mencionan daño o infligir daño.",
+    patterns: ["inflige", "daño", "damage", "deal"],
+  },
+  {
+    key: "text-summon",
+    title: "Cartas que invocan",
+    description: "Todas las cartas correctas mencionan invocar o summon.",
+    patterns: ["invoca", "invocar", "summon"],
+  },
+  {
+    key: "text-draw",
+    title: "Cartas que roban cartas",
+    description: "Todas las cartas correctas mencionan robar cartas.",
+    patterns: ["roba", "robar", "robas", "robada", "draw"],
+  },
+  {
+    key: "text-restore",
+    title: "Cartas que restauran salud",
+    description: "Todas las cartas correctas mencionan restaurar salud o curar.",
+    patterns: ["restaura", "restaurar", "cura", "curar", "restore", "heal"],
+  },
+  {
+    key: "text-destroy",
+    title: "Cartas que destruyen",
+    description: "Todas las cartas correctas mencionan destruir.",
+    patterns: ["destruye", "destruir", "destroy"],
+  },
+  {
+    key: "text-add",
+    title: "Cartas que añaden cartas",
+    description: "Todas las cartas correctas mencionan añadir cartas a la mano, mazo o campo.",
+    patterns: ["añade", "anade", "add"],
+  },
+  {
+    key: "text-discard",
+    title: "Cartas que descartan",
+    description: "Todas las cartas correctas mencionan descartar.",
+    patterns: ["descarta", "descartar", "discard"],
+  },
+  {
+    key: "text-cost",
+    title: "Cartas que modifican coste",
+    description: "Todas las cartas correctas mencionan coste, cristales o cambios de coste.",
+    patterns: ["cuesta", "coste", "cristal", "cost"],
+  },
+  {
+    key: "text-attack",
+    title: "Cartas que mencionan ataque",
+    description: "Todas las cartas correctas mencionan ataque o Attack.",
+    patterns: ["ataque", "attack"],
+  },
+  {
+    key: "text-health",
+    title: "Cartas que mencionan salud",
+    description: "Todas las cartas correctas mencionan salud, vida o Health.",
+    patterns: ["salud", "vida", "health"],
+  },
+];
+
+
+const NEUTRAL_CARD_TEMPLATE_IMAGE_SOURCES = [
+  "/ui/impostor/minion-neutral-template.png",
+  "/ui/impostor/spell-neutral-template.png",
+  "/ui/impostor/weapon-neutral-template.png",
+];
+
+const PRELOADED_IMAGE_SOURCES = new Set();
+
 function translateCardClass(value) {
   return CLASS_LABELS[value] ?? value ?? "Desconocida";
 }
@@ -64,6 +199,35 @@ function translateRarity(value) {
 
 function translateType(value) {
   return TYPE_LABELS[value] ?? value ?? "Carta";
+}
+
+function translateRace(value) {
+  return RACE_LABELS[value] ?? value ?? "Raza";
+}
+
+function translateMechanic(value) {
+  return MECHANIC_LABELS[value] ?? value ?? "Mecánica";
+}
+
+function normalizeSearchText(value) {
+  return (value ?? "")
+    .toString()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+}
+
+function getSearchableCardText(card) {
+  return normalizeSearchText(`${card?.text ?? ""} ${card?.textEn ?? ""}`);
+}
+
+function cardHasMechanic(card, mechanic) {
+  return Array.isArray(card?.mechanics) && card.mechanics.includes(mechanic);
+}
+
+function cardTextHasAnyPattern(card, patterns) {
+  const searchableText = getSearchableCardText(card);
+  return patterns.some((pattern) => searchableText.includes(normalizeSearchText(pattern)));
 }
 
 function getCardImage(card) {
@@ -82,74 +246,61 @@ function getOriginalCardImage(card) {
   );
 }
 
-const PRELOADED_IMAGE_URLS = new Set();
-const IMAGE_DECODE_PROMISES = new Map();
 
-function preloadImage(src, priority = "auto") {
-  if (!src || typeof window === "undefined") return Promise.resolve();
-
-  if (IMAGE_DECODE_PROMISES.has(src)) {
-    return IMAGE_DECODE_PROMISES.get(src);
-  }
-
-  const image = new window.Image();
-  image.decoding = "async";
-
-  if ("fetchPriority" in image) {
-    image.fetchPriority = priority;
-  }
-
-  if ("loading" in image) {
-    image.loading = "eager";
-  }
-
-  const decodePromise = new Promise((resolve) => {
-    image.onload = () => resolve();
-    image.onerror = () => resolve();
-  }).then(() => {
-    if (typeof image.decode === "function") {
-      return image.decode().catch(() => {});
-    }
-
-    return undefined;
-  });
-
-  IMAGE_DECODE_PROMISES.set(src, decodePromise);
-  PRELOADED_IMAGE_URLS.add(src);
-  image.src = src;
-
-  return decodePromise;
-}
-
-function waitForImage(src, priority = "high", maxWaitMs = 80) {
-  if (!src || typeof window === "undefined") return Promise.resolve();
-
-  return Promise.race([
-    preloadImage(src, priority),
-    new Promise((resolve) => {
-      window.setTimeout(resolve, maxWaitMs);
-    }),
-  ]);
-}
-
-// Algunas cartas normalizadas salen con un poco de aire extra a la derecha.
-// Añade aquí más ids si aparece otro caso parecido en el minijuego.
-const RIGHT_PAD_RENDER_CARD_IDS = new Set([
-  "FIR_901",
-]);
-
-function getRevealCardImageClassName(card) {
+function getOriginalCardImageClassName(card) {
   const classNames = ["im-original-card-image"];
+
+  if (card?.rarity === "LEGENDARY") {
+    classNames.push("is-legendary-render");
+  }
 
   if (card?.type === "SPELL" && card?.rarity === "LEGENDARY") {
     classNames.push("is-legendary-spell-render");
   }
 
-  if (RIGHT_PAD_RENDER_CARD_IDS.has(card?.id)) {
-    classNames.push("is-tight-right-render");
+  return classNames.join(" ");
+}
+
+function getCardPreloadSources(card) {
+  // Importante: precargamos solo las dos imágenes que se usan realmente en Impostor.
+  // Antes se pedían hasta 6 versiones por carta y eso saturaba la carga inicial.
+  return Array.from(new Set([
+    getCardImage(card),
+    getOriginalCardImage(card),
+  ].filter(Boolean)));
+}
+
+function preloadImageSource(src, fetchPriority = "auto") {
+  if (!src || PRELOADED_IMAGE_SOURCES.has(src) || typeof window === "undefined") return;
+
+  PRELOADED_IMAGE_SOURCES.add(src);
+
+  const image = new Image();
+  image.decoding = "async";
+
+  try {
+    image.fetchPriority = fetchPriority;
+  } catch {
+    // Algunos navegadores no soportan fetchPriority en Image().
   }
 
-  return classNames.join(" ");
+  image.src = src;
+
+  if (typeof image.decode === "function") {
+    image.decode().catch(() => {
+      // Si decode falla, el navegador igualmente puede usar la petición/cache normal.
+    });
+  }
+}
+
+function preloadRoundImages(roundData, fetchPriority = "auto") {
+  if (!roundData?.cards) return;
+
+  NEUTRAL_CARD_TEMPLATE_IMAGE_SOURCES.forEach((src) => preloadImageSource(src, "high"));
+
+  roundData.cards.forEach((card) => {
+    getCardPreloadSources(card).forEach((src) => preloadImageSource(src, fetchPriority));
+  });
 }
 
 function isAllowedType(card) {
@@ -239,6 +390,50 @@ function buildConditions(cards) {
     });
   });
 
+  TYPE_CONDITIONS.forEach((type) => {
+    rawConditions.push({
+      id: `type-${type}`,
+      kind: "Tipo",
+      title: `Cartas de tipo ${translateType(type)}`,
+      description: "Todas las cartas correctas son de este tipo.",
+      poolFilter: () => true,
+      test: (card) => card.type === type,
+    });
+  });
+
+  RACE_CONDITIONS.forEach((race) => {
+    rawConditions.push({
+      id: `race-${race}`,
+      kind: "Raza",
+      title: `Esbirros de raza ${translateRace(race)}`,
+      description: "Todas las cartas correctas son esbirros de esta raza.",
+      poolFilter: (card) => card.type === "MINION",
+      test: (card) => card.race === race,
+    });
+  });
+
+  MECHANIC_CONDITIONS.forEach((mechanic) => {
+    rawConditions.push({
+      id: `mechanic-${mechanic}`,
+      kind: "Mecánica",
+      title: `Cartas con ${translateMechanic(mechanic)}`,
+      description: "Todas las cartas correctas tienen esta mecánica o palabra clave.",
+      poolFilter: () => true,
+      test: (card) => cardHasMechanic(card, mechanic),
+    });
+  });
+
+  TEXT_CONDITIONS.forEach((rule) => {
+    rawConditions.push({
+      id: rule.key,
+      kind: "Texto",
+      title: rule.title,
+      description: rule.description,
+      poolFilter: () => true,
+      test: (card) => cardTextHasAnyPattern(card, rule.patterns),
+    });
+  });
+
   [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].forEach((cost) => {
     rawConditions.push({
       id: `cost-${cost}`,
@@ -286,9 +481,8 @@ function buildConditions(cards) {
     });
 }
 
-function createRound(cards, previousConditionId = null) {
-  const conditions = buildConditions(cards);
-  if (conditions.length === 0) return null;
+function createRoundFromConditions(conditions, previousConditionId = null) {
+  if (!conditions || conditions.length === 0) return null;
 
   const availableConditions = conditions.filter((condition) => condition.id !== previousConditionId);
   const condition = getRandomItem(availableConditions.length > 0 ? availableConditions : conditions);
@@ -329,12 +523,21 @@ function createRound(cards, previousConditionId = null) {
   };
 }
 
+function createRound(cards, previousConditionId = null) {
+  return createRoundFromConditions(buildConditions(cards), previousConditionId);
+}
+
 function ImpostorGame({ cards, onBack }) {
   const playableCards = useMemo(() => {
     return cards.filter((card) => card.id && card.name && getCardImage(card) && isAllowedType(card));
   }, [cards]);
 
+  // Con muchas categorías, calcular validCards/invalidCards en cada ronda era caro.
+  // Lo calculamos una sola vez mientras no cambie la lista de cartas.
+  const availableConditions = useMemo(() => buildConditions(playableCards), [playableCards]);
+
   const [roundData, setRoundData] = useState(null);
+  const [preparedRoundData, setPreparedRoundData] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [foundCorrectIds, setFoundCorrectIds] = useState(new Set());
   const [failedCardId, setFailedCardId] = useState(null);
@@ -345,18 +548,31 @@ function ImpostorGame({ cards, onBack }) {
   const [finished, setFinished] = useState(false);
 
   useEffect(() => {
-    if (playableCards.length === 0 || roundData) return;
-    setRoundData(createRound(playableCards));
-  }, [playableCards, roundData]);
+    if (availableConditions.length === 0 || roundData) return;
+    setRoundData(createRoundFromConditions(availableConditions));
+  }, [availableConditions, roundData]);
 
   useEffect(() => {
-    if (!roundData || typeof window === "undefined") return;
+    if (!roundData || typeof window === "undefined") return undefined;
 
-    roundData.cards.forEach((card) => {
-      preloadImage(getCardImage(card), "high");
-      preloadImage(getOriginalCardImage(card), "high");
-    });
-  }, [roundData]);
+    // Precargamos desde el primer frame tanto la cara frontal como el render revelado.
+    // Así el giro no crea la imagen de cero justo al revelar.
+    preloadRoundImages(roundData, "high");
+
+    // Mientras el jugador piensa, dejamos preparada la siguiente ronda y sus imágenes.
+    const prepareTimeout = window.setTimeout(() => {
+      if (round >= MAX_ROUNDS || availableConditions.length === 0) return;
+
+      const nextPreparedRound = createRoundFromConditions(availableConditions, roundData.condition.id);
+      setPreparedRoundData(nextPreparedRound);
+      // Dejamos respirar a la ronda actual antes de precargar la siguiente.
+      preloadRoundImages(nextPreparedRound, "low");
+    }, 1200);
+
+    return () => {
+      window.clearTimeout(prepareTimeout);
+    };
+  }, [availableConditions, round, roundData]);
 
   function revealAllCards(cardsToReveal = roundData?.cards ?? []) {
     setRevealedIds(new Set(cardsToReveal.map((card) => card.id)));
@@ -366,19 +582,13 @@ function ImpostorGame({ cards, onBack }) {
     if (roundResult !== "playing") return;
     if (revealedIds.has(cardId)) return;
 
-    const selectedCard = roundData?.cards.find((card) => card.id === cardId);
-    preloadImage(getOriginalCardImage(selectedCard), "high");
-
     setSelectedId((previousSelectedId) => {
       return previousSelectedId === cardId ? null : cardId;
     });
   }
 
-  async function checkSelectedCard() {
+  function checkSelectedCard() {
     if (roundResult !== "playing" || !roundData || !selectedId) return;
-
-    const selectedCard = roundData.cards.find((card) => card.id === selectedId);
-    await waitForImage(getOriginalCardImage(selectedCard), "high", 80);
 
     const selectedIsCorrect = roundData.correctIds.has(selectedId);
     const nextRevealedIds = new Set(revealedIds);
@@ -417,7 +627,10 @@ function ImpostorGame({ cards, onBack }) {
       return;
     }
 
-    setRoundData(createRound(playableCards, roundData?.condition?.id));
+    const nextRoundData = preparedRoundData || createRoundFromConditions(availableConditions, roundData?.condition?.id);
+
+    setRoundData(nextRoundData);
+    setPreparedRoundData(null);
     setSelectedId(null);
     setFoundCorrectIds(new Set());
     setFailedCardId(null);
@@ -427,7 +640,8 @@ function ImpostorGame({ cards, onBack }) {
   }
 
   function restartGame() {
-    setRoundData(createRound(playableCards));
+    setRoundData(createRoundFromConditions(availableConditions));
+    setPreparedRoundData(null);
     setSelectedId(null);
     setFoundCorrectIds(new Set());
     setFailedCardId(null);
@@ -438,12 +652,12 @@ function ImpostorGame({ cards, onBack }) {
     setFinished(false);
   }
 
-  if (playableCards.length === 0) {
+  if (playableCards.length === 0 || availableConditions.length === 0) {
     return (
       <main className="im-page">
         <section className="im-message-panel">
           <h1>Hearthstone Impostor</h1>
-          <p>No hay suficientes cartas con arte disponible para este modo.</p>
+          <p>No hay suficientes cartas o categorías válidas para este modo.</p>
           <button className="im-secondary-button" onClick={onBack}>Volver</button>
         </section>
       </main>
@@ -546,8 +760,6 @@ function ImpostorGame({ cards, onBack }) {
                     key={card.id}
                     className={`im-card ${stateClass} ${isRevealed ? "is-flipped" : ""}`}
                     onClick={() => selectCard(card.id)}
-                    onPointerEnter={() => preloadImage(getOriginalCardImage(card), "high")}
-                    onFocus={() => preloadImage(getOriginalCardImage(card), "high")}
                     title={`${card.name} · ${translateType(card.type)}`}
                   >
                     <div className="im-flip-card">
@@ -556,18 +768,14 @@ function ImpostorGame({ cards, onBack }) {
                       </div>
 
                       <div className="im-flip-face im-flip-back">
-                        {isRevealed ? (
-                          <img
-                            className={getRevealCardImageClassName(card)}
-                            src={getOriginalCardImage(card)}
-                            alt={card.name}
-                            loading="eager"
-                            decoding="async"
-                            fetchPriority="high"
-                          />
-                        ) : (
-                          <div className="im-original-card-placeholder" />
-                        )}
+                        <img
+                          className={getOriginalCardImageClassName(card)}
+                          src={getOriginalCardImage(card)}
+                          alt={card.name}
+                          loading="eager"
+                          decoding="async"
+                          fetchPriority="high"
+                        />
                       </div>
                     </div>
 

@@ -630,3 +630,155 @@
   color: #ffd36d;
 }
 /* === TAVERN RESKIN OVERRIDES END === */
+/* ==========================================================
+   DESKTOP FIT PATCH — permitir scroll en Base de datos
+   Pegar al FINAL de src/components/CardBrowser.css
+   o al FINAL de src/App.css.
+   Corrige el overflow:hidden del parche de home/minijuegos en 1080p.
+   ========================================================== */
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  html:has(.cb-page),
+  body:has(.cb-page),
+  #root:has(.cb-page) {
+    height: auto;
+    min-height: 100%;
+  }
+
+  body:has(.cb-page) {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .app-page:has(.cb-page) {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .cb-page {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+}
+
+/* ==========================================================
+   HEARTHSTONE CLASSIC STYLE FINAL PATCH
+   Añadido automáticamente al final del archivo.
+   Mantiene layouts, tamaños, recortes, scroll y lógica existentes.
+   ========================================================== */
+
+:root {
+  --hs-page-bg-dark: #0f0906;
+  --hs-page-bg-brown: #20120a;
+  --hs-page-gold: #f0b968;
+  --hs-page-gold-strong: #ffcf70;
+  --hs-page-gold-soft: #f9e1b4;
+  --hs-page-blue: #77dfff;
+  --hs-page-text: #f7edd8;
+  --hs-page-muted: #d9c8ae;
+  --hs-page-border: rgba(216, 160, 86, 0.3);
+  --hs-page-border-strong: rgba(234, 182, 107, 0.5);
+  --hs-page-panel: rgba(33, 19, 10, 0.9);
+}
+
+.cb-page {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 188, 84, 0.12), transparent 24%),
+    radial-gradient(circle at 16% 78%, rgba(82, 149, 255, 0.055), transparent 18%),
+    radial-gradient(circle at 84% 26%, rgba(169, 91, 255, 0.055), transparent 20%),
+    linear-gradient(90deg, rgba(255, 232, 183, 0.016) 0, rgba(255, 232, 183, 0.016) 50%, transparent 50%, transparent 100%),
+    linear-gradient(180deg, #20150e, #0d0908 58%, #160b15);
+  background-size: auto, auto, auto, 26px 26px, auto;
+}
+
+.cb-hero-copy h1,
+.cb-detail-info h2,
+.cb-detail-copy h2 {
+  font-family: "Belwe HS", Georgia, serif;
+  color: var(--hs-page-gold-soft);
+  text-shadow:
+    0 2px 0 rgba(70, 34, 8, 0.9),
+    0 8px 22px rgba(0, 0, 0, 0.3);
+}
+
+.cb-hero,
+.cb-main-panel,
+.cb-detail-panel {
+  border-color: var(--hs-page-border);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.06), transparent 34%),
+    linear-gradient(180deg, rgba(42, 24, 12, 0.94), rgba(12, 18, 29, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.07),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.55),
+    0 18px 50px rgba(0, 0, 0, 0.36);
+}
+
+.cb-hero-copy p,
+.cb-field span,
+.cb-results-row strong,
+.cb-detail-kicker,
+.cb-detail-meta dt {
+  color: var(--hs-page-blue);
+}
+
+.cb-hero-copy span,
+.cb-results-row,
+.cb-detail-english,
+.cb-detail-empty p,
+.cb-detail-meta div {
+  color: var(--hs-page-muted);
+}
+
+.cb-back-button,
+.cb-clear-button,
+.cb-cost-chip {
+  color: var(--hs-page-gold-soft);
+  border-color: rgba(240, 185, 104, 0.34);
+  background: linear-gradient(180deg, rgba(72, 48, 28, 0.78), rgba(18, 29, 49, 0.78));
+}
+
+.cb-counter,
+.cb-card-tile,
+.cb-thumb,
+.cb-field input,
+.cb-field select,
+.cb-detail-stats div,
+.cb-detail-stat,
+.cb-detail-text,
+.cb-detail-empty,
+.cb-detail-image {
+  border-color: rgba(216, 160, 86, 0.16);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.045), transparent 42%),
+    rgba(10, 18, 31, 0.5);
+}
+
+.cb-field input:focus,
+.cb-field select:focus {
+  border-color: rgba(240, 185, 104, 0.62);
+  box-shadow: 0 0 0 4px rgba(240, 185, 104, 0.08);
+}
+
+.cb-cost-chip.is-active,
+.cb-card-tile:hover,
+.cb-card-tile.is-selected {
+  border-color: rgba(240, 185, 104, 0.5);
+  box-shadow: 0 0 22px rgba(240, 185, 104, 0.1);
+}
+
+.cb-card-caption strong,
+.cb-detail-stats strong,
+.cb-detail-stat strong,
+.cb-counter strong {
+  color: var(--hs-page-gold-strong);
+}
+
+.cb-card-caption span,
+.cb-detail-tags span {
+  border-color: rgba(119, 223, 255, 0.2);
+  background: rgba(119, 223, 255, 0.08);
+  color: #d7ecff;
+}
