@@ -1,8 +1,45 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import CardBrowser from "./components/CardBrowser";
 import GuessManaCost from "./games/GuessManaCost";
 import ImpostorGame from "./games/Impostor/ImpostorGame";
 import "./App.css";
+
+const MODES = [
+  {
+    id: "guessMana",
+    label: "Guess the Mana",
+    title: "Adivina el coste",
+    description: "Tapa el cristal y acierta el coste real de la carta.",
+    difficulty: "Fácil",
+    rounds: "10 rondas",
+    cta: "Jugar",
+    icon: "?",
+    tone: "blue",
+  },
+  {
+    id: "impostor",
+    label: "Find the Impostor",
+    title: "Encuentra el impostor",
+    description: "Encuentra las 5 cartas buenas sin caer en las trampas.",
+    difficulty: "Media",
+    rounds: "9 cartas",
+    cta: "Jugar",
+    icon: "✕",
+    tone: "gold",
+    featured: true,
+  },
+  {
+    id: "cards",
+    label: "Card Library",
+    title: "Base de datos",
+    description: "Busca, filtra y revisa la colección de cartas.",
+    difficulty: "Libre",
+    rounds: "Colección",
+    cta: "Abrir",
+    icon: "◆",
+    tone: "violet",
+  },
+];
 
 function App() {
   const [cards, setCards] = useState([]);
@@ -22,21 +59,6 @@ function App() {
       });
   }, []);
 
-  const stats = useMemo(() => {
-    const classCount = new Set(cards.map((card) => card.cardClass).filter(Boolean)).size;
-    const typeCount = new Set(cards.map((card) => card.type).filter(Boolean)).size;
-    const spellCount = cards.filter((card) => card.type === "SPELL").length;
-    const minionCount = cards.filter((card) => card.type === "MINION").length;
-
-    return {
-      totalCards: cards.length,
-      classCount,
-      typeCount,
-      spellCount,
-      minionCount,
-    };
-  }, [cards]);
-
   if (currentView === "guessMana") {
     return <GuessManaCost cards={cards} onBack={() => setCurrentView("home")} />;
   }
@@ -50,190 +72,95 @@ function App() {
   }
 
   return (
-    <main className="app-page">
-      <section className="app-home-shell">
-        <section className="app-home-hero">
-          <div className="app-home-copy">
-            <p className="app-eyebrow">HS Cards Project</p>
-            <h1>Minijuegos y base de datos de Hearthstone</h1>
-            <p className="app-intro">
-              Explora tu colección, practica con minijuegos y construye poco a poco
-              una web más completa sobre cartas de Hearthstone.
+    <main className="app-page app-inn-home">
+      <div className="app-inn-light app-inn-light-left" aria-hidden="true" />
+      <div className="app-inn-light app-inn-light-right" aria-hidden="true" />
+
+      <section className="app-inn-shell">
+        <header className="app-inn-header">
+          <button className="app-logo-plaque" onClick={() => setCurrentView("home")} aria-label="Inicio">
+            <span className="app-logo-rune">◇</span>
+            <span className="app-logo-copy">
+              <strong>HS Minigame Inn</strong>
+              <em>Retos de cartas</em>
+            </span>
+          </button>
+
+          <nav className="app-parchment-nav" aria-label="Modos de juego">
+            <button onClick={() => setCurrentView("guessMana")} disabled={loading}>Coste</button>
+            <button onClick={() => setCurrentView("impostor")} disabled={loading}>Impostor</button>
+            <button onClick={() => setCurrentView("cards")} disabled={loading}>Cartas</button>
+          </nav>
+
+          <button
+            className="app-play-now"
+            disabled={loading}
+            onClick={() => setCurrentView("impostor")}
+          >
+            Jugar ahora
+          </button>
+        </header>
+
+        <section className="app-inn-stage" aria-labelledby="app-home-title">
+          <div className="app-stage-copy">
+            <p className="app-eyebrow">Taberna de minijuegos</p>
+            <h1 id="app-home-title">Elige tu reto</h1>
+            <p>
+              Tres modos rápidos para practicar memoria, coste, categorías y reconocimiento de cartas.
             </p>
-
-            <div className="app-actions">
-              <button
-                className="app-button app-button-primary"
-                disabled={loading}
-                onClick={() => setCurrentView("guessMana")}
-              >
-                Jugar ahora
-              </button>
-
-              <button
-                className="app-button app-button-secondary"
-                disabled={loading}
-                onClick={() => setCurrentView("cards")}
-              >
-                Abrir base de datos
-              </button>
-
-              <button
-                className="app-button app-button-secondary"
-                disabled={loading}
-                onClick={() => setCurrentView("impostor")}
-              >
-                Hearthstone Impostor
-              </button>
-            </div>
-
-            <div className="app-status-row">
-              <span className="app-status-pill">
-                {loading ? "Cargando datos..." : "Proyecto estable"}
-              </span>
-              <span className="app-status-text">
-                {loading ? "Preparando cartas y módulos..." : `${stats.totalCards} cartas listas para usar`}
-              </span>
-            </div>
           </div>
 
-          <aside className="app-hero-panel">
-            <div className="app-panel-head">
-              <span>Estado del proyecto</span>
-              <strong>v0.1</strong>
-            </div>
+          <div className="app-mode-showcase">
+            {MODES.map((mode) => (
+              <article
+                key={mode.id}
+                className={`app-game-tile app-game-tile-${mode.tone} ${
+                  mode.featured ? "is-featured" : ""
+                }`}
+              >
+                <div className="app-tile-frame" aria-hidden="true" />
+                <div className="app-tile-header">
+                  <span>{mode.label}</span>
+                </div>
 
-            <div className="app-hero-stats-grid">
-              <article className="app-hero-stat-card">
-                <span>Cartas</span>
-                <strong>{loading ? "..." : stats.totalCards}</strong>
+                <div className="app-tile-preview" aria-hidden="true">
+                  <div className="app-preview-card app-preview-card-main">
+                    <span>{mode.icon}</span>
+                  </div>
+                  <div className="app-preview-card app-preview-card-side" />
+                  <div className="app-preview-spark app-preview-spark-one" />
+                  <div className="app-preview-spark app-preview-spark-two" />
+                </div>
+
+                <div className="app-tile-body">
+                  <h2>{mode.title}</h2>
+                  <p>{mode.description}</p>
+
+                  <div className="app-tile-meta">
+                    <span>{mode.difficulty}</span>
+                    <span>{mode.rounds}</span>
+                  </div>
+
+                  <button
+                    className="app-tile-button"
+                    disabled={loading}
+                    onClick={() => setCurrentView(mode.id)}
+                  >
+                    {loading ? "Cargando..." : mode.cta}
+                  </button>
+                </div>
               </article>
-              <article className="app-hero-stat-card">
-                <span>Clases</span>
-                <strong>{loading ? "..." : stats.classCount}</strong>
-              </article>
-              <article className="app-hero-stat-card">
-                <span>Tipos</span>
-                <strong>{loading ? "..." : stats.typeCount}</strong>
-              </article>
-              <article className="app-hero-stat-card">
-                <span>Minijuegos</span>
-                <strong>2</strong>
-              </article>
-            </div>
+            ))}
+          </div>
 
-            <div className="app-progress-card">
-              <div className="app-progress-labels">
-                <span>Progreso del proyecto</span>
-                <strong>Base funcional</strong>
-              </div>
-              <div className="app-progress-track">
-                <span className="app-progress-fill" />
-              </div>
-              <p>
-                Ya tienes una base sólida: visor de cartas, dos minijuegos,
-                imágenes optimizadas y estructura separada por componentes.
-              </p>
-            </div>
-          </aside>
-        </section>
-
-        <section className="app-dashboard-grid">
-          <article className="app-dashboard-card app-dashboard-card-featured">
-            <div className="app-card-topline">
-              <span className="app-badge">Disponible</span>
-              <span className="app-card-meta">Minijuego</span>
-            </div>
-            <h2>Adivina el coste</h2>
-            <p>
-              Observa una carta con el maná oculto y elige su coste real. Perfecto
-              para memorizar cartas y practicar rápido.
-            </p>
-            <ul className="app-feature-list">
-              <li>10 rondas por partida</li>
-              <li>Respuesta inmediata</li>
-              <li>Uso de imágenes optimizadas</li>
-            </ul>
-            <button
-              className="app-button app-button-primary"
-              disabled={loading}
-              onClick={() => setCurrentView("guessMana")}
-            >
-              Entrar al minijuego
-            </button>
-          </article>
-
-          <article className="app-dashboard-card">
-            <div className="app-card-topline">
-              <span className="app-badge app-badge-alt">Archivo</span>
-              <span className="app-card-meta">Base de datos</span>
-            </div>
-            <h2>Visor de cartas</h2>
-            <p>
-              Filtra por coste, clase, tipo o rareza y abre cada carta en grande
-              para consultar sus datos desde el panel lateral.
-            </p>
-            <div className="app-mini-stats">
-              <div>
-                <span>Esbirros</span>
-                <strong>{loading ? "..." : stats.minionCount}</strong>
-              </div>
-              <div>
-                <span>Hechizos</span>
-                <strong>{loading ? "..." : stats.spellCount}</strong>
-              </div>
-            </div>
-            <button
-              className="app-button app-button-secondary"
-              disabled={loading}
-              onClick={() => setCurrentView("cards")}
-            >
-              Explorar cartas
-            </button>
-          </article>
-
-          <article className="app-dashboard-card app-dashboard-card-roadmap">
-            <div className="app-card-topline">
-              <span className="app-badge app-badge-alt">Nuevo</span>
-              <span className="app-card-meta">Minijuego</span>
-            </div>
-            <h2>Hearthstone Impostor</h2>
-            <p>
-              Encuentra las cartas que no pertenecen a la categoría. Selecciona los impostores y comprueba tu ronda.
-            </p>
-            <ul className="app-feature-list">
-              <li>9 cartas por ronda</li>
-              <li>1 o 2 impostores ocultos</li>
-              <li>Categorías de clase, tipo, rareza, coste y estadísticas</li>
-            </ul>
-            <button
-              className="app-button app-button-primary"
-              disabled={loading}
-              onClick={() => setCurrentView("impostor")}
-            >
-              Detectar impostores
-            </button>
-          </article>
-        </section>
-
-        <section className="app-info-grid">
-          <article className="app-info-card">
-            <p className="app-eyebrow">Qué hay ahora</p>
-            <h3>Base funcional del proyecto</h3>
-            <p>
-              La web ya carga tu JSON de cartas, muestra imágenes optimizadas y
-              separa bien la lógica entre home, visor y minijuegos.
-            </p>
-          </article>
-
-          <article className="app-info-card">
-            <p className="app-eyebrow">Qué falta más adelante</p>
-            <h3>Capas extra de calidad</h3>
-            <p>
-              Traducciones completas de imágenes, efectos visuales finos,
-              estadísticas persistentes, más minijuegos y quizá rutas reales con React Router.
-            </p>
-          </article>
+          <div className="app-table-dressing" aria-hidden="true">
+            <span className="app-gem app-gem-blue" />
+            <span className="app-gem app-gem-purple" />
+            <span className="app-coin app-coin-one" />
+            <span className="app-coin app-coin-two" />
+            <span className="app-card-stack" />
+            <span className="app-beer-mug" />
+          </div>
         </section>
       </section>
     </main>
