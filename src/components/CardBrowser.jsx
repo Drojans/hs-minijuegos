@@ -65,11 +65,11 @@ function translateRarity(value) {
 }
 
 function getThumbImage(card) {
-  return card?.imageThumb || card?.imageGame || card?.image || "";
+  return card?.imageRenderNormalized || card?.imageThumb || card?.imageGame || card?.image || "";
 }
 
 function getDetailImage(card) {
-  return card?.imageDetail || card?.imageGame || card?.image || "";
+  return card?.imageRenderNormalized || card?.imageDetail || card?.imageGame || card?.image || "";
 }
 
 function CardBrowser({ cards, loading, onBack }) {

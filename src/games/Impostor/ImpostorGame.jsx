@@ -54,7 +54,6 @@ const CLASS_CONDITIONS = [
 
 const RARITY_CONDITIONS = ["COMMON", "RARE", "EPIC", "LEGENDARY"];
 
-
 function translateCardClass(value) {
   return CLASS_LABELS[value] ?? value ?? "Desconocida";
 }
@@ -83,16 +82,71 @@ function getOriginalCardImage(card) {
   );
 }
 
+const PRELOADED_IMAGE_URLS = new Set();
+const IMAGE_DECODE_PROMISES = new Map();
 
-function getOriginalCardImageClassName(card) {
-  const classNames = ["im-original-card-image"];
+function preloadImage(src, priority = "auto") {
+  if (!src || typeof window === "undefined") return Promise.resolve();
 
-  if (card?.rarity === "LEGENDARY") {
-    classNames.push("is-legendary-render");
+  if (IMAGE_DECODE_PROMISES.has(src)) {
+    return IMAGE_DECODE_PROMISES.get(src);
   }
+
+  const image = new window.Image();
+  image.decoding = "async";
+
+  if ("fetchPriority" in image) {
+    image.fetchPriority = priority;
+  }
+
+  if ("loading" in image) {
+    image.loading = "eager";
+  }
+
+  const decodePromise = new Promise((resolve) => {
+    image.onload = () => resolve();
+    image.onerror = () => resolve();
+  }).then(() => {
+    if (typeof image.decode === "function") {
+      return image.decode().catch(() => {});
+    }
+
+    return undefined;
+  });
+
+  IMAGE_DECODE_PROMISES.set(src, decodePromise);
+  PRELOADED_IMAGE_URLS.add(src);
+  image.src = src;
+
+  return decodePromise;
+}
+
+function waitForImage(src, priority = "high", maxWaitMs = 80) {
+  if (!src || typeof window === "undefined") return Promise.resolve();
+
+  return Promise.race([
+    preloadImage(src, priority),
+    new Promise((resolve) => {
+      window.setTimeout(resolve, maxWaitMs);
+    }),
+  ]);
+}
+
+// Algunas cartas normalizadas salen con un poco de aire extra a la derecha.
+// Añade aquí más ids si aparece otro caso parecido en el minijuego.
+const RIGHT_PAD_RENDER_CARD_IDS = new Set([
+  "FIR_901",
+]);
+
+function getRevealCardImageClassName(card) {
+  const classNames = ["im-original-card-image"];
 
   if (card?.type === "SPELL" && card?.rarity === "LEGENDARY") {
     classNames.push("is-legendary-spell-render");
+  }
+
+  if (RIGHT_PAD_RENDER_CARD_IDS.has(card?.id)) {
+    classNames.push("is-tight-right-render");
   }
 
   return classNames.join(" ");
@@ -296,35 +350,12 @@ function ImpostorGame({ cards, onBack }) {
   }, [playableCards, roundData]);
 
   useEffect(() => {
-    if (!roundData || typeof window === "undefined") return undefined;
+    if (!roundData || typeof window === "undefined") return;
 
-    // Primero precargamos inmediatamente las imágenes frontales de las 9 cartas.
-    // Así evitamos que las cartas de la última fila aparezcan medio segundo después.
     roundData.cards.forEach((card) => {
-      const frontSrc = getCardImage(card);
-      if (!frontSrc) return;
-
-      const image = new Image();
-      image.decoding = "async";
-      image.src = frontSrc;
+      preloadImage(getCardImage(card), "high");
+      preloadImage(getOriginalCardImage(card), "high");
     });
-
-    // Después, sin bloquear el inicio visual de la ronda, precargamos los renders originales
-    // para que el giro/revelado también sea fluido.
-    const preloadTimeout = window.setTimeout(() => {
-      roundData.cards.forEach((card) => {
-        const originalSrc = getOriginalCardImage(card);
-        if (!originalSrc) return;
-
-        const image = new Image();
-        image.decoding = "async";
-        image.src = originalSrc;
-      });
-    }, 650);
-
-    return () => {
-      window.clearTimeout(preloadTimeout);
-    };
   }, [roundData]);
 
   function revealAllCards(cardsToReveal = roundData?.cards ?? []) {
@@ -335,13 +366,19 @@ function ImpostorGame({ cards, onBack }) {
     if (roundResult !== "playing") return;
     if (revealedIds.has(cardId)) return;
 
+    const selectedCard = roundData?.cards.find((card) => card.id === cardId);
+    preloadImage(getOriginalCardImage(selectedCard), "high");
+
     setSelectedId((previousSelectedId) => {
       return previousSelectedId === cardId ? null : cardId;
     });
   }
 
-  function checkSelectedCard() {
+  async function checkSelectedCard() {
     if (roundResult !== "playing" || !roundData || !selectedId) return;
+
+    const selectedCard = roundData.cards.find((card) => card.id === selectedId);
+    await waitForImage(getOriginalCardImage(selectedCard), "high", 80);
 
     const selectedIsCorrect = roundData.correctIds.has(selectedId);
     const nextRevealedIds = new Set(revealedIds);
@@ -509,6 +546,8 @@ function ImpostorGame({ cards, onBack }) {
                     key={card.id}
                     className={`im-card ${stateClass} ${isRevealed ? "is-flipped" : ""}`}
                     onClick={() => selectCard(card.id)}
+                    onPointerEnter={() => preloadImage(getOriginalCardImage(card), "high")}
+                    onFocus={() => preloadImage(getOriginalCardImage(card), "high")}
                     title={`${card.name} · ${translateType(card.type)}`}
                   >
                     <div className="im-flip-card">
@@ -519,11 +558,12 @@ function ImpostorGame({ cards, onBack }) {
                       <div className="im-flip-face im-flip-back">
                         {isRevealed ? (
                           <img
-                            className={getOriginalCardImageClassName(card)}
+                            className={getRevealCardImageClassName(card)}
                             src={getOriginalCardImage(card)}
                             alt={card.name}
                             loading="eager"
                             decoding="async"
+                            fetchPriority="high"
                           />
                         ) : (
                           <div className="im-original-card-placeholder" />

@@ -473,7 +473,7 @@
 .im-original-card-image.is-legendary-render {
   max-width: 92%;
   max-height: 98%;
-  transform: translateY(-3.6%) scale(1.035);
+  transform: translateY(-3.6%) scale(1.015);
   transform-origin: center center;
 }
 

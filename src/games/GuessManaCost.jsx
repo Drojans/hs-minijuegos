@@ -49,7 +49,7 @@ function translateRarity(value) {
 }
 
 function getGameImage(card) {
-  return card?.imageGame || card?.imageDetail || card?.image || "";
+  return card?.imageRenderNormalized || card?.imageGame || card?.imageDetail || card?.image || "";
 }
 
 function getRandomItem(array) {
@@ -189,7 +189,14 @@ function GuessManaCost({ cards, onBack }) {
             <div className="gm-card-frame">
               <div className="gm-card-image-wrap">
                 {!imageFailed ? (
-                  <img src={imageSrc} alt={currentCard.name} onError={() => setImageFailed(true)} />
+                  <img
+                    src={imageSrc}
+                    alt={currentCard.name}
+                    loading="eager"
+                    decoding="async"
+                    fetchPriority="high"
+                    onError={() => setImageFailed(true)}
+                  />
                 ) : (
                   <div className="gm-image-fallback">Sin imagen</div>
                 )}

@@ -167,9 +167,9 @@
 
 .gm-mana-cover {
   position: absolute;
-  top: 11.2%;
-  left: 8.3%;
-  width: 19.8%;
+  top: 1%;
+  left: -2%;
+  width: 30%;
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   display: grid;
