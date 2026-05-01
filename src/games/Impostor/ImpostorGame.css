@@ -201,21 +201,23 @@
 }
 
 .im-board-panel {
-  padding: 22px;
+  padding: 28px 30px;
 }
 
 .im-board-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(150px, 1fr));
-  gap: 16px;
+  column-gap: clamp(24px, 2.2vw, 34px);
+  row-gap: clamp(30px, 3vw, 44px);
+  align-items: center;
 }
 
 .im-card {
   position: relative;
-  min-height: 318px;
+  min-height: 334px;
   border: 0;
   border-radius: 26px;
-  padding: 0;
+  padding: 8px 0;
   background: transparent;
   color: var(--hs-text);
   cursor: pointer;
@@ -225,6 +227,10 @@
 
 .im-card:hover {
   transform: translateY(-3px);
+}
+
+.im-board-grid .inc-card-shell {
+  max-width: 238px;
 }
 
 .im-card.is-selected .inc-card-shell {
@@ -352,10 +358,17 @@
 
   .im-board-grid {
     grid-template-columns: repeat(3, minmax(110px, 1fr));
+    column-gap: 18px;
+    row-gap: 28px;
   }
 
   .im-card {
-    min-height: 280px;
+    min-height: 292px;
+    padding: 6px 0;
+  }
+
+  .im-board-grid .inc-card-shell {
+    max-width: 218px;
   }
 }
 
@@ -366,6 +379,8 @@
 
   .im-board-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 14px;
+    row-gap: 24px;
   }
 
   .im-board-panel,
@@ -376,7 +391,12 @@
   }
 
   .im-card {
-    min-height: 250px;
+    min-height: 262px;
+    padding: 4px 0;
+  }
+
+  .im-board-grid .inc-card-shell {
+    max-width: 196px;
   }
 }
 
@@ -442,10 +462,37 @@
 .im-original-card-image {
   width: auto;
   height: auto;
-  max-width: 92%;
-  max-height: 98%;
+  max-width: 88%;
+  max-height: 94%;
   display: block;
   filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.42));
+}
+
+/* Las legendarias tienen el adorno de dragón y ocupan más caja transparente.
+   Las subimos un poco para que el cuerpo de la carta quede centrado en su celda. */
+.im-original-card-image.is-legendary-render {
+  max-width: 92%;
+  max-height: 98%;
+  transform: translateY(-3.6%) scale(1.035);
+  transform-origin: center center;
+}
+
+/* Los hechizos legendarios necesitan además recentrado hacia la derecha
+   porque el dragón sobresale más por ese lado. */
+.im-original-card-image.is-legendary-spell-render {
+  max-width: 100%;
+  max-height: 100%;
+  transform: translate(3.2%, -3.6%) scale(1.015);
+  transform-origin: center center;
+}
+
+/* Corrección puntual para cartas cuyo render normalizado trae aire extra a la derecha.
+   La carta crece ligeramente y se recentra para igualar el tamaño visual. */
+.im-original-card-image.is-tight-right-render {
+  max-width: 96%;
+  max-height: 100%;
+  transform: translateX(-1.2%) scale(1.06);
+  transform-origin: center center;
 }
 
 .im-original-card-placeholder {

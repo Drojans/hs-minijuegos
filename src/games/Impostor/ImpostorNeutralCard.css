@@ -13,13 +13,24 @@
 .inc-card-shell {
   position: relative;
   width: 100%;
-  aspect-ratio: 800 / 1066;
+  /* Las plantillas reales son 785x1100, no 800x1066.
+     Usar su proporción evita que se vean encogidas antes del giro. */
+  aspect-ratio: 785 / 1100;
   max-width: 250px;
   margin: 0 auto;
   user-select: none;
   filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.34));
   border: 1px solid transparent;
   transform: translateZ(0);
+}
+
+.inc-card-minion,
+.inc-card-spell {
+  aspect-ratio: 785 / 1100;
+}
+
+.inc-card-weapon {
+  aspect-ratio: 785 / 1070;
 }
 
 /* Imagen interior común */

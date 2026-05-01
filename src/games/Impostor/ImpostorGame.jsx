@@ -54,6 +54,7 @@ const CLASS_CONDITIONS = [
 
 const RARITY_CONDITIONS = ["COMMON", "RARE", "EPIC", "LEGENDARY"];
 
+
 function translateCardClass(value) {
   return CLASS_LABELS[value] ?? value ?? "Desconocida";
 }
@@ -71,7 +72,30 @@ function getCardImage(card) {
 }
 
 function getOriginalCardImage(card) {
-  return card?.imageGame || card?.imageDetail || card?.image || card?.imageThumb || card?.imageArt || "";
+  return (
+    card?.imageRenderNormalized ||
+    card?.imageGame ||
+    card?.imageDetail ||
+    card?.image ||
+    card?.imageThumb ||
+    card?.imageArt ||
+    ""
+  );
+}
+
+
+function getOriginalCardImageClassName(card) {
+  const classNames = ["im-original-card-image"];
+
+  if (card?.rarity === "LEGENDARY") {
+    classNames.push("is-legendary-render");
+  }
+
+  if (card?.type === "SPELL" && card?.rarity === "LEGENDARY") {
+    classNames.push("is-legendary-spell-render");
+  }
+
+  return classNames.join(" ");
 }
 
 function isAllowedType(card) {
@@ -495,7 +519,7 @@ function ImpostorGame({ cards, onBack }) {
                       <div className="im-flip-face im-flip-back">
                         {isRevealed ? (
                           <img
-                            className="im-original-card-image"
+                            className={getOriginalCardImageClassName(card)}
                             src={getOriginalCardImage(card)}
                             alt={card.name}
                             loading="eager"
