@@ -25,3 +25,5 @@ dist-ssr
 
 public/cards/
 public/data/cards.backup.json
+public/card-art/
+public/data/cards.before-art.json

@@ -452,3 +452,49 @@
     min-height: 52px;
   }
 }
+
+/* Pulido selector de maná v2: bloque más compacto y equilibrado */
+.gm-mana-panel {
+  padding: 22px 24px 24px;
+}
+
+.gm-mana-panel .gm-eyebrow {
+  margin-bottom: 8px;
+}
+
+.gm-mana-panel h3 {
+  margin: 0 0 18px;
+  font-size: clamp(1.55rem, 2.4vw, 2.15rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.gm-mana-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  max-width: 510px;
+  margin: 0 auto;
+}
+
+.gm-mana-button {
+  width: 68px;
+  min-height: 54px;
+  border-radius: 16px;
+  font-size: 1.22rem;
+}
+
+@media (max-width: 560px) {
+  .gm-mana-grid {
+    max-width: 100%;
+    gap: 8px;
+  }
+
+  .gm-mana-button {
+    width: 56px;
+    min-height: 48px;
+    border-radius: 14px;
+    font-size: 1.08rem;
+  }
+}
