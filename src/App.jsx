@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import CardBrowser from "./components/CardBrowser";
 import LanguageToggle from "./components/LanguageToggle";
 import { useLanguage } from "./i18n/LanguageProvider";
+import { useCardsData } from "./hooks/useCardsData";
 import GuessManaCost from "./games/GuessManaCost";
 import ImpostorGame from "./games/Impostor/ImpostorGame";
 import CardGridGame from "./games/CardGrid/CardGridGame";
@@ -44,22 +45,8 @@ const HOME_MODE_CONFIG = [
 
 function App() {
   const { t } = useLanguage();
-  const [cards, setCards] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { cards, loading } = useCardsData();
   const [currentView, setCurrentView] = useState("home");
-
-  useEffect(() => {
-    fetch("/data/cards.json")
-      .then((response) => response.json())
-      .then((data) => {
-        setCards(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error cargando cartas:", error);
-        setLoading(false);
-      });
-  }, []);
 
   const homeModes = useMemo(() => {
     return HOME_MODE_CONFIG.map((mode) => ({

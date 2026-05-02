@@ -6,41 +6,11 @@ import {
   getDetailImage,
   getSecondaryCardName,
   getThumbImage,
-  mergeLocaleImages,
+  translateCardClass,
+  translateCardRarity,
+  translateCardType,
 } from "../utils/cardLocale";
 import "./CardBrowser.css";
-
-const CLASS_LABELS = {
-  DEATHKNIGHT: "Caballero de la Muerte",
-  DEMONHUNTER: "Cazador de Demonios",
-  DRUID: "Druida",
-  HUNTER: "Cazador",
-  MAGE: "Mago",
-  PALADIN: "Paladín",
-  PRIEST: "Sacerdote",
-  ROGUE: "Pícaro",
-  SHAMAN: "Chamán",
-  WARLOCK: "Brujo",
-  WARRIOR: "Guerrero",
-  NEUTRAL: "Neutral",
-};
-
-const TYPE_LABELS = {
-  MINION: "Esbirro",
-  SPELL: "Hechizo",
-  WEAPON: "Arma",
-  HERO: "Héroe",
-  HERO_POWER: "Poder de héroe",
-  LOCATION: "Lugar",
-};
-
-const RARITY_LABELS = {
-  FREE: "Gratis",
-  COMMON: "Común",
-  RARE: "Rara",
-  EPIC: "Épica",
-  LEGENDARY: "Legendaria",
-};
 
 const CLASS_ORDER = [
   "DEATHKNIGHT",
@@ -61,18 +31,6 @@ const TYPE_ORDER = ["MINION", "SPELL", "WEAPON", "LOCATION", "HERO"];
 const RARITY_ORDER = ["FREE", "COMMON", "RARE", "EPIC", "LEGENDARY"];
 const COST_OPTIONS = ["ALL", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
 
-function translateCardClass(value) {
-  return CLASS_LABELS[value] ?? value ?? "Desconocida";
-}
-
-function translateType(value) {
-  return TYPE_LABELS[value] ?? value ?? "Desconocido";
-}
-
-function translateRarity(value) {
-  return RARITY_LABELS[value] ?? value ?? "Sin rareza";
-}
-
 function CardBrowser({ cards, loading, onBack }) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
@@ -81,60 +39,24 @@ function CardBrowser({ cards, loading, onBack }) {
   const [costFilter, setCostFilter] = useState("ALL");
   const [selectedCard, setSelectedCard] = useState(null);
   const { locale, t } = useLanguage();
-  const [previewImagesById, setPreviewImagesById] = useState(new Map());
-
-  useEffect(() => {
-    let cancelled = false;
-
-    fetch("/data/cards.multilang.preview.json")
-      .then((response) => {
-        if (!response.ok) throw new Error("Preview multiidioma no disponible.");
-        return response.json();
-      })
-      .then((data) => {
-        if (cancelled || !Array.isArray(data)) return;
-
-        const imagesMap = new Map();
-
-        data.forEach((card) => {
-          if (card?.id && card.imagesByLocale) {
-            imagesMap.set(card.id, card.imagesByLocale);
-          }
-        });
-
-        setPreviewImagesById(imagesMap);
-      })
-      .catch(() => {
-        // Es normal que este archivo no exista cuando no estamos probando multiidioma.
-        setPreviewImagesById(new Map());
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const displayCards = useMemo(() => {
-    return mergeLocaleImages(cards, previewImagesById);
-  }, [cards, previewImagesById]);
 
   const availableClasses = useMemo(() => {
-    const values = new Set(displayCards.map((card) => card.cardClass).filter(Boolean));
+    const values = new Set(cards.map((card) => card.cardClass).filter(Boolean));
     return CLASS_ORDER.filter((cardClass) => values.has(cardClass));
-  }, [displayCards]);
+  }, [cards]);
 
   const availableTypes = useMemo(() => {
-    const values = new Set(displayCards.map((card) => card.type).filter(Boolean));
+    const values = new Set(cards.map((card) => card.type).filter(Boolean));
     return TYPE_ORDER.filter((type) => values.has(type));
-  }, [displayCards]);
+  }, [cards]);
 
   const availableRarities = useMemo(() => {
-    const values = new Set(displayCards.map((card) => card.rarity).filter(Boolean));
+    const values = new Set(cards.map((card) => card.rarity).filter(Boolean));
     return RARITY_ORDER.filter((rarity) => values.has(rarity));
-  }, [displayCards]);
+  }, [cards]);
 
   const filteredCards = useMemo(() => {
-    return displayCards.filter((card) => {
+    return cards.filter((card) => {
       const searchText = `${card.name ?? ""} ${card.nameEn ?? ""} ${card.text ?? ""} ${card.textEn ?? ""}`;
       const matchesSearch = searchText.toLowerCase().includes(search.toLowerCase());
       const matchesType = typeFilter === "ALL" || card.type === typeFilter;
@@ -146,7 +68,7 @@ function CardBrowser({ cards, loading, onBack }) {
 
       return matchesSearch && matchesType && matchesClass && matchesRarity && matchesCost;
     });
-  }, [displayCards, search, typeFilter, classFilter, rarityFilter, costFilter]);
+  }, [cards, search, typeFilter, classFilter, rarityFilter, costFilter]);
 
   const visibleCards = filteredCards.slice(0, 60);
 
@@ -199,7 +121,7 @@ function CardBrowser({ cards, loading, onBack }) {
               <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
                 <option value="ALL">Todos</option>
                 {availableTypes.map((type) => (
-                  <option key={type} value={type}>{translateType(type)}</option>
+                  <option key={type} value={type}>{translateCardType(type, locale)}</option>
                 ))}
               </select>
             </label>
@@ -209,7 +131,7 @@ function CardBrowser({ cards, loading, onBack }) {
               <select value={classFilter} onChange={(event) => setClassFilter(event.target.value)}>
                 <option value="ALL">Todas</option>
                 {availableClasses.map((cardClass) => (
-                  <option key={cardClass} value={cardClass}>{translateCardClass(cardClass)}</option>
+                  <option key={cardClass} value={cardClass}>{translateCardClass(cardClass, locale)}</option>
                 ))}
               </select>
             </label>
@@ -219,7 +141,7 @@ function CardBrowser({ cards, loading, onBack }) {
               <select value={rarityFilter} onChange={(event) => setRarityFilter(event.target.value)}>
                 <option value="ALL">Todas</option>
                 {availableRarities.map((rarity) => (
-                  <option key={rarity} value={rarity}>{translateRarity(rarity)}</option>
+                  <option key={rarity} value={rarity}>{translateCardRarity(rarity, locale)}</option>
                 ))}
               </select>
             </label>
@@ -253,7 +175,7 @@ function CardBrowser({ cards, loading, onBack }) {
                 <CardThumb card={card} locale={locale} />
                 <div className="cb-card-caption">
                   <strong>{getCardName(card, locale)}</strong>
-                  <span>{translateType(card.type)}</span>
+                  <span>{translateCardType(card.type, locale)}</span>
                 </div>
               </button>
             ))}
@@ -346,9 +268,9 @@ function CardDetailPanel({ card, locale, t, onClose }) {
         {getSecondaryCardName(card, locale) && <p className="cb-detail-english">{getSecondaryCardName(card, locale)}</p>}
 
         <div className="cb-detail-tags">
-          <span>{translateCardClass(card.cardClass)}</span>
-          <span>{translateType(card.type)}</span>
-          <span>{translateRarity(card.rarity)}</span>
+          <span>{translateCardClass(card.cardClass, locale)}</span>
+          <span>{translateCardType(card.type, locale)}</span>
+          <span>{translateCardRarity(card.rarity, locale)}</span>
         </div>
 
         <div className="cb-detail-stats">
