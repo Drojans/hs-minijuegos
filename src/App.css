@@ -346,3 +346,22 @@ button {
     min-height: 220px;
   }
 }
+
+
+/* Home update for 4 minigame cards */
+.app-home-mode-grid {
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  width: min(100%, 780px);
+  margin: 0 auto;
+}
+
+.app-home-mode-card {
+  min-height: 236px;
+}
+
+@media (max-width: 720px) {
+  .app-home-mode-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+}

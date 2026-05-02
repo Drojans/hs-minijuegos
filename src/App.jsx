@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CardBrowser from "./components/CardBrowser";
 import GuessManaCost from "./games/GuessManaCost";
 import ImpostorGame from "./games/Impostor/ImpostorGame";
+import CardGridGame from "./games/CardGrid/CardGridGame";
 import "./App.css";
 
 const HOME_MODES = [
@@ -18,6 +19,14 @@ const HOME_MODES = [
     icon: "◈",
     title: "Encuentra el impostor",
     description: "Encuentra las cartas correctas y evita las trampas de cada ronda.",
+    cta: "Jugar",
+    featured: false,
+  },
+  {
+    id: "grid",
+    icon: "▦",
+    title: "Grid de cartas",
+    description: "Completa un 3x3 escribiendo cartas que cumplan fila y columna.",
     cta: "Jugar",
     featured: false,
   },
@@ -55,6 +64,10 @@ function App() {
 
   if (currentView === "impostor") {
     return <ImpostorGame cards={cards} onBack={() => setCurrentView("home")} />;
+  }
+
+  if (currentView === "grid") {
+    return <CardGridGame cards={cards} onBack={() => setCurrentView("home")} />;
   }
 
   if (currentView === "cards") {

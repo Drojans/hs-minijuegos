@@ -3,22 +3,184 @@
 ## Visual
 - Rework completo de home estilo taberna.
 - Loader bonito para Impostor.
-- Pulir responsive móvil.
+- Loader bonito para la carga inicial de la web, sin romper imágenes ni layout.
+- Pulir responsive móvil en home, Impostor, Adivina el coste, Grid y Base de datos.
 - Mejorar estilo de resultados.
+- Unificar estilo visual de todas las páginas: home, minijuegos y base de datos.
+- Revisar tipografías, tamaños, márgenes y espaciado general.
+- Preparar una versión final más Hearthstone/taberna con más personalidad, pero manteniendo buena legibilidad.
+- Revisar efectos hover, transiciones y estados activos.
+- Valorar fondo/ilustración propia para la home sin que pese demasiado.
+- Revisar que todas las pantallas importantes funcionen bien a 1920x1080 sin scroll, excepto Base de datos.
 
 ## Datos
 - Revisar API oficial Blizzard.
 - Verificar textos/nombres faltantes.
 - Revisar duplicados CORE/normal.
+- Revisar duplicados por set que comparten nombre y asegurar que los juegos los aceptan bien.
+- Normalizar campos raros o inconsistentes: raza, tipo, clase, mecánicas, coste, ataque, vida y rareza.
+- Revisar cartas con imágenes faltantes o rutas rotas.
+- Mantener claro el pipeline de imágenes: originales, optimizadas, thumb, game, detail, art y normalized.
+- Valorar si algunas imágenes deben servirse desde CDN/hosting externo cuando se publique.
+- Crear scripts de validación para detectar cartas sin imagen optimizada, sin render normalizado o con campos clave vacíos.
+- Revisar si hay cartas especiales que deberían excluirse de minijuegos: héroes, skins, tokens, cartas no coleccionables, cartas raras de eventos, etc.
+- Preparar manifest o índice ligero para búsquedas rápidas en Base de datos y minijuegos.
+
+## Rendimiento / carga
+- Revisar peso total de imágenes y JSON.
+- Mantener thumbnails ligeras para Base de datos.
+- Usar renders normalizados/optimizados en minijuegos.
+- Añadir lazy loading donde tenga sentido.
+- Precargar imágenes de la ronda actual y quizá de la siguiente.
+- Revisar caché del navegador en producción.
+- Valorar service worker/cache local para imágenes más usadas.
+- Probar build de producción, no solo localhost.
+- Revisar alojamiento futuro: Vercel, Netlify, Cloudflare Pages u otra opción.
+- Valorar CDN para imágenes si el proyecto crece mucho.
+- Evitar que la app cargue de golpe más imágenes de las necesarias.
+
+## Base de datos
+- Mantener scroll permitido en Base de datos.
+- Mejorar búsqueda con debounce.
+- Valorar virtualización/paginación si la lista vuelve a ir lenta.
+- Mejorar panel de detalle.
+- Añadir más filtros: set, año, coleccionable/no coleccionable, raza, escuela de hechizo, mecánica.
+- Revisar cómo enseñar duplicados de una misma carta por diferentes sets.
+- Añadir estado de carga más bonito para miniaturas.
+- Añadir botón de limpiar filtros más visible.
+- Valorar vista compacta / vista grande.
+- Revisar responsive móvil específico de Base de datos.
 
 ## Impostor
 - Ajustar textos SVG de nombres.
+- Revisar curva de texto en nombres cortos/largos.
 - Añadir más categorías.
 - Añadir dificultad.
+- Revisar categorías para evitar rondas demasiado obvias o demasiado raras.
+- Añadir resumen final más completo.
+- Mejorar feedback visual al acertar/fallar.
+- Mejorar loader interno de rondas.
+- Revisar escalado de cartas legendarias y hechizos legendarios si se toca layout en el futuro.
+- Mantener 10 cartas por ronda: 5 buenas y 5 impostores.
+- Añadir estadísticas de partida: aciertos, fallos, rachas, tiempo.
+- Valorar modos: fácil, normal, difícil.
+- Revisar que al cambiar interfaz no se rompan recortes, posiciones ni render normalizado.
+- Añadir categorías nuevas solo si tienen suficientes cartas para generar rondas sanas.
+- Crear tests manuales de varias rondas seguidas para detectar categorías problemáticas.
+- Revisar si conviene mostrar explicación de por qué una carta era impostora.
 
 ## Adivina el coste
 - Feedback más vistoso al acertar/fallar.
 - Mostrar resumen final más completo.
+- Revisar posición y tamaño del interrogante si se cambia el render o layout.
+- Añadir dificultad: costes agrupados, sin pistas, con límite de tiempo, etc.
+- Añadir racha, puntuación y tiempo por respuesta.
+- Añadir explicación al fallar: coste real y quizá datos de la carta.
+- Revisar animación de cambio de ronda.
+- Usar siempre imágenes optimizadas/normalizadas.
+- Añadir atajos de teclado para elegir coste.
+- Valorar modo entrenamiento sin límite de rondas.
+- Mejorar pantalla final con porcentajes, errores y cartas falladas.
+
+## Grid de cartas
+- Revisar y cambiar categorías actuales.
+- Añadir iconos de todas las categorías al juego.
+- Sustituir progresivamente texto por iconos: clase, tipo, rareza, coste, estadística, raza y texto/mecánicas.
+- Añadir icono de Neutral si se mantiene como categoría.
+- Revisar tamaño y centrado de iconos en fila superior y columna izquierda.
+- Revisar que los iconos no deformen el grid ni se desalineen.
+- Mantener el sistema de carpetas `public/grid-icons/`.
+- Mantener nombres de iconos con slugs simples: `class_mage.png`, `race_dragon.png`, `cost_7_plus.png`, etc.
+- Crear una tabla/mapa final de iconos para cada condición.
+- Revisar generación de categorías para que no se repitan en la misma ronda.
+- Revisar que Meca/MECH/MECHANICAL no se duplique.
+- Modo fácil: todas las casillas con al menos 50 respuestas posibles.
+- Modo normal: combinaciones más libres, pero siempre con respuesta.
+- Valorar modo difícil: menos respuestas posibles, sin sugerencias y con penalización por revelar.
+- Revisar si el modo normal debe ser realmente aleatorio o también tener mínimos razonables.
+- Ajustar puntuación: revelar respuesta debería contar como fallo o reducir puntuación.
+- Mantener sugerencias desde 3 letras, pero revisar si deben ser generales o filtradas según dificultad.
+- Mejorar render de cartas acertadas dentro de cada casilla.
+- Revisar tamaño exacto de cartas resueltas para que se vean completas y centradas.
+- Valorar mostrar nombre de carta al pasar el ratón por encima de una casilla resuelta.
+- Añadir botón de rendirse/revelar respuesta por casilla.
+- Revisar aceptación de nombres duplicados por sets.
+- Permitir escribir nombre español o inglés si la base lo tiene.
+- Añadir feedback si una carta existe pero no cumple la casilla.
+- Añadir estado final del grid con resumen: correctas, reveladas, errores y tiempo.
+- Valorar temporizador opcional.
+- Valorar categorías nuevas:
+  - escuela de hechizo, solo si se equilibra bien;
+  - sets o expansiones, si tenemos iconos y suficientes cartas;
+  - mecánicas adicionales como Combo, Secret, Overload, Reborn, Spellburst, Tradeable, etc.;
+  - rangos de ataque/vida/coste más variados.
+- Preparar imágenes definitivas para las categorías del grid.
+- Revisar UX móvil del grid, probablemente necesite una versión específica.
+
+## Home
+- Rework completo de home estilo taberna.
+- Mantener tarjetas de modos, pero con diseño más limpio y práctico.
+- Añadir tarjetas para nuevos minijuegos cuando estén listos.
+- Evitar elementos decorativos que se superpongan a las tarjetas.
+- Valorar navegación real con rutas cuando haya más páginas.
+- Mejorar estado visual de modos en desarrollo o bloqueados.
+- Añadir breve explicación de cada modo.
+- Añadir contadores o progreso cuando haya estadísticas persistentes.
 
 ## Nuevos minijuegos
-- ...
+- Grid de cartas.
+- Adivinar carta por arte.
+- Adivinar carta por nombre oculto.
+- Timeline: ordenar cartas de más antigua a más nueva.
+- Parejas/memoria con cartas.
+- Adivinar texto de carta.
+- Adivinar raza/clase/tipo por pistas.
+- Modo “qué carta falta”.
+- Modo construcción/deck challenge, más adelante.
+- Modo diario tipo Hearthdle si se decide hacer versión diaria.
+- Modo con puntuación y racha diaria.
+
+## UX / calidad de vida
+- Añadir sonidos opcionales estilo taberna/Hearthstone.
+- Añadir animaciones suaves pero sin afectar rendimiento.
+- Añadir mensajes de error más claros.
+- Añadir pantalla de pausa o volver a inicio sin perder del todo el estado, si interesa.
+- Añadir confirmación antes de abandonar una partida empezada.
+- Añadir accesibilidad básica: foco visible, navegación teclado, alt text, contraste.
+- Revisar textos para que todo esté en español coherente.
+- Revisar nombres de botones y CTAs.
+- Añadir tooltips en categorías difíciles.
+- Añadir modo reducido de animaciones si hiciera falta.
+
+## Persistencia / progreso
+- Guardar puntuaciones localmente.
+- Guardar mejores marcas por minijuego.
+- Guardar rachas.
+- Guardar estadísticas simples: partidas jugadas, aciertos, fallos, mejor partida.
+- Valorar login o backend solo mucho más adelante.
+- Valorar ranking local antes que ranking online.
+
+## Testing / backups
+- Hacer commit antes de cambios grandes.
+- Probar cada minijuego después de tocar CSS global.
+- Probar recarga dura tras cambios de CSS o assets.
+- Probar varias rondas rápidas seguidas para detectar imágenes que cargan tarde.
+- Probar en móvil desde DevTools.
+- Probar build de producción.
+- Crear checklist manual antes de publicar.
+- Mantener versiones estables antes de tocar layout de cartas.
+- Añadir scripts de validación para categorías de Impostor y Grid.
+
+## Publicación
+- Decidir nombre final del proyecto.
+- Revisar avisos de fan content si hace falta.
+- Revisar política de uso de assets.
+- Elegir hosting.
+- Optimizar imágenes antes de publicar.
+- Comprobar rutas relativas en producción.
+- Preparar README básico.
+- Preparar una versión estable jugable antes de enseñar a más gente.
+
+
+INTENTAR HACER SCRIPT PARA DESCARGAR CARTAS EN ESPAÑOL DE HEARTHSTONE.JSON - IMPORTANTE
+

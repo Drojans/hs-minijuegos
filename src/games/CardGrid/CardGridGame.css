@@ -1,0 +1,1067 @@
+@font-face {
+  font-family: "Belwe HS";
+  src:
+    local("Belwe Bold"),
+    local("Belwe Bd BT"),
+    local("Belwe BT Bold"),
+    url("/fonts/Belwe%20Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+.cg-page {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px clamp(14px, 2vw, 34px) 28px;
+  color: #f7edd8;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 188, 84, 0.12), transparent 24%),
+    radial-gradient(circle at 16% 78%, rgba(82, 149, 255, 0.055), transparent 18%),
+    radial-gradient(circle at 84% 26%, rgba(169, 91, 255, 0.055), transparent 20%),
+    linear-gradient(90deg, rgba(255, 232, 183, 0.016) 0, rgba(255, 232, 183, 0.016) 50%, transparent 50%, transparent 100%),
+    linear-gradient(180deg, #20150e, #0d0908 58%, #160b16);
+  background-size: auto, auto, auto, 26px 26px, auto;
+}
+
+.cg-shell {
+  width: min(98vw, 1660px);
+  margin: 0 auto;
+}
+
+.cg-header {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr) 150px;
+  gap: 18px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.cg-title-block {
+  text-align: center;
+}
+
+.cg-eyebrow {
+  margin: 0 0 8px;
+  color: #77dfff;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  font-weight: 900;
+  text-shadow: 0 0 12px rgba(119, 223, 255, 0.24);
+}
+
+.cg-title-block h1,
+.cg-current-cell h2,
+.cg-empty h1 {
+  margin: 0;
+  font-family: "Belwe HS", Georgia, serif;
+  color: #ffc51d;
+  text-shadow:
+    0 2px 0 rgba(70, 34, 8, 0.94),
+    0 8px 22px rgba(0, 0, 0, 0.34),
+    0 0 20px rgba(255, 197, 54, 0.15);
+}
+
+.cg-title-block h1 {
+  font-size: clamp(2.4rem, 4.6vw, 4.1rem);
+  line-height: 0.95;
+}
+
+.cg-title-block p:not(.cg-eyebrow) {
+  margin: 10px 0 0;
+  color: #d9c8ae;
+}
+
+.cg-secondary-button,
+.cg-primary-button,
+.cg-reveal-button {
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-family: "Belwe HS", Georgia, serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease, opacity 0.18s ease;
+}
+
+.cg-secondary-button,
+.cg-reveal-button {
+  color: #f9e1b4;
+  border: 1px solid rgba(240, 185, 104, 0.42);
+  background:
+    linear-gradient(180deg, rgba(76, 46, 24, 0.88), rgba(31, 20, 14, 0.94));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 240, 188, 0.13),
+    0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.cg-primary-button {
+  color: #2b1505;
+  border: 1px solid rgba(255, 235, 180, 0.62);
+  background:
+    radial-gradient(circle at 34% 20%, rgba(255, 255, 255, 0.22), transparent 24%),
+    linear-gradient(180deg, #ffe59c, #d99a40 58%, #91501d);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 22px rgba(217, 154, 64, 0.18);
+}
+
+.cg-secondary-button:hover,
+.cg-primary-button:hover:not(:disabled),
+.cg-reveal-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.07);
+}
+
+.cg-primary-button:disabled,
+.cg-reveal-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.cg-score-pill {
+  justify-self: end;
+  min-width: 120px;
+  border: 1px solid rgba(216, 160, 86, 0.22);
+  border-radius: 20px;
+  padding: 12px 14px;
+  background:
+    linear-gradient(180deg, rgba(39, 22, 10, 0.9), rgba(10, 18, 31, 0.78));
+  text-align: right;
+}
+
+.cg-score-pill span {
+  display: block;
+  color: #d9c8ae;
+  font-size: 0.8rem;
+}
+
+.cg-score-pill strong {
+  display: block;
+  margin-top: 4px;
+  color: #ffc51d;
+  font-size: 1.25rem;
+}
+
+.cg-progress-track {
+  height: 9px;
+  border-radius: 999px;
+  overflow: hidden;
+  border: 1px solid rgba(216, 160, 86, 0.2);
+  background:
+    linear-gradient(180deg, rgba(25, 14, 8, 0.95), rgba(8, 11, 18, 0.95));
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.58),
+    0 1px 0 rgba(255, 232, 178, 0.05);
+  margin-bottom: 16px;
+}
+
+.cg-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #77dfff, #ffc51d 58%, #f0b968);
+  box-shadow: 0 0 18px rgba(255, 197, 29, 0.24);
+  transition: width 0.28s ease;
+}
+
+.cg-layout {
+  display: grid;
+  grid-template-columns: minmax(680px, 790px) 330px;
+  justify-content: center;
+  gap: 16px;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.cg-board-panel,
+.cg-control-panel,
+.cg-empty {
+  position: relative;
+  border: 1px solid rgba(216, 160, 86, 0.3);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 218, 142, 0.065), transparent 36%),
+    linear-gradient(180deg, rgba(46, 25, 11, 0.94), rgba(11, 16, 26, 0.94));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.08),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.55),
+    0 18px 50px rgba(0, 0, 0, 0.36);
+}
+
+.cg-board-panel {
+  border-radius: 24px;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.cg-control-panel {
+  border-radius: 24px;
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+  min-height: 0;
+}
+
+.cg-board {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 116px repeat(3, minmax(0, 1fr));
+  grid-template-rows: 78px repeat(3, minmax(178px, 1fr));
+  gap: 7px;
+}
+
+.cg-row-fragment {
+  display: contents;
+}
+
+.cg-corner-cell,
+.cg-condition-cell,
+.cg-answer-cell {
+  border-radius: 16px;
+  border: 1px solid rgba(216, 160, 86, 0.2);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.04), transparent 42%),
+    rgba(10, 18, 31, 0.54);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 188, 0.05);
+}
+
+.cg-corner-cell {
+  display: grid;
+  place-items: center;
+  color: #ffc51d;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.45rem;
+}
+
+.cg-condition-cell {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 7px;
+  padding: 10px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.cg-condition-cell span {
+  color: #77dfff;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.62rem;
+  font-weight: 900;
+}
+
+.cg-condition-cell strong {
+  color: #f9e1b4;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(1rem, 1.25vw, 1.35rem);
+  line-height: 1.02;
+}
+
+.cg-answer-cell {
+  position: relative;
+  min-height: 178px;
+  padding: 5px;
+  color: #f7edd8;
+  cursor: pointer;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+}
+
+.cg-answer-cell:hover,
+.cg-answer-cell.is-selected {
+  transform: translateY(-1px);
+  border-color: rgba(255, 197, 29, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.08),
+    0 0 22px rgba(255, 197, 29, 0.12);
+}
+
+.cg-answer-cell > span {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #77dfff;
+  font-size: 1.8rem;
+  font-weight: 900;
+  background: rgba(119, 223, 255, 0.08);
+  border: 1px solid rgba(119, 223, 255, 0.18);
+}
+
+.cg-answer-cell.is-solved {
+  padding: 3px;
+  border-color: rgba(112, 255, 181, 0.36);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(112, 255, 181, 0.075), transparent 42%),
+    rgba(10, 18, 31, 0.58);
+}
+
+.cg-answer-cell.is-revealed {
+  border-color: rgba(255, 197, 29, 0.42);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 197, 29, 0.08), transparent 44%),
+    rgba(10, 18, 31, 0.58);
+}
+
+.cg-answer-cell strong {
+  display: none;
+}
+
+.cg-answer-cell img,
+.cg-answer-cell img.cg-solved-card-image {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 12px 18px rgba(0, 0, 0, 0.48))
+    drop-shadow(0 0 12px rgba(255, 197, 29, 0.08));
+}
+
+.cg-answer-cell.is-revealed img.cg-solved-card-image {
+  opacity: 0.92;
+}
+
+.cg-current-cell {
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 160, 86, 0.16);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.04), transparent 42%),
+    rgba(10, 18, 31, 0.52);
+  text-align: center;
+}
+
+.cg-current-cell h2 {
+  font-size: 1.55rem;
+  line-height: 1.05;
+}
+
+.cg-current-cell span {
+  display: block;
+  margin-top: 8px;
+  color: #d9c8ae;
+}
+
+.cg-answer-form {
+  display: grid;
+  gap: 10px;
+}
+
+.cg-answer-form label {
+  color: #77dfff;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.cg-input-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 9px;
+}
+
+.cg-input-row input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid rgba(216, 160, 86, 0.24);
+  border-radius: 14px;
+  padding: 12px 14px;
+  color: #f7edd8;
+  background: rgba(10, 18, 31, 0.62);
+  outline: none;
+}
+
+.cg-input-row input:focus {
+  border-color: rgba(255, 197, 29, 0.6);
+  box-shadow: 0 0 0 4px rgba(255, 197, 29, 0.08);
+}
+
+.cg-suggestions {
+  display: grid;
+  max-height: 138px;
+  overflow: auto;
+  padding-right: 2px;
+  gap: 6px;
+}
+
+.cg-suggestions button {
+  border: 1px solid rgba(216, 160, 86, 0.14);
+  border-radius: 12px;
+  padding: 9px 11px;
+  color: #f7edd8;
+  background: rgba(10, 18, 31, 0.55);
+  text-align: left;
+  cursor: pointer;
+}
+
+.cg-suggestions button:hover {
+  border-color: rgba(255, 197, 29, 0.4);
+  filter: brightness(1.08);
+}
+
+.cg-reveal-button {
+  width: 100%;
+  border-radius: 14px;
+  padding: 11px 14px;
+}
+
+.cg-message {
+  padding: 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 160, 86, 0.16);
+  background: rgba(10, 18, 31, 0.52);
+}
+
+.cg-message p {
+  margin: 0;
+  color: #f7edd8;
+  line-height: 1.45;
+}
+
+.cg-message span {
+  display: block;
+  margin-top: 8px;
+  color: #d9c8ae;
+  font-size: 0.9rem;
+}
+
+.cg-empty {
+  width: min(92vw, 720px);
+  margin: 10vh auto 0;
+  padding: 46px 28px;
+  border-radius: 24px;
+  text-align: center;
+}
+
+.cg-empty h1 {
+  margin-top: 26px;
+  font-size: clamp(2.4rem, 6vw, 4rem);
+}
+
+.cg-empty p {
+  color: #d9c8ae;
+}
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  html:has(.cg-page),
+  body:has(.cg-page),
+  #root:has(.cg-page) {
+    height: 100%;
+    min-height: 100%;
+    overflow: hidden;
+  }
+
+  .cg-page {
+    height: 100vh;
+    min-height: 100vh;
+    padding: 8px 18px 12px;
+    overflow: hidden;
+  }
+
+  .cg-shell {
+    width: min(98vw, 1680px);
+    height: calc(100vh - 20px);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .cg-header {
+    grid-template-columns: 142px minmax(0, 1fr) 142px;
+    margin-bottom: 7px;
+    flex: 0 0 auto;
+  }
+
+  .cg-title-block h1 {
+    font-size: clamp(2.05rem, 3.05vw, 3.28rem);
+  }
+
+  .cg-eyebrow {
+    margin-bottom: 4px;
+    font-size: 0.68rem;
+  }
+
+  .cg-title-block p:not(.cg-eyebrow) {
+    margin-top: 5px;
+    font-size: 0.86rem;
+  }
+
+  .cg-secondary-button {
+    padding: 10px 16px;
+  }
+
+  .cg-score-pill {
+    padding: 10px 12px;
+  }
+
+  .cg-progress-track {
+    height: 7px;
+    margin-bottom: 10px;
+    flex: 0 0 auto;
+  }
+
+  .cg-layout {
+    grid-template-columns: minmax(680px, 790px) 330px;
+    gap: 14px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .cg-board-panel,
+  .cg-control-panel {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+  }
+
+  .cg-board {
+    height: 100%;
+    grid-template-columns: 112px repeat(3, minmax(0, 1fr));
+    grid-template-rows: 74px repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .cg-answer-cell {
+    min-height: 0;
+    padding: 3px;
+  }
+
+  .cg-condition-cell {
+    padding: 8px;
+    gap: 5px;
+  }
+
+  .cg-condition-cell strong {
+    font-size: clamp(1rem, 1.15vw, 1.28rem);
+  }
+
+  .cg-control-panel {
+    padding: 16px;
+    gap: 12px;
+    align-content: start;
+  }
+
+  .cg-current-cell {
+    padding: 14px;
+  }
+
+  .cg-current-cell h2 {
+    font-size: 1.38rem;
+  }
+
+  .cg-current-cell span {
+    margin-top: 7px;
+    font-size: 0.9rem;
+  }
+
+  .cg-input-row input,
+  .cg-primary-button,
+  .cg-reveal-button {
+    min-height: 44px;
+  }
+
+  .cg-suggestions {
+    max-height: 128px;
+  }
+
+  .cg-message {
+    padding: 13px;
+  }
+
+  .cg-message p,
+  .cg-message span {
+    font-size: 0.92rem;
+  }
+}
+
+@media (max-width: 1220px) {
+  .cg-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cg-control-panel {
+    order: -1;
+  }
+
+  .cg-board {
+    grid-template-columns: 108px repeat(3, minmax(120px, 1fr));
+    grid-template-rows: 78px repeat(3, 170px);
+  }
+}
+
+@media (max-width: 760px) {
+  .cg-page {
+    padding: 18px 12px 28px;
+    overflow: auto;
+  }
+
+  .cg-header {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .cg-score-pill,
+  .cg-secondary-button {
+    justify-self: center;
+  }
+
+  .cg-board {
+    grid-template-columns: 82px repeat(3, minmax(82px, 1fr));
+    grid-template-rows: 78px repeat(3, 128px);
+    gap: 6px;
+  }
+
+  .cg-condition-cell {
+    padding: 6px;
+  }
+
+  .cg-condition-cell strong {
+    font-size: 0.9rem;
+  }
+
+  .cg-condition-cell span {
+    font-size: 0.52rem;
+  }
+}
+
+/* ==========================================================
+   CARD GRID V7 FIT PER CELL PATCH
+   Cada carta resuelta se centra dentro de SU propia casilla,
+   con topes reales arriba/abajo/izquierda/derecha.
+   ========================================================== */
+
+.cg-answer-cell {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Marco interno de cada casilla: este es el "cajón" donde vive la carta. */
+.cg-solved-card-frame {
+  position: absolute;
+  inset: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Gana a reglas antiguas: la carta ya no puede estirarse ni recortarse. */
+.cg-answer-cell .cg-solved-card-frame > img.cg-solved-card-image {
+  display: block !important;
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: none !important;
+  margin: auto !important;
+  filter:
+    drop-shadow(0 12px 18px rgba(0, 0, 0, 0.48))
+    drop-shadow(0 0 12px rgba(255, 197, 29, 0.08));
+}
+
+/* Quitamos la regla anterior que forzaba width/height 100% en todas las img. */
+.cg-answer-cell img:not(.cg-solved-card-image) {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-solved-card-frame {
+    inset: 5px;
+  }
+}
+
+@media (max-width: 760px) {
+  .cg-solved-card-frame {
+    inset: 4px;
+  }
+}
+
+/* ==========================================================
+   CARD GRID V8 DIFFICULTY PATCH
+   Modos Fácil / Normal.
+   ========================================================== */
+
+.cg-mode-selector {
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+  border-radius: 18px;
+  border: 1px solid rgba(216, 160, 86, 0.16);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.04), transparent 42%),
+    rgba(10, 18, 31, 0.46);
+}
+
+.cg-mode-selector > span {
+  color: #77dfff;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.68rem;
+  font-weight: 900;
+}
+
+.cg-mode-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
+}
+
+.cg-mode-buttons button {
+  border: 1px solid rgba(240, 185, 104, 0.28);
+  border-radius: 999px;
+  padding: 9px 11px;
+  color: #f9e1b4;
+  background:
+    linear-gradient(180deg, rgba(72, 48, 28, 0.72), rgba(18, 29, 49, 0.72));
+  font-family: "Belwe HS", Georgia, serif;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease, border-color 0.18s ease;
+}
+
+.cg-mode-buttons button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+}
+
+.cg-mode-buttons button.is-active {
+  color: #2b1505;
+  border-color: rgba(255, 235, 180, 0.66);
+  background:
+    radial-gradient(circle at 34% 20%, rgba(255, 255, 255, 0.22), transparent 24%),
+    linear-gradient(180deg, #ffe59c, #d99a40 58%, #91501d);
+}
+
+.cg-mode-selector p {
+  margin: 0;
+  color: #d9c8ae;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.cg-mode-selector-empty {
+  width: min(100%, 420px);
+  margin: 18px auto;
+  text-align: left;
+}
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-mode-selector {
+    padding: 11px;
+    gap: 7px;
+  }
+
+  .cg-mode-buttons button {
+    padding: 8px 9px;
+  }
+
+  .cg-mode-selector p {
+    font-size: 0.78rem;
+  }
+}
+
+/* ==========================================================
+   CARD GRID V10 CLASS ICON PATCH
+   Muestra iconos PNG para las categorías de clase.
+   ========================================================== */
+
+.cg-condition-icon {
+  width: clamp(46px, 5vw, 72px);
+  height: clamp(46px, 5vw, 72px);
+  object-fit: contain;
+  display: block;
+  filter:
+    drop-shadow(0 8px 12px rgba(0, 0, 0, 0.42))
+    drop-shadow(0 0 10px rgba(255, 197, 29, 0.08));
+}
+
+.cg-row-cell .cg-condition-icon {
+  width: clamp(44px, 4.4vw, 64px);
+  height: clamp(44px, 4.4vw, 64px);
+}
+
+.cg-condition-cell:has(.cg-condition-icon) {
+  gap: 6px;
+}
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-condition-icon {
+    width: 58px;
+    height: 58px;
+  }
+
+  .cg-row-cell .cg-condition-icon {
+    width: 54px;
+    height: 54px;
+  }
+}
+
+@media (max-width: 760px) {
+  .cg-condition-icon {
+    width: 38px;
+    height: 38px;
+  }
+
+  .cg-row-cell .cg-condition-icon {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* ==========================================================
+   CARD GRID V11 CENTERED CLASS ICON PATCH
+   Iconos de clase sin texto "CLASE", centrados en su celda.
+   ========================================================== */
+
+.cg-condition-cell:has(.cg-condition-icon) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  padding: 8px;
+  gap: 0;
+}
+
+/* Seguridad por si algún JSX antiguo todavía deja el span "CLASE". */
+.cg-condition-cell:has(.cg-condition-icon) > span,
+.cg-condition-cell:has(.cg-condition-icon) > strong {
+  display: none;
+}
+
+.cg-condition-icon {
+  width: clamp(56px, 5.8vw, 84px);
+  height: clamp(56px, 5.8vw, 84px);
+  object-fit: contain;
+  object-position: center;
+  margin: auto;
+  display: block;
+  filter:
+    drop-shadow(0 9px 13px rgba(0, 0, 0, 0.46))
+    drop-shadow(0 0 12px rgba(255, 197, 29, 0.1));
+}
+
+.cg-row-cell .cg-condition-icon {
+  width: clamp(52px, 5.2vw, 76px);
+  height: clamp(52px, 5.2vw, 76px);
+}
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-condition-icon {
+    width: 70px;
+    height: 70px;
+  }
+
+  .cg-row-cell .cg-condition-icon {
+    width: 64px;
+    height: 64px;
+  }
+}
+
+@media (max-width: 760px) {
+  .cg-condition-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .cg-row-cell .cg-condition-icon {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* ==========================================================
+   CARD GRID V12 CENTERED ICON FRAME PATCH
+   Iconos centrados con un marco interno por celda.
+   Corrige especialmente los iconos de la fila superior.
+   ========================================================== */
+
+.cg-condition-cell:has(.cg-condition-icon-frame) {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  justify-items: center;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
+/* Oculta cualquier texto residual tipo "CLASE" si lo hubiera. */
+.cg-condition-cell:has(.cg-condition-icon-frame) > span,
+.cg-condition-cell:has(.cg-condition-icon-frame) > strong {
+  display: none !important;
+}
+
+/* Caja interna con topes reales arriba/abajo/izquierda/derecha. */
+.cg-condition-icon-frame {
+  position: absolute;
+  inset: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Top row: la celda es más baja, así que usamos una caja más precisa. */
+.cg-column-cell .cg-condition-icon-frame {
+  inset: 5px 8px;
+}
+
+/* Left column: conservamos el ajuste que ya se veía bien. */
+.cg-row-cell .cg-condition-icon-frame {
+  inset: 8px 6px;
+}
+
+.cg-condition-icon-frame > img.cg-condition-icon {
+  display: block !important;
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  margin: auto !important;
+  transform: none !important;
+  filter:
+    drop-shadow(0 9px 13px rgba(0, 0, 0, 0.46))
+    drop-shadow(0 0 12px rgba(255, 197, 29, 0.1));
+}
+
+/* Algunos iconos PNG tienen aire interno. En la fila superior compensamos un pelín. */
+.cg-column-cell .cg-condition-icon-frame > img.cg-condition-icon {
+  max-height: 92% !important;
+  transform: translateY(-1px) !important;
+}
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-condition-icon-frame {
+    inset: 6px;
+  }
+
+  .cg-column-cell .cg-condition-icon-frame {
+    inset: 5px 8px;
+  }
+
+  .cg-row-cell .cg-condition-icon-frame {
+    inset: 8px 6px;
+  }
+
+  .cg-column-cell .cg-condition-icon-frame > img.cg-condition-icon {
+    max-height: 92% !important;
+    transform: translateY(-1px) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .cg-condition-icon-frame {
+    inset: 5px;
+  }
+
+  .cg-column-cell .cg-condition-icon-frame {
+    inset: 5px 6px;
+  }
+
+  .cg-row-cell .cg-condition-icon-frame {
+    inset: 6px 4px;
+  }
+}
+
+/* ==========================================================
+   CARD GRID V13 EQUAL ICON SIZE PATCH
+   Normaliza el tamaño visual de iconos arriba/lateral.
+   Las celdas mantienen su forma; solo igualamos el icono.
+   ========================================================== */
+
+.cg-condition-cell:has(.cg-condition-icon-frame) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* El marco del icono ya NO se estira a toda la celda.
+   Es una caja cuadrada centrada, igual arriba y a la izquierda. */
+.cg-condition-icon-frame,
+.cg-column-cell .cg-condition-icon-frame,
+.cg-row-cell .cg-condition-icon-frame {
+  position: static !important;
+  inset: auto !important;
+  width: clamp(48px, 4.2vw, 62px);
+  height: clamp(48px, 4.2vw, 62px);
+  max-width: calc(100% - 10px);
+  max-height: calc(100% - 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* El PNG ocupa su marco, no la celda completa. */
+.cg-condition-icon-frame > img.cg-condition-icon,
+.cg-column-cell .cg-condition-icon-frame > img.cg-condition-icon,
+.cg-row-cell .cg-condition-icon-frame > img.cg-condition-icon {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: none !important;
+  margin: 0 !important;
+  display: block !important;
+}
+
+/* Ajuste específico para 1080p: que el de arriba no quede pequeño
+   y el lateral no se dispare por tener más alto de celda. */
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-condition-icon-frame,
+  .cg-column-cell .cg-condition-icon-frame,
+  .cg-row-cell .cg-condition-icon-frame {
+    width: 58px;
+    height: 58px;
+  }
+}
+
+/* En móvil bajamos un poco para que no choque con los bordes. */
+@media (max-width: 760px) {
+  .cg-condition-icon-frame,
+  .cg-column-cell .cg-condition-icon-frame,
+  .cg-row-cell .cg-condition-icon-frame {
+    width: 38px;
+    height: 38px;
+  }
+}
