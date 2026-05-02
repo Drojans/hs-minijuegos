@@ -184,3 +184,10 @@
 
 INTENTAR HACER SCRIPT PARA DESCARGAR CARTAS EN ESPAÑOL DE HEARTHSTONE.JSON - IMPORTANTE
 
+Visual / Animaciones futuras:
+- Mantener React + CSS como base.
+- Añadir Framer Motion cuando toque animar pantallas, cartas, resultados y transiciones.
+- Usar CSS para hovers, brillos, fondos, loaders y efectos de taberna.
+- Valorar Lottie/Rive para loaders especiales o iconos animados.
+- Usar GSAP solo para animaciones grandes o muy coreografiadas.
+- No migrar a otra plataforma salvo necesidad real.

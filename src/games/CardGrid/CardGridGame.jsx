@@ -28,6 +28,59 @@ const CLASS_ICON_PATHS = {
   SHAMAN: "/grid-icons/class_shaman.png",
   WARLOCK: "/grid-icons/class_warlock.png",
   WARRIOR: "/grid-icons/class_warrior.png",
+  NEUTRAL: "/grid-icons/class_neutral.png",
+};
+
+const TYPE_ICON_PATHS = {
+  MINION: "/grid-icons/type_minion.png",
+  SPELL: "/grid-icons/type_spell.png",
+  WEAPON: "/grid-icons/type_weapon.png",
+};
+
+const RARITY_ICON_PATHS = {
+  COMMON: "/grid-icons/rarity_common.png",
+  RARE: "/grid-icons/rarity_rare.png",
+  EPIC: "/grid-icons/rarity_epic.png",
+  LEGENDARY: "/grid-icons/rarity_legendary.png",
+};
+
+const COST_ICON_PATHS = {
+  "cost-low": "/grid-icons/cost_0_2.png",
+  "cost-mid": "/grid-icons/cost_3_4.png",
+  "cost-high": "/grid-icons/cost_5_6.png",
+  "cost-big": "/grid-icons/cost_7_plus.png",
+};
+
+const STAT_ICON_PATHS = {
+  "attack-3": "/grid-icons/stat_attack_3_plus.png",
+  "attack-5": "/grid-icons/stat_attack_5_plus.png",
+  "health-4": "/grid-icons/stat_health_4_plus.png",
+  "health-6": "/grid-icons/stat_health_6_plus.png",
+};
+
+const RACE_ICON_PATHS = {
+  BEAST: "/grid-icons/race_beast.png",
+  DEMON: "/grid-icons/race_demon.png",
+  DRAGON: "/grid-icons/race_dragon.png",
+  DRAENEI: "/grid-icons/race_draenei.png",
+  ELEMENTAL: "/grid-icons/race_elemental.png",
+  MECHANICAL: "/grid-icons/race_mech.png",
+  MURLOC: "/grid-icons/race_murloc.png",
+  NAGA: "/grid-icons/race_naga.png",
+  PIRATE: "/grid-icons/race_pirate.png",
+  QUILBOAR: "/grid-icons/race_quilboar.png",
+  TOTEM: "/grid-icons/race_totem.png",
+  UNDEAD: "/grid-icons/race_undead.png",
+};
+
+const KEYWORD_ICON_PATHS = {
+  BATTLECRY: "/grid-icons/text_battlecry.png",
+  DEATHRATTLE: "/grid-icons/text_deathrattle.png",
+  TAUNT: "/grid-icons/text_taunt.png",
+  DISCOVER: "/grid-icons/text_discover.png",
+  DIVINE_SHIELD: "/grid-icons/text_divine_shield.png",
+  LIFESTEAL: "/grid-icons/text_lifesteal.png",
+  RUSH: "/grid-icons/text_rush.png",
 };
 
 const TYPE_LABELS = {
@@ -167,6 +220,7 @@ function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION)
       label,
       shortLabel: label,
       description: "Tipo",
+      icon: TYPE_ICON_PATHS[key],
       predicate: (card) => card.type === key,
     });
   });
@@ -178,6 +232,7 @@ function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION)
       label,
       shortLabel: label,
       description: "Rareza",
+      icon: RARITY_ICON_PATHS[key],
       predicate: (card) => card.rarity === key,
     });
   });
@@ -193,6 +248,7 @@ function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION)
       family: "cost",
       shortLabel: condition.label,
       description: "Coste",
+      icon: COST_ICON_PATHS[condition.id],
     });
   });
 
@@ -207,6 +263,7 @@ function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION)
       family: "stats",
       shortLabel: condition.label,
       description: "Estadística",
+      icon: STAT_ICON_PATHS[condition.id],
     });
   });
 
@@ -217,6 +274,7 @@ function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION)
       label,
       shortLabel: label,
       description: "Raza",
+      icon: RACE_ICON_PATHS[key],
       predicate: (card) => card.type === "MINION" && hasRace(card, key),
     });
   });
@@ -228,6 +286,7 @@ function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION)
       label: keyword.label,
       shortLabel: keyword.label,
       description: "Texto",
+      icon: KEYWORD_ICON_PATHS[keyword.key],
       predicate: (card) => hasKeyword(card, keyword),
     });
   });
@@ -562,14 +621,28 @@ function CardGridGame({ cards, onBack }) {
   function renderConditionContent(condition) {
     if (condition.icon) {
       return (
-        <div className="cg-condition-icon-frame" title={condition.shortLabel}>
+        <div
+          className="cg-condition-icon-frame"
+          title={condition.shortLabel}
+          data-label={condition.shortLabel}
+        >
           <img
             className="cg-condition-icon"
             src={condition.icon}
             alt={condition.shortLabel}
             loading="eager"
             decoding="async"
+            onError={(event) => {
+              const icon = event.currentTarget;
+              const fallback = icon.parentElement?.querySelector(".cg-condition-icon-fallback");
+
+              icon.style.display = "none";
+              if (fallback) fallback.hidden = false;
+            }}
           />
+          <span className="cg-condition-icon-fallback" hidden>
+            {condition.shortLabel}
+          </span>
         </div>
       );
     }

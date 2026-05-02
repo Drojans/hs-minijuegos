@@ -1065,3 +1065,233 @@
     height: 38px;
   }
 }
+
+/* ==========================================================
+   CARD GRID V14 ALL CATEGORY ICON PATCH
+   Iconos para todas las familias: clase, tipo, rareza,
+   coste, estadística, raza y texto/mecánica.
+   ========================================================== */
+
+.cg-condition-cell:has(.cg-condition-icon-frame) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+/* Marco cuadrado común. Las casillas mantienen su forma, el icono no. */
+.cg-condition-icon-frame,
+.cg-column-cell .cg-condition-icon-frame,
+.cg-row-cell .cg-condition-icon-frame {
+  position: static !important;
+  inset: auto !important;
+  width: clamp(52px, 4.6vw, 68px);
+  height: clamp(52px, 4.6vw, 68px);
+  max-width: calc(100% - 10px);
+  max-height: calc(100% - 10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* El PNG ocupa el marco, no la celda completa. */
+.cg-condition-icon-frame > img.cg-condition-icon,
+.cg-column-cell .cg-condition-icon-frame > img.cg-condition-icon,
+.cg-row-cell .cg-condition-icon-frame > img.cg-condition-icon {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+  transform: none !important;
+  margin: 0 !important;
+  display: block !important;
+  filter:
+    drop-shadow(0 9px 13px rgba(0, 0, 0, 0.46))
+    drop-shadow(0 0 12px rgba(255, 197, 29, 0.1));
+}
+
+/* Fallback si falta un archivo de icono. */
+.cg-condition-icon-fallback {
+  color: #f9e1b4;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(0.9rem, 1.15vw, 1.25rem);
+  line-height: 1.05;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.cg-condition-icon-fallback[hidden] {
+  display: none !important;
+}
+
+/* Oculta labels residuales cuando hay icono real/fallback dentro del marco. */
+.cg-condition-cell:has(.cg-condition-icon-frame) > span,
+.cg-condition-cell:has(.cg-condition-icon-frame) > strong {
+  display: none !important;
+}
+
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-condition-icon-frame,
+  .cg-column-cell .cg-condition-icon-frame,
+  .cg-row-cell .cg-condition-icon-frame {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+@media (max-width: 760px) {
+  .cg-condition-icon-frame,
+  .cg-column-cell .cg-condition-icon-frame,
+  .cg-row-cell .cg-condition-icon-frame {
+    width: 38px;
+    height: 38px;
+  }
+
+  .cg-condition-icon-fallback {
+    font-size: 0.78rem;
+  }
+}
+
+/* ==========================================================
+   CARD GRID V15 BIGGER ICON + TOOLTIP PATCH
+   Iconos más grandes en cabeceras/lateral + tooltip custom.
+   ========================================================== */
+
+/* Dejamos respirar un poco más las cabeceras para que el icono pueda crecer. */
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-board {
+    grid-template-rows: 86px repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Los iconos pasan a tener un marco cuadrado mayor.
+   La celda no cambia radicalmente, solo se aprovecha más. */
+.cg-condition-icon-frame,
+.cg-column-cell .cg-condition-icon-frame,
+.cg-row-cell .cg-condition-icon-frame {
+  position: relative !important;
+  width: clamp(64px, 5.1vw, 82px) !important;
+  height: clamp(64px, 5.1vw, 82px) !important;
+  max-width: calc(100% - 4px) !important;
+  max-height: calc(100% - 4px) !important;
+  pointer-events: auto !important;
+  overflow: visible !important;
+}
+
+/* El lateral tiene más alto, así que puede permitirse un poquito más. */
+.cg-row-cell .cg-condition-icon-frame {
+  width: clamp(68px, 5.5vw, 90px) !important;
+  height: clamp(68px, 5.5vw, 90px) !important;
+}
+
+/* El PNG siempre centrado y ocupando el marco, sin estirar la celda. */
+.cg-condition-icon-frame > img.cg-condition-icon,
+.cg-column-cell .cg-condition-icon-frame > img.cg-condition-icon,
+.cg-row-cell .cg-condition-icon-frame > img.cg-condition-icon {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  object-position: center center !important;
+}
+
+/* Permitimos que el tooltip pueda salir de la celda. */
+.cg-condition-cell:has(.cg-condition-icon-frame),
+.cg-board,
+.cg-board-panel {
+  overflow: visible;
+}
+
+/* Tooltip propio al pasar el ratón por encima. */
+.cg-condition-icon-frame::after {
+  content: attr(data-label);
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 8px);
+  transform: translateX(-50%) translateY(-2px);
+  z-index: 50;
+  min-width: max-content;
+  max-width: 180px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 220, 150, 0.48);
+  color: #fff3cf;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 218, 142, 0.16), transparent 44%),
+    linear-gradient(180deg, rgba(56, 31, 14, 0.98), rgba(12, 15, 23, 0.98));
+  box-shadow:
+    0 10px 24px rgba(0, 0, 0, 0.38),
+    inset 0 1px 0 rgba(255, 236, 188, 0.1);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 0.86rem;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.14s ease, visibility 0.14s ease, transform 0.14s ease;
+}
+
+/* En la columna izquierda el tooltip sale hacia la derecha para no chocar con el borde. */
+.cg-row-cell .cg-condition-icon-frame::after {
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-2px);
+}
+
+/* En la esquina superior, tooltip debajo. */
+.cg-column-cell .cg-condition-icon-frame::after {
+  top: calc(100% + 8px);
+}
+
+/* Hover/focus. */
+.cg-condition-icon-frame:hover::after,
+.cg-condition-icon-frame:focus-visible::after {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
+}
+
+.cg-row-cell .cg-condition-icon-frame:hover::after,
+.cg-row-cell .cg-condition-icon-frame:focus-visible::after {
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Un pequeño glow al hover para que se note que el icono tiene ayuda. */
+.cg-condition-icon-frame:hover > img.cg-condition-icon {
+  filter:
+    drop-shadow(0 9px 13px rgba(0, 0, 0, 0.46))
+    drop-shadow(0 0 14px rgba(255, 197, 29, 0.26)) !important;
+}
+
+/* Ajuste en escritorio 1080p: tamaño consistente y legible. */
+@media (min-width: 1500px) and (min-height: 850px) {
+  .cg-condition-icon-frame,
+  .cg-column-cell .cg-condition-icon-frame {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  .cg-row-cell .cg-condition-icon-frame {
+    width: 82px !important;
+    height: 82px !important;
+  }
+}
+
+/* En pantallas pequeñas, volvemos a tamaños moderados y sin tooltip intrusivo. */
+@media (max-width: 760px) {
+  .cg-condition-icon-frame,
+  .cg-column-cell .cg-condition-icon-frame,
+  .cg-row-cell .cg-condition-icon-frame {
+    width: 42px !important;
+    height: 42px !important;
+  }
+
+  .cg-condition-icon-frame::after {
+    display: none;
+  }
+}
