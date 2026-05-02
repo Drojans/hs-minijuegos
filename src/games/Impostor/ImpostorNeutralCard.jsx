@@ -1,4 +1,5 @@
 import { useId } from "react";
+import { getArtImage, getCardName, getGameImage, getThumbImage } from "../../utils/cardLocale";
 import "./ImpostorNeutralCard.css";
 
 const CARD_TEMPLATES = {
@@ -13,8 +14,8 @@ const CARD_NAME_PATHS = {
   WEAPON: "m 105,642 H 695.11632",
 };
 
-function getNeutralArt(card) {
-  return card?.imageArt || card?.imageThumb || card?.imageGame || card?.image || "";
+function getNeutralArt(card, locale) {
+  return getArtImage(card, locale) || getThumbImage(card, locale) || getGameImage(card, locale) || card?.image || "";
 }
 
 function getTemplateType(card) {
@@ -134,8 +135,9 @@ function CardNameSvg({ name, templateType }) {
   );
 }
 
-function ImpostorNeutralCard({ card }) {
-  const artSrc = getNeutralArt(card);
+function ImpostorNeutralCard({ card, locale = "es" }) {
+  const artSrc = getNeutralArt(card, locale);
+  const cardName = getCardName(card, locale);
   const templateType = getTemplateType(card);
   const templateSrc = CARD_TEMPLATES[templateType];
 
@@ -151,7 +153,7 @@ function ImpostorNeutralCard({ card }) {
             decoding="sync"
           />
         ) : (
-          <div className="inc-portrait-fallback">Sin arte</div>
+          <div className="inc-portrait-fallback">{locale === "en" ? "No art" : "Sin arte"}</div>
         )}
       </div>
 
@@ -164,8 +166,8 @@ function ImpostorNeutralCard({ card }) {
         decoding="async"
       />
 
-      <div className="inc-name-ribbon" title={card.name} aria-label={card.name}>
-        <CardNameSvg name={card.name} templateType={templateType} />
+      <div className="inc-name-ribbon" title={cardName} aria-label={cardName}>
+        <CardNameSvg name={cardName} templateType={templateType} />
       </div>
     </div>
   );
