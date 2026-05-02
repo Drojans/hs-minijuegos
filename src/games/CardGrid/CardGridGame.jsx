@@ -1,20 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLanguage } from "../../i18n/LanguageProvider";
+import {
+  getCardName,
+  getDetailImage,
+  translateCardClass,
+  translateCardRace,
+  translateCardRarity,
+  translateCardType,
+} from "../../utils/cardLocale";
 import "./CardGridGame.css";
-
-const CLASS_LABELS = {
-  DEATHKNIGHT: "Caballero de la Muerte",
-  DEMONHUNTER: "Cazador de Demonios",
-  DRUID: "Druida",
-  HUNTER: "Cazador",
-  MAGE: "Mago",
-  PALADIN: "Paladín",
-  PRIEST: "Sacerdote",
-  ROGUE: "Pícaro",
-  SHAMAN: "Chamán",
-  WARLOCK: "Brujo",
-  WARRIOR: "Guerrero",
-  NEUTRAL: "Neutral",
-};
 
 const CLASS_ICON_PATHS = {
   DEATHKNIGHT: "/grid-icons/class_deathknight.png",
@@ -83,64 +77,40 @@ const KEYWORD_ICON_PATHS = {
   RUSH: "/grid-icons/text_rush.png",
 };
 
-const TYPE_LABELS = {
-  MINION: "Esbirro",
-  SPELL: "Hechizo",
-  WEAPON: "Arma",
-};
-
-const RARITY_LABELS = {
-  COMMON: "Común",
-  RARE: "Rara",
-  EPIC: "Épica",
-  LEGENDARY: "Legendaria",
-};
-
-const RACE_LABELS = {
-  BEAST: "Bestia",
-  DEMON: "Demonio",
-  DRAGON: "Dragón",
-  DRAENEI: "Draenei",
-  ELEMENTAL: "Elemental",
-  MECHANICAL: "Meca",
-  MURLOC: "Múrloc",
-  NAGA: "Naga",
-  PIRATE: "Pirata",
-  QUILBOAR: "Jabaespín",
-  TOTEM: "Tótem",
-  UNDEAD: "No-muerto",
-};
-
-const KEYWORD_CONDITIONS = [
-  { key: "BATTLECRY", label: "Grito de batalla", terms: ["battlecry", "grito de batalla"] },
-  { key: "DEATHRATTLE", label: "Último aliento", terms: ["deathrattle", "último aliento", "ultimo aliento"] },
-  { key: "TAUNT", label: "Provocar", terms: ["taunt", "provocar"] },
-  { key: "DISCOVER", label: "Descubrir", terms: ["discover", "descubre", "descubrir"] },
-  { key: "DIVINE_SHIELD", label: "Escudo divino", terms: ["divine shield", "escudo divino"] },
-  { key: "LIFESTEAL", label: "Robo de vida", terms: ["lifesteal", "robo de vida"] },
-  { key: "RUSH", label: "Embestir", terms: ["rush", "embestir"] },
-];
+function getKeywordConditions(t) {
+  return [
+    { key: "BATTLECRY", label: t("grid.keyword.battlecry"), terms: ["battlecry", "grito de batalla"] },
+    { key: "DEATHRATTLE", label: t("grid.keyword.deathrattle"), terms: ["deathrattle", "último aliento", "ultimo aliento"] },
+    { key: "TAUNT", label: t("grid.keyword.taunt"), terms: ["taunt", "provocar"] },
+    { key: "DISCOVER", label: t("grid.keyword.discover"), terms: ["discover", "descubre", "descubrir"] },
+    { key: "DIVINE_SHIELD", label: t("grid.keyword.divineShield"), terms: ["divine shield", "escudo divino"] },
+    { key: "LIFESTEAL", label: t("grid.keyword.lifesteal"), terms: ["lifesteal", "robo de vida"] },
+    { key: "RUSH", label: t("grid.keyword.rush"), terms: ["rush", "embestir"] },
+  ];
+}
 
 const MIN_CARDS_IN_CONDITION = 35;
 const MIN_CANDIDATES_PER_CELL = 2;
 const MAX_GENERATION_ATTEMPTS = 9000;
 
-const GRID_MODES = {
-  easy: {
-    id: "easy",
-    label: "Fácil",
-    minCandidatesPerCell: 50,
-    minCardsInCondition: 50,
-    description: "Cada casilla tiene al menos 50 respuestas posibles.",
-  },
-  normal: {
-    id: "normal",
-    label: "Normal",
-    minCandidatesPerCell: 1,
-    minCardsInCondition: 1,
-    description: "Condiciones mucho más libres. Solo se garantiza que cada casilla tenga respuesta.",
-  },
-};
+function getGridModes(t) {
+  return {
+    easy: {
+      id: "easy",
+      label: t("grid.mode.easy"),
+      minCandidatesPerCell: 50,
+      minCardsInCondition: 50,
+      description: t("grid.mode.easyDescription"),
+    },
+    normal: {
+      id: "normal",
+      label: t("grid.mode.normal"),
+      minCandidatesPerCell: 1,
+      minCardsInCondition: 1,
+      description: t("grid.mode.normalDescription"),
+    },
+  };
+}
 
 function normalize(value = "") {
   return String(value)
@@ -163,8 +133,8 @@ function getCardSearchText(card) {
   ].filter(Boolean).join(" "));
 }
 
-function getCardImage(card) {
-  return card?.imageRenderNormalized || card?.imageGame || card?.image || card?.imageThumb || "";
+function getCardImage(card, locale) {
+  return getDetailImage(card, locale) || card?.imageGame || card?.image || card?.imageThumb || "";
 }
 
 function getRaceValues(card) {
@@ -197,95 +167,131 @@ function countMatches(cards, predicate) {
   return cards.reduce((count, card) => count + (predicate(card) ? 1 : 0), 0);
 }
 
-function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION) {
+function buildConditionPool(cards, minCardsInCondition = MIN_CARDS_IN_CONDITION, locale = "es", t = (key) => key) {
   const baseCards = cards.filter((card) => ["MINION", "SPELL", "WEAPON"].includes(card.type));
   const conditions = [];
 
-  Object.entries(CLASS_LABELS).forEach(([key, label]) => {
+  Object.keys(CLASS_ICON_PATHS).forEach((key) => {
+    const label = translateCardClass(key, locale);
     conditions.push({
       id: `class-${key}`,
       family: "class",
       label,
       shortLabel: label,
-      description: "Clase",
+      description: t("grid.condition.class"),
       icon: CLASS_ICON_PATHS[key],
       predicate: (card) => card.cardClass === key,
     });
   });
 
-  Object.entries(TYPE_LABELS).forEach(([key, label]) => {
+  Object.keys(TYPE_ICON_PATHS).forEach((key) => {
+    const label = translateCardType(key, locale);
     conditions.push({
       id: `type-${key}`,
       family: "type",
       label,
       shortLabel: label,
-      description: "Tipo",
+      description: t("grid.condition.type"),
       icon: TYPE_ICON_PATHS[key],
       predicate: (card) => card.type === key,
     });
   });
 
-  Object.entries(RARITY_LABELS).forEach(([key, label]) => {
+  Object.keys(RARITY_ICON_PATHS).forEach((key) => {
+    const label = translateCardRarity(key, locale);
     conditions.push({
       id: `rarity-${key}`,
       family: "rarity",
       label,
       shortLabel: label,
-      description: "Rareza",
+      description: t("grid.condition.rarity"),
       icon: RARITY_ICON_PATHS[key],
       predicate: (card) => card.rarity === key,
     });
   });
 
   [
-    { id: "cost-low", label: "Coste 0-2", predicate: (card) => typeof card.cost === "number" && card.cost <= 2 },
-    { id: "cost-mid", label: "Coste 3-4", predicate: (card) => typeof card.cost === "number" && card.cost >= 3 && card.cost <= 4 },
-    { id: "cost-high", label: "Coste 5-6", predicate: (card) => typeof card.cost === "number" && card.cost >= 5 && card.cost <= 6 },
-    { id: "cost-big", label: "Coste 7+", predicate: (card) => typeof card.cost === "number" && card.cost >= 7 },
+    {
+      id: "cost-low",
+      label: t("grid.condition.costLow"),
+      predicate: (card) => typeof card.cost === "number" && card.cost <= 2,
+    },
+    {
+      id: "cost-mid",
+      label: t("grid.condition.costMid"),
+      predicate: (card) => typeof card.cost === "number" && card.cost >= 3 && card.cost <= 4,
+    },
+    {
+      id: "cost-high",
+      label: t("grid.condition.costHigh"),
+      predicate: (card) => typeof card.cost === "number" && card.cost >= 5 && card.cost <= 6,
+    },
+    {
+      id: "cost-big",
+      label: t("grid.condition.costBig"),
+      predicate: (card) => typeof card.cost === "number" && card.cost >= 7,
+    },
   ].forEach((condition) => {
     conditions.push({
       ...condition,
       family: "cost",
       shortLabel: condition.label,
-      description: "Coste",
+      description: t("grid.condition.cost"),
       icon: COST_ICON_PATHS[condition.id],
     });
   });
 
   [
-    { id: "attack-3", label: "Ataque 3+", predicate: (card) => card.type === "MINION" && Number(card.attack) >= 3 },
-    { id: "attack-5", label: "Ataque 5+", predicate: (card) => card.type === "MINION" && Number(card.attack) >= 5 },
-    { id: "health-4", label: "Vida 4+", predicate: (card) => card.type === "MINION" && Number(card.health) >= 4 },
-    { id: "health-6", label: "Vida 6+", predicate: (card) => card.type === "MINION" && Number(card.health) >= 6 },
+    {
+      id: "attack-3",
+      label: t("grid.condition.attackAtLeast", { value: 3 }),
+      predicate: (card) => card.type === "MINION" && Number(card.attack) >= 3,
+    },
+    {
+      id: "attack-5",
+      label: t("grid.condition.attackAtLeast", { value: 5 }),
+      predicate: (card) => card.type === "MINION" && Number(card.attack) >= 5,
+    },
+    {
+      id: "health-4",
+      label: t("grid.condition.healthAtLeast", { value: 4 }),
+      predicate: (card) => card.type === "MINION" && Number(card.health) >= 4,
+    },
+    {
+      id: "health-6",
+      label: t("grid.condition.healthAtLeast", { value: 6 }),
+      predicate: (card) => card.type === "MINION" && Number(card.health) >= 6,
+    },
   ].forEach((condition) => {
     conditions.push({
       ...condition,
       family: "stats",
       shortLabel: condition.label,
-      description: "Estadística",
+      description: t("grid.condition.stats"),
       icon: STAT_ICON_PATHS[condition.id],
     });
   });
 
-  Object.entries(RACE_LABELS).forEach(([key, label]) => {
+  Object.keys(RACE_ICON_PATHS).forEach((key) => {
+    const label = translateCardRace(key, locale);
     conditions.push({
       id: `race-${key}`,
       family: "race",
       label,
       shortLabel: label,
-      description: "Raza",
+      description: t("grid.condition.race"),
       icon: RACE_ICON_PATHS[key],
       predicate: (card) => card.type === "MINION" && hasRace(card, key),
     });
   });
 
-  KEYWORD_CONDITIONS.forEach((keyword) => {
+  getKeywordConditions(t).forEach((keyword) => {
     conditions.push({
       id: `keyword-${keyword.key}`,
       family: "keyword",
       label: keyword.label,
       shortLabel: keyword.label,
-      description: "Texto",
+      description: t("grid.condition.text"),
       icon: KEYWORD_ICON_PATHS[keyword.key],
       predicate: (card) => hasKeyword(card, keyword),
     });
@@ -431,8 +437,10 @@ function getSuggestions(cards, answer, usedCardIds) {
 }
 
 function CardGridGame({ cards, onBack }) {
+  const { locale, t } = useLanguage();
   const [gridMode, setGridMode] = useState("easy");
-  const modeConfig = GRID_MODES[gridMode];
+  const gridModes = useMemo(() => getGridModes(t), [t]);
+  const modeConfig = gridModes[gridMode];
 
   const playableCards = useMemo(
     () => cards.filter((card) => ["MINION", "SPELL", "WEAPON"].includes(card.type)),
@@ -440,15 +448,15 @@ function CardGridGame({ cards, onBack }) {
   );
 
   const conditionPool = useMemo(
-    () => buildConditionPool(cards, modeConfig.minCardsInCondition),
-    [cards, modeConfig.minCardsInCondition]
+    () => buildConditionPool(cards, modeConfig.minCardsInCondition, locale, t),
+    [cards, modeConfig.minCardsInCondition, locale, t]
   );
 
   const [grid, setGrid] = useState(null);
   const [selectedCell, setSelectedCell] = useState({ row: 0, column: 0 });
   const [answers, setAnswers] = useState({});
   const [answer, setAnswer] = useState("");
-  const [message, setMessage] = useState("Selecciona una casilla y escribe una carta válida.");
+  const [message, setMessage] = useState(() => t("grid.message.initial"));
   const [mistakes, setMistakes] = useState(0);
   const [revealedCells, setRevealedCells] = useState(new Set());
 
@@ -467,13 +475,13 @@ function CardGridGame({ cards, onBack }) {
     if (nextGrid) {
       setMessage(
         gridMode === "easy"
-          ? "Modo fácil: mínimo 50 respuestas por casilla y sin condiciones repetidas."
-          : "Modo normal: cuadrícula libre, pero sin condiciones repetidas."
+          ? t("grid.message.easyReady")
+          : t("grid.message.normalReady")
       );
     } else {
-      setMessage("No se pudo generar una cuadrícula con este modo. Prueba otra vez o cambia de modo.");
+      setMessage(t("grid.message.generationFailed"));
     }
-  }, [cards.length, playableCards, conditionPool, modeConfig.minCandidatesPerCell, gridMode]);
+  }, [cards.length, playableCards, conditionPool, modeConfig.minCandidatesPerCell, gridMode, t]);
 
   const usedCardIds = useMemo(
     () => new Set(Object.values(answers).map((card) => card.id)),
@@ -510,11 +518,11 @@ function CardGridGame({ cards, onBack }) {
     if (nextGrid) {
       setMessage(
         gridMode === "easy"
-          ? "Nueva cuadrícula fácil preparada: mínimo 50 respuestas por casilla y sin repetidas."
-          : "Nueva cuadrícula normal preparada sin condiciones repetidas."
+          ? t("grid.message.easyNewReady")
+          : t("grid.message.normalNewReady")
       );
     } else {
-      setMessage("No se pudo generar una cuadrícula con este modo. Prueba otra vez o cambia de modo.");
+      setMessage(t("grid.message.generationFailed"));
     }
   }
 
@@ -529,21 +537,21 @@ function CardGridGame({ cards, onBack }) {
     if (!grid || isComplete) return;
 
     if (answers[selectedKey]) {
-      setMessage("Esa casilla ya está completada. Elige otra.");
+      setMessage(t("grid.message.cellCompleted"));
       return;
     }
 
     const exactMatches = getCardsByExactName(playableCards, answer);
 
     if (!exactMatches.length) {
-      setMessage("No encuentro esa carta. Prueba una pista o escribe el nombre completo.");
+      setMessage(t("grid.message.cardNotFound"));
       return;
     }
 
     const unusedMatches = exactMatches.filter((card) => !usedCardIds.has(card.id));
 
     if (!unusedMatches.length) {
-      setMessage("Esa carta ya se ha usado en otra casilla.");
+      setMessage(t("grid.message.cardAlreadyUsed"));
       return;
     }
 
@@ -553,7 +561,7 @@ function CardGridGame({ cards, onBack }) {
 
     if (!validCard) {
       setMistakes((current) => current + 1);
-      setMessage(`${unusedMatches[0].name} no cumple ${selectedRow?.shortLabel} + ${selectedColumn?.shortLabel}.`);
+      setMessage(t("grid.message.wrongCell", { name: getCardName(unusedMatches[0], locale), row: selectedRow?.shortLabel, column: selectedColumn?.shortLabel }));
       return;
     }
 
@@ -563,7 +571,7 @@ function CardGridGame({ cards, onBack }) {
     }));
 
     setAnswer("");
-    setMessage(`Correcto: ${validCard.name}.`);
+    setMessage(t("grid.message.correct", { name: getCardName(validCard, locale) }));
 
     moveToNextEmptyCell({
       ...answers,
@@ -591,14 +599,14 @@ function CardGridGame({ cards, onBack }) {
     if (!grid || isComplete) return;
 
     if (answers[selectedKey]) {
-      setMessage("Esa casilla ya está completada. Elige otra.");
+      setMessage(t("grid.message.cellCompleted"));
       return;
     }
 
     const revealedCard = selectedCandidates.find((card) => !usedCardIds.has(card.id));
 
     if (!revealedCard) {
-      setMessage("No hay respuestas disponibles para revelar en esta casilla.");
+      setMessage(t("grid.message.noRevealAvailable"));
       return;
     }
 
@@ -614,7 +622,7 @@ function CardGridGame({ cards, onBack }) {
       return updated;
     });
     setAnswer("");
-    setMessage(`Respuesta revelada: ${revealedCard.name}.`);
+    setMessage(t("grid.message.revealed", { name: getCardName(revealedCard, locale) }));
     moveToNextEmptyCell(nextAnswers);
   }
 
@@ -660,21 +668,21 @@ function CardGridGame({ cards, onBack }) {
       <main className="cg-page">
         <section className="cg-empty">
           <button className="cg-secondary-button" onClick={onBack}>
-            ← Inicio
+            {t("common.backHome")}
           </button>
-          <h1>Grid de cartas</h1>
+          <h1>{t("grid.title")}</h1>
           <p>
             {!cards.length
-              ? "Preparando condiciones y cartas disponibles..."
-              : "No se pudo generar una cuadrícula con este modo. Prueba de nuevo o cambia de dificultad."}
+              ? t("grid.preparing")
+              : t("grid.generationFailedShort")}
           </p>
 
           {cards.length ? (
             <>
               <div className="cg-mode-selector cg-mode-selector-empty">
-                <span>Modo de juego</span>
+                <span>{t("grid.modeLabelFull")}</span>
                 <div className="cg-mode-buttons">
-                  {Object.values(GRID_MODES).map((mode) => (
+                  {Object.values(gridModes).map((mode) => (
                     <button
                       key={mode.id}
                       type="button"
@@ -689,7 +697,7 @@ function CardGridGame({ cards, onBack }) {
               </div>
 
               <button className="cg-primary-button" onClick={startNewGrid}>
-                Reintentar cuadrícula
+                {t("grid.retry")}
               </button>
             </>
           ) : null}
@@ -703,17 +711,17 @@ function CardGridGame({ cards, onBack }) {
       <section className="cg-shell">
         <header className="cg-header">
           <button className="cg-secondary-button" onClick={onBack}>
-            ← Inicio
+            {t("common.backHome")}
           </button>
 
           <div className="cg-title-block">
-            <p className="cg-eyebrow">Minijuego</p>
-            <h1>Grid de cartas</h1>
-            <p>Completa cada casilla con una carta que cumpla fila y columna.</p>
+            <p className="cg-eyebrow">{t("grid.minigame")}</p>
+            <h1>{t("grid.title")}</h1>
+            <p>{t("grid.subtitle")}</p>
           </div>
 
           <div className="cg-score-pill">
-            <span>Progreso</span>
+            <span>{t("grid.progress")}</span>
             <strong>{correctCount}/9</strong>
           </div>
         </header>
@@ -724,7 +732,7 @@ function CardGridGame({ cards, onBack }) {
 
         <section className="cg-layout">
           <div className="cg-board-panel">
-            <div className="cg-board" role="grid" aria-label="Grid de cartas">
+            <div className="cg-board" role="grid" aria-label={t("grid.title")}>
               <div className="cg-corner-cell">
                 <span>GRID</span>
               </div>
@@ -754,15 +762,15 @@ function CardGridGame({ cards, onBack }) {
                         className={`cg-answer-cell ${selected ? "is-selected" : ""} ${solvedCard ? "is-solved" : ""} ${revealed ? "is-revealed" : ""}`}
                         key={column.id}
                         onClick={() => setSelectedCell({ row: rowIndex, column: columnIndex })}
-                        title={solvedCard?.name || "Casilla vacía"}
+                        title={solvedCard ? getCardName(solvedCard, locale) : t("grid.emptyCell")}
                       >
                         {solvedCard ? (
-                          getCardImage(solvedCard) ? (
+                          getCardImage(solvedCard, locale) ? (
                             <div className="cg-solved-card-frame">
                               <img
                                 className="cg-solved-card-image"
-                                src={getCardImage(solvedCard)}
-                                alt={solvedCard.name}
+                                src={getCardImage(solvedCard, locale)}
+                                alt={getCardName(solvedCard, locale)}
                                 loading="lazy"
                                 decoding="async"
                                 style={{
@@ -776,7 +784,7 @@ function CardGridGame({ cards, onBack }) {
                               />
                             </div>
                           ) : (
-                            <strong>{solvedCard.name}</strong>
+                            <strong>{getCardName(solvedCard, locale)}</strong>
                           )
                         ) : (
                           <span>+</span>
@@ -791,15 +799,15 @@ function CardGridGame({ cards, onBack }) {
 
           <aside className="cg-control-panel">
             <div className="cg-current-cell">
-              <p className="cg-eyebrow">Casilla seleccionada</p>
+              <p className="cg-eyebrow">{t("grid.selectedCell")}</p>
               <h2>{selectedRow?.shortLabel} + {selectedColumn?.shortLabel}</h2>
-              <span>{grid.candidateMap[selectedKey]?.length ?? 0} respuestas posibles en la base.</span>
+              <span>{t("grid.possibleAnswers", { count: grid.candidateMap[selectedKey]?.length ?? 0 })}</span>
             </div>
 
             <div className="cg-mode-selector">
-              <span>Modo</span>
+              <span>{t("grid.modeLabel")}</span>
               <div className="cg-mode-buttons">
-                {Object.values(GRID_MODES).map((mode) => (
+                {Object.values(gridModes).map((mode) => (
                   <button
                     key={mode.id}
                     type="button"
@@ -814,18 +822,18 @@ function CardGridGame({ cards, onBack }) {
             </div>
 
             <form className="cg-answer-form" onSubmit={submitAnswer}>
-              <label htmlFor="grid-card-answer">Carta</label>
+              <label htmlFor="grid-card-answer">{t("grid.cardLabel")}</label>
               <div className="cg-input-row">
                 <input
                   id="grid-card-answer"
                   value={answer}
                   onChange={(event) => setAnswer(event.target.value)}
-                  placeholder="Escribe el nombre de la carta"
+                  placeholder={t("grid.answerPlaceholder")}
                   autoComplete="off"
                   disabled={isComplete}
                 />
                 <button className="cg-primary-button" type="submit" disabled={isComplete}>
-                  Probar
+                  {t("grid.tryAnswer")}
                 </button>
               </div>
 
@@ -835,9 +843,9 @@ function CardGridGame({ cards, onBack }) {
                     <button
                       type="button"
                       key={card.id}
-                      onClick={() => setAnswer(card.name)}
+                      onClick={() => setAnswer(getCardName(card, locale))}
                     >
-                      {card.name}
+                      {getCardName(card, locale)}
                     </button>
                   ))}
                 </div>
@@ -849,17 +857,17 @@ function CardGridGame({ cards, onBack }) {
                 onClick={revealSelectedAnswer}
                 disabled={isComplete || Boolean(answers[selectedKey])}
               >
-                Me rindo: revelar respuesta
+                {t("grid.revealAnswer")}
               </button>
             </form>
 
             <div className="cg-message">
-              <p>{isComplete ? "¡Grid completado!" : message}</p>
-              <span>Errores: {mistakes}</span>
+              <p>{isComplete ? t("grid.completed") : message}</p>
+              <span>{t("grid.mistakes", { mistakes })}</span>
             </div>
 
             <button className="cg-secondary-button" onClick={startNewGrid}>
-              Nueva cuadrícula
+              {t("grid.newGrid")}
             </button>
           </aside>
         </section>
