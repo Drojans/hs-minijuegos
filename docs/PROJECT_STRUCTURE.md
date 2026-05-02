@@ -1,8 +1,20 @@
 # Estructura del proyecto
 
+## Estado estable actual
+
+Estado funcional actual:
+
+```text
+Home: selector global ES/EN funcionando
+Base de datos: idioma global + preview de renders ES/EN funcionando
+Adivina el coste: idioma global funcionando
+Grid de cartas: idioma global funcionando
+Impostor: pendiente de adaptar a idioma global
+```
+
 ## App en uso
 
-Estas carpetas y archivos se usan directamente por la app durante el desarrollo o ejecución:
+Estas carpetas y archivos se usan directamente por la app durante desarrollo/ejecución:
 
 ```text
 src/
@@ -13,85 +25,157 @@ public/grid-icons/
 public/ui/
 ```
 
-## Carpetas de imágenes de cartas
+## Datos activos
 
-Estructura actual de imágenes:
-
-```text
-public/cards/
-public/cards-optimized/
-public/cards-normalized/
-public/card-art-optimized/
-```
-
-Significado:
-
-```text
-public/cards/
-  Renders originales de cartas. Se mantienen como fallback.
-
-public/cards-optimized/
-  Variantes optimizadas de renders:
-    thumb/
-    game/
-    detail/
-
-public/cards-normalized/
-  Renders normalizados/recortados usados por juegos donde importa el tamaño consistente.
-
-public/card-art-optimized/
-  Artes optimizados usados principalmente por las plantillas neutrales del Impostor.
-```
-
-No borrar estas carpetas todavía. Algunas cartas todavía dependen de rutas fallback.
-
-## Carpetas multiidioma temporales / preview
-
-```text
-public/cards-localized/
-public/cards-optimized-localized/
-public/cards-normalized-localized/
-```
-
-Se crearon para la preview ES/EN. De momento son experimentales y no deberían tratarse aún como la estructura definitiva del sistema multiidioma.
-
-## Datos
-
-Archivos activos:
+Archivos activos en runtime:
 
 ```text
 public/data/cards.json
 public/data/cards.multilang.preview.json
 ```
 
-Archivos temporales/generados que no deberían vivir en `public/data` a largo plazo:
+`cards.json` es la base principal de cartas.
+
+`cards.multilang.preview.json` añade datos/imagenes localizadas de preview para ES/EN y se mezcla de forma centralizada desde:
 
 ```text
-public/data/cards.backup.json
-public/data/cards.before-art.json
-public/data/cards.before-normalized-renders.json
-public/data/cards.generated.es.json
-public/data/cards.generated.es.with-images.json
-public/data/cards.original.before-generated-es.json
-public/data/normalized-renders-report.json
+src/hooks/useCardsData.js
 ```
 
-Más adelante deberían moverse a una carpeta de archivo o reports fuera de `public`, o regenerarse cuando hagan falta.
+## Carga centralizada de cartas
+
+La carga de cartas está centralizada en:
+
+```text
+src/hooks/useCardsData.js
+```
+
+Este hook carga:
+
+```text
+/data/cards.json
+/data/cards.multilang.preview.json
+```
+
+y mezcla `imagesByLocale` mediante helpers de:
+
+```text
+src/utils/cardLocale.js
+```
+
+`App.jsx` pasa las cartas ya preparadas a los juegos/componentes.
+
+## Juegos
+
+Estructura actual:
+
+```text
+src/games/
+  GuessManaCost/
+    GuessManaCost.jsx
+    GuessManaCost.css
+    index.js
+
+  CardGrid/
+    CardGridGame.jsx
+    CardGridGame.css
+
+  Impostor/
+    ImpostorGame.jsx
+    ImpostorNeutralCard.jsx
+    ...
+```
+
+Estado de idioma:
+
+```text
+GuessManaCost: adaptado
+CardGrid: adaptado
+Impostor: pendiente
+```
+
+## Helpers globales
+
+Idioma global:
+
+```text
+src/i18n/LanguageProvider.jsx
+src/i18n/translations.js
+```
+
+Helpers de cartas:
+
+```text
+src/utils/cardLocale.js
+```
+
+Incluye helpers para:
+
+```text
+getCardImage
+getThumbImage
+getGameImage
+getDetailImage
+getArtImage
+getCardName
+getSecondaryCardName
+getCardText
+mergeLocaleImages
+translateCardClass
+translateCardType
+translateCardRarity
+translateCardRace
+getCardDisplayData
+```
+
+## Carpetas de imágenes de cartas
+
+Estas carpetas existen en local, pero ya no deben estar trackeadas por Git:
+
+```text
+public/cards/
+public/cards-optimized/
+public/cards-normalized/
+public/card-art/
+public/card-art-optimized/
+public/cards-localized/
+public/cards-optimized-localized/
+public/cards-normalized-localized/
+```
+
+No borrarlas todavía. La app local puede depender de ellas para mostrar renders.
+
+A futuro habrá que decidir si estos assets viven en:
+
+```text
+CDN / hosting externo
+Git LFS
+script de regeneración
+carpeta local documentada
+```
+
+## Assets ligeros que sí quedan en Git
+
+```text
+public/fonts/
+public/grid-icons/
+public/ui/
+```
+
+`public/grid-icons/` sí se mantiene porque es ligero y necesario para el Grid.
 
 ## Scripts
 
-Ahora mismo están en:
+Los scripts siguen en:
 
 ```text
 scripts/
 ```
 
-Organización recomendada para el futuro:
+No se mueven todavía. Están documentados en:
 
 ```text
-scripts/data/
-scripts/images/
-scripts/dev/
+docs/SCRIPTS.md
 ```
 
-No mover scripts hasta revisar sus comandos y rutas relativas.
+Moverlos a subcarpetas será una fase separada.

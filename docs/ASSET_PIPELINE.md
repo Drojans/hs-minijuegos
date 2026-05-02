@@ -1,42 +1,60 @@
 # Pipeline de assets
 
-## Situación actual
+## Estado actual
 
-El proyecto usa varias carpetas de imágenes generadas. Algunas son assets reales de la app y otras son fuente o temporales.
+El proyecto usa assets locales de cartas, pero las carpetas pesadas de imágenes ya no están trackeadas por Git.
 
-## Carpetas runtime
+Esto significa:
 
-Estas carpetas se usan actualmente por la app o por rutas en `cards.json`:
+```text
+La app funciona en este ordenador porque las imágenes siguen en disco.
+Git ya no guarda esas carpetas pesadas.
+.gitignore evita que vuelvan a entrar.
+```
+
+## Carpetas pesadas locales ignoradas
 
 ```text
 public/cards/
+public/card-art/
 public/cards-optimized/
 public/cards-normalized/
 public/card-art-optimized/
+public/cards-localized/
+public/cards-optimized-localized/
+public/cards-normalized-localized/
+```
+
+Estas carpetas no deben borrarse todavía.
+
+## Carpetas runtime ligeras mantenidas en Git
+
+```text
+public/fonts/
 public/grid-icons/
 public/ui/
-public/fonts/
 ```
 
-## Carpetas fuente o temporales
+## Datos activos en Git
 
 ```text
-public/card-art/
+public/data/cards.json
+public/data/cards.multilang.preview.json
 ```
 
-Parece contener arte fuente sin optimizar. Más adelante debería moverse fuera de `public/`, por ejemplo:
+`cards.json` es la base principal.
+
+`cards.multilang.preview.json` es una preview multiidioma usada por la carga centralizada.
+
+## Carga de imágenes localizada
+
+La carga y elección de imágenes debe pasar por:
 
 ```text
-asset-sources/card-art/
+src/utils/cardLocale.js
 ```
 
-Pero solo después de actualizar los scripts que dependan de esa carpeta.
-
-## Prioridad recomendada de imágenes
-
-La app debería preferir imágenes optimizadas/localizadas cuando existan.
-
-Orden general:
+Orden general recomendado:
 
 ```text
 1. imagesByLocale[locale][imageType]
@@ -45,15 +63,19 @@ Orden general:
 4. campos fallback de imagen
 ```
 
-Helper actual:
+## Carga de datos
+
+La carga de datos de cartas debe pasar por:
 
 ```text
-src/utils/cardLocale.js
+src/hooks/useCardsData.js
 ```
 
-## Preview multiidioma
+No conviene que cada juego haga su propio `fetch` de cartas.
 
-La preview ES/EN actual usa:
+## Preview multiidioma actual
+
+La preview ES/EN usa:
 
 ```text
 public/data/cards.multilang.preview.json
@@ -62,11 +84,11 @@ public/cards-optimized-localized/
 public/cards-normalized-localized/
 ```
 
-Es una preview validada, no el pipeline definitivo completo.
-
-Antes de generar miles de imágenes multiidioma, hay que decidir la estructura final.
+Las carpetas de imágenes localizadas son locales/ignoradas; el JSON de preview sí está en Git porque es necesario para la prueba actual.
 
 ## Posible estructura futura
+
+Cuando se haga el pipeline multiidioma completo, se podría unificar en algo como:
 
 ```text
 public/card-images/
@@ -86,7 +108,7 @@ public/card-images/
     art/
 ```
 
-Esto evitaría tener tantas carpetas separadas en la raíz de `public/`.
+Pero no se debe mover ahora sin actualizar `cards.json`, scripts y helpers.
 
 ## Regla de limpieza
 
@@ -94,7 +116,16 @@ Nunca borrar una carpeta de imágenes hasta comprobar:
 
 ```text
 1. cards.json ya no la referencia
-2. ningún componente la referencia
-3. los scripts están actualizados
-4. un script de validación confirma que no faltan rutas
+2. cards.multilang.preview.json ya no la referencia
+3. ningún componente la referencia directamente
+4. scripts están actualizados
+5. un script de validación confirma que no faltan rutas
+```
+
+## Próximas decisiones pendientes
+
+```text
+Decidir dónde vivirán los assets pesados si el proyecto se despliega fuera de local.
+Revisar si public/cards puede dejar de ser fallback.
+Definir pipeline definitivo para ES/EN completo.
 ```

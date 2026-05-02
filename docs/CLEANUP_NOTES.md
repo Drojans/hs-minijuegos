@@ -1,86 +1,145 @@
 # Notas de limpieza
 
-## Punto estable actual
+## Estado estable actual
 
-El commit estable actual incluye:
+El proyecto está en un punto estable con:
 
 ```text
-Selector global de idioma en Home
-CardBrowser usando idioma global
-Preview localizada funcionando en Base de datos
+Home multiidioma
+Base de datos multiidioma
+Adivina el coste multiidioma
+Grid de cartas multiidioma
+Carga centralizada de cartas
+Helpers globales de idioma/carta
+public/data limpio
+assets pesados fuera del tracking de Git
+scripts documentados
 ```
 
-No seguir aplicando idioma a minijuegos hasta limpiar helpers y carga de datos.
+Pendiente principal:
 
-## Ignorado en Git
+```text
+Impostor todavía no está adaptado al idioma global.
+```
 
-Assets pesados/locales ignorados en `.gitignore`:
+## Limpieza ya completada
+
+```text
+.gitignore ordenado
+docs creados
+public/data limpiado
+JSON temporales archivados fuera de public/data
+scripts documentados
+Maná movido a su propia carpeta
+helpers globales añadidos
+carga centralizada añadida
+Maná adaptado a idioma global
+Grid adaptado a idioma global
+assets pesados destrackeados de Git
+```
+
+## No borrar todavía
+
+No borrar estas carpetas locales aunque estén ignoradas:
 
 ```text
 public/cards/
-public/card-art/
 public/cards-optimized/
 public/cards-normalized/
+public/card-art/
 public/card-art-optimized/
 public/cards-localized/
 public/cards-optimized-localized/
 public/cards-normalized-localized/
 ```
 
-Esto no borra nada del disco. Solo evita que Git los meta en commits.
-
-## No borrar todavía
-
-No borrar todavía:
+Motivo:
 
 ```text
-public/cards/
-public/cards-optimized/
-public/cards-normalized/
-public/card-art-optimized/
+La app local todavía puede depender de esas rutas para renders y fallback.
 ```
 
-Motivo: siguen referenciadas por `cards.json` y/o componentes como rutas runtime o fallback.
-
-## Candidatos a mover/archivar después
+## Mantener en Git
 
 ```text
-public/data/cards.backup.json
-public/data/cards.before-art.json
-public/data/cards.before-normalized-renders.json
-public/data/cards.generated.es.json
-public/data/cards.generated.es.with-images.json
-public/data/cards.original.before-generated-es.json
-public/data/normalized-renders-report.json
+src/
+public/data/cards.json
+public/data/cards.multilang.preview.json
+public/fonts/
+public/grid-icons/
+public/ui/
+docs/
+scripts/
+package.json
+package-lock.json
+vite.config.*
 ```
 
-Posibles destinos:
+## Scripts
+
+De momento:
 
 ```text
-data-archive/
-reports/archive/
+No eliminar scripts.
+No mover scripts.
+No ejecutar scripts destructivos sin revisar.
 ```
 
-## Antes de tocar minijuegos otra vez
-
-Hacer primero:
+Consultar antes:
 
 ```text
-1. Mejorar LanguageProvider para soportar t(key, variables)
-2. Añadir helpers globales de etiquetas de cartas
-3. Centralizar helpers de imagen/nombre/texto de cartas
-4. Centralizar carga de datos de cartas
-5. Aplicar idioma a un minijuego cada vez
-6. Probar
-7. Commit
+docs/SCRIPTS.md
 ```
 
-Orden recomendado:
+## Antes de tocar Impostor
+
+Hacer siempre:
 
 ```text
-1. GuessManaCost
-2. CardGrid
-3. Impostor
+1. git status limpio
+2. commit/tag estable previo
+3. tocar un archivo cada vez si se puede
+4. no tocar CSS salvo necesidad real
+5. probar Home, Base de datos, Maná y Grid después
+6. commit propio de Impostor
 ```
 
-Impostor debería ir al final porque tiene preload, plantillas neutrales y renderizado más delicado.
+## Orden recomendado a partir de ahora
+
+```text
+1. Crear tag estable antes de Impostor
+2. Revisar estructura de Impostor sin cambiar lógica
+3. Adaptar solo textos visibles de Impostor
+4. Adaptar nombres/renders localizados de cartas
+5. Probar
+6. Commit
+```
+
+## Comandos útiles de comprobación
+
+Ver estado:
+
+```bash
+git status
+```
+
+Comprobar que Git no trackea assets pesados:
+
+```bash
+git ls-files public/cards public/cards-optimized public/cards-normalized public/card-art public/card-art-optimized public/cards-localized public/cards-optimized-localized public/cards-normalized-localized
+```
+
+Debe no devolver nada.
+
+Comprobar `public/data`:
+
+```powershell
+Get-ChildItem public\data | Select-Object Name, Length
+```
+
+Debe mostrar solo:
+
+```text
+cards.json
+cards.multilang.preview.json
+```
