@@ -1,4 +1,13 @@
-import { useDeferredValue, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useLanguage } from "../i18n/LanguageProvider";
+import {
+  getCardName,
+  getCardText,
+  getDetailImage,
+  getSecondaryCardName,
+  getThumbImage,
+  mergeLocaleImages,
+} from "../utils/cardLocale";
 import "./CardBrowser.css";
 
 const CLASS_LABELS = {
@@ -51,12 +60,6 @@ const CLASS_ORDER = [
 const TYPE_ORDER = ["MINION", "SPELL", "WEAPON", "LOCATION", "HERO"];
 const RARITY_ORDER = ["FREE", "COMMON", "RARE", "EPIC", "LEGENDARY"];
 const COST_OPTIONS = ["ALL", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
-const INITIAL_VISIBLE_COUNT = 24;
-const LOAD_MORE_COUNT = 24;
-const THUMB_PRELOAD_COUNT = 12;
-
-const PRELOADED_BROWSER_IMAGES = new Set();
-const LOADED_BROWSER_IMAGES = new Set();
 
 function translateCardClass(value) {
   return CLASS_LABELS[value] ?? value ?? "Desconocida";
@@ -70,104 +73,6 @@ function translateRarity(value) {
   return RARITY_LABELS[value] ?? value ?? "Sin rareza";
 }
 
-function getOppositeLocale(locale) {
-  return locale === "en" ? "es" : "en";
-}
-
-function getCardImage(card, imageType, locale = "es") {
-  if (!card) return "";
-
-  const localized =
-    card.imagesByLocale?.[locale]?.[imageType] ||
-    card.imagesByLocale?.[getOppositeLocale(locale)]?.[imageType];
-
-  if (localized) return localized;
-
-  if (card[imageType]) return card[imageType];
-
-  if (imageType === "imageThumb") {
-    return card.imageGame || card.image || card.imageRenderNormalized || "";
-  }
-
-  if (imageType === "imageGame") {
-    return card.imageThumb || card.image || card.imageRenderNormalized || "";
-  }
-
-  if (imageType === "imageRenderNormalized") {
-    return card.imageDetail || card.imageGame || card.image || card.imageThumb || "";
-  }
-
-  return card.imageGame || card.imageThumb || card.image || card.imageRenderNormalized || "";
-}
-
-function getThumbImage(card, locale = "es") {
-  // La base de datos muestra muchas cartas a la vez: aquí conviene usar miniaturas.
-  return getCardImage(card, "imageThumb", locale);
-}
-
-function getDetailImage(card, locale = "es") {
-  // En el detalle usamos el render normalizado si existe.
-  return getCardImage(card, "imageRenderNormalized", locale);
-}
-
-function getCardName(card, locale = "es") {
-  if (!card) return "";
-  return locale === "en"
-    ? card.nameEn || card.name || ""
-    : card.name || card.nameEn || "";
-}
-
-function getSecondaryCardName(card, locale = "es") {
-  if (!card) return "";
-
-  if (locale === "en") {
-    return card.name && card.name !== card.nameEn ? card.name : "";
-  }
-
-  return card.nameEn && card.nameEn !== card.name ? card.nameEn : "";
-}
-
-function getCardText(card, locale = "es") {
-  if (!card) return "";
-  return locale === "en"
-    ? card.textEn || card.text || ""
-    : card.text || card.textEn || "";
-}
-
-function mergePreviewLocaleImages(cards, previewImagesById) {
-  if (!previewImagesById.size) return cards;
-
-  return cards.map((card) => {
-    const previewImages = previewImagesById.get(card.id);
-    if (!previewImages) return card;
-
-    return {
-      ...card,
-      imagesByLocale: {
-        ...(card.imagesByLocale ?? {}),
-        ...previewImages,
-      },
-      multilangPreview: true,
-    };
-  });
-}
-
-function preloadBrowserImage(src) {
-  if (!src || typeof window === "undefined" || PRELOADED_BROWSER_IMAGES.has(src)) return;
-
-  PRELOADED_BROWSER_IMAGES.add(src);
-
-  const image = new window.Image();
-  image.decoding = "async";
-
-  if ("fetchPriority" in image) {
-    image.fetchPriority = "low";
-  }
-
-  image.onload = () => LOADED_BROWSER_IMAGES.add(src);
-  image.src = src;
-}
-
 function CardBrowser({ cards, loading, onBack }) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
@@ -175,10 +80,8 @@ function CardBrowser({ cards, loading, onBack }) {
   const [rarityFilter, setRarityFilter] = useState("ALL");
   const [costFilter, setCostFilter] = useState("ALL");
   const [selectedCard, setSelectedCard] = useState(null);
-  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT);
-  const [locale, setLocale] = useState("es");
+  const { locale, t } = useLanguage();
   const [previewImagesById, setPreviewImagesById] = useState(new Map());
-  const deferredSearch = useDeferredValue(search.trim().toLowerCase());
 
   useEffect(() => {
     let cancelled = false;
@@ -212,21 +115,8 @@ function CardBrowser({ cards, loading, onBack }) {
   }, []);
 
   const displayCards = useMemo(() => {
-    return mergePreviewLocaleImages(cards, previewImagesById);
+    return mergeLocaleImages(cards, previewImagesById);
   }, [cards, previewImagesById]);
-
-  const searchIndexById = useMemo(() => {
-    const index = new Map();
-
-    displayCards.forEach((card) => {
-      index.set(
-        card.id,
-        `${card.name ?? ""} ${card.nameEn ?? ""} ${card.text ?? ""} ${card.textEn ?? ""}`.toLowerCase()
-      );
-    });
-
-    return index;
-  }, [displayCards]);
 
   const availableClasses = useMemo(() => {
     const values = new Set(displayCards.map((card) => card.cardClass).filter(Boolean));
@@ -245,7 +135,8 @@ function CardBrowser({ cards, loading, onBack }) {
 
   const filteredCards = useMemo(() => {
     return displayCards.filter((card) => {
-      const matchesSearch = !deferredSearch || (searchIndexById.get(card.id) ?? "").includes(deferredSearch);
+      const searchText = `${card.name ?? ""} ${card.nameEn ?? ""} ${card.text ?? ""} ${card.textEn ?? ""}`;
+      const matchesSearch = searchText.toLowerCase().includes(search.toLowerCase());
       const matchesType = typeFilter === "ALL" || card.type === typeFilter;
       const matchesClass = classFilter === "ALL" || card.cardClass === classFilter;
       const matchesRarity = rarityFilter === "ALL" || card.rarity === rarityFilter;
@@ -255,26 +146,15 @@ function CardBrowser({ cards, loading, onBack }) {
 
       return matchesSearch && matchesType && matchesClass && matchesRarity && matchesCost;
     });
-  }, [displayCards, deferredSearch, searchIndexById, typeFilter, classFilter, rarityFilter, costFilter]);
+  }, [displayCards, search, typeFilter, classFilter, rarityFilter, costFilter]);
 
-  const visibleCards = filteredCards.slice(0, visibleCount);
-  const hasMoreCards = visibleCount < filteredCards.length;
+  const visibleCards = filteredCards.slice(0, 60);
 
   useEffect(() => {
     if (!selectedCard) return;
     const stillVisible = filteredCards.some((card) => card.id === selectedCard.id);
     if (!stillVisible) setSelectedCard(null);
   }, [filteredCards, selectedCard]);
-
-  useEffect(() => {
-    setVisibleCount(INITIAL_VISIBLE_COUNT);
-  }, [deferredSearch, typeFilter, classFilter, rarityFilter, costFilter]);
-
-  useEffect(() => {
-    visibleCards.slice(0, THUMB_PRELOAD_COUNT).forEach((card) => {
-      preloadBrowserImage(getThumbImage(card, locale));
-    });
-  }, [visibleCards, locale]);
 
   function clearFilters() {
     setSearch("");
@@ -295,28 +175,8 @@ function CardBrowser({ cards, loading, onBack }) {
           <span>Explora tus cartas, filtra y abre cualquier carta para verla en grande.</span>
         </div>
 
-        <div className="cb-locale-switch" aria-label="Idioma de cartas">
-          <span>Idioma</span>
-          <div>
-            <button
-              type="button"
-              className={locale === "es" ? "is-active" : ""}
-              onClick={() => setLocale("es")}
-            >
-              ES
-            </button>
-            <button
-              type="button"
-              className={locale === "en" ? "is-active" : ""}
-              onClick={() => setLocale("en")}
-            >
-              EN
-            </button>
-          </div>
-        </div>
-
         <div className="cb-counter">
-          <span>{loading ? "Cargando" : "Cartas"}</span>
+          <span>{loading ? t("common.loading") : t("common.cards")}</span>
           <strong>{loading ? "..." : cards.length}</strong>
         </div>
       </header>
@@ -383,14 +243,14 @@ function CardBrowser({ cards, loading, onBack }) {
           </div>
 
           <div className="cb-card-grid">
-            {visibleCards.map((card, index) => (
+            {visibleCards.map((card) => (
               <button
                 type="button"
                 className={`cb-card-tile ${selectedCard?.id === card.id ? "is-selected" : ""}`}
                 key={card.id}
                 onClick={() => setSelectedCard(card)}
               >
-                <CardThumb card={card} locale={locale} priority={index < 8} />
+                <CardThumb card={card} locale={locale} />
                 <div className="cb-card-caption">
                   <strong>{getCardName(card, locale)}</strong>
                   <span>{translateType(card.type)}</span>
@@ -398,32 +258,21 @@ function CardBrowser({ cards, loading, onBack }) {
               </button>
             ))}
           </div>
-
-          {hasMoreCards && (
-            <div style={{ display: "flex", justifyContent: "center", marginTop: 22 }}>
-              <button
-                className="cb-clear-button"
-                onClick={() => setVisibleCount((current) => current + LOAD_MORE_COUNT)}
-              >
-                Mostrar {Math.min(LOAD_MORE_COUNT, filteredCards.length - visibleCards.length)} más
-              </button>
-            </div>
-          )}
         </div>
 
-        <CardDetailPanel card={selectedCard} locale={locale} onClose={() => setSelectedCard(null)} />
+        <CardDetailPanel card={selectedCard} locale={locale} t={t} onClose={() => setSelectedCard(null)} />
       </section>
     </main>
   );
 }
 
-function CardThumb({ card, locale, priority = false }) {
-  const src = getThumbImage(card, locale);
-  const [loaded, setLoaded] = useState(() => Boolean(src && LOADED_BROWSER_IMAGES.has(src)));
+function CardThumb({ card, locale }) {
+  const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
+  const src = getThumbImage(card, locale);
 
   useEffect(() => {
-    setLoaded(Boolean(src && LOADED_BROWSER_IMAGES.has(src)));
+    setLoaded(false);
     setFailed(false);
   }, [src]);
 
@@ -434,13 +283,9 @@ function CardThumb({ card, locale, priority = false }) {
         <img
           src={src}
           alt={getCardName(card, locale)}
-          loading={priority ? "eager" : "lazy"}
+          loading="lazy"
           decoding="async"
-          fetchPriority={priority ? "high" : "low"}
-          onLoad={() => {
-            LOADED_BROWSER_IMAGES.add(src);
-            setLoaded(true);
-          }}
+          onLoad={() => setLoaded(true)}
           onError={() => setFailed(true)}
         />
       ) : (
@@ -479,7 +324,7 @@ function CardLargeImage({ card, locale }) {
   );
 }
 
-function CardDetailPanel({ card, locale, onClose }) {
+function CardDetailPanel({ card, locale, t, onClose }) {
   if (!card) {
     return (
       <aside className="cb-detail-panel cb-detail-empty">
@@ -496,11 +341,9 @@ function CardDetailPanel({ card, locale, onClose }) {
       <CardLargeImage card={card} locale={locale} />
 
       <div className="cb-detail-info">
-        <p className="cb-detail-kicker">Detalle de carta · {locale.toUpperCase()}</p>
+        <p className="cb-detail-kicker">{t("database.cardDetail")} · {locale.toUpperCase()}</p>
         <h2>{getCardName(card, locale)}</h2>
-        {getSecondaryCardName(card, locale) && (
-          <p className="cb-detail-english">{getSecondaryCardName(card, locale)}</p>
-        )}
+        {getSecondaryCardName(card, locale) && <p className="cb-detail-english">{getSecondaryCardName(card, locale)}</p>}
 
         <div className="cb-detail-tags">
           <span>{translateCardClass(card.cardClass)}</span>
@@ -516,7 +359,7 @@ function CardDetailPanel({ card, locale, onClose }) {
 
         <div className="cb-detail-text">
           <span>Texto</span>
-          <p>{getCardText(card, locale) || "Sin texto."}</p>
+          <p>{getCardText(card, locale) || t("database.noText")}</p>
         </div>
 
         <dl className="cb-detail-meta">

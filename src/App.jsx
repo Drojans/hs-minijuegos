@@ -1,46 +1,49 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CardBrowser from "./components/CardBrowser";
+import LanguageToggle from "./components/LanguageToggle";
+import { useLanguage } from "./i18n/LanguageProvider";
 import GuessManaCost from "./games/GuessManaCost";
 import ImpostorGame from "./games/Impostor/ImpostorGame";
 import CardGridGame from "./games/CardGrid/CardGridGame";
 import "./App.css";
 
-const HOME_MODES = [
+const HOME_MODE_CONFIG = [
   {
     id: "guessMana",
     icon: "✦",
-    title: "Adivina el coste",
-    description: "Observa la carta y selecciona su coste real de maná.",
-    cta: "Jugar",
+    titleKey: "home.modes.guessMana.title",
+    descriptionKey: "home.modes.guessMana.description",
+    ctaKey: "home.modes.play",
     featured: true,
   },
   {
     id: "impostor",
     icon: "◈",
-    title: "Encuentra el impostor",
-    description: "Encuentra las cartas correctas y evita las trampas de cada ronda.",
-    cta: "Jugar",
+    titleKey: "home.modes.impostor.title",
+    descriptionKey: "home.modes.impostor.description",
+    ctaKey: "home.modes.play",
     featured: false,
   },
   {
     id: "grid",
     icon: "▦",
-    title: "Grid de cartas",
-    description: "Completa un 3x3 escribiendo cartas que cumplan fila y columna.",
-    cta: "Jugar",
+    titleKey: "home.modes.grid.title",
+    descriptionKey: "home.modes.grid.description",
+    ctaKey: "home.modes.play",
     featured: false,
   },
   {
     id: "cards",
     icon: "☰",
-    title: "Base de datos",
-    description: "Explora la colección, filtra cartas y ábrelas en grande.",
-    cta: "Abrir",
+    titleKey: "home.modes.cards.title",
+    descriptionKey: "home.modes.cards.description",
+    ctaKey: "home.modes.open",
     featured: false,
   },
 ];
 
 function App() {
+  const { t } = useLanguage();
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState("home");
@@ -57,6 +60,15 @@ function App() {
         setLoading(false);
       });
   }, []);
+
+  const homeModes = useMemo(() => {
+    return HOME_MODE_CONFIG.map((mode) => ({
+      ...mode,
+      title: t(mode.titleKey),
+      description: t(mode.descriptionKey),
+      cta: t(mode.ctaKey),
+    }));
+  }, [t]);
 
   if (currentView === "guessMana") {
     return <GuessManaCost cards={cards} onBack={() => setCurrentView("home")} />;
@@ -78,16 +90,27 @@ function App() {
     <main className="app-page app-home-hearthstone">
       <div className="app-home-bg-layer" aria-hidden="true" />
 
+      <div
+        style={{
+          position: "fixed",
+          top: 14,
+          right: 22,
+          zIndex: 50,
+        }}
+      >
+        <LanguageToggle compact />
+      </div>
+
       <section className="app-home-centered-shell">
         <header className="app-home-centered-header">
-          <p className="app-home-kicker">Hearthstone fan minigames</p>
+          <p className="app-home-kicker">{t("home.kicker")}</p>
           <h1>Hearthdle</h1>
-          <p className="app-home-subtitle">Adivina cartas de Hearthstone</p>
-          <h2>Selecciona un modo</h2>
+          <p className="app-home-subtitle">{t("home.subtitle")}</p>
+          <h2>{t("home.selectMode")}</h2>
         </header>
 
-        <section className="app-home-mode-grid" aria-label="Modos de juego">
-          {HOME_MODES.map((mode) => (
+        <section className="app-home-mode-grid" aria-label={t("home.gameModesAria")}>
+          {homeModes.map((mode) => (
             <article
               key={mode.id}
               className={`app-home-mode-card ${mode.featured ? "app-home-mode-card-featured" : ""}`}
@@ -102,7 +125,7 @@ function App() {
                 disabled={loading}
                 onClick={() => setCurrentView(mode.id)}
               >
-                {loading ? "Cargando..." : mode.cta}
+                {loading ? t("common.loadingLong") : mode.cta}
               </button>
             </article>
           ))}

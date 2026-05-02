@@ -1,0 +1,58 @@
+.language-toggle {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 112px;
+  padding: 10px;
+  border-radius: 22px;
+  border: 1px solid rgba(81, 203, 255, 0.24);
+  background: rgba(255, 255, 255, 0.045);
+  text-align: center;
+}
+
+.language-toggle > span {
+  color: var(--hs-muted, #c9b894);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.language-toggle > div {
+  display: flex;
+  gap: 6px;
+}
+
+.language-toggle button {
+  flex: 1;
+  border: 1px solid rgba(81, 203, 255, 0.24);
+  border-radius: 999px;
+  padding: 7px 9px;
+  background: rgba(255, 255, 255, 0.055);
+  color: var(--hs-text, #fff2d0);
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.16s ease, background 0.16s ease, border-color 0.16s ease;
+}
+
+.language-toggle button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(112, 227, 255, 0.48);
+}
+
+.language-toggle button.is-active {
+  color: #071021;
+  border-color: rgba(255, 213, 111, 0.75);
+  background: linear-gradient(135deg, #ffd66d, #f7a928);
+  box-shadow: 0 0 18px rgba(255, 196, 74, 0.18);
+}
+
+.language-toggle.is-compact {
+  min-width: auto;
+  padding: 7px;
+  border-radius: 999px;
+}
+
+.language-toggle.is-compact button {
+  padding: 6px 10px;
+}
