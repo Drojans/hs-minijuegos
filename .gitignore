@@ -51,3 +51,5 @@ public/data/normalized-renders-report.json
 # Local audit exports
 hs-minijuegos-audit/
 hs-minijuegos-audit.zip
+# Local archived generated data
+data-archive/
