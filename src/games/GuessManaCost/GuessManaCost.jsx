@@ -1,55 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
+import { useLanguage } from "../../i18n/LanguageProvider";
+import {
+  getCardName,
+  getDetailImage,
+  translateCardClass,
+  translateCardRarity,
+  translateCardType,
+} from "../../utils/cardLocale";
 import "./GuessManaCost.css";
 
 const MAX_ROUNDS = 10;
 const MANA_VALUES = Array.from({ length: 11 }, (_, index) => index);
 
-const CLASS_LABELS = {
-  DEATHKNIGHT: "Caballero de la Muerte",
-  DEMONHUNTER: "Cazador de Demonios",
-  DRUID: "Druida",
-  HUNTER: "Cazador",
-  MAGE: "Mago",
-  PALADIN: "Paladín",
-  PRIEST: "Sacerdote",
-  ROGUE: "Pícaro",
-  SHAMAN: "Chamán",
-  WARLOCK: "Brujo",
-  WARRIOR: "Guerrero",
-  NEUTRAL: "Neutral",
-};
-
-const TYPE_LABELS = {
-  MINION: "Esbirro",
-  SPELL: "Hechizo",
-  WEAPON: "Arma",
-  HERO: "Héroe",
-  HERO_POWER: "Poder de héroe",
-  LOCATION: "Lugar",
-};
-
-const RARITY_LABELS = {
-  FREE: "Gratis",
-  COMMON: "Común",
-  RARE: "Rara",
-  EPIC: "Épica",
-  LEGENDARY: "Legendaria",
-};
-
-function translateCardClass(value) {
-  return CLASS_LABELS[value] ?? value ?? "Desconocida";
-}
-
-function translateType(value) {
-  return TYPE_LABELS[value] ?? value ?? "Desconocido";
-}
-
-function translateRarity(value) {
-  return RARITY_LABELS[value] ?? value ?? "Sin rareza";
-}
-
-function getGameImage(card) {
-  return card?.imageRenderNormalized || card?.imageGame || card?.imageDetail || card?.image || "";
+function getGameImage(card, locale) {
+  return getDetailImage(card, locale) || card?.imageGame || card?.imageDetail || card?.image || "";
 }
 
 function getRandomItem(array) {
@@ -57,19 +21,21 @@ function getRandomItem(array) {
 }
 
 function GuessManaCost({ cards, onBack }) {
+  const { locale, t } = useLanguage();
+
   const playableCards = useMemo(() => {
     return cards.filter((card) => {
       return (
         typeof card.cost === "number" &&
         card.cost >= 0 &&
         card.cost <= 10 &&
-        card.name &&
-        getGameImage(card) &&
+        getCardName(card, locale) &&
+        getGameImage(card, locale) &&
         card.type !== "HERO" &&
         card.type !== "HERO_POWER"
       );
     });
-  }, [cards]);
+  }, [cards, locale]);
 
   const [currentCard, setCurrentCard] = useState(null);
   const [selectedCost, setSelectedCost] = useState(null);
@@ -82,6 +48,10 @@ function GuessManaCost({ cards, onBack }) {
     if (playableCards.length === 0 || currentCard) return;
     setCurrentCard(getRandomItem(playableCards));
   }, [playableCards, currentCard]);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [locale, currentCard?.id]);
 
   function startNewGame() {
     setCurrentCard(getRandomItem(playableCards));
@@ -123,9 +93,9 @@ function GuessManaCost({ cards, onBack }) {
     return (
       <main className="gm-page">
         <section className="gm-empty-state">
-          <h2>Adivina el coste</h2>
-          <p>No hay cartas disponibles para este minijuego.</p>
-          <button className="gm-secondary-button" onClick={onBack}>Volver</button>
+          <h2>{t("guessMana.title")}</h2>
+          <p>{t("guessMana.noCards")}</p>
+          <button className="gm-secondary-button" onClick={onBack}>{t("common.back")}</button>
         </section>
       </main>
     );
@@ -134,7 +104,7 @@ function GuessManaCost({ cards, onBack }) {
   if (!currentCard) {
     return (
       <main className="gm-page">
-        <section className="gm-empty-state"><h2>Cargando partida...</h2></section>
+        <section className="gm-empty-state"><h2>{t("guessMana.loadingGame")}</h2></section>
       </main>
     );
   }
@@ -143,19 +113,26 @@ function GuessManaCost({ cards, onBack }) {
   const isCorrect = selectedCost === currentCard.cost;
   const accuracy = Math.round((score / MAX_ROUNDS) * 100);
   const progressPercent = (round / MAX_ROUNDS) * 100;
-  const imageSrc = getGameImage(currentCard);
+  const imageSrc = getGameImage(currentCard, locale);
+  const currentCardName = getCardName(currentCard, locale);
 
   if (finished) {
     return (
       <main className="gm-page">
         <section className="gm-end-screen">
-          <p className="gm-eyebrow">Partida terminada</p>
-          <h1>Adivina el coste</h1>
+          <p className="gm-eyebrow">{t("guessMana.gameFinished")}</p>
+          <h1>{t("guessMana.title")}</h1>
           <div className="gm-end-score">{score} / {MAX_ROUNDS}</div>
-          <p>Has acertado <strong>{score}</strong> de <strong>{MAX_ROUNDS}</strong> cartas. Precisión final: <strong>{accuracy}%</strong>.</p>
+          <p>
+            {t("guessMana.finalText", {
+              score,
+              maxRounds: MAX_ROUNDS,
+              accuracy,
+            })}
+          </p>
           <div className="gm-end-actions">
-            <button className="gm-primary-button" onClick={startNewGame}>Jugar otra vez</button>
-            <button className="gm-secondary-button" onClick={onBack}>Volver al inicio</button>
+            <button className="gm-primary-button" onClick={startNewGame}>{t("common.playAgain")}</button>
+            <button className="gm-secondary-button" onClick={onBack}>{t("guessMana.backHome")}</button>
           </div>
         </section>
       </main>
@@ -166,17 +143,17 @@ function GuessManaCost({ cards, onBack }) {
     <main className="gm-page">
       <section className="gm-shell">
         <header className="gm-header">
-          <button className="gm-secondary-button" onClick={onBack}>← Inicio</button>
+          <button className="gm-secondary-button" onClick={onBack}>{t("common.backHome")}</button>
 
           <div className="gm-title-block">
-            <p className="gm-eyebrow">Minijuego</p>
-            <h1>Adivina el coste</h1>
-            <p>Observa la carta y selecciona su coste real de maná.</p>
+            <p className="gm-eyebrow">{t("guessMana.minigame")}</p>
+            <h1>{t("guessMana.title")}</h1>
+            <p>{t("guessMana.subtitle")}</p>
           </div>
 
           <div className="gm-score-pill">
-            <span>Ronda {round}/{MAX_ROUNDS}</span>
-            <strong>{score} aciertos</strong>
+            <span>{t("common.round", { round, maxRounds: MAX_ROUNDS })}</span>
+            <strong>{t("common.correctCount", { score })}</strong>
           </div>
         </header>
 
@@ -191,14 +168,14 @@ function GuessManaCost({ cards, onBack }) {
                 {!imageFailed ? (
                   <img
                     src={imageSrc}
-                    alt={currentCard.name}
+                    alt={currentCardName}
                     loading="eager"
                     decoding="async"
                     fetchPriority="high"
                     onError={() => setImageFailed(true)}
                   />
                 ) : (
-                  <div className="gm-image-fallback">Sin imagen</div>
+                  <div className="gm-image-fallback">{t("guessMana.noImage")}</div>
                 )}
 
                 {!hasAnswered && !imageFailed && <div className="gm-mana-cover">?</div>}
@@ -209,28 +186,28 @@ function GuessManaCost({ cards, onBack }) {
 
           <article className="gm-control-panel">
             <section className="gm-info-card">
-              <p className="gm-eyebrow">Datos de la carta</p>
-              <h2>{currentCard.name}</h2>
+              <p className="gm-eyebrow">{t("guessMana.cardData")}</p>
+              <h2>{currentCardName}</h2>
 
               <div className="gm-tag-row">
-                <span>{translateCardClass(currentCard.cardClass)}</span>
-                <span>{translateType(currentCard.type)}</span>
-                <span>{translateRarity(currentCard.rarity)}</span>
+                <span>{translateCardClass(currentCard.cardClass, locale)}</span>
+                <span>{translateCardType(currentCard.type, locale)}</span>
+                <span>{translateCardRarity(currentCard.rarity, locale)}</span>
               </div>
 
               {currentCard.attack !== null && currentCard.health !== null ? (
                 <div className="gm-stat-row">
-                  <div><span>Ataque</span><strong>{currentCard.attack}</strong></div>
-                  <div><span>Vida</span><strong>{currentCard.health}</strong></div>
+                  <div><span>{t("guessMana.attack")}</span><strong>{currentCard.attack}</strong></div>
+                  <div><span>{t("guessMana.health")}</span><strong>{currentCard.health}</strong></div>
                 </div>
               ) : (
-                <p className="gm-no-stats">Carta sin ataque ni vida.</p>
+                <p className="gm-no-stats">{t("guessMana.noStats")}</p>
               )}
             </section>
 
             <section className="gm-mana-panel">
-              <p className="gm-eyebrow">Selector de maná</p>
-              <h3>Elige el coste</h3>
+              <p className="gm-eyebrow">{t("guessMana.manaSelector")}</p>
+              <h3>{t("guessMana.chooseCost")}</h3>
 
               <div className="gm-mana-grid">
                 {MANA_VALUES.map((cost) => {
@@ -249,10 +226,15 @@ function GuessManaCost({ cards, onBack }) {
 
             {hasAnswered && (
               <section className={`gm-feedback ${isCorrect ? "is-correct" : "is-wrong"}`}>
-                <h3>{isCorrect ? "¡Correcto!" : "No era esa"}</h3>
-                <p><strong>{currentCard.name}</strong> cuesta <strong>{currentCard.cost}</strong> de maná.</p>
+                <h3>{isCorrect ? t("guessMana.correct") : t("guessMana.wrong")}</h3>
+                <p>
+                  {t("guessMana.costFeedback", {
+                    name: currentCardName,
+                    cost: currentCard.cost,
+                  })}
+                </p>
                 <button className="gm-primary-button" onClick={goNextRound}>
-                  {round >= MAX_ROUNDS ? "Ver resultado" : "Siguiente carta"}
+                  {round >= MAX_ROUNDS ? t("common.seeResult") : t("guessMana.nextCard")}
                 </button>
               </section>
             )}
