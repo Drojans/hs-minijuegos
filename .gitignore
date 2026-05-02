@@ -23,15 +23,31 @@ dist-ssr
 *.sln
 *.sw?
 
+# Heavy generated/runtime image folders
+# Kept locally for now. Do not commit blindly.
 public/cards/
-public/data/cards.backup.json
 public/card-art/
-public/data/cards.before-art.json
+public/cards-optimized/
+public/cards-normalized/
+public/card-art-optimized/
+
+# Temporary multilingual preview/generated image folders
+public/cards-localized/
+public/cards-optimized-localized/
+public/cards-normalized-localized/
 
 # Reports/scripts output
 reports/
 
 # Generated card-data previews/backups
+public/data/cards.backup.json
+public/data/cards.before-art.json
+public/data/cards.before-normalized-renders.json
 public/data/cards.generated.es.json
 public/data/cards.generated.es.with-images.json
 public/data/cards.original.before-generated-es.json
+public/data/normalized-renders-report.json
+
+# Local audit exports
+hs-minijuegos-audit/
+hs-minijuegos-audit.zip
