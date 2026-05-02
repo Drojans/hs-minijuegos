@@ -13,6 +13,15 @@ export const translations = {
     "common.loadingLong": "Cargando...",
     "common.cards": "Cartas",
     "common.unknown": "Desconocido",
+    "common.back": "Volver",
+    "common.backHome": "← Inicio",
+    "common.next": "Siguiente",
+    "common.play": "Jugar",
+    "common.playAgain": "Jugar otra vez",
+    "common.result": "Resultado",
+    "common.seeResult": "Ver resultado",
+    "common.round": "Ronda {round}/{maxRounds}",
+    "common.correctCount": "{score} aciertos",
 
     "home.kicker": "Hearthstone fan minigames",
     "home.subtitle": "Adivina cartas de Hearthstone",
@@ -38,6 +47,15 @@ export const translations = {
     "common.loadingLong": "Loading...",
     "common.cards": "Cards",
     "common.unknown": "Unknown",
+    "common.back": "Back",
+    "common.backHome": "← Home",
+    "common.next": "Next",
+    "common.play": "Play",
+    "common.playAgain": "Play again",
+    "common.result": "Result",
+    "common.seeResult": "See result",
+    "common.round": "Round {round}/{maxRounds}",
+    "common.correctCount": "{score} correct",
 
     "home.kicker": "Hearthstone fan minigames",
     "home.subtitle": "Guess Hearthstone cards",
@@ -63,7 +81,11 @@ export function normalizeLocale(locale) {
   return SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
 }
 
-export function translate(locale, key) {
+export function translate(locale, key, values = {}) {
   const safeLocale = normalizeLocale(locale);
-  return translations[safeLocale]?.[key] ?? translations[DEFAULT_LOCALE]?.[key] ?? key;
+  const template = translations[safeLocale]?.[key] ?? translations[DEFAULT_LOCALE]?.[key] ?? key;
+
+  return Object.entries(values).reduce((text, [name, value]) => {
+    return text.replaceAll(`{${name}}`, String(value));
+  }, template);
 }

@@ -6,7 +6,7 @@ const STORAGE_KEY = "hs-minijuegos-locale";
 const LanguageContext = createContext({
   locale: DEFAULT_LOCALE,
   setLocale: () => {},
-  t: (key) => translate(DEFAULT_LOCALE, key),
+  t: (key, values) => translate(DEFAULT_LOCALE, key, values),
 });
 
 function getInitialLocale() {
@@ -39,7 +39,7 @@ export function LanguageProvider({ children }) {
     return {
       locale,
       setLocale,
-      t: (key) => translate(locale, key),
+      t: (key, values) => translate(locale, key, values),
     };
   }, [locale]);
 
