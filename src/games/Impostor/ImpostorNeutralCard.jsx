@@ -1,5 +1,12 @@
 import { useId } from "react";
-import { getArtImage, getCardName, getGameImage, getThumbImage } from "../../utils/cardLocale";
+import {
+  getArtImage,
+  getCardName,
+  getDetailImage,
+  getGameImage,
+  getThumbImage,
+} from "../../utils/cardLocale";
+import minionNeutralOverlayFull from "./minion-neutral-overlay-full.png";
 import "./ImpostorNeutralCard.css";
 
 const CARD_TEMPLATES = {
@@ -16,6 +23,16 @@ const CARD_NAME_PATHS = {
 
 function getNeutralArt(card, locale) {
   return getArtImage(card, locale) || getThumbImage(card, locale) || getGameImage(card, locale) || card?.image || "";
+}
+
+function getNeutralRender(card, locale) {
+  return (
+    getDetailImage(card, locale) ||
+    getGameImage(card, locale) ||
+    getThumbImage(card, locale) ||
+    card?.image ||
+    ""
+  );
 }
 
 function getTemplateType(card) {
@@ -113,7 +130,7 @@ function CardNameSvg({ name, templateType }) {
           href={`#inc-card-name-path-${safeId}`}
           startOffset="50%"
           {...nameFitProps}
-      >
+        >
           {cleanName}
         </textPath>
       </text>
@@ -127,7 +144,7 @@ function CardNameSvg({ name, templateType }) {
           href={`#inc-card-name-path-${safeId}`}
           startOffset="50%"
           {...nameFitProps}
-      >
+        >
           {cleanName}
         </textPath>
       </text>
@@ -135,11 +152,50 @@ function CardNameSvg({ name, templateType }) {
   );
 }
 
-function ImpostorNeutralCard({ card, locale = "es" }) {
+function isLegendaryCard(card) {
+  return String(card?.rarity || "").toUpperCase() === "LEGENDARY";
+}
+
+function FullOverlayMinionCard({ card, locale, cardName }) {
+  const renderSrc = getNeutralRender(card, locale);
+  const legendaryClass = isLegendaryCard(card)
+    ? " inc-card-minion-template-overlay-legendary"
+    : "";
+
+  return (
+    <div
+      className={`inc-card-shell inc-card-minion inc-card-minion-template-overlay${legendaryClass}`}
+      title={cardName}
+      aria-label={cardName}
+    >
+      {renderSrc ? (
+        <img
+          className="inc-template-overlay-render"
+          src={renderSrc}
+          alt=""
+          loading="eager"
+          decoding="sync"
+        />
+      ) : (
+        <div className="inc-template-overlay-fallback">
+          {locale === "en" ? "No image" : "Sin imagen"}
+        </div>
+      )}
+
+      <img
+        className="inc-template-overlay-frame"
+        src={minionNeutralOverlayFull}
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+  );
+}
+
+function ClassicNeutralCard({ card, locale, templateType, templateSrc, cardName }) {
   const artSrc = getNeutralArt(card, locale);
-  const cardName = getCardName(card, locale);
-  const templateType = getTemplateType(card);
-  const templateSrc = CARD_TEMPLATES[templateType];
 
   return (
     <div className={`inc-card-shell inc-card-${templateType.toLowerCase()}`}>
@@ -170,6 +226,26 @@ function ImpostorNeutralCard({ card, locale = "es" }) {
         <CardNameSvg name={cardName} templateType={templateType} />
       </div>
     </div>
+  );
+}
+
+function ImpostorNeutralCard({ card, locale = "es" }) {
+  const cardName = getCardName(card, locale);
+  const templateType = getTemplateType(card);
+  const templateSrc = CARD_TEMPLATES[templateType];
+
+  if (templateType === "MINION") {
+    return <FullOverlayMinionCard card={card} locale={locale} cardName={cardName} />;
+  }
+
+  return (
+    <ClassicNeutralCard
+      card={card}
+      locale={locale}
+      templateType={templateType}
+      templateSrc={templateSrc}
+      cardName={cardName}
+    />
   );
 }
 

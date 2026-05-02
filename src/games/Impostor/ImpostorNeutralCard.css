@@ -13,24 +13,13 @@
 .inc-card-shell {
   position: relative;
   width: 100%;
-  /* Las plantillas reales son 785x1100, no 800x1066.
-     Usar su proporción evita que se vean encogidas antes del giro. */
-  aspect-ratio: 785 / 1100;
+  aspect-ratio: 800 / 1066;
   max-width: 250px;
   margin: 0 auto;
   user-select: none;
   filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.34));
   border: 1px solid transparent;
   transform: translateZ(0);
-}
-
-.inc-card-minion,
-.inc-card-spell {
-  aspect-ratio: 785 / 1100;
-}
-
-.inc-card-weapon {
-  aspect-ratio: 785 / 1070;
 }
 
 /* Imagen interior común */
@@ -72,51 +61,41 @@
   pointer-events: none;
 }
 
-/* Nombre común: una sola línea sobre ruta real de HearthCards */
+/* Nombre común */
 .inc-name-ribbon {
   position: absolute;
   z-index: 3;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  text-align: center;
+  overflow: hidden;
+}
+
+.inc-name-ribbon::before {
+  content: "";
+  position: absolute;
+  border-radius: 12px;
   pointer-events: none;
 }
 
-.inc-name-svg {
+.inc-name-ribbon span {
   position: relative;
   z-index: 1;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.inc-name-svg-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
   font-family: "Belwe HS", "Belwe Bold", "Trebuchet MS", "Segoe UI", Arial, sans-serif;
   font-weight: 700;
-  letter-spacing: -0.018em;
-  fill: #fff7ea;
-  stroke: rgba(3, 3, 3, 0.97);
-  stroke-width: 8.2px;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-  paint-order: stroke fill;
-  filter:
-    drop-shadow(0 3px 0 rgba(0, 0, 0, 0.72))
-    drop-shadow(0 0 2px rgba(255, 246, 218, 0.38));
-}
-
-.inc-name-svg-text-shadow {
-  fill: transparent;
-  stroke: rgba(0, 0, 0, 0.58);
-  stroke-width: 12px;
-  filter: none;
+  letter-spacing: -0.01em;
+  overflow-wrap: normal;
 }
 
 /* Esbirros */
 .inc-card-minion .inc-portrait-mask {
   left: 16.2%;
-  top: 8.2%;
+  top: 7.2%;
   width: 67.4%;
   height: 47.2%;
   border-radius: 50% / 50%;
@@ -128,10 +107,33 @@
 }
 
 .inc-card-minion .inc-name-ribbon {
-  left: 8.0%;
-  top: 50.0%;
-  width: 91.8%;
-  height: 16.2%;
+  left: 16.8%;
+  top: 64.8%;
+  width: 67.2%;
+  height: 14.6%;
+  padding: 0 4.4%;
+}
+
+.inc-card-minion .inc-name-ribbon::before {
+  inset: 8% 2.5% 7% 2.5%;
+  background:
+    linear-gradient(180deg, rgba(255, 251, 242, 0.36), rgba(225, 214, 193, 0.26));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(110, 85, 52, 0.14),
+    0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.inc-card-minion .inc-name-ribbon span {
+  color: #2f1a0f;
+  font-size: clamp(0.66rem, 1.14vw, 0.9rem);
+  line-height: 0.92;
+  text-shadow:
+    -1px 0 rgba(255, 255, 255, 0.95),
+    1px 0 rgba(255, 255, 255, 0.95),
+    0 -1px rgba(255, 255, 255, 0.95),
+    0 1px rgba(255, 255, 255, 0.95),
+    0 1px 2px rgba(255, 248, 234, 0.72);
 }
 
 /* Hechizos */
@@ -149,14 +151,32 @@
 }
 
 .inc-card-spell .inc-name-ribbon {
-  left: 5.6%;
-  top: 50.0%;
-  width: 92%;
-  height: 15.8%;
+  left: 16.6%;
+  top: 66.2%;
+  width: 68.4%;
+  height: 13.2%;
+  padding: 0 4.4%;
 }
 
-.inc-card-spell .inc-name-svg {
-  transform: translateX(1.8%);
+.inc-card-spell .inc-name-ribbon::before {
+  inset: 5% 1.5% 5% 1.5%;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 232, 0.42), rgba(225, 203, 166, 0.31));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.36),
+    0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+.inc-card-spell .inc-name-ribbon span {
+  color: #2d1a0b;
+  font-size: clamp(0.64rem, 1.1vw, 0.88rem);
+  line-height: 0.92;
+  text-shadow:
+    -1px 0 rgba(255, 255, 255, 0.92),
+    1px 0 rgba(255, 255, 255, 0.92),
+    0 -1px rgba(255, 255, 255, 0.92),
+    0 1px rgba(255, 255, 255, 0.92),
+    0 1px 2px rgba(255, 248, 234, 0.66);
 }
 
 /* Armas */
@@ -174,14 +194,33 @@
 }
 
 .inc-card-weapon .inc-name-ribbon {
-  left: 5.8%;
-  top: 47.8%;
-  width: 91%;
-  height: 15.8%;
+  left: 14.8%;
+  top: 66.4%;
+  width: 70.4%;
+  height: 13.8%;
+  padding: 0 5%;
 }
 
-.inc-card-weapon .inc-name-svg {
-  transform: translateX(1.2%);
+.inc-card-weapon .inc-name-ribbon::before {
+  inset: 6% 2% 6% 2%;
+  background:
+    linear-gradient(180deg, rgba(64, 72, 75, 0.66), rgba(29, 34, 37, 0.58));
+  border: 1px solid rgba(210, 215, 210, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 1px 3px rgba(0, 0, 0, 0.28);
+}
+
+.inc-card-weapon .inc-name-ribbon span {
+  color: #f3ead8;
+  font-size: clamp(0.64rem, 1.1vw, 0.88rem);
+  line-height: 0.92;
+  text-shadow:
+    -1px 0 rgba(0, 0, 0, 0.95),
+    1px 0 rgba(0, 0, 0, 0.95),
+    0 -1px rgba(0, 0, 0, 0.95),
+    0 1px rgba(0, 0, 0, 0.95),
+    0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .inc-card-shell:hover .inc-portrait-image {
@@ -192,4 +231,99 @@
 .inc-card-spell:hover .inc-portrait-image,
 .inc-card-weapon:hover .inc-portrait-image {
   transform: scale(1.16);
+}
+
+
+
+/* ==========================================================
+   EXPERIMENTO SIMPLE: render real + template PNG encima
+   Solo afecta a MINION.
+   Requiere:
+   src/games/Impostor/minion-neutral-overlay-full.png
+
+   No usa máscaras ni recortes. Solo:
+   1) render real completo debajo
+   2) template PNG encima
+
+   Ajustes:
+   - --ito-render-scale / x / y: tamaño y posición del render real.
+   - --ito-frame-scale / x / y: tamaño y posición del PNG de template.
+   ========================================================== */
+
+.inc-card-minion-template-overlay {
+  aspect-ratio: 2 / 3;
+  overflow: visible;
+  background: transparent;
+
+  /* Mueve render + overlay juntos para igualar la altura con la carta revelada.
+     Prueba primero entre -6px y -14px. */
+  --ito-card-y: -10px;
+
+  --ito-render-scale: 0.85;
+  --ito-render-x: 0%;
+  --ito-render-y: 0%;
+
+  --ito-frame-scale: 1;
+  --ito-frame-x: 2%;
+  --ito-frame-y: -2.8%;
+}
+
+.inc-card-minion-template-overlay .inc-template-overlay-render,
+.inc-card-minion-template-overlay .inc-template-overlay-frame,
+.inc-card-minion-template-overlay .inc-template-overlay-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.inc-card-minion-template-overlay .inc-template-overlay-render {
+  z-index: 1;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  transform:
+    translate(var(--ito-render-x), calc(var(--ito-render-y) + var(--ito-card-y)))
+    scale(var(--ito-render-scale));
+  transform-origin: center center;
+}
+
+.inc-card-minion-template-overlay .inc-template-overlay-frame {
+  z-index: 2;
+  object-fit: contain;
+  object-position: center center;
+  pointer-events: none;
+  display: block;
+  transform:
+    translate(var(--ito-frame-x), calc(var(--ito-frame-y) + var(--ito-card-y)))
+    scale(var(--ito-frame-scale));
+  transform-origin: center center;
+}
+
+.inc-card-minion-template-overlay .inc-template-overlay-fallback {
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.86rem;
+  font-weight: 800;
+  background:
+    radial-gradient(circle at 50% 26%, rgba(255, 255, 255, 0.16), transparent 52%),
+    linear-gradient(180deg, rgba(20, 33, 52, 0.9), rgba(7, 14, 25, 0.98));
+}
+/* Ajuste específico para esbirros legendarios.
+   Solo afecta a MINION + LEGENDARY. */
+.inc-card-minion-template-overlay.inc-card-minion-template-overlay-legendary {
+  /* Mantiene el conjunto a la misma altura general */
+  --ito-card-y: -10px;
+
+  /* Ajusta solo el render real de debajo */
+  --ito-render-scale: 0.9;
+  --ito-render-x: 1%;
+  --ito-render-y: -1.5%;
+
+  /* Mantiene el overlay donde ya encaja bien */
+  --ito-frame-scale: 1;
+  --ito-frame-x: 2%;
+  --ito-frame-y: -2.8%;
 }
