@@ -27,3 +27,11 @@ public/cards/
 public/data/cards.backup.json
 public/card-art/
 public/data/cards.before-art.json
+
+# Reports/scripts output
+reports/
+
+# Generated card-data previews/backups
+public/data/cards.generated.es.json
+public/data/cards.generated.es.with-images.json
+public/data/cards.original.before-generated-es.json
