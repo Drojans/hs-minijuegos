@@ -1,145 +1,96 @@
 # Notas de limpieza
 
-## Estado estable actual
+## Limpieza completada
 
-El proyecto está en un punto estable con:
-
-```text
-Home multiidioma
-Base de datos multiidioma
-Adivina el coste multiidioma
-Grid de cartas multiidioma
-Carga centralizada de cartas
-Helpers globales de idioma/carta
-public/data limpio
-assets pesados fuera del tracking de Git
-scripts documentados
-```
-
-Pendiente principal:
-
-```text
-Impostor todavía no está adaptado al idioma global.
-```
-
-## Limpieza ya completada
-
-```text
-.gitignore ordenado
-docs creados
-public/data limpiado
-JSON temporales archivados fuera de public/data
-scripts documentados
-Maná movido a su propia carpeta
-helpers globales añadidos
-carga centralizada añadida
-Maná adaptado a idioma global
-Grid adaptado a idioma global
-assets pesados destrackeados de Git
-```
-
-## No borrar todavía
-
-No borrar estas carpetas locales aunque estén ignoradas:
+Se eliminaron o archivaron fuera del proyecto:
 
 ```text
 public/cards/
 public/cards-optimized/
 public/cards-normalized/
-public/card-art/
-public/card-art-optimized/
 public/cards-localized/
 public/cards-optimized-localized/
 public/cards-normalized-localized/
-```
-
-Motivo:
-
-```text
-La app local todavía puede depender de esas rutas para renders y fallback.
-```
-
-## Mantener en Git
-
-```text
-src/
-public/data/cards.json
-public/data/cards.multilang.preview.json
-public/fonts/
-public/grid-icons/
+public/card-art/
+public/card-art-optimized/
 public/ui/
-docs/
-scripts/
-package.json
-package-lock.json
-vite.config.*
+src/assets/
+reports/
+data-archive/
+scripts legacy de la raíz de scripts/
+public/data/cards.multilang.preview.json
 ```
 
-## Scripts
-
-De momento:
+## Estructura final activa
 
 ```text
-No eliminar scripts.
-No mover scripts.
-No ejecutar scripts destructivos sin revisar.
+public/data/cards.json
+public/data/cards.multilang.generated.json
+public/card-images/{es,en}/{thumb,game,adapted}/
+scripts/v2/generate-card-images-multilang.mjs
+src/utils/cardLocale.js
+src/hooks/useCardsData.js
 ```
 
-Consultar antes:
+## Estado de juegos
 
 ```text
-docs/SCRIPTS.md
+Home: OK
+Base de datos: OK
+Guess Mana: OK
+Grid: OK
+Impostor: OK
+Idioma ES/EN: OK
 ```
 
-## Antes de tocar Impostor
+## Regla para nuevos cambios
 
-Hacer siempre:
+Antes de borrar cualquier cosa:
 
 ```text
 1. git status limpio
-2. commit/tag estable previo
-3. tocar un archivo cada vez si se puede
-4. no tocar CSS salvo necesidad real
-5. probar Home, Base de datos, Maná y Grid después
-6. commit propio de Impostor
+2. buscar referencias en src/
+3. mover a backup temporal, no borrar directo
+4. probar npm run dev
+5. probar ES/EN y minijuegos principales
+6. commit
+7. borrar backup temporal
 ```
 
-## Orden recomendado a partir de ahora
+## Búsquedas útiles
 
-```text
-1. Crear tag estable antes de Impostor
-2. Revisar estructura de Impostor sin cambiar lógica
-3. Adaptar solo textos visibles de Impostor
-4. Adaptar nombres/renders localizados de cartas
-5. Probar
-6. Commit
+Referencias legacy en código:
+
+```powershell
+Get-ChildItem src -Recurse -File | Select-String -Pattern "cards-optimized-localized|cards-normalized-localized|cards.multilang.preview|/ui/|public/ui|imageArt|card-art|cards-optimized|cards-normalized|/cards/"
 ```
 
-## Comandos útiles de comprobación
+Rutas antiguas en todo el proyecto excepto docs:
 
-Ver estado:
-
-```bash
-git status
+```powershell
+Get-ChildItem . -Recurse -File |
+  Where-Object { $_.FullName -notmatch "\\.git\\|\\node_modules\\|\\docs\\" } |
+  Select-String -Pattern "cards.multilang.preview|public/ui|cards-normalized-localized|cards-optimized-localized"
 ```
 
-Comprobar que Git no trackea assets pesados:
-
-```bash
-git ls-files public/cards public/cards-optimized public/cards-normalized public/card-art public/card-art-optimized public/cards-localized public/cards-optimized-localized public/cards-normalized-localized
-```
-
-Debe no devolver nada.
-
-Comprobar `public/data`:
+Estado de datos:
 
 ```powershell
 Get-ChildItem public\data | Select-Object Name, Length
 ```
 
-Debe mostrar solo:
+Estado Git:
+
+```powershell
+git status
+```
+
+## Carpetas que deben seguir ignoradas
 
 ```text
-cards.json
-cards.multilang.preview.json
+public/card-images/
+reports/
+data-archive/
 ```
+
+Y también las carpetas legacy de imágenes, por si algún script viejo o backup las recrea.

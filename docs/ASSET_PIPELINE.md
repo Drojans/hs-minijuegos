@@ -1,131 +1,141 @@
-# Pipeline de assets
+# Pipeline de assets de cartas
 
-## Estado actual
+## Objetivo
 
-El proyecto usa assets locales de cartas, pero las carpetas pesadas de imágenes ya no están trackeadas por Git.
+Mantener un único sistema de imágenes de cartas, localizado por idioma y sin guardar renders PNG pesados en `public/`.
 
-Esto significa:
-
-```text
-La app funciona en este ordenador porque las imágenes siguen en disco.
-Git ya no guarda esas carpetas pesadas.
-.gitignore evita que vuelvan a entrar.
-```
-
-## Carpetas pesadas locales ignoradas
+## Estructura activa
 
 ```text
-public/cards/
-public/card-art/
-public/cards-optimized/
-public/cards-normalized/
-public/card-art-optimized/
-public/cards-localized/
-public/cards-optimized-localized/
-public/cards-normalized-localized/
+public/card-images/
+  es/
+    thumb/
+    game/
+    adapted/
+  en/
+    thumb/
+    game/
+    adapted/
 ```
 
-Estas carpetas no deben borrarse todavía.
+## Variantes
 
-## Carpetas runtime ligeras mantenidas en Git
+### `thumb`
+
+Miniatura ligera para listados, grids y base de datos.
 
 ```text
-public/fonts/
-public/grid-icons/
-public/ui/
+/card-images/es/thumb/ID.webp
+/card-images/en/thumb/ID.webp
 ```
 
-## Datos activos en Git
+### `game`
+
+Carta completa optimizada para minijuegos.
 
 ```text
-public/data/cards.json
-public/data/cards.multilang.preview.json
+/card-images/es/game/ID.webp
+/card-images/en/game/ID.webp
 ```
 
-`cards.json` es la base principal.
+### `adapted`
 
-`cards.multilang.preview.json` es una preview multiidioma usada por la carga centralizada.
+Carta recortada/adaptada para que los renders tengan tamaños visuales comparables.
 
-## Carga de imágenes localizada
+Sustituye al sistema viejo llamado `normalized`.
 
-La carga y elección de imágenes debe pasar por:
+```text
+/card-images/es/adapted/ID.webp
+/card-images/en/adapted/ID.webp
+```
+
+## Qué no se guarda ya
+
+No se guardan en runtime:
+
+```text
+raw PNG
+image detail
+art puro
+```
+
+Si en el futuro se necesita zoom grande o minijuegos basados en arte, se puede ampliar la estructura con:
+
+```text
+detail/
+art/
+```
+
+sin cambiar el diseño general.
+
+## Script activo
+
+```text
+scripts/v2/generate-card-images-multilang.mjs
+```
+
+Comandos útiles:
+
+```powershell
+node scripts/v2/generate-card-images-multilang.mjs --limit=20
+node scripts/v2/generate-card-images-multilang.mjs --types=MINION,SPELL,WEAPON --limit=30
+node scripts/v2/generate-card-images-multilang.mjs --ids=AV_244 --overwrite
+node scripts/v2/generate-card-images-multilang.mjs --all
+```
+
+## Salida del script
+
+Genera:
+
+```text
+public/card-images/{es,en}/thumb/ID.webp
+public/card-images/{es,en}/game/ID.webp
+public/card-images/{es,en}/adapted/ID.webp
+public/data/cards.multilang.generated.json
+```
+
+También genera reportes en `reports/`, carpeta ignorada por Git.
+
+## JSON activo
+
+Cada carta de `cards.multilang.generated.json` usa `imagesByLocale`:
+
+```json
+{
+  "imagesByLocale": {
+    "es": {
+      "thumb": "/card-images/es/thumb/ID.webp",
+      "game": "/card-images/es/game/ID.webp",
+      "adapted": "/card-images/es/adapted/ID.webp"
+    },
+    "en": {
+      "thumb": "/card-images/en/thumb/ID.webp",
+      "game": "/card-images/en/game/ID.webp",
+      "adapted": "/card-images/en/adapted/ID.webp"
+    }
+  }
+}
+```
+
+El script mantiene aliases antiguos dentro del JSON (`imageThumb`, `imageGame`, `imageRenderNormalized`) solo por compatibilidad.
+
+## Regla de oro
+
+Los componentes no deben montar rutas manualmente ni leer carpetas viejas. Deben usar helpers de:
 
 ```text
 src/utils/cardLocale.js
 ```
 
-Orden general recomendado:
+## Carpetas legacy eliminadas
 
 ```text
-1. imagesByLocale[locale][imageType]
-2. imagesByLocale[otherLocale][imageType]
-3. card[imageType]
-4. campos fallback de imagen
-```
-
-## Carga de datos
-
-La carga de datos de cartas debe pasar por:
-
-```text
-src/hooks/useCardsData.js
-```
-
-No conviene que cada juego haga su propio `fetch` de cartas.
-
-## Preview multiidioma actual
-
-La preview ES/EN usa:
-
-```text
-public/data/cards.multilang.preview.json
+public/cards/
+public/cards-optimized/
+public/cards-normalized/
 public/cards-localized/
 public/cards-optimized-localized/
 public/cards-normalized-localized/
-```
-
-Las carpetas de imágenes localizadas son locales/ignoradas; el JSON de preview sí está en Git porque es necesario para la prueba actual.
-
-## Posible estructura futura
-
-Cuando se haga el pipeline multiidioma completo, se podría unificar en algo como:
-
-```text
-public/card-images/
-  es/
-    raw/
-    thumb/
-    game/
-    detail/
-    normalized/
-    art/
-  en/
-    raw/
-    thumb/
-    game/
-    detail/
-    normalized/
-    art/
-```
-
-Pero no se debe mover ahora sin actualizar `cards.json`, scripts y helpers.
-
-## Regla de limpieza
-
-Nunca borrar una carpeta de imágenes hasta comprobar:
-
-```text
-1. cards.json ya no la referencia
-2. cards.multilang.preview.json ya no la referencia
-3. ningún componente la referencia directamente
-4. scripts están actualizados
-5. un script de validación confirma que no faltan rutas
-```
-
-## Próximas decisiones pendientes
-
-```text
-Decidir dónde vivirán los assets pesados si el proyecto se despliega fuera de local.
-Revisar si public/cards puede dejar de ser fallback.
-Definir pipeline definitivo para ES/EN completo.
+public/card-art/
+public/card-art-optimized/
 ```

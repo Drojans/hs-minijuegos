@@ -1,181 +1,139 @@
 # Estructura del proyecto
 
-## Estado estable actual
-
-Estado funcional actual:
+## Raíz
 
 ```text
-Home: selector global ES/EN funcionando
-Base de datos: idioma global + preview de renders ES/EN funcionando
-Adivina el coste: idioma global funcionando
-Grid de cartas: idioma global funcionando
-Impostor: pendiente de adaptar a idioma global
+src/                 Código React de la app
+public/data/         JSON activos de cartas
+public/card-images/  Imágenes generadas por idioma, ignoradas por Git
+public/fonts/        Fuentes necesarias para la UI/cartas
+public/grid-icons/   Iconos del modo Grid
+scripts/v2/          Pipeline actual de generación de imágenes
 ```
 
-## App en uso
-
-Estas carpetas y archivos se usan directamente por la app durante desarrollo/ejecución:
+## `src/`
 
 ```text
-src/
-public/data/cards.json
-public/data/cards.multilang.preview.json
-public/fonts/
-public/grid-icons/
-public/ui/
+src/App.jsx
+src/App.css
+src/index.css
+src/main.jsx
 ```
 
-## Datos activos
+Carga la app, la navegación principal y la home.
 
-Archivos activos en runtime:
+## Componentes globales
 
 ```text
-public/data/cards.json
-public/data/cards.multilang.preview.json
+src/components/CardBrowser.jsx
+src/components/CardBrowser.css
+src/components/LanguageToggle.jsx
+src/components/LanguageToggle.css
 ```
 
-`cards.json` es la base principal de cartas.
-
-`cards.multilang.preview.json` añade datos/imagenes localizadas de preview para ES/EN y se mezcla de forma centralizada desde:
+`CardBrowser` usa:
 
 ```text
-src/hooks/useCardsData.js
+thumb     → casillas/listado
+adapted   → vista grande/detalle
 ```
 
-## Carga centralizada de cartas
+Siempre mediante helpers de `src/utils/cardLocale.js`.
 
-La carga de cartas está centralizada en:
-
-```text
-src/hooks/useCardsData.js
-```
-
-Este hook carga:
-
-```text
-/data/cards.json
-/data/cards.multilang.preview.json
-```
-
-y mezcla `imagesByLocale` mediante helpers de:
-
-```text
-src/utils/cardLocale.js
-```
-
-`App.jsx` pasa las cartas ya preparadas a los juegos/componentes.
-
-## Juegos
-
-Estructura actual:
-
-```text
-src/games/
-  GuessManaCost/
-    GuessManaCost.jsx
-    GuessManaCost.css
-    index.js
-
-  CardGrid/
-    CardGridGame.jsx
-    CardGridGame.css
-
-  Impostor/
-    ImpostorGame.jsx
-    ImpostorNeutralCard.jsx
-    ...
-```
-
-Estado de idioma:
-
-```text
-GuessManaCost: adaptado
-CardGrid: adaptado
-Impostor: pendiente
-```
-
-## Helpers globales
-
-Idioma global:
+## Idioma
 
 ```text
 src/i18n/LanguageProvider.jsx
 src/i18n/translations.js
 ```
 
-Helpers de cartas:
+Controlan idioma global ES/EN y textos de interfaz.
+
+## Datos de cartas
+
+```text
+src/hooks/useCardsData.js
+```
+
+Carga primero:
+
+```text
+/data/cards.multilang.generated.json
+```
+
+Y si falla, usa fallback:
+
+```text
+/data/cards.json
+```
+
+## Helpers de cartas
 
 ```text
 src/utils/cardLocale.js
 ```
 
-Incluye helpers para:
+Responsable de:
 
 ```text
-getCardImage
-getThumbImage
-getGameImage
-getDetailImage
-getArtImage
-getCardName
-getSecondaryCardName
-getCardText
-mergeLocaleImages
-translateCardClass
-translateCardType
-translateCardRarity
-translateCardRace
-getCardDisplayData
+nombres por idioma
+texto por idioma
+rutas de imágenes por idioma
+traducciones de clase/tipo/rareza/raza
+fallbacks seguros
+bloqueo de rutas legacy eliminadas
 ```
 
-## Carpetas de imágenes de cartas
-
-Estas carpetas existen en local, pero ya no deben estar trackeadas por Git:
+## Juegos
 
 ```text
-public/cards/
-public/cards-optimized/
-public/cards-normalized/
-public/card-art/
-public/card-art-optimized/
-public/cards-localized/
-public/cards-optimized-localized/
-public/cards-normalized-localized/
+src/games/GuessManaCost/
+src/games/CardGrid/
+src/games/Impostor/
 ```
 
-No borrarlas todavía. La app local puede depender de ellas para mostrar renders.
+Todos están conectados al idioma global.
 
-A futuro habrá que decidir si estos assets viven en:
+## Impostor
 
 ```text
-CDN / hosting externo
-Git LFS
-script de regeneración
-carpeta local documentada
+src/games/Impostor/ImpostorGame.jsx
+src/games/Impostor/ImpostorGame.css
+src/games/Impostor/ImpostorNeutralCard.jsx
+src/games/Impostor/ImpostorNeutralCard.css
+src/games/Impostor/minion-neutral-overlay-full.png
+src/games/Impostor/spell-neutral-overlay-full.png
+src/games/Impostor/weapon-neutral-overlay-full.png
 ```
 
-## Assets ligeros que sí quedan en Git
+Las cartas ocultas se montan con:
 
 ```text
-public/fonts/
-public/grid-icons/
-public/ui/
+render adapted localizado + overlay PNG local
 ```
 
-`public/grid-icons/` sí se mantiene porque es ligero y necesario para el Grid.
-
-## Scripts
-
-Los scripts siguen en:
+## `public/data/`
 
 ```text
-scripts/
+cards.json
+cards.multilang.generated.json
 ```
 
-No se mueven todavía. Están documentados en:
+`cards.multilang.generated.json` es la base activa.
+
+`cards.json` queda como fallback de seguridad.
+
+## `public/card-images/`
+
+No está en Git. Se genera con `scripts/v2/generate-card-images-multilang.mjs`.
+
+Estructura:
 
 ```text
-docs/SCRIPTS.md
+public/card-images/es/thumb/ID.webp
+public/card-images/es/game/ID.webp
+public/card-images/es/adapted/ID.webp
+public/card-images/en/thumb/ID.webp
+public/card-images/en/game/ID.webp
+public/card-images/en/adapted/ID.webp
 ```
-
-Moverlos a subcarpetas será una fase separada.
