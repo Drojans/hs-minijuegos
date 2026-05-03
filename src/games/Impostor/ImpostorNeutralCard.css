@@ -327,3 +327,88 @@
   --ito-frame-x: 2%;
   --ito-frame-y: -2.8%;
 }
+
+/* ==========================================================
+   HECHIZOS: render real + template PNG encima
+   Requiere:
+   src/games/Impostor/spell-neutral-overlay-full.png
+
+   Está separado de MINION para no tocar los ajustes que ya funcionan.
+   ========================================================== */
+
+.inc-card-spell-template-overlay {
+  aspect-ratio: 2 / 3;
+  overflow: visible;
+  background: transparent;
+
+  /* Mueve render + overlay juntos para igualar la altura con la carta revelada. */
+  --ito-card-y: -10px;
+
+  /* Render real de debajo. */
+  --ito-render-scale: 0.90;
+  --ito-render-x: 0%;
+  --ito-render-y: 0%;
+
+  /* PNG del marco de hechizo. */
+  --ito-frame-scale: 1.1;
+  --ito-frame-x: 2%;
+  --ito-frame-y: 0.8%;
+}
+
+.inc-card-spell-template-overlay .inc-template-overlay-render,
+.inc-card-spell-template-overlay .inc-template-overlay-frame,
+.inc-card-spell-template-overlay .inc-template-overlay-fallback {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.inc-card-spell-template-overlay .inc-template-overlay-render {
+  z-index: 1;
+  object-fit: contain;
+  object-position: center center;
+  display: block;
+  transform:
+    translate(var(--ito-render-x), calc(var(--ito-render-y) + var(--ito-card-y)))
+    scale(var(--ito-render-scale));
+  transform-origin: center center;
+}
+
+.inc-card-spell-template-overlay .inc-template-overlay-frame {
+  z-index: 2;
+  object-fit: contain;
+  object-position: center center;
+  pointer-events: none;
+  display: block;
+  transform:
+    translate(var(--ito-frame-x), calc(var(--ito-frame-y) + var(--ito-card-y)))
+    scale(var(--ito-frame-scale));
+  transform-origin: center center;
+}
+
+.inc-card-spell-template-overlay .inc-template-overlay-fallback {
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.86rem;
+  font-weight: 800;
+  background:
+    radial-gradient(circle at 50% 26%, rgba(255, 255, 255, 0.16), transparent 52%),
+    linear-gradient(180deg, rgba(20, 33, 52, 0.9), rgba(7, 14, 25, 0.98));
+}
+
+/* Ajuste específico para hechizos legendarios.
+   Compensa el dragón superior/lateral de los renders legendarios. */
+.inc-card-spell-template-overlay.inc-card-spell-template-overlay-legendary {
+  --ito-card-y: -10px;
+
+  --ito-render-scale: 0.95;
+  --ito-render-x: 3.2%;
+  --ito-render-y: -0.8%;
+
+  --ito-frame-scale: 1.12;
+  --ito-frame-x: 2%;
+  --ito-frame-y: 0.8%;
+}

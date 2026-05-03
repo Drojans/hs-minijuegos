@@ -471,18 +471,18 @@
 /* Las legendarias tienen el adorno de dragón y ocupan más caja transparente.
    Las subimos un poco para que el cuerpo de la carta quede centrado en su celda. */
 .im-original-card-image.is-legendary-render {
-  max-width: 92%;
-  max-height: 98%;
-  transform: translateY(-3.6%) scale(1.035);
+  max-width: 88%;
+  max-height: 94%;
+  transform: translateY(-1%) scale(1.035);
   transform-origin: center center;
 }
 
 /* Los hechizos legendarios necesitan además recentrado hacia la derecha
    porque el dragón sobresale más por ese lado. */
 .im-original-card-image.is-legendary-spell-render {
-  max-width: 100%;
-  max-height: 100%;
-  transform: translate(3.2%, -3.6%) scale(1.015);
+  max-width: 88%;
+  max-height: 94%;
+  transform: translate(5.5%, -1%) scale(1.08);
   transform-origin: center center;
 }
 
