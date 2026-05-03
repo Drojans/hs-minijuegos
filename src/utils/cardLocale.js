@@ -198,6 +198,3 @@ export function translateCardRace(value, locale = "es") {
   return getLabel(CARD_RACE_LABELS, value, locale, value || "");
 }
 
-export function translateRace(value, locale = "es") {
-  return translateCardRace(value, locale);
-}

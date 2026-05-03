@@ -4,8 +4,6 @@ const CARDS_URL = "/data/cards.multilang.generated.json";
 
 export function useCardsData() {
   const [cards, setCards] = useState([]);
-  const [baseCards, setBaseCards] = useState([]);
-  const [activeCardsSource, setActiveCardsSource] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -31,16 +29,12 @@ export function useCardsData() {
 
         if (!cancelled) {
           setCards(data);
-          setBaseCards(data);
-          setActiveCardsSource(CARDS_URL);
         }
       } catch (loadError) {
         if (!cancelled) {
           console.error("Error cargando cartas:", loadError);
           setError(loadError);
           setCards([]);
-          setBaseCards([]);
-          setActiveCardsSource(null);
         }
       } finally {
         if (!cancelled) {
@@ -56,12 +50,5 @@ export function useCardsData() {
     };
   }, []);
 
-  return {
-    cards,
-    baseCards,
-    activeCardsSource,
-    loading,
-    error,
-    setCards,
-  };
+  return { cards, loading, error };
 }
