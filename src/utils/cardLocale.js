@@ -2,6 +2,17 @@ export function getOppositeLocale(locale) {
   return locale === "en" ? "es" : "en";
 }
 
+const REMOVED_IMAGE_PREFIXES = [
+  "/cards/",
+  "/cards-optimized/",
+  "/cards-normalized/",
+  "/card-art/",
+  "/card-art-optimized/",
+  "/cards-localized/",
+  "/cards-optimized-localized/",
+  "/cards-normalized-localized/",
+];
+
 const IMAGE_VARIANT_ALIASES = {
   thumb: ["thumb", "imageThumb"],
   imageThumb: ["imageThumb", "thumb"],
@@ -9,16 +20,17 @@ const IMAGE_VARIANT_ALIASES = {
   imageGame: ["imageGame", "game"],
   adapted: ["adapted", "imageRenderNormalized"],
   imageRenderNormalized: ["imageRenderNormalized", "adapted"],
-  detail: ["detail", "imageDetail", "adapted", "imageRenderNormalized", "game", "imageGame"],
-  imageDetail: ["imageDetail", "detail", "adapted", "imageRenderNormalized", "game", "imageGame"],
-  art: ["art", "imageArt"],
-  imageArt: ["imageArt", "art"],
-  raw: ["raw", "image"],
-  image: ["image", "raw"],
+  detail: ["adapted", "imageRenderNormalized", "game", "imageGame", "thumb", "imageThumb"],
+  imageDetail: ["adapted", "imageRenderNormalized", "game", "imageGame", "thumb", "imageThumb"],
 };
 
 function getImageVariantAliases(imageType) {
   return IMAGE_VARIANT_ALIASES[imageType] ?? [imageType];
+}
+
+function isUsableImagePath(value) {
+  if (!value || typeof value !== "string") return false;
+  return !REMOVED_IMAGE_PREFIXES.some((prefix) => value.startsWith(prefix));
 }
 
 function getLocalizedImage(card, imageType, locale) {
@@ -30,7 +42,8 @@ function getLocalizedImage(card, imageType, locale) {
     if (!localizedImages) continue;
 
     for (const alias of aliases) {
-      if (localizedImages[alias]) return localizedImages[alias];
+      const imagePath = localizedImages[alias];
+      if (isUsableImagePath(imagePath)) return imagePath;
     }
   }
 
@@ -39,7 +52,8 @@ function getLocalizedImage(card, imageType, locale) {
 
 function getLegacyImage(card, imageType) {
   for (const alias of getImageVariantAliases(imageType)) {
-    if (card[alias]) return card[alias];
+    const imagePath = card[alias];
+    if (isUsableImagePath(imagePath)) return imagePath;
   }
 
   return "";
@@ -48,29 +62,7 @@ function getLegacyImage(card, imageType) {
 export function getCardImage(card, imageType, locale = "es") {
   if (!card) return "";
 
-  const localized = getLocalizedImage(card, imageType, locale);
-  if (localized) return localized;
-
-  const legacy = getLegacyImage(card, imageType);
-  if (legacy) return legacy;
-
-  if (imageType === "imageThumb" || imageType === "thumb") {
-    return card.imageGame || card.game || card.image || card.imageRenderNormalized || card.adapted || "";
-  }
-
-  if (imageType === "imageGame" || imageType === "game") {
-    return card.imageThumb || card.thumb || card.image || card.imageRenderNormalized || card.adapted || "";
-  }
-
-  if (imageType === "imageRenderNormalized" || imageType === "adapted") {
-    return card.imageGame || card.game || card.image || card.imageThumb || card.thumb || "";
-  }
-
-  if (imageType === "imageArt" || imageType === "art") {
-    return card.imageGame || card.game || card.imageThumb || card.thumb || card.imageRenderNormalized || card.adapted || card.image || "";
-  }
-
-  return card.imageGame || card.game || card.imageThumb || card.thumb || card.imageRenderNormalized || card.adapted || card.image || "";
+  return getLocalizedImage(card, imageType, locale) || getLegacyImage(card, imageType);
 }
 
 export function getThumbImage(card, locale = "es") {
@@ -86,11 +78,7 @@ export function getAdaptedImage(card, locale = "es") {
 }
 
 export function getDetailImage(card, locale = "es") {
-  return getAdaptedImage(card, locale) || getGameImage(card, locale);
-}
-
-export function getArtImage(card, locale = "es") {
-  return getCardImage(card, "art", locale);
+  return getAdaptedImage(card, locale) || getGameImage(card, locale) || getThumbImage(card, locale);
 }
 
 export function getCardName(card, locale = "es") {
@@ -117,24 +105,6 @@ export function getCardText(card, locale = "es") {
   return locale === "en"
     ? card.textEn || card.text || ""
     : card.text || card.textEn || "";
-}
-
-export function mergeLocaleImages(cards, previewImagesById) {
-  if (!previewImagesById?.size) return cards;
-
-  return cards.map((card) => {
-    const previewImages = previewImagesById.get(card.id);
-    if (!previewImages) return card;
-
-    return {
-      ...card,
-      imagesByLocale: {
-        ...(card.imagesByLocale ?? {}),
-        ...previewImages,
-      },
-      multilangPreview: true,
-    };
-  });
 }
 
 const CARD_CLASS_LABELS = {
@@ -277,20 +247,4 @@ export function translateCardRace(value, locale = "es") {
     locale,
     locale === "en" ? "No race" : "Sin raza"
   );
-}
-
-export function getCardDisplayData(card, locale = "es") {
-  return {
-    name: getCardName(card, locale),
-    secondaryName: getSecondaryCardName(card, locale),
-    text: getCardText(card, locale),
-    cardClass: translateCardClass(card?.cardClass, locale),
-    type: translateCardType(card?.type, locale),
-    rarity: translateCardRarity(card?.rarity, locale),
-    race: translateCardRace(card?.race, locale),
-    thumbImage: getThumbImage(card, locale),
-    gameImage: getGameImage(card, locale),
-    detailImage: getDetailImage(card, locale),
-    artImage: getArtImage(card, locale),
-  };
 }

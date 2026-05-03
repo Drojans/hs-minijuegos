@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
-  getDetailImage,
+  getAdaptedImage,
   getGameImage,
   getThumbImage,
   translateCardClass as translateSharedCardClass,
@@ -252,18 +252,11 @@ function cardTextHasAnyPattern(card, patterns) {
 }
 
 function getCardImage(card, locale) {
-  return getDetailImage(card, locale) || getGameImage(card, locale) || getThumbImage(card, locale) || card?.image || "";
+  return getAdaptedImage(card, locale) || getGameImage(card, locale) || getThumbImage(card, locale);
 }
 
 function getOriginalCardImage(card, locale) {
-  return (
-    getDetailImage(card, locale) ||
-    getGameImage(card, locale) ||
-    getThumbImage(card, locale) ||
-    card?.imageDetail ||
-    card?.image ||
-    ""
-  );
+  return getAdaptedImage(card, locale) || getGameImage(card, locale) || getThumbImage(card, locale);
 }
 
 

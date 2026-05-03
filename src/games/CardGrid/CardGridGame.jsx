@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
-  getDetailImage,
+  getAdaptedImage,
   translateCardClass,
   translateCardRace,
   translateCardRarity,
@@ -134,7 +134,7 @@ function getCardSearchText(card) {
 }
 
 function getCardImage(card, locale) {
-  return getDetailImage(card, locale) || card?.imageGame || card?.image || card?.imageThumb || "";
+  return getAdaptedImage(card, locale);
 }
 
 function getRaceValues(card) {

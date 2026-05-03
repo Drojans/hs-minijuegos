@@ -14,7 +14,6 @@ function getNeutralRender(card, locale) {
     getAdaptedImage(card, locale) ||
     getGameImage(card, locale) ||
     getThumbImage(card, locale) ||
-    card?.image ||
     ""
   );
 }

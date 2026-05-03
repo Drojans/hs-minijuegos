@@ -7,9 +7,13 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies / build output
 node_modules
 dist
 dist-ssr
+build
+.vite
+coverage
 *.local
 
 # Editor directories and files
@@ -23,23 +27,24 @@ dist-ssr
 *.sln
 *.sw?
 
-# Heavy generated/runtime image folders
-# Kept locally for now. Do not commit blindly.
+# Generated runtime card images
+public/card-images/
+
+# Generated reports / archives
+reports/
+data-archive/
+
+# Legacy generated image folders. Keep ignored in case an old script or backup recreates them.
 public/cards/
-public/card-art/
 public/cards-optimized/
 public/cards-normalized/
+public/card-art/
 public/card-art-optimized/
-
-# Temporary multilingual preview/generated image folders
 public/cards-localized/
 public/cards-optimized-localized/
 public/cards-normalized-localized/
 
-# Reports/scripts output
-reports/
-
-# Generated card-data previews/backups
+# Legacy generated card-data backups
 public/data/cards.backup.json
 public/data/cards.before-art.json
 public/data/cards.before-normalized-renders.json
@@ -51,10 +56,3 @@ public/data/normalized-renders-report.json
 # Local audit exports
 hs-minijuegos-audit/
 hs-minijuegos-audit.zip
-# Local archived generated data
-data-archive/
-
-public/card-images/
-
-reports/
-data-archive/

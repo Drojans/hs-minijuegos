@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
-  getDetailImage,
+  getAdaptedImage,
   translateCardClass,
   translateCardRarity,
   translateCardType,
@@ -12,8 +12,8 @@ import "./GuessManaCost.css";
 const MAX_ROUNDS = 10;
 const MANA_VALUES = Array.from({ length: 11 }, (_, index) => index);
 
-function getGameImage(card, locale) {
-  return getDetailImage(card, locale) || card?.imageGame || card?.imageDetail || card?.image || "";
+function getGameCardImage(card, locale) {
+  return getAdaptedImage(card, locale);
 }
 
 function getRandomItem(array) {
@@ -30,7 +30,7 @@ function GuessManaCost({ cards, onBack }) {
         card.cost >= 0 &&
         card.cost <= 10 &&
         getCardName(card, locale) &&
-        getGameImage(card, locale) &&
+        getGameCardImage(card, locale) &&
         card.type !== "HERO" &&
         card.type !== "HERO_POWER"
       );
