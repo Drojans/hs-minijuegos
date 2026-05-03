@@ -206,11 +206,6 @@ function getTextConditions(t) {
 }
 
 
-const NEUTRAL_CARD_TEMPLATE_IMAGE_SOURCES = [
-  "/ui/impostor/minion-neutral-template.png",
-  "/ui/impostor/spell-neutral-template.png",
-  "/ui/impostor/weapon-neutral-template.png",
-];
 
 const PRELOADED_IMAGE_SOURCES = new Set();
 
@@ -321,7 +316,6 @@ function preloadImageSource(src, fetchPriority = "auto") {
 function preloadRoundImages(roundData, locale, fetchPriority = "auto") {
   if (!roundData?.cards) return;
 
-  NEUTRAL_CARD_TEMPLATE_IMAGE_SOURCES.forEach((src) => preloadImageSource(src, "high"));
 
   roundData.cards.forEach((card) => {
     getCardPreloadSources(card, locale).forEach((src) => preloadImageSource(src, fetchPriority));
