@@ -3,7 +3,7 @@ import CardDatabase from "./features/CardDatabase/CardDatabase";
 import LanguageToggle from "./shared/components/LanguageToggle/LanguageToggle";
 import { useLanguage } from "./i18n/LanguageProvider";
 import { useCardsData } from "./hooks/useCardsData";
-import GuessManaCost from "./games/GuessManaCost";
+import GuessManaCost from "./games/GuessManaCost/GuessManaCost";
 import ImpostorGame from "./games/Impostor/ImpostorGame";
 import CardGridGame from "./games/CardGrid/CardGridGame";
 import "./App.css";
