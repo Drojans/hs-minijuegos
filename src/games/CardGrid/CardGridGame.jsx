@@ -10,71 +10,80 @@ import {
 } from "../../utils/cardLocale";
 import "./CardGridGame.css";
 
+const GRID_ICON_MODULES = import.meta.glob("./assets/*", {
+  eager: true,
+  query: "?url",
+  import: "default",
+});
+function gridIcon(fileName) {
+  return GRID_ICON_MODULES[`./assets/${fileName}`] || "";
+}
+
 const CLASS_ICON_PATHS = {
-  DEATHKNIGHT: "/grid-icons/class_deathknight.png",
-  DEMONHUNTER: "/grid-icons/class_demonhunter.png",
-  DRUID: "/grid-icons/class_druid.png",
-  HUNTER: "/grid-icons/class_hunter.png",
-  MAGE: "/grid-icons/class_mage.png",
-  PALADIN: "/grid-icons/class_paladin.png",
-  PRIEST: "/grid-icons/class_priest.png",
-  ROGUE: "/grid-icons/class_rogue.png",
-  SHAMAN: "/grid-icons/class_shaman.png",
-  WARLOCK: "/grid-icons/class_warlock.png",
-  WARRIOR: "/grid-icons/class_warrior.png",
-  NEUTRAL: "/grid-icons/class_neutral.png",
+  DEATHKNIGHT: gridIcon("class_deathknight.png"),
+  DEMONHUNTER: gridIcon("class_demonhunter.png"),
+  DRUID: gridIcon("class_druid.png"),
+  HUNTER: gridIcon("class_hunter.png"),
+  MAGE: gridIcon("class_mage.png"),
+  PALADIN: gridIcon("class_paladin.png"),
+  PRIEST: gridIcon("class_priest.png"),
+  ROGUE: gridIcon("class_rogue.png"),
+  SHAMAN: gridIcon("class_shaman.png"),
+  WARLOCK: gridIcon("class_warlock.png"),
+  WARRIOR: gridIcon("class_warrior.png"),
+  NEUTRAL: gridIcon("class_neutral.png"),
 };
 
 const TYPE_ICON_PATHS = {
-  MINION: "/grid-icons/type_minion.png",
-  SPELL: "/grid-icons/type_spell.png",
-  WEAPON: "/grid-icons/type_weapon.png",
+  MINION: gridIcon("type_minion.png"),
+  SPELL: gridIcon("type_spell.png"),
+  WEAPON: gridIcon("type_weapon.png"),
 };
 
 const RARITY_ICON_PATHS = {
-  COMMON: "/grid-icons/rarity_common.png",
-  RARE: "/grid-icons/rarity_rare.png",
-  EPIC: "/grid-icons/rarity_epic.png",
-  LEGENDARY: "/grid-icons/rarity_legendary.png",
+  COMMON: gridIcon("rarity_common.png"),
+  RARE: gridIcon("rarity_rare.png"),
+  EPIC: gridIcon("rarity_epic.png"),
+  LEGENDARY: gridIcon("rarity_legendary.png"),
 };
 
 const COST_ICON_PATHS = {
-  "cost-low": "/grid-icons/cost_0_2.png",
-  "cost-mid": "/grid-icons/cost_3_4.png",
-  "cost-high": "/grid-icons/cost_5_6.png",
-  "cost-big": "/grid-icons/cost_7_plus.png",
+  "cost-low": gridIcon("cost_0_2.png"),
+  "cost-mid": gridIcon("cost_3_4.png"),
+  "cost-high": gridIcon("cost_5_6.png"),
+  "cost-big": gridIcon("cost_7_plus.png"),
 };
 
 const STAT_ICON_PATHS = {
-  "attack-3": "/grid-icons/stat_attack_3_plus.png",
-  "attack-5": "/grid-icons/stat_attack_5_plus.png",
-  "health-4": "/grid-icons/stat_health_4_plus.png",
-  "health-6": "/grid-icons/stat_health_6_plus.png",
+  "attack-3": gridIcon("stat_attack_3_plus.png"),
+  "attack-5": gridIcon("stat_attack_5_plus.png"),
+  "health-4": gridIcon("stat_health_4_plus.png"),
+  "health-6": gridIcon("stat_health_6_plus.png"),
 };
 
 const RACE_ICON_PATHS = {
-  BEAST: "/grid-icons/race_beast.png",
-  DEMON: "/grid-icons/race_demon.png",
-  DRAGON: "/grid-icons/race_dragon.png",
-  DRAENEI: "/grid-icons/race_draenei.png",
-  ELEMENTAL: "/grid-icons/race_elemental.png",
-  MECHANICAL: "/grid-icons/race_mech.png",
-  MURLOC: "/grid-icons/race_murloc.png",
-  NAGA: "/grid-icons/race_naga.png",
-  PIRATE: "/grid-icons/race_pirate.png",
-  QUILBOAR: "/grid-icons/race_quilboar.png",
-  TOTEM: "/grid-icons/race_totem.png",
-  UNDEAD: "/grid-icons/race_undead.png",
+  BEAST: gridIcon("race_beast.png"),
+  DEMON: gridIcon("race_demon.png"),
+  DRAGON: gridIcon("race_dragon.png"),
+  DRAENEI: gridIcon("race_draenei.png"),
+  ELEMENTAL: gridIcon("race_elemental.png"),
+  MECHANICAL: gridIcon("race_mech.png"),
+  MURLOC: gridIcon("race_murloc.png"),
+  NAGA: gridIcon("race_naga.png"),
+  PIRATE: gridIcon("race_pirate.png"),
+  QUILBOAR: gridIcon("race_quilboar.png"),
+  TOTEM: gridIcon("race_totem.png"),
+  UNDEAD: gridIcon("race_undead.png"),
 };
 
 const KEYWORD_ICON_PATHS = {
-  BATTLECRY: "/grid-icons/text_battlecry.png",
-  DEATHRATTLE: "/grid-icons/text_deathrattle.png",
-  TAUNT: "/grid-icons/text_taunt.png",
-  DISCOVER: "/grid-icons/text_discover.png",
-  DIVINE_SHIELD: "/grid-icons/text_divine_shield.png",
-  LIFESTEAL: "/grid-icons/text_lifesteal.png",
-  RUSH: "/grid-icons/text_rush.png",
+  BATTLECRY: gridIcon("text_battlecry.png"),
+  DEATHRATTLE: gridIcon("text_deathrattle.png"),
+  TAUNT: gridIcon("text_taunt.png"),
+  DISCOVER: gridIcon("text_discover.png"),
+  DIVINE_SHIELD: gridIcon("text_divine_shield.png"),
+  LIFESTEAL: gridIcon("text_lifesteal.png"),
+  RUSH: gridIcon("text_rush.png"),
 };
 
 function getKeywordConditions(t) {
