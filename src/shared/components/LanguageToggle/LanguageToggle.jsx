@@ -1,5 +1,5 @@
-import { useLanguage } from "../i18n/LanguageProvider";
-import { LOCALE_LABELS } from "../i18n/translations";
+import { useLanguage } from "../../../i18n/LanguageProvider";
+import { LOCALE_LABELS } from "../../../i18n/translations";
 import "./LanguageToggle.css";
 
 function LanguageToggle({ className = "", compact = false }) {

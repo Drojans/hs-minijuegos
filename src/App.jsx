@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import CardDatabase from "./features/CardDatabase/CardDatabase";
-import LanguageToggle from "./components/LanguageToggle";
+import LanguageToggle from "./shared/components/LanguageToggle/LanguageToggle";
 import { useLanguage } from "./i18n/LanguageProvider";
 import { useCardsData } from "./hooks/useCardsData";
 import GuessManaCost from "./games/GuessManaCost";
