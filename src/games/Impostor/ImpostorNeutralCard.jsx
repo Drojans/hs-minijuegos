@@ -8,6 +8,7 @@ import {
 } from "../../utils/cardLocale";
 import minionNeutralOverlayFull from "./minion-neutral-overlay-full.png";
 import spellNeutralOverlayFull from "./spell-neutral-overlay-full.png";
+import weaponNeutralOverlayFull from "./weapon-neutral-overlay-full.png";
 import "./ImpostorNeutralCard.css";
 
 const CARD_TEMPLATES = {
@@ -233,6 +234,45 @@ function FullOverlaySpellCard({ card, locale, cardName }) {
   );
 }
 
+
+function FullOverlayWeaponCard({ card, locale, cardName }) {
+  const renderSrc = getNeutralRender(card, locale);
+  const legendaryClass = isLegendaryCard(card)
+    ? " inc-card-weapon-template-overlay-legendary"
+    : "";
+
+  return (
+    <div
+      className={`inc-card-shell inc-card-weapon inc-card-weapon-template-overlay${legendaryClass}`}
+      title={cardName}
+      aria-label={cardName}
+    >
+      {renderSrc ? (
+        <img
+          className="inc-template-overlay-render"
+          src={renderSrc}
+          alt=""
+          loading="eager"
+          decoding="sync"
+        />
+      ) : (
+        <div className="inc-template-overlay-fallback">
+          {locale === "en" ? "No image" : "Sin imagen"}
+        </div>
+      )}
+
+      <img
+        className="inc-template-overlay-frame"
+        src={weaponNeutralOverlayFull}
+        alt=""
+        aria-hidden="true"
+        loading="eager"
+        decoding="async"
+      />
+    </div>
+  );
+}
+
 function ClassicNeutralCard({ card, locale, templateType, templateSrc, cardName }) {
   const artSrc = getNeutralArt(card, locale);
 
@@ -279,6 +319,10 @@ function ImpostorNeutralCard({ card, locale = "es" }) {
 
   if (templateType === "SPELL") {
     return <FullOverlaySpellCard card={card} locale={locale} cardName={cardName} />;
+  }
+
+  if (templateType === "WEAPON") {
+    return <FullOverlayWeaponCard card={card} locale={locale} cardName={cardName} />;
   }
 
   return (
