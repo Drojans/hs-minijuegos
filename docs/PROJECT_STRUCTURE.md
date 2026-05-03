@@ -4,9 +4,9 @@
 
 ```text
 src/                 Código React de la app
-public/data/         JSON activos de cartas
+public/data/         JSON activo de cartas
 public/card-images/  Imágenes generadas por idioma, ignoradas por Git
-public/fonts/        Fuentes necesarias para la UI/cartas
+public/fonts/        Fuentes necesarias para UI/cartas
 public/grid-icons/   Iconos del modo Grid
 scripts/v2/          Pipeline actual de generación de imágenes
 ```
@@ -20,7 +20,7 @@ src/index.css
 src/main.jsx
 ```
 
-Carga la app, la navegación principal y la home.
+Contiene la app, navegación principal y estilos globales.
 
 ## Componentes globales
 
@@ -31,14 +31,12 @@ src/components/LanguageToggle.jsx
 src/components/LanguageToggle.css
 ```
 
-`CardBrowser` usa:
+`CardBrowser` usa imágenes localizadas mediante helpers:
 
 ```text
-thumb     → casillas/listado
-adapted   → vista grande/detalle
+thumb   → casillas/listado
+adapted → vista grande/detalle
 ```
-
-Siempre mediante helpers de `src/utils/cardLocale.js`.
 
 ## Idioma
 
@@ -55,16 +53,10 @@ Controlan idioma global ES/EN y textos de interfaz.
 src/hooks/useCardsData.js
 ```
 
-Carga primero:
+Carga:
 
 ```text
 /data/cards.multilang.generated.json
-```
-
-Y si falla, usa fallback:
-
-```text
-/data/cards.json
 ```
 
 ## Helpers de cartas
@@ -80,8 +72,6 @@ nombres por idioma
 texto por idioma
 rutas de imágenes por idioma
 traducciones de clase/tipo/rareza/raza
-fallbacks seguros
-bloqueo de rutas legacy eliminadas
 ```
 
 ## Juegos
@@ -92,7 +82,7 @@ src/games/CardGrid/
 src/games/Impostor/
 ```
 
-Todos están conectados al idioma global.
+Todos están conectados al idioma global y usan los helpers de cartas.
 
 ## Impostor
 
@@ -115,13 +105,10 @@ render adapted localizado + overlay PNG local
 ## `public/data/`
 
 ```text
-cards.json
 cards.multilang.generated.json
 ```
 
-`cards.multilang.generated.json` es la base activa.
-
-`cards.json` queda como fallback de seguridad.
+Es la única base activa de cartas.
 
 ## `public/card-images/`
 

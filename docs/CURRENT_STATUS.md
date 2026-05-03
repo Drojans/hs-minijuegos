@@ -2,7 +2,7 @@
 
 ## Resumen
 
-El proyecto está en un estado estable después de la migración de imágenes multiidioma y la limpieza de assets antiguos.
+El proyecto está en un estado estable después de la migración completa a imágenes de cartas localizadas por idioma.
 
 Funciona actualmente:
 
@@ -16,16 +16,10 @@ Impostor: ES/EN OK con overlays para minions, hechizos y armas
 
 ## Datos activos
 
-La app carga las cartas desde:
+La app carga una única base de cartas:
 
 ```text
 public/data/cards.multilang.generated.json
-```
-
-Y mantiene este archivo como fallback:
-
-```text
-public/data/cards.json
 ```
 
 La carga está centralizada en:
@@ -33,6 +27,8 @@ La carga está centralizada en:
 ```text
 src/hooks/useCardsData.js
 ```
+
+No hay base legacy activa ni fallback a una base antigua.
 
 ## Imágenes activas
 
@@ -54,7 +50,7 @@ Esta carpeta está ignorada en Git porque contiene imágenes generadas y pesa de
 
 ## Helpers activos
 
-La selección de nombres, textos e imágenes por idioma se centraliza en:
+La selección de nombres, textos, etiquetas e imágenes por idioma está centralizada en:
 
 ```text
 src/utils/cardLocale.js
@@ -76,11 +72,11 @@ translateCardRarity
 translateCardRace
 ```
 
-Todos los juegos deberían pedir imágenes mediante estos helpers, no leyendo campos antiguos directamente.
+Los componentes no deben construir rutas de imágenes manualmente. Deben pedirlas a estos helpers.
 
 ## Impostor
 
-Impostor usa renders localizados `adapted` más overlays locales:
+Impostor usa renders `adapted` localizados más overlays locales:
 
 ```text
 src/games/Impostor/minion-neutral-overlay-full.png
@@ -88,29 +84,6 @@ src/games/Impostor/spell-neutral-overlay-full.png
 src/games/Impostor/weapon-neutral-overlay-full.png
 ```
 
-Ya no depende de:
+## Limpieza realizada
 
-```text
-public/ui/
-public/card-art/
-public/card-art-optimized/
-```
-
-## Carpetas antiguas eliminadas o archivadas fuera del proyecto
-
-```text
-public/cards/
-public/cards-optimized/
-public/cards-normalized/
-public/cards-localized/
-public/cards-optimized-localized/
-public/cards-normalized-localized/
-public/card-art/
-public/card-art-optimized/
-public/ui/
-src/assets/
-reports/
-data-archive/
-```
-
-Si alguna reaparece por ejecutar scripts viejos o copiar backups, `.gitignore` evita que entren en Git.
+Se eliminaron las carpetas y scripts legacy de imágenes, previews, reports y backups temporales. La estructura actual queda reducida al pipeline v2 y a la carpeta generada `public/card-images/`.
