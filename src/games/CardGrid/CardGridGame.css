@@ -1295,3 +1295,165 @@
     display: none;
   }
 }
+
+
+/* ==========================================================
+   FULL WIDTH PLAYABLE LAYOUT PATCH
+   Hace que el tablero y panel lateral aprovechen el ancho real.
+   ========================================================== */
+
+.cg-page {
+  padding: 12px clamp(10px, 1.2vw, 24px) 18px;
+  overflow-x: hidden;
+}
+
+.cg-shell {
+  width: min(99vw, 1880px);
+}
+
+.cg-header {
+  grid-template-columns: clamp(150px, 15vw, 300px) minmax(0, 1fr) clamp(130px, 12vw, 190px);
+  margin-bottom: 10px;
+}
+
+.cg-title-block h1 {
+  font-size: clamp(2.35rem, 4.1vw, 4.15rem);
+}
+
+.cg-layout {
+  grid-template-columns: minmax(0, 1fr) clamp(300px, 19vw, 370px);
+  gap: clamp(12px, 1.1vw, 20px);
+  align-items: stretch;
+}
+
+.cg-board-panel,
+.cg-control-panel {
+  min-width: 0;
+}
+
+.cg-board-panel {
+  padding: clamp(12px, 1vw, 18px);
+}
+
+.cg-board {
+  width: 100%;
+  height: min(calc(100svh - 165px), 660px);
+  min-height: 560px;
+  grid-template-columns: clamp(92px, 7vw, 122px) repeat(3, minmax(0, 1fr));
+  grid-template-rows: clamp(66px, 7.2vh, 86px) repeat(3, minmax(0, 1fr));
+}
+
+.cg-answer-cell,
+.cg-condition-cell,
+.cg-corner-cell {
+  min-width: 0;
+}
+
+.cg-control-panel {
+  gap: 12px;
+}
+
+.cg-current-cell,
+.cg-mode-selector,
+.cg-answer-form,
+.cg-message {
+  padding: 14px;
+}
+
+@media (min-width: 1500px) and (min-height: 820px) {
+  .cg-shell {
+    width: min(99vw, 1880px);
+  }
+
+  .cg-layout {
+    grid-template-columns: minmax(0, 1fr) clamp(310px, 18vw, 360px);
+  }
+
+  .cg-board {
+    height: min(calc(100svh - 160px), 680px);
+    min-height: 585px;
+  }
+}
+
+@media (max-width: 1220px) {
+  .cg-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cg-board {
+    height: auto;
+    min-height: 0;
+    grid-template-columns: 92px repeat(3, minmax(100px, 1fr));
+    grid-template-rows: 74px repeat(3, 148px);
+  }
+}
+
+@media (max-width: 760px) {
+  .cg-board {
+    grid-template-columns: 72px repeat(3, minmax(78px, 1fr));
+    grid-template-rows: 70px repeat(3, 118px);
+  }
+}
+
+/* ==========================================================
+   BALANCED PLAYABLE WIDTH PATCH — CARD GRID
+   Evita que las celdas se estiren demasiado en horizontal.
+   El tablero vuelve a proporciones más naturales y las cartas
+   resueltas ganan presencia sin deformarse.
+   ========================================================== */
+
+@media (min-width: 1280px) {
+  .cg-shell {
+    width: min(96vw, 1640px);
+  }
+
+  .cg-layout {
+    grid-template-columns: minmax(860px, 1260px) clamp(310px, 20vw, 370px);
+    justify-content: center;
+    gap: clamp(16px, 1.3vw, 24px);
+  }
+
+  .cg-board-panel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(14px, 1.05vw, 20px);
+  }
+
+  .cg-board {
+    width: 100%;
+    max-width: 1260px;
+    height: min(calc(100svh - 165px), 650px);
+    min-height: 565px;
+    grid-template-columns: clamp(90px, 7vw, 112px) repeat(3, minmax(205px, 1fr));
+    grid-template-rows: clamp(70px, 7.2vh, 86px) repeat(3, minmax(150px, 1fr));
+  }
+
+  .cg-answer-cell .cg-solved-card-frame > img.cg-solved-card-image {
+    max-width: 92% !important;
+    max-height: 112% !important;
+    transform: scale(1.08) !important;
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 850px) {
+  .cg-board {
+    max-width: 1280px;
+    height: min(calc(100svh - 160px), 665px);
+    min-height: 590px;
+  }
+
+  .cg-answer-cell .cg-solved-card-frame > img.cg-solved-card-image {
+    transform: scale(1.1) !important;
+  }
+}
+
+@media (max-width: 1360px) {
+  .cg-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cg-board {
+    max-width: none;
+  }
+}

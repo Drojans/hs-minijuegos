@@ -533,3 +533,220 @@
   .cb-thumb img { max-width: 126px; max-height: 172px; }
   .cb-card-caption strong { font-size: 0.95rem; }
 }
+
+
+/* ==========================================================
+   FULL WIDTH DATABASE PATCH
+   Usa todo el ancho para que las cartas y filtros respiren.
+   ========================================================== */
+
+.cb-page {
+  width: 100%;
+  max-width: none;
+  padding: 16px clamp(10px, 1.2vw, 24px) 24px;
+}
+
+.cb-hero {
+  width: 100%;
+  max-width: none;
+  padding: 22px clamp(20px, 2vw, 34px);
+  grid-template-columns: clamp(150px, 16vw, 280px) minmax(0, 1fr) clamp(105px, 10vw, 150px);
+}
+
+.cb-hero-copy h1 {
+  font-size: clamp(2.45rem, 4.4vw, 4.7rem);
+}
+
+.cb-layout {
+  width: 100%;
+  max-width: none;
+  grid-template-columns: minmax(0, 1fr) clamp(320px, 22vw, 430px);
+  gap: clamp(14px, 1.2vw, 22px);
+}
+
+.cb-main-panel,
+.cb-detail-panel {
+  min-width: 0;
+}
+
+.cb-card-grid {
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: 14px;
+}
+
+.cb-card-tile {
+  min-height: 340px;
+  grid-template-rows: 230px 1fr;
+}
+
+.cb-thumb img {
+  max-width: 154px;
+  max-height: 210px;
+}
+
+.cb-card-caption strong {
+  font-size: 1.06rem;
+}
+
+.cb-detail-panel {
+  max-height: calc(100svh - 176px);
+}
+
+.cb-detail-card-image {
+  max-height: 360px;
+}
+
+@media (min-width: 1700px) {
+  .cb-card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(172px, 1fr));
+  }
+}
+
+@media (max-width: 1360px) {
+  .cb-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cb-detail-panel {
+    max-height: none;
+  }
+}
+
+@media (max-width: 580px) {
+  .cb-card-grid {
+    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+  }
+}
+
+/* ==========================================================
+   TAVERN STYLE ALIGNMENT — CARD DATABASE
+   Quita el tono azul de archivo técnico y alinea la base de
+   datos con el estilo Hearthstone del hub y los minijuegos.
+   ========================================================== */
+
+.cb-page {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(255, 188, 84, 0.11), transparent 24%),
+    radial-gradient(circle at 16% 78%, rgba(82, 149, 255, 0.04), transparent 18%),
+    radial-gradient(circle at 84% 26%, rgba(169, 91, 255, 0.045), transparent 20%),
+    linear-gradient(90deg, rgba(255, 232, 183, 0.016) 0, rgba(255, 232, 183, 0.016) 50%, transparent 50%, transparent 100%),
+    linear-gradient(180deg, #20150e, #0d0908 58%, #160b15);
+  background-size: auto, auto, auto, 26px 26px, auto;
+}
+
+.cb-hero,
+.cb-main-panel,
+.cb-detail-panel {
+  border-color: rgba(216, 160, 86, 0.3);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.07), transparent 34%),
+    linear-gradient(180deg, rgba(42, 24, 12, 0.94), rgba(12, 18, 29, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.07),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.55),
+    0 18px 50px rgba(0, 0, 0, 0.36);
+}
+
+.cb-hero-copy p,
+.cb-field span,
+.cb-detail-kicker,
+.cb-detail-meta dt {
+  color: #77dfff;
+}
+
+.cb-hero-copy h1 {
+  font-family: "Belwe HS", Georgia, serif;
+  color: #f9e1b4;
+  text-shadow:
+    0 2px 0 rgba(70, 34, 8, 0.9),
+    0 8px 22px rgba(0, 0, 0, 0.3);
+}
+
+.cb-back-button,
+.cb-clear-button,
+.cb-cost-chip {
+  color: #f9e1b4;
+  border-color: rgba(240, 185, 104, 0.34);
+  background: linear-gradient(180deg, rgba(72, 48, 28, 0.78), rgba(18, 29, 49, 0.78));
+  font-family: "Belwe HS", Georgia, serif;
+}
+
+.cb-back-button:hover,
+.cb-clear-button:hover,
+.cb-cost-chip:hover {
+  border-color: rgba(234, 182, 107, 0.56);
+  background: linear-gradient(180deg, rgba(100, 64, 30, 0.88), rgba(30, 22, 16, 0.88));
+}
+
+.cb-cost-chip.is-active {
+  color: #2f1605;
+  border-color: rgba(255, 225, 150, 0.72);
+  background: linear-gradient(180deg, #ffe59c, #d99a40 58%, #91501d);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 22px rgba(217, 154, 64, 0.18);
+}
+
+.cb-field input,
+.cb-field select {
+  border-color: rgba(216, 160, 86, 0.22);
+  background: rgba(13, 15, 23, 0.74);
+}
+
+.cb-field input:focus,
+.cb-field select:focus {
+  border-color: rgba(240, 185, 104, 0.68);
+  box-shadow: 0 0 0 4px rgba(240, 185, 104, 0.08);
+}
+
+.cb-results-row strong,
+.cb-counter strong,
+.cb-detail-stats strong {
+  color: #ffcf70;
+}
+
+.cb-counter,
+.cb-card-tile,
+.cb-thumb,
+.cb-detail-image,
+.cb-detail-stats div,
+.cb-detail-text,
+.cb-detail-tags span {
+  border-color: rgba(216, 160, 86, 0.18);
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.05), transparent 42%),
+    rgba(10, 18, 31, 0.5);
+}
+
+.cb-card-tile {
+  background:
+    radial-gradient(circle at top, rgba(255, 218, 142, 0.06), transparent 45%),
+    linear-gradient(180deg, rgba(38, 24, 14, 0.86), rgba(10, 17, 29, 0.9));
+}
+
+.cb-card-tile:hover,
+.cb-card-tile.is-selected {
+  border-color: rgba(240, 185, 104, 0.48);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.28),
+    0 0 24px rgba(240, 185, 104, 0.12);
+}
+
+.cb-card-caption span,
+.cb-detail-tags span {
+  color: #77dfff;
+  border-color: rgba(119, 223, 255, 0.18);
+  background: rgba(119, 223, 255, 0.08);
+}
+
+.cb-empty-orb {
+  color: #77dfff;
+  border-color: rgba(216, 160, 86, 0.26);
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255, 218, 142, 0.18), rgba(119, 223, 255, 0.08));
+}
+
+.cb-detail-close {
+  border-color: rgba(216, 160, 86, 0.22);
+  background: rgba(39, 24, 13, 0.76);
+}

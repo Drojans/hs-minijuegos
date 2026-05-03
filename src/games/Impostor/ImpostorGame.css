@@ -961,3 +961,175 @@
 .im-progress-fill {
   background: linear-gradient(90deg, var(--hs-page-blue), var(--hs-page-gold-strong), #ff8a3d);
 }
+
+
+/* ==========================================================
+   FULL WIDTH PLAYABLE LAYOUT PATCH
+   Aprovecha más pantalla para que las cartas del Impostor se lean.
+   ========================================================== */
+
+.im-page {
+  padding: 14px clamp(10px, 1.1vw, 22px) 18px;
+  overflow-x: hidden;
+}
+
+.im-shell {
+  width: min(99vw, 1880px);
+}
+
+.im-header {
+  grid-template-columns: clamp(140px, 13vw, 230px) minmax(0, 1fr) clamp(130px, 12vw, 190px);
+  margin-bottom: 12px;
+}
+
+.im-title-block h1 {
+  font-size: clamp(2.25rem, 4.2vw, 4rem);
+}
+
+.im-title-block p:not(.im-eyebrow) {
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.im-game-layout {
+  grid-template-columns: clamp(205px, 15vw, 270px) minmax(0, 1fr) clamp(210px, 15vw, 270px);
+  gap: clamp(12px, 1vw, 18px);
+  align-items: stretch;
+}
+
+.im-side-panel,
+.im-action-panel,
+.im-board-panel {
+  padding: clamp(14px, 1vw, 20px);
+}
+
+.im-board-panel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.im-board-grid {
+  width: 100%;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  column-gap: clamp(10px, 1.1vw, 20px);
+  row-gap: clamp(12px, 1.5vh, 20px);
+  align-items: center;
+  justify-items: center;
+}
+
+.im-card {
+  width: 100%;
+  min-height: clamp(235px, 28vh, 318px);
+}
+
+.im-board-grid .inc-card-shell {
+  width: 100%;
+  max-width: clamp(165px, 11.6vw, 245px);
+}
+
+.im-action-panel .im-primary-button {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 18px;
+}
+
+@media (min-width: 1500px) and (min-height: 820px) {
+  .im-shell {
+    width: min(99vw, 1880px);
+  }
+
+  .im-game-layout {
+    grid-template-columns: clamp(210px, 14vw, 260px) minmax(0, 1fr) clamp(210px, 14vw, 260px);
+  }
+
+  .im-board-grid .inc-card-shell {
+    max-width: clamp(175px, 11.9vw, 248px);
+  }
+}
+
+@media (max-width: 1240px) {
+  .im-game-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .im-board-grid {
+    grid-template-columns: repeat(5, minmax(110px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .im-board-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .im-card {
+    min-height: 230px;
+  }
+}
+
+/* ==========================================================
+   BALANCED PLAYABLE WIDTH PATCH — IMPOSTOR
+   Mantiene el ancho útil, pero evita solapes verticales y
+   devuelve algo de aire entre filas sin deformar cartas.
+   ========================================================== */
+
+@media (min-width: 1280px) {
+  .im-shell {
+    width: min(97vw, 1760px);
+  }
+
+  .im-game-layout {
+    grid-template-columns: clamp(220px, 14vw, 270px) minmax(0, 1fr) clamp(220px, 14vw, 270px);
+    gap: clamp(14px, 1.1vw, 22px);
+  }
+
+  .im-board-panel {
+    padding: clamp(18px, 1.25vw, 26px);
+    overflow: hidden;
+  }
+
+  .im-board-grid {
+    column-gap: clamp(14px, 1.25vw, 24px);
+    row-gap: clamp(38px, 4.1vh, 58px);
+    align-items: center;
+    justify-items: center;
+  }
+
+  .im-card {
+    min-height: clamp(300px, 32.5vh, 372px);
+  }
+
+  .im-board-grid .inc-card-shell {
+    width: 100%;
+    max-width: clamp(165px, 10.3vw, 218px);
+  }
+}
+
+@media (min-width: 1600px) and (min-height: 850px) {
+  .im-board-grid {
+    row-gap: clamp(44px, 4.8vh, 66px);
+  }
+
+  .im-card {
+    min-height: clamp(318px, 33.8vh, 382px);
+  }
+
+  .im-board-grid .inc-card-shell {
+    max-width: clamp(170px, 10.5vw, 220px);
+  }
+}
+
+@media (min-width: 1280px) and (max-height: 820px) {
+  .im-board-grid {
+    row-gap: 30px;
+  }
+
+  .im-card {
+    min-height: 292px;
+  }
+
+  .im-board-grid .inc-card-shell {
+    max-width: 198px;
+  }
+}
