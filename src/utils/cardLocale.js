@@ -2,50 +2,95 @@ export function getOppositeLocale(locale) {
   return locale === "en" ? "es" : "en";
 }
 
+const IMAGE_VARIANT_ALIASES = {
+  thumb: ["thumb", "imageThumb"],
+  imageThumb: ["imageThumb", "thumb"],
+  game: ["game", "imageGame"],
+  imageGame: ["imageGame", "game"],
+  adapted: ["adapted", "imageRenderNormalized"],
+  imageRenderNormalized: ["imageRenderNormalized", "adapted"],
+  detail: ["detail", "imageDetail", "adapted", "imageRenderNormalized", "game", "imageGame"],
+  imageDetail: ["imageDetail", "detail", "adapted", "imageRenderNormalized", "game", "imageGame"],
+  art: ["art", "imageArt"],
+  imageArt: ["imageArt", "art"],
+  raw: ["raw", "image"],
+  image: ["image", "raw"],
+};
+
+function getImageVariantAliases(imageType) {
+  return IMAGE_VARIANT_ALIASES[imageType] ?? [imageType];
+}
+
+function getLocalizedImage(card, imageType, locale) {
+  const aliases = getImageVariantAliases(imageType);
+  const locales = [locale, getOppositeLocale(locale)];
+
+  for (const localeKey of locales) {
+    const localizedImages = card.imagesByLocale?.[localeKey];
+    if (!localizedImages) continue;
+
+    for (const alias of aliases) {
+      if (localizedImages[alias]) return localizedImages[alias];
+    }
+  }
+
+  return "";
+}
+
+function getLegacyImage(card, imageType) {
+  for (const alias of getImageVariantAliases(imageType)) {
+    if (card[alias]) return card[alias];
+  }
+
+  return "";
+}
+
 export function getCardImage(card, imageType, locale = "es") {
   if (!card) return "";
 
-  const localized =
-    card.imagesByLocale?.[locale]?.[imageType] ||
-    card.imagesByLocale?.[getOppositeLocale(locale)]?.[imageType];
-
+  const localized = getLocalizedImage(card, imageType, locale);
   if (localized) return localized;
 
-  if (card[imageType]) return card[imageType];
+  const legacy = getLegacyImage(card, imageType);
+  if (legacy) return legacy;
 
-  if (imageType === "imageThumb") {
-    return card.imageGame || card.image || card.imageRenderNormalized || "";
+  if (imageType === "imageThumb" || imageType === "thumb") {
+    return card.imageGame || card.game || card.image || card.imageRenderNormalized || card.adapted || "";
   }
 
-  if (imageType === "imageGame") {
-    return card.imageThumb || card.image || card.imageRenderNormalized || "";
+  if (imageType === "imageGame" || imageType === "game") {
+    return card.imageThumb || card.thumb || card.image || card.imageRenderNormalized || card.adapted || "";
   }
 
-  if (imageType === "imageRenderNormalized") {
-    return card.imageDetail || card.imageGame || card.image || card.imageThumb || "";
+  if (imageType === "imageRenderNormalized" || imageType === "adapted") {
+    return card.imageGame || card.game || card.image || card.imageThumb || card.thumb || "";
   }
 
-  if (imageType === "imageArt") {
-    return card.imageThumb || card.imageGame || card.image || card.imageRenderNormalized || "";
+  if (imageType === "imageArt" || imageType === "art") {
+    return card.imageGame || card.game || card.imageThumb || card.thumb || card.imageRenderNormalized || card.adapted || card.image || "";
   }
 
-  return card.imageGame || card.imageThumb || card.image || card.imageRenderNormalized || "";
+  return card.imageGame || card.game || card.imageThumb || card.thumb || card.imageRenderNormalized || card.adapted || card.image || "";
 }
 
 export function getThumbImage(card, locale = "es") {
-  return getCardImage(card, "imageThumb", locale);
+  return getCardImage(card, "thumb", locale);
 }
 
 export function getGameImage(card, locale = "es") {
-  return getCardImage(card, "imageGame", locale);
+  return getCardImage(card, "game", locale);
+}
+
+export function getAdaptedImage(card, locale = "es") {
+  return getCardImage(card, "adapted", locale);
 }
 
 export function getDetailImage(card, locale = "es") {
-  return getCardImage(card, "imageRenderNormalized", locale);
+  return getAdaptedImage(card, locale) || getGameImage(card, locale);
 }
 
 export function getArtImage(card, locale = "es") {
-  return getCardImage(card, "imageArt", locale);
+  return getCardImage(card, "art", locale);
 }
 
 export function getCardName(card, locale = "es") {

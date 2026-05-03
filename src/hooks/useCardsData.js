@@ -1,49 +1,63 @@
-import { useEffect, useMemo, useState } from "react";
-import { mergeLocaleImages } from "../utils/cardLocale";
+import { useEffect, useState } from "react";
 
-function buildPreviewImagesMap(data) {
-  const imagesMap = new Map();
-
-  if (!Array.isArray(data)) return imagesMap;
-
-  data.forEach((card) => {
-    if (card?.id && card.imagesByLocale) {
-      imagesMap.set(card.id, card.imagesByLocale);
-    }
-  });
-
-  return imagesMap;
-}
+const MULTILANG_CARDS_URL = "/data/cards.multilang.generated.json";
+const LEGACY_CARDS_URL = "/data/cards.json";
 
 export function useCardsData() {
+  const [cards, setCards] = useState([]);
   const [baseCards, setBaseCards] = useState([]);
-  const [previewImagesById, setPreviewImagesById] = useState(new Map());
+  const [activeCardsSource, setActiveCardsSource] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
 
+    async function fetchCardsJson(url) {
+      const response = await fetch(url);
+
+      if (!response.ok) {
+        throw new Error(`No se pudo cargar ${url} (${response.status})`);
+      }
+
+      const data = await response.json();
+
+      if (!Array.isArray(data)) {
+        throw new Error(`${url} no contiene un array de cartas.`);
+      }
+
+      return data;
+    }
+
     async function loadCards() {
       try {
         setLoading(true);
         setError(null);
 
-        const response = await fetch("/data/cards.json");
-        if (!response.ok) {
-          throw new Error(`No se pudo cargar /data/cards.json (${response.status})`);
+        let data;
+        let source;
+
+        try {
+          data = await fetchCardsJson(MULTILANG_CARDS_URL);
+          source = MULTILANG_CARDS_URL;
+        } catch (multilangError) {
+          console.info("Base multiidioma no disponible; usando cards.json.", multilangError);
+          data = await fetchCardsJson(LEGACY_CARDS_URL);
+          source = LEGACY_CARDS_URL;
         }
 
-        const data = await response.json();
-
         if (!cancelled) {
-          setBaseCards(Array.isArray(data) ? data : []);
+          setCards(data);
+          setBaseCards(data);
+          setActiveCardsSource(source);
         }
       } catch (loadError) {
         if (!cancelled) {
           console.error("Error cargando cartas:", loadError);
           setError(loadError);
+          setCards([]);
           setBaseCards([]);
+          setActiveCardsSource(null);
         }
       } finally {
         if (!cancelled) {
@@ -52,42 +66,17 @@ export function useCardsData() {
       }
     }
 
-    async function loadPreviewImages() {
-      try {
-        const response = await fetch("/data/cards.multilang.preview.json");
-        if (!response.ok) {
-          throw new Error("Preview multiidioma no disponible.");
-        }
-
-        const data = await response.json();
-
-        if (!cancelled) {
-          setPreviewImagesById(buildPreviewImagesMap(data));
-        }
-      } catch {
-        // Es normal que este archivo no exista si no estamos probando multiidioma.
-        if (!cancelled) {
-          setPreviewImagesById(new Map());
-        }
-      }
-    }
-
     loadCards();
-    loadPreviewImages();
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const cards = useMemo(() => {
-    return mergeLocaleImages(baseCards, previewImagesById);
-  }, [baseCards, previewImagesById]);
-
   return {
     cards,
     baseCards,
-    previewImagesById,
+    activeCardsSource,
     loading,
     error,
   };

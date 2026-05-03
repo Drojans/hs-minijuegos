@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
-  getArtImage,
   getCardName,
   getDetailImage,
   getGameImage,
@@ -258,17 +257,16 @@ function cardTextHasAnyPattern(card, patterns) {
 }
 
 function getCardImage(card, locale) {
-  return getArtImage(card, locale) || getThumbImage(card, locale) || getGameImage(card, locale) || card?.image || "";
+  return getDetailImage(card, locale) || getGameImage(card, locale) || getThumbImage(card, locale) || card?.image || "";
 }
 
 function getOriginalCardImage(card, locale) {
   return (
     getDetailImage(card, locale) ||
     getGameImage(card, locale) ||
+    getThumbImage(card, locale) ||
     card?.imageDetail ||
     card?.image ||
-    getThumbImage(card, locale) ||
-    getArtImage(card, locale) ||
     ""
   );
 }

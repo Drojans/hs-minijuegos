@@ -1,6 +1,5 @@
 import { useId } from "react";
 import {
-  getArtImage,
   getCardName,
   getDetailImage,
   getGameImage,
@@ -24,7 +23,7 @@ const CARD_NAME_PATHS = {
 };
 
 function getNeutralArt(card, locale) {
-  return getArtImage(card, locale) || getThumbImage(card, locale) || getGameImage(card, locale) || card?.image || "";
+  return getGameImage(card, locale) || getThumbImage(card, locale) || getDetailImage(card, locale) || card?.image || "";
 }
 
 function getNeutralRender(card, locale) {
