@@ -113,7 +113,7 @@ function GuessManaCost({ cards, onBack }) {
   const isCorrect = selectedCost === currentCard.cost;
   const accuracy = Math.round((score / MAX_ROUNDS) * 100);
   const progressPercent = (round / MAX_ROUNDS) * 100;
-  const imageSrc = getGameImage(currentCard, locale);
+  const imageSrc = getGameCardImage(currentCard, locale);
   const currentCardName = getCardName(currentCard, locale);
 
   if (finished) {
