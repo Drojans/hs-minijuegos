@@ -4,9 +4,9 @@ import {
   getGameImage,
   getThumbImage,
 } from "../../utils/cardLocale";
-import minionNeutralOverlayFull from "./minion-neutral-overlay-full.png";
-import spellNeutralOverlayFull from "./spell-neutral-overlay-full.png";
-import weaponNeutralOverlayFull from "./weapon-neutral-overlay-full.png";
+import minionNeutralOverlayFull from "./assets/minion-neutral-overlay-full.png";
+import spellNeutralOverlayFull from "./assets/spell-neutral-overlay-full.png";
+import weaponNeutralOverlayFull from "./assets/weapon-neutral-overlay-full.png";
 import "./ImpostorNeutralCard.css";
 
 function getNeutralRender(card, locale) {
