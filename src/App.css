@@ -17,18 +17,17 @@
 :root {
   color-scheme: dark;
   --hs-bg-dark: #0f0906;
-  --hs-bg-brown: #20120a;
-  --hs-bg-panel: rgba(33, 19, 10, 0.92);
-  --hs-bg-panel-soft: rgba(29, 18, 11, 0.86);
   --hs-gold: #f0b968;
   --hs-gold-strong: #ffcf70;
   --hs-gold-soft: #f9e1b4;
   --hs-blue: #71d9ff;
+  --hs-violet: #a77cff;
+  --hs-green: #8dffba;
   --hs-text: #f7edd8;
   --hs-muted: #d9c8ae;
   --hs-border: rgba(216, 160, 86, 0.32);
   --hs-border-strong: rgba(234, 182, 107, 0.58);
-  --hs-shadow: 0 18px 50px rgba(0, 0, 0, 0.42);
+  --hs-shadow: 0 22px 62px rgba(0, 0, 0, 0.46);
 }
 
 html,
@@ -51,11 +50,11 @@ body {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--hs-text);
   background:
-    radial-gradient(circle at 50% 8%, rgba(255, 188, 84, 0.12), transparent 24%),
-    radial-gradient(circle at 16% 78%, rgba(82, 149, 255, 0.06), transparent 18%),
-    radial-gradient(circle at 84% 26%, rgba(169, 91, 255, 0.06), transparent 20%),
+    radial-gradient(circle at 50% 4%, rgba(255, 197, 96, 0.15), transparent 26%),
+    radial-gradient(circle at 15% 72%, rgba(91, 152, 255, 0.07), transparent 22%),
+    radial-gradient(circle at 88% 20%, rgba(171, 107, 255, 0.075), transparent 24%),
     linear-gradient(90deg, rgba(255, 232, 183, 0.018) 0, rgba(255, 232, 183, 0.018) 50%, transparent 50%, transparent 100%),
-    linear-gradient(180deg, #20150e, #0d0908 58%, #160b15);
+    linear-gradient(180deg, #21140d, #0d0908 57%, #150914);
   background-size: auto, auto, auto, 26px 26px, auto;
 }
 
@@ -76,22 +75,24 @@ button {
 .app-home-hearthstone {
   position: relative;
   min-height: 100vh;
-  padding: 24px;
+  padding: 34px 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  isolation: isolate;
 }
 
 .app-home-bg-layer {
   position: absolute;
   inset: 0;
+  z-index: -1;
   pointer-events: none;
+  overflow: hidden;
   background:
-    radial-gradient(ellipse at 50% 48%, rgba(255, 191, 94, 0.07), transparent 36%),
-    radial-gradient(circle at 50% 22%, rgba(255, 220, 143, 0.055), transparent 18%),
-    linear-gradient(180deg, transparent 0 70%, rgba(0, 0, 0, 0.24));
-  opacity: 0.95;
+    radial-gradient(ellipse at 50% 38%, rgba(255, 191, 94, 0.09), transparent 42%),
+    radial-gradient(circle at 50% 18%, rgba(255, 220, 143, 0.07), transparent 18%),
+    linear-gradient(180deg, transparent 0 64%, rgba(0, 0, 0, 0.34));
 }
 
 .app-home-bg-layer::before,
@@ -103,187 +104,330 @@ button {
 
 .app-home-bg-layer::before {
   inset: 24px;
-  border-radius: 34px;
-  border: 1px solid rgba(240, 185, 104, 0.06);
+  border-radius: 38px;
+  border: 1px solid rgba(240, 185, 104, 0.08);
   box-shadow:
-    inset 0 0 90px rgba(0, 0, 0, 0.28),
-    inset 0 0 32px rgba(255, 193, 92, 0.03);
+    inset 0 0 90px rgba(0, 0, 0, 0.32),
+    inset 0 0 36px rgba(255, 193, 92, 0.04);
 }
 
 .app-home-bg-layer::after {
   left: 50%;
-  top: 50%;
-  width: min(88vw, 1180px);
-  height: min(72vh, 760px);
+  top: 48%;
+  width: min(92vw, 1240px);
+  height: min(78vh, 800px);
   transform: translate(-50%, -50%);
   border-radius: 999px;
-  background: radial-gradient(circle, rgba(255, 197, 96, 0.055), transparent 66%);
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 197, 96, 0.07), transparent 58%),
+    radial-gradient(circle at 50% 50%, rgba(113, 217, 255, 0.035), transparent 76%);
 }
 
-.app-home-centered-shell {
+.app-home-orb,
+.app-home-rune {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+}
+
+.app-home-orb {
+  width: 340px;
+  height: 340px;
+  border-radius: 999px;
+  filter: blur(16px);
+  opacity: 0.34;
+}
+
+.app-home-orb-a {
+  left: -92px;
+  top: 12%;
+  background: radial-gradient(circle, rgba(113, 217, 255, 0.22), transparent 66%);
+}
+
+.app-home-orb-b {
+  right: -96px;
+  bottom: 7%;
+  background: radial-gradient(circle, rgba(255, 207, 112, 0.2), transparent 67%);
+}
+
+.app-home-orb-c {
+  left: 52%;
+  bottom: -170px;
+  transform: translateX(-50%);
+  background: radial-gradient(circle, rgba(167, 124, 255, 0.15), transparent 70%);
+}
+
+.app-home-rune {
+  color: rgba(255, 225, 157, 0.19);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(4rem, 10vw, 9rem);
+  text-shadow: 0 0 28px rgba(255, 200, 100, 0.08);
+}
+
+.app-home-rune-a {
+  left: 7%;
+  bottom: 9%;
+  transform: rotate(-12deg);
+}
+
+.app-home-rune-b {
+  right: 9%;
+  top: 11%;
+  transform: rotate(14deg);
+}
+
+.app-language-anchor {
+  position: fixed;
+  top: 14px;
+  right: 22px;
+  z-index: 50;
+}
+
+.app-home-shell {
   position: relative;
   z-index: 1;
-  width: min(100%, 1060px);
-  max-height: calc(100vh - 48px);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  width: min(100%, 1180px);
+  display: grid;
   gap: 28px;
 }
 
-.app-home-centered-header {
+.app-home-hero {
+  width: min(100%, 850px);
+  margin: 0 auto;
   text-align: center;
+  display: grid;
+  justify-items: center;
+}
+
+.app-home-kicker-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 10px;
+  padding: 7px 12px;
+  border: 1px solid rgba(240, 185, 104, 0.2);
+  border-radius: 999px;
+  background: rgba(30, 18, 10, 0.58);
+  box-shadow: inset 0 1px 0 rgba(255, 236, 188, 0.08);
+  backdrop-filter: blur(12px);
+}
+
+.app-home-kicker-icon {
+  display: grid;
+  place-items: center;
+  color: var(--hs-gold-strong);
 }
 
 .app-home-kicker,
 .app-home-subtitle,
-.app-home-centered-header h2,
+.app-home-lead,
 .app-home-mode-card p {
   margin: 0;
 }
 
 .app-home-kicker {
-  margin-bottom: 8px;
-  color: #dcb787;
-  font-size: 0.84rem;
-  letter-spacing: 0.14em;
+  color: #e4c094;
+  font-size: 0.76rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  font-weight: 800;
+  font-weight: 850;
 }
 
-.app-home-centered-header h1,
-.app-home-centered-header h2,
-.app-home-mode-card h3,
+.app-home-hero h1,
+.app-home-mode-card h2,
 .app-home-mode-button {
   font-family: "Belwe HS", Georgia, serif;
 }
 
-.app-home-centered-header h1 {
+.app-home-hero h1 {
   margin: 0;
-  color: #ffc51d;
-  font-size: clamp(3rem, 5vw, 4.5rem);
-  line-height: 0.95;
+  font-size: clamp(3.8rem, 8.6vw, 7.6rem);
+  line-height: 0.88;
+  letter-spacing: -0.04em;
   text-shadow:
     0 2px 0 rgba(70, 34, 8, 0.94),
-    0 8px 22px rgba(0, 0, 0, 0.34),
-    0 0 20px rgba(255, 197, 54, 0.15);
+    0 10px 28px rgba(0, 0, 0, 0.44),
+    0 0 28px rgba(255, 197, 54, 0.18);
+}
+
+.app-home-hero h1 span {
+  display: inline-block;
+  background: linear-gradient(180deg, #fff1a8 0%, #ffc51d 46%, #d8891a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .app-home-subtitle {
-  margin-top: 10px;
-  color: var(--hs-text);
-  font-size: clamp(1.02rem, 1.5vw, 1.4rem);
-  font-weight: 750;
+  margin-top: 12px;
+  color: var(--hs-gold-soft);
+  font-size: clamp(1.08rem, 1.65vw, 1.46rem);
+  font-weight: 780;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.22);
 }
 
-.app-home-centered-header h2 {
-  margin-top: 32px;
-  color: var(--hs-gold-soft);
-  font-size: clamp(1.5rem, 2vw, 2rem);
-  font-weight: 700;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.28);
+.app-home-lead {
+  width: min(100%, 670px);
+  margin-top: 10px;
+  color: rgba(247, 237, 216, 0.82);
+  line-height: 1.6;
+  font-size: 1rem;
 }
 
 .app-home-mode-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 18px;
   width: 100%;
 }
 
 .app-home-mode-card {
+  --card-accent: var(--hs-gold);
   position: relative;
-  min-height: 256px;
-  padding: 24px 22px 20px;
-  border-radius: 20px;
-  border: 1px solid var(--hs-border);
+  min-height: 322px;
+  padding: 20px 19px 18px;
+  border-radius: 26px;
+  border: 1px solid rgba(216, 160, 86, 0.3);
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 218, 142, 0.07), transparent 38%),
-    linear-gradient(180deg, rgba(46, 25, 11, 0.97), rgba(22, 12, 7, 0.96));
+    linear-gradient(180deg, rgba(255, 239, 189, 0.045), transparent 24%),
+    radial-gradient(circle at 88% 2%, color-mix(in srgb, var(--card-accent) 18%, transparent), transparent 35%),
+    linear-gradient(180deg, rgba(43, 26, 16, 0.88), rgba(14, 11, 10, 0.92));
   box-shadow:
-    inset 0 1px 0 rgba(255, 236, 188, 0.08),
-    inset 0 -1px 0 rgba(77, 41, 14, 0.65),
+    inset 0 1px 0 rgba(255, 236, 188, 0.1),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.58),
     var(--hs-shadow);
-  text-align: center;
+  text-align: left;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
+  align-items: stretch;
   overflow: hidden;
-  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  backdrop-filter: blur(18px);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
 }
 
 .app-home-mode-card::before,
-.app-home-mode-card::after {
+.app-home-mode-card::after,
+.app-home-card-glow {
   content: "";
   position: absolute;
   pointer-events: none;
 }
 
 .app-home-mode-card::before {
-  inset: 8px;
-  border-radius: 15px;
-  border: 1px solid rgba(255, 222, 154, 0.08);
-  box-shadow: inset 0 0 22px rgba(255, 205, 110, 0.035);
+  inset: 9px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 222, 154, 0.09);
+  box-shadow:
+    inset 0 0 24px rgba(255, 205, 110, 0.04),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
 .app-home-mode-card::after {
-  top: 11px;
-  left: 11px;
-  right: 11px;
+  top: 12px;
+  left: 14px;
+  right: 14px;
   height: 4px;
   border-radius: 999px;
-  background: linear-gradient(90deg, transparent, rgba(255, 213, 121, 0.34), transparent);
-  opacity: 0.75;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--card-accent) 62%, transparent), transparent);
+  opacity: 0.86;
+}
+
+.app-home-card-glow {
+  inset: -54px -44px auto auto;
+  width: 168px;
+  height: 168px;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--card-accent) 32%, transparent), transparent 68%);
+  filter: blur(2px);
+  opacity: 0.85;
 }
 
 .app-home-mode-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--hs-border-strong);
-  filter: brightness(1.03);
+  border-color: color-mix(in srgb, var(--card-accent) 58%, rgba(234, 182, 107, 0.48));
+  filter: brightness(1.04);
   box-shadow:
-    inset 0 1px 0 rgba(255, 236, 188, 0.1),
-    inset 0 -1px 0 rgba(77, 41, 14, 0.65),
-    0 24px 58px rgba(0, 0, 0, 0.52),
-    0 0 26px rgba(255, 197, 96, 0.08);
+    inset 0 1px 0 rgba(255, 236, 188, 0.12),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.58),
+    0 26px 66px rgba(0, 0, 0, 0.55),
+    0 0 36px color-mix(in srgb, var(--card-accent) 18%, transparent);
 }
 
 .app-home-mode-card-featured {
-  border-color: rgba(245, 187, 100, 0.62);
-  background:
-    radial-gradient(circle at 50% 0%, rgba(255, 209, 107, 0.11), transparent 38%),
-    linear-gradient(180deg, rgba(57, 31, 13, 0.98), rgba(23, 12, 7, 0.96));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 236, 188, 0.11),
-    inset 0 -1px 0 rgba(77, 41, 14, 0.65),
-    0 22px 54px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(245, 187, 100, 0.12);
+  border-color: rgba(245, 187, 100, 0.66);
+}
+
+.app-home-mode-card-mana {
+  --card-accent: #75e0ff;
+}
+
+.app-home-mode-card-impostor {
+  --card-accent: #ffcf70;
+}
+
+.app-home-mode-card-grid {
+  --card-accent: #a98bff;
+}
+
+.app-home-mode-card-database {
+  --card-accent: #91f2b2;
+}
+
+.app-home-mode-topline {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+
+.app-home-mode-badge,
+.app-home-mode-meta {
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.app-home-mode-badge {
+  padding: 6px 8px;
+  color: #180d05;
+  background: linear-gradient(180deg, #ffe39b, #ca8f35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.app-home-mode-meta {
+  color: rgba(249, 225, 180, 0.78);
 }
 
 .app-home-mode-icon {
   position: relative;
-  width: 58px;
-  height: 58px;
-  border-radius: 50%;
+  z-index: 1;
+  width: 66px;
+  height: 66px;
+  border-radius: 23px;
   display: grid;
   place-items: center;
   margin-bottom: 18px;
-  border: 2px solid rgba(241, 185, 104, 0.36);
+  border: 1px solid color-mix(in srgb, var(--card-accent) 46%, rgba(241, 185, 104, 0.22));
   background:
-    radial-gradient(circle at 36% 28%, rgba(255, 241, 190, 0.22), transparent 24%),
-    linear-gradient(180deg, rgba(89, 56, 24, 0.74), rgba(25, 16, 10, 0.86));
-  color: var(--hs-gold);
-  font-size: 1.55rem;
-  font-weight: 900;
+    radial-gradient(circle at 36% 28%, rgba(255, 241, 190, 0.24), transparent 24%),
+    linear-gradient(180deg, rgba(89, 56, 24, 0.72), rgba(18, 15, 13, 0.92));
+  color: var(--card-accent);
   box-shadow:
     inset 0 1px 0 rgba(255, 235, 187, 0.16),
-    0 0 18px rgba(255, 197, 96, 0.09);
+    0 0 24px color-mix(in srgb, var(--card-accent) 16%, transparent);
 }
 
-.app-home-mode-card h3 {
+.app-home-mode-card h2 {
+  position: relative;
+  z-index: 1;
   margin: 0;
-  color: var(--hs-gold);
-  font-size: clamp(1.45rem, 2vw, 1.95rem);
+  color: var(--hs-gold-soft);
+  font-size: clamp(1.38rem, 1.75vw, 1.9rem);
   line-height: 1.06;
   text-shadow:
     0 2px 0 rgba(51, 24, 7, 0.72),
@@ -291,34 +435,40 @@ button {
 }
 
 .app-home-mode-card p {
-  margin-top: 14px;
-  color: var(--hs-text);
-  line-height: 1.55;
-  font-size: 1rem;
-  max-width: 240px;
-  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+  margin-top: 12px;
+  color: rgba(247, 237, 216, 0.87);
+  line-height: 1.52;
+  font-size: 0.95rem;
 }
 
 .app-home-mode-button {
+  position: relative;
+  z-index: 1;
   margin-top: auto;
-  min-width: 124px;
-  border: 1px solid rgba(240, 185, 104, 0.58);
-  border-radius: 12px;
-  padding: 10px 20px;
+  width: 100%;
+  border: 1px solid rgba(240, 185, 104, 0.5);
+  border-radius: 15px;
+  padding: 12px 13px;
   background:
-    linear-gradient(180deg, rgba(102, 64, 27, 0.96), rgba(44, 24, 10, 0.98));
+    linear-gradient(180deg, color-mix(in srgb, var(--card-accent) 20%, rgba(102, 64, 27, 0.96)), rgba(37, 23, 14, 0.98));
   color: var(--hs-gold-soft);
-  font-size: 1.02rem;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
   box-shadow:
     inset 0 1px 0 rgba(255, 228, 176, 0.16),
-    0 8px 18px rgba(0, 0, 0, 0.2);
+    0 8px 18px rgba(0, 0, 0, 0.22);
   transition: filter 0.18s ease, transform 0.18s ease, opacity 0.18s ease;
 }
 
 .app-home-mode-button:hover:not(:disabled) {
-  filter: brightness(1.09);
+  filter: brightness(1.1);
   transform: translateY(-1px);
 }
 
@@ -327,41 +477,64 @@ button {
   cursor: not-allowed;
 }
 
-@media (max-width: 980px) {
-  .app-home-hearthstone {
-    min-height: auto;
-    padding: 22px 14px;
-    overflow: visible;
-  }
-
-  .app-home-centered-shell {
-    max-height: none;
-  }
-
+@media (max-width: 1120px) {
   .app-home-mode-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: min(100%, 820px);
+    margin: 0 auto;
   }
 
   .app-home-mode-card {
-    min-height: 220px;
+    min-height: 286px;
   }
 }
 
+@media (max-width: 760px) {
+  .app-home-hearthstone {
+    min-height: auto;
+    padding: 76px 14px 24px;
+    overflow: visible;
+  }
 
-/* Home update for 4 minigame cards */
-.app-home-mode-grid {
-  grid-template-columns: repeat(2, minmax(260px, 1fr));
-  width: min(100%, 780px);
-  margin: 0 auto;
-}
+  .app-language-anchor {
+    top: 12px;
+    right: 12px;
+  }
 
-.app-home-mode-card {
-  min-height: 236px;
-}
+  .app-home-bg-layer::before {
+    inset: 10px;
+    border-radius: 24px;
+  }
 
-@media (max-width: 720px) {
+  .app-home-shell {
+    gap: 20px;
+  }
+
   .app-home-mode-grid {
     grid-template-columns: 1fr;
     width: 100%;
+  }
+
+  .app-home-hero h1 {
+    font-size: clamp(3.15rem, 15vw, 4.65rem);
+  }
+
+  .app-home-lead {
+    font-size: 0.92rem;
+  }
+
+  .app-home-mode-card {
+    min-height: 258px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }
