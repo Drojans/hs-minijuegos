@@ -3,7 +3,7 @@
  * Generador multiidioma mínimo de imágenes de cartas.
  *
  * Qué hace:
- * - Lee public/data/cards.json.
+ * - Lee public/data/cards.multilang.generated.json.
  * - Descarga renders desde HearthstoneJSON para ES y EN.
  * - NO guarda PNG/raw originales.
  * - Genera solo:
@@ -44,8 +44,8 @@ try {
 
 const PROJECT_ROOT = process.cwd();
 
-const INPUT_CARDS_PATH = path.join(PROJECT_ROOT, "public", "data", "cards.json");
 const OUTPUT_CARDS_PATH = path.join(PROJECT_ROOT, "public", "data", "cards.multilang.generated.json");
+const INPUT_CARDS_PATH = OUTPUT_CARDS_PATH;
 
 const REPORTS_DIR = path.join(PROJECT_ROOT, "reports");
 const REPORT_JSON_PATH = path.join(REPORTS_DIR, "card-images-multilang-report.json");
@@ -178,15 +178,9 @@ function getPublicPaths(id, locale) {
   const adapted = `/card-images/${locale}/adapted/${id}.webp`;
 
   return {
-    // Nombres nuevos limpios.
     thumb,
     game,
     adapted,
-
-    // Nombres legacy para que el código actual funcione sin tocar helpers todavía.
-    imageThumb: thumb,
-    imageGame: game,
-    imageRenderNormalized: adapted,
   };
 }
 
@@ -623,7 +617,6 @@ function makeTextReport(report) {
   lines.push("Nota:");
   lines.push("  No se guardan PNG/raw, detail ni art.");
   lines.push("  adapted sustituye a la antigua idea de normalized.");
-  lines.push("  En el JSON se guardan también imageThumb/imageGame/imageRenderNormalized para que el código actual pueda leerlo.");
   lines.push("");
 
   return lines.join("\n");
