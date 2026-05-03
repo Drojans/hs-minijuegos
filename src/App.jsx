@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import CardBrowser from "./components/CardBrowser";
+import CardDatabase from "./features/CardDatabase/CardDatabase";
 import LanguageToggle from "./components/LanguageToggle";
 import { useLanguage } from "./i18n/LanguageProvider";
 import { useCardsData } from "./hooks/useCardsData";
@@ -70,7 +70,7 @@ function App() {
   }
 
   if (currentView === "cards") {
-    return <CardBrowser cards={cards} loading={loading} onBack={() => setCurrentView("home")} />;
+    return <CardDatabase cards={cards} loading={loading} onBack={() => setCurrentView("home")} />;
   }
 
   return (

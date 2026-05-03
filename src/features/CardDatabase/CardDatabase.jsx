@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLanguage } from "../i18n/LanguageProvider";
+import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
   getCardText,
@@ -9,8 +9,8 @@ import {
   translateCardClass,
   translateCardRarity,
   translateCardType,
-} from "../utils/cardLocale";
-import "./CardBrowser.css";
+} from "../../utils/cardLocale";
+import "./CardDatabase.css";
 
 const CLASS_ORDER = [
   "DEATHKNIGHT",
@@ -31,7 +31,7 @@ const TYPE_ORDER = ["MINION", "SPELL", "WEAPON", "LOCATION", "HERO"];
 const RARITY_ORDER = ["FREE", "COMMON", "RARE", "EPIC", "LEGENDARY"];
 const COST_OPTIONS = ["ALL", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
 
-function CardBrowser({ cards, loading, onBack }) {
+function CardDatabase({ cards, loading, onBack }) {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("ALL");
   const [classFilter, setClassFilter] = useState("ALL");
@@ -293,4 +293,4 @@ function CardDetailPanel({ card, locale, t, onClose }) {
   );
 }
 
-export default CardBrowser;
+export default CardDatabase;
