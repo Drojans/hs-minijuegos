@@ -1,14 +1,30 @@
 # Estructura del proyecto
 
+Estado actualizado después de separar la Home, limpiar assets de `public/ui/book` y añadir rutas/páginas por minijuego.
+
 ## Raíz
 
 ```text
 src/                 Código React de la app
 public/data/         JSON activo de cartas
-public/card-images/  Imágenes generadas por idioma, ignoradas por Git
+public/card-images/  Imágenes generadas de cartas, ignoradas por Git
+public/ui/book/      Assets activos de la Home/libro
 public/fonts/        Fuentes necesarias para UI/cartas
-public/grid-icons/   Iconos del modo Grid
 scripts/v2/          Pipeline actual de generación de imágenes
+scripts/cleanup/     Scripts auxiliares de auditoría/limpieza
+docs/                Documentación del proyecto
+```
+
+## Rutas de la app
+
+La app usa rutas internas mediante History API, sin dependencia externa de router.
+
+```text
+/             Home / libro de misiones
+/guess-mana   Adivina el coste
+/impostor     Impostor
+/grid         Grid de cartas
+/cards        Base de datos
 ```
 
 ## `src/`
@@ -20,22 +36,85 @@ src/index.css
 src/main.jsx
 ```
 
-Contiene la app, navegación principal y estilos globales.
+`App.jsx` actúa como router/controlador de vistas. Carga los datos de cartas con `useCardsData()` y renderiza la página correspondiente.
 
-## Componentes globales
+`App.css` mantiene estilos globales mínimos.
+
+## Páginas
 
 ```text
-src/components/CardBrowser.jsx
-src/components/CardBrowser.css
-src/components/LanguageToggle.jsx
-src/components/LanguageToggle.css
+src/pages/HomePage.jsx
+src/pages/GuessManaPage.jsx
+src/pages/ImpostorPage.jsx
+src/pages/CardGridPage.jsx
+src/pages/CardDatabasePage.jsx
 ```
 
-`CardBrowser` usa imágenes localizadas mediante helpers:
+Las páginas son envoltorios finos. Sirven para que cada sección tenga su ruta propia sin mezclar la lógica interna de cada minijuego.
+
+## Home / libro de misiones
 
 ```text
-thumb   → casillas/listado
-adapted → vista grande/detalle
+src/features/HomeBook/HomeBook.jsx
+src/features/HomeBook/HomeBook.css
+src/features/HomeBook/homeBookConfig.js
+```
+
+Responsabilidades:
+
+```text
+HomeBook.jsx        Estructura React de la Home
+HomeBook.css        Layout, assets, hitboxes y animaciones de la Home
+homeBookConfig.js   Configuración de modos, rutas, textos y variantes
+```
+
+La Home ya no vive directamente en `App.jsx`.
+
+## Base de datos
+
+```text
+src/features/CardDatabase/CardDatabase.jsx
+src/features/CardDatabase/CardDatabase.css
+```
+
+Usa los helpers de idioma e imágenes de cartas para mostrar la colección.
+
+## Juegos
+
+```text
+src/games/GuessManaCost/
+src/games/CardGrid/
+src/games/Impostor/
+```
+
+Cada juego conserva su propia carpeta, CSS y lógica.
+
+```text
+src/games/GuessManaCost/GuessManaCost.jsx
+src/games/GuessManaCost/GuessManaCost.css
+
+src/games/CardGrid/CardGridGame.jsx
+src/games/CardGrid/CardGridGame.css
+src/games/CardGrid/assets/
+
+src/games/Impostor/ImpostorGame.jsx
+src/games/Impostor/ImpostorGame.css
+src/games/Impostor/ImpostorNeutralCard.jsx
+src/games/Impostor/ImpostorNeutralCard.css
+```
+
+## Componentes compartidos
+
+```text
+src/shared/components/GameLayout/
+src/shared/components/LanguageToggle/
+```
+
+`LanguageToggle` controla ES/EN y en la Home usa la variante visual tipo libro con assets:
+
+```text
+public/ui/book/language-es-frame-cartoon.png
+public/ui/book/language-en-frame-cartoon.png
 ```
 
 ## Idioma
@@ -51,13 +130,10 @@ Controlan idioma global ES/EN y textos de interfaz.
 
 ```text
 src/hooks/useCardsData.js
+public/data/cards.multilang.generated.json
 ```
 
-Carga:
-
-```text
-/data/cards.multilang.generated.json
-```
+`useCardsData()` carga el JSON activo.
 
 ## Helpers de cartas
 
@@ -74,45 +150,53 @@ rutas de imágenes por idioma
 traducciones de clase/tipo/rareza/raza
 ```
 
-## Juegos
+Los componentes no deben construir rutas de imágenes manualmente. Deben pedirlas a estos helpers.
+
+## Assets de la Home
+
+La estructura activa está aplanada en:
 
 ```text
-src/games/GuessManaCost/
-src/games/CardGrid/
-src/games/Impostor/
+public/ui/book/
 ```
 
-Todos están conectados al idioma global y usan los helpers de cartas.
-
-## Impostor
+Assets activos principales:
 
 ```text
-src/games/Impostor/ImpostorGame.jsx
-src/games/Impostor/ImpostorGame.css
-src/games/Impostor/ImpostorNeutralCard.jsx
-src/games/Impostor/ImpostorNeutralCard.css
-src/games/Impostor/minion-neutral-overlay-full.png
-src/games/Impostor/spell-neutral-overlay-full.png
-src/games/Impostor/weapon-neutral-overlay-full.png
+button-primary-purple-cartoon.png
+divider-thin-black-cartoon.png
+home-open-book-cartoon.png
+home-tavern-backdrop-cartoon.webp
+icon-featured-mission-star-cartoon.png
+icon-mode-database-cartoon.png
+icon-mode-grid-cartoon.png
+icon-mode-impostor-cartoon.png
+icon-mode-mana-cartoon.png
+language-en-frame-cartoon.png
+language-es-frame-cartoon.png
+panel-featured-mission-cartoon.png
+panel-game-row-cartoon.png
+parchment-note-render.png
+prop-bottom-coins-cartoon.png
+prop-bottom-left-cards-cartoon.png
+prop-left-candle-cartoon.png
+prop-right-mug-cartoon.png
+section-divider-cartoon.png
+status-check-cartoon.png
+status-cross-cartoon.png
+status-minus-cartoon.png
 ```
 
-Las cartas ocultas se montan con:
+Ya no deberían existir referencias activas a:
 
 ```text
-render adapted localizado + overlay PNG local
+public/ui/book/cartoon-v1/
+public/ui/book/render-v1/
 ```
 
-## `public/data/`
+## Imágenes de cartas
 
-```text
-cards.multilang.generated.json
-```
-
-Es la única base activa de cartas.
-
-## `public/card-images/`
-
-No está en Git. Se genera con `scripts/v2/generate-card-images-multilang.mjs`.
+`public/card-images/` no está en Git. Se genera con `scripts/v2/generate-card-images-multilang.mjs`.
 
 Estructura:
 
@@ -124,3 +208,17 @@ public/card-images/en/thumb/ID.webp
 public/card-images/en/game/ID.webp
 public/card-images/en/adapted/ID.webp
 ```
+
+## Editor temporal de layout
+
+```text
+src/dev/LayoutEditor.jsx
+```
+
+Sigue disponible para ajustar la Home con:
+
+```text
+/?layoutEditor=1
+```
+
+Cuando el diseño quede cerrado, se puede decidir si mantenerlo solo en desarrollo o retirarlo.

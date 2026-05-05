@@ -1,14 +1,12 @@
 # Scripts del proyecto
 
-## Script activo
+## Pipeline activo de cartas
 
 El pipeline actual vive en:
 
 ```text
 scripts/v2/generate-card-images-multilang.mjs
 ```
-
-Los scripts legacy fueron eliminados para evitar recrear estructuras antiguas.
 
 ## Qué hace
 
@@ -66,6 +64,35 @@ node scripts/v2/generate-card-images-multilang.mjs --locales=es --limit=20
 node scripts/v2/generate-card-images-multilang.mjs --locales=en --limit=20
 ```
 
+## Scripts de limpieza
+
+```text
+scripts/cleanup/audit-book-assets-phase2.ps1
+scripts/cleanup/archive-unused-book-assets-phase2.ps1
+```
+
+### Auditar assets de Home
+
+```powershell
+.\scripts\cleanup\audit-book-assets-phase2.ps1
+```
+
+Lista assets de `public/ui/book` y si aparecen referenciados en el código.
+
+### Archivar assets antiguos de Home
+
+```powershell
+.\scripts\cleanup\archive-unused-book-assets-phase2.ps1
+```
+
+Mueve assets antiguos a una carpeta `_archive`. No debería usarse después de haber completado la limpieza salvo que vuelvan a aparecer assets legacy.
+
+Si PowerShell bloquea scripts no firmados:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
 ## Carpetas generadas ignoradas
 
 ```text
@@ -73,7 +100,7 @@ public/card-images/
 reports/
 ```
 
-## Después de regenerar
+## Después de regenerar imágenes
 
 Probar:
 

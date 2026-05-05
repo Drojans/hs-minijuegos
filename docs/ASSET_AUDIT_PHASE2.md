@@ -1,95 +1,59 @@
-# Asset audit fase 2 — Home book
+# Asset audit fase 2 — completado
 
-Esta fase limpia solo assets de `public/ui/book`.
+Esta auditoría correspondía a la limpieza de assets de la Home/libro.
 
-## Cambio funcional mínimo
+## Estado final
 
-`src/App.css` ahora usa:
-
-```css
-url("/ui/book/cartoon-v1/parchment-note-render.png")
-```
-
-en lugar de:
-
-```css
-url("/ui/book/render-v1/parchment-note-render.png")
-```
-
-Así podemos archivar `render-v1` sin romper la nota del tabernero.
-
-## Assets activos que se mantienen en `public/ui/book/cartoon-v1`
-
-- `button-primary-purple-cartoon.png`
-- `divider-thin-black-cartoon.png`
-- `home-open-book-cartoon.png`
-- `home-tavern-backdrop-cartoon.webp`
-- `icon-featured-mission-star-cartoon.png`
-- `icon-mode-database-cartoon.png`
-- `icon-mode-grid-cartoon.png`
-- `icon-mode-impostor-cartoon.png`
-- `icon-mode-mana-cartoon.png`
-- `language-en-frame-cartoon.png`
-- `language-es-frame-cartoon.png`
-- `panel-featured-mission-cartoon.png`
-- `panel-game-row-cartoon.png`
-- `parchment-note-render.png`
-- `prop-bottom-coins-cartoon.png`
-- `prop-bottom-left-cards-cartoon.png`
-- `prop-left-candle-cartoon.png`
-- `prop-right-mug-cartoon.png`
-- `section-divider-cartoon.png`
-- `status-check-cartoon.png`
-- `status-cross-cartoon.png`
-- `status-minus-cartoon.png`
-
-## Assets archivables detectados
-
-### `public/ui/book/` raíz
-
-- `public/ui/book/featured-quest-frame-large.png`
-- `public/ui/book/featured-quest-frame.png`
-- `public/ui/book/icon-database.png`
-- `public/ui/book/icon-grid.png`
-- `public/ui/book/icon-impostor.png`
-- `public/ui/book/icon-mana.png`
-- `public/ui/book/open-book-overlay.webp`
-- `public/ui/book/parchment-note-aged.png`
-- `public/ui/book/parchment-note.png`
-- `public/ui/book/purple-button.png`
-- `public/ui/book/quest-row-aged-frame.png`
-- `public/ui/book/quest-row-frame.png`
-- `public/ui/book/quest-row-status-slot.png`
-- `public/ui/book/tavern-background.webp`
-- `public/ui/book/wood-button.png`
-
-### Banderas/botones de idioma antiguos en `cartoon-v1`
-
-- `public/ui/book/cartoon-v1/flag-es-cartoon.png`
-- `public/ui/book/cartoon-v1/flag-es-flat-cartoon.png`
-- `public/ui/book/cartoon-v1/flag-gb-cartoon.png`
-- `public/ui/book/cartoon-v1/flag-gb-flat-cartoon.png`
-- `public/ui/book/cartoon-v1/toggle-language-button-dark-cartoon.png`
-- `public/ui/book/cartoon-v1/toggle-language-button-gold-cartoon.png`
-
-### `public/ui/book/render-v1`
-
-Se archiva completa después de copiar `parchment-note-render.png` a `cartoon-v1`.
-
-## Cómo aplicar
-
-1. Copia/machaca los archivos del zip.
-2. Recarga y comprueba que la Home se ve igual.
-3. Ejecuta:
-
-```powershell
-.\scripts\cleanup\archive-unused-book-assets-phase2.ps1
-```
-
-El script mueve archivos a:
+Los assets activos de Home quedaron aplanados en:
 
 ```text
-public/ui/book/_archive-unused-20260505/
+public/ui/book/
 ```
 
-No borra nada definitivamente.
+Ya no se usan rutas activas a:
+
+```text
+public/ui/book/cartoon-v1/
+public/ui/book/render-v1/
+```
+
+## Assets activos esperados
+
+```text
+public/ui/book/button-primary-purple-cartoon.png
+public/ui/book/divider-thin-black-cartoon.png
+public/ui/book/home-open-book-cartoon.png
+public/ui/book/home-tavern-backdrop-cartoon.webp
+public/ui/book/icon-featured-mission-star-cartoon.png
+public/ui/book/icon-mode-database-cartoon.png
+public/ui/book/icon-mode-grid-cartoon.png
+public/ui/book/icon-mode-impostor-cartoon.png
+public/ui/book/icon-mode-mana-cartoon.png
+public/ui/book/language-en-frame-cartoon.png
+public/ui/book/language-es-frame-cartoon.png
+public/ui/book/panel-featured-mission-cartoon.png
+public/ui/book/panel-game-row-cartoon.png
+public/ui/book/parchment-note-render.png
+public/ui/book/prop-bottom-coins-cartoon.png
+public/ui/book/prop-bottom-left-cards-cartoon.png
+public/ui/book/prop-left-candle-cartoon.png
+public/ui/book/prop-right-mug-cartoon.png
+public/ui/book/section-divider-cartoon.png
+public/ui/book/status-check-cartoon.png
+public/ui/book/status-cross-cartoon.png
+public/ui/book/status-minus-cartoon.png
+```
+
+## Comprobación
+
+```powershell
+.\scripts\cleanup\audit-book-assets-phase2.ps1
+```
+
+La salida esperada es que los assets activos aparezcan como `Used True`.
+
+Si aparece algún asset `False`, revisar si es un asset reservado para futuro o eliminarlo.
+
+## Nota
+
+El script de archivado no borra definitivamente; mueve a `_archive`. Si ya has eliminado manualmente las carpetas antiguas, no hace falta volver a ejecutarlo.
