@@ -1,4 +1,4 @@
-﻿
+
 .cb-page {
   min-height: 100vh;
   width: 100%;
@@ -536,7 +536,7 @@
 
 
 /* ==========================================================
-   FULL WIDTH DATABASE PATCH
+   DATABASE LAYOUT — full width
    Usa todo el ancho para que las cartas y filtros respiren.
    ========================================================== */
 
@@ -619,7 +619,7 @@
 }
 
 /* ==========================================================
-   TAVERN STYLE ALIGNMENT â€” CARD DATABASE
+   TAVERN STYLE ALIGNMENT — CARD DATABASE
    Quita el tono azul de archivo tÃ©cnico y alinea la base de
    datos con el estilo Hearthstone del hub y los minijuegos.
    ========================================================== */

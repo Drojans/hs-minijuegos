@@ -1,194 +1,153 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
+  CLASS_ORDER,
+  COST_OPTIONS,
+  FILTER_ALL,
+  RARITY_ORDER,
+  TYPE_ORDER,
+  createInitialFilters,
+  filterCards,
+  getAvailableValues,
   getCardName,
   getCardText,
+  getCostLabel,
+  getDatabaseCopy,
   getDetailImage,
   getSecondaryCardName,
   getThumbImage,
+  getVisibleCards,
+  hasSelectedCard,
   translateCardClass,
   translateCardRarity,
   translateCardType,
-} from "../../utils/cardLocale";
+} from "./cardDatabaseConfig";
 import "./CardDatabase.css";
 
-const CLASS_ORDER = [
-  "DEATHKNIGHT",
-  "DEMONHUNTER",
-  "DRUID",
-  "HUNTER",
-  "MAGE",
-  "PALADIN",
-  "PRIEST",
-  "ROGUE",
-  "SHAMAN",
-  "WARLOCK",
-  "WARRIOR",
-  "NEUTRAL",
-];
-
-const TYPE_ORDER = ["MINION", "SPELL", "WEAPON", "LOCATION", "HERO"];
-const RARITY_ORDER = ["FREE", "COMMON", "RARE", "EPIC", "LEGENDARY"];
-const COST_OPTIONS = ["ALL", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10+"];
-
-function CardDatabase({ cards, loading, onBack }) {
-  const [search, setSearch] = useState("");
-  const [typeFilter, setTypeFilter] = useState("ALL");
-  const [classFilter, setClassFilter] = useState("ALL");
-  const [rarityFilter, setRarityFilter] = useState("ALL");
-  const [costFilter, setCostFilter] = useState("ALL");
-  const [selectedCard, setSelectedCard] = useState(null);
-  const { locale, t } = useLanguage();
-
-  const availableClasses = useMemo(() => {
-    const values = new Set(cards.map((card) => card.cardClass).filter(Boolean));
-    return CLASS_ORDER.filter((cardClass) => values.has(cardClass));
-  }, [cards]);
-
-  const availableTypes = useMemo(() => {
-    const values = new Set(cards.map((card) => card.type).filter(Boolean));
-    return TYPE_ORDER.filter((type) => values.has(type));
-  }, [cards]);
-
-  const availableRarities = useMemo(() => {
-    const values = new Set(cards.map((card) => card.rarity).filter(Boolean));
-    return RARITY_ORDER.filter((rarity) => values.has(rarity));
-  }, [cards]);
-
-  const filteredCards = useMemo(() => {
-    return cards.filter((card) => {
-      const searchText = `${card.name ?? ""} ${card.nameEn ?? ""} ${card.text ?? ""} ${card.textEn ?? ""}`;
-      const matchesSearch = searchText.toLowerCase().includes(search.toLowerCase());
-      const matchesType = typeFilter === "ALL" || card.type === typeFilter;
-      const matchesClass = classFilter === "ALL" || card.cardClass === classFilter;
-      const matchesRarity = rarityFilter === "ALL" || card.rarity === rarityFilter;
-      const matchesCost =
-        costFilter === "ALL" ||
-        (costFilter === "10+" ? typeof card.cost === "number" && card.cost >= 10 : card.cost === Number(costFilter));
-
-      return matchesSearch && matchesType && matchesClass && matchesRarity && matchesCost;
-    });
-  }, [cards, search, typeFilter, classFilter, rarityFilter, costFilter]);
-
-  const visibleCards = filteredCards.slice(0, 60);
-
-  useEffect(() => {
-    if (!selectedCard) return;
-    const stillVisible = filteredCards.some((card) => card.id === selectedCard.id);
-    if (!stillVisible) setSelectedCard(null);
-  }, [filteredCards, selectedCard]);
-
-  function clearFilters() {
-    setSearch("");
-    setTypeFilter("ALL");
-    setClassFilter("ALL");
-    setRarityFilter("ALL");
-    setCostFilter("ALL");
-  }
-
+function Hero({ copy, loading, totalCards, onBack }) {
   return (
-    <main className="cb-page">
-      <header className="cb-hero">
-        <button className="cb-back-button" onClick={onBack}>â† Inicio</button>
+    <header className="cb-hero">
+      <button type="button" className="cb-back-button" onClick={onBack}>
+        {copy.backHome}
+      </button>
 
-        <div className="cb-hero-copy">
-          <p>Archivo de cartas</p>
-          <h1>Base de datos</h1>
-          <span>Explora tus cartas, filtra y abre cualquier carta para verla en grande.</span>
-        </div>
+      <div className="cb-hero-copy">
+        <p>{copy.eyebrow}</p>
+        <h1>{copy.title}</h1>
+        <span>{copy.subtitle}</span>
+      </div>
 
-        <div className="cb-counter">
-          <span>{loading ? t("common.loading") : t("common.cards")}</span>
-          <strong>{loading ? "..." : cards.length}</strong>
-        </div>
-      </header>
-
-      <section className="cb-layout">
-        <div className="cb-main-panel">
-          <div className="cb-filter-grid">
-            <label className="cb-field cb-search-field">
-              <span>Buscar</span>
-              <input
-                type="text"
-                placeholder="Nombre, texto o nombre inglÃ©s..."
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-            </label>
-
-            <label className="cb-field cb-field-type">
-              <span>Tipo</span>
-              <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
-                <option value="ALL">Todos</option>
-                {availableTypes.map((type) => (
-                  <option key={type} value={type}>{translateCardType(type, locale)}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="cb-field cb-field-class">
-              <span>Clase</span>
-              <select value={classFilter} onChange={(event) => setClassFilter(event.target.value)}>
-                <option value="ALL">Todas</option>
-                {availableClasses.map((cardClass) => (
-                  <option key={cardClass} value={cardClass}>{translateCardClass(cardClass, locale)}</option>
-                ))}
-              </select>
-            </label>
-
-            <label className="cb-field cb-field-rarity">
-              <span>Rareza</span>
-              <select value={rarityFilter} onChange={(event) => setRarityFilter(event.target.value)}>
-                <option value="ALL">Todas</option>
-                {availableRarities.map((rarity) => (
-                  <option key={rarity} value={rarity}>{translateCardRarity(rarity, locale)}</option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="cb-cost-row">
-            {COST_OPTIONS.map((cost) => (
-              <button
-                key={cost}
-                className={`cb-cost-chip ${costFilter === cost ? "is-active" : ""}`}
-                onClick={() => setCostFilter(cost)}
-              >
-                {cost === "ALL" ? "Todos" : cost}
-              </button>
-            ))}
-          </div>
-
-          <div className="cb-results-row">
-            <p>Mostrando <strong>{visibleCards.length}</strong> de <strong>{filteredCards.length}</strong> resultados</p>
-            <button className="cb-clear-button" onClick={clearFilters}>Limpiar filtros</button>
-          </div>
-
-          <div className="cb-card-grid">
-            {visibleCards.map((card) => (
-              <button
-                type="button"
-                className={`cb-card-tile ${selectedCard?.id === card.id ? "is-selected" : ""}`}
-                key={card.id}
-                onClick={() => setSelectedCard(card)}
-              >
-                <CardThumb card={card} locale={locale} />
-                <div className="cb-card-caption">
-                  <strong>{getCardName(card, locale)}</strong>
-                  <span>{translateCardType(card.type, locale)}</span>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <CardDetailPanel card={selectedCard} locale={locale} t={t} onClose={() => setSelectedCard(null)} />
-      </section>
-    </main>
+      <div className="cb-counter">
+        <span>{loading ? copy.loading : copy.cards}</span>
+        <strong>{loading ? "..." : totalCards}</strong>
+      </div>
+    </header>
   );
 }
 
-function CardThumb({ card, locale }) {
+function FilterSelect({ label, value, options, allLabel, onChange, renderOptionLabel }) {
+  return (
+    <label className="cb-field">
+      <span>{label}</span>
+      <select value={value} onChange={(event) => onChange(event.target.value)}>
+        <option value={FILTER_ALL}>{allLabel}</option>
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {renderOptionLabel(option)}
+          </option>
+        ))}
+      </select>
+    </label>
+  );
+}
+
+function Filters({
+  copy,
+  locale,
+  filters,
+  availableTypes,
+  availableClasses,
+  availableRarities,
+  onUpdateFilter,
+}) {
+  return (
+    <>
+      <div className="cb-filter-grid">
+        <label className="cb-field cb-search-field">
+          <span>{copy.search}</span>
+          <input
+            type="text"
+            placeholder={copy.searchPlaceholder}
+            value={filters.search}
+            onChange={(event) => onUpdateFilter("search", event.target.value)}
+          />
+        </label>
+
+        <div className="cb-field-type">
+          <FilterSelect
+            label={copy.type}
+            value={filters.type}
+            options={availableTypes}
+            allLabel={copy.allPlural}
+            onChange={(value) => onUpdateFilter("type", value)}
+            renderOptionLabel={(type) => translateCardType(type, locale)}
+          />
+        </div>
+
+        <div className="cb-field-class">
+          <FilterSelect
+            label={copy.class}
+            value={filters.cardClass}
+            options={availableClasses}
+            allLabel={copy.allFeminine}
+            onChange={(value) => onUpdateFilter("cardClass", value)}
+            renderOptionLabel={(cardClass) => translateCardClass(cardClass, locale)}
+          />
+        </div>
+
+        <div className="cb-field-rarity">
+          <FilterSelect
+            label={copy.rarity}
+            value={filters.rarity}
+            options={availableRarities}
+            allLabel={copy.allFeminine}
+            onChange={(value) => onUpdateFilter("rarity", value)}
+            renderOptionLabel={(rarity) => translateCardRarity(rarity, locale)}
+          />
+        </div>
+      </div>
+
+      <div className="cb-cost-row">
+        {COST_OPTIONS.map((cost) => (
+          <button
+            key={cost}
+            type="button"
+            className={`cb-cost-chip ${filters.cost === cost ? "is-active" : ""}`}
+            onClick={() => onUpdateFilter("cost", cost)}
+          >
+            {getCostLabel(cost, copy)}
+          </button>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function ResultsHeader({ copy, visibleCount, filteredCount, onClearFilters }) {
+  return (
+    <div className="cb-results-row">
+      <p>
+        {copy.showing} <strong>{visibleCount}</strong> {copy.of}{" "}
+        <strong>{filteredCount}</strong> {copy.results}
+      </p>
+      <button type="button" className="cb-clear-button" onClick={onClearFilters}>
+        {copy.clearFilters}
+      </button>
+    </div>
+  );
+}
+
+function CardThumb({ card, locale, copy }) {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   const src = getThumbImage(card, locale);
@@ -200,7 +159,7 @@ function CardThumb({ card, locale }) {
 
   return (
     <div className={`cb-thumb ${loaded ? "is-loaded" : ""} ${failed ? "is-failed" : ""}`}>
-      {!loaded && !failed && <span className="cb-image-placeholder">Cargando</span>}
+      {!loaded && !failed ? <span className="cb-image-placeholder">{copy.loadingImage}</span> : null}
       {!failed ? (
         <img
           src={src}
@@ -211,13 +170,46 @@ function CardThumb({ card, locale }) {
           onError={() => setFailed(true)}
         />
       ) : (
-        <span className="cb-image-placeholder">Sin imagen</span>
+        <span className="cb-image-placeholder">{copy.noImage}</span>
       )}
     </div>
   );
 }
 
-function CardLargeImage({ card, locale }) {
+function CardTile({ card, locale, copy, selected, onSelect }) {
+  return (
+    <button
+      type="button"
+      className={`cb-card-tile ${selected ? "is-selected" : ""}`}
+      onClick={() => onSelect(card)}
+    >
+      <CardThumb card={card} locale={locale} copy={copy} />
+      <div className="cb-card-caption">
+        <strong>{getCardName(card, locale)}</strong>
+        <span>{translateCardType(card.type, locale)}</span>
+      </div>
+    </button>
+  );
+}
+
+function CardGrid({ cards, locale, copy, selectedCard, onSelectCard }) {
+  return (
+    <div className="cb-card-grid">
+      {cards.map((card) => (
+        <CardTile
+          key={card.id}
+          card={card}
+          locale={locale}
+          copy={copy}
+          selected={selectedCard?.id === card.id}
+          onSelect={onSelectCard}
+        />
+      ))}
+    </div>
+  );
+}
+
+function CardLargeImage({ card, locale, copy }) {
   const [loaded, setLoaded] = useState(false);
   const [failed, setFailed] = useState(false);
   const src = getDetailImage(card, locale);
@@ -229,7 +221,7 @@ function CardLargeImage({ card, locale }) {
 
   return (
     <div className={`cb-detail-image ${loaded ? "is-loaded" : ""} ${failed ? "is-failed" : ""}`}>
-      {!loaded && !failed && <span>Preparando carta...</span>}
+      {!loaded && !failed ? <span>{copy.preparingCard}</span> : null}
       {!failed ? (
         <img
           src={src}
@@ -240,58 +232,185 @@ function CardLargeImage({ card, locale }) {
           onError={() => setFailed(true)}
         />
       ) : (
-        <span>Imagen no disponible</span>
+        <span>{copy.imageUnavailable}</span>
       )}
     </div>
   );
 }
 
-function CardDetailPanel({ card, locale, t, onClose }) {
+function CardDetailEmpty({ copy }) {
+  return (
+    <aside className="cb-detail-panel cb-detail-empty">
+      <div className="cb-empty-orb">+</div>
+      <h2>{copy.selectCard}</h2>
+      <p>{copy.selectCardBody}</p>
+    </aside>
+  );
+}
+
+function DetailTags({ card, locale }) {
+  return (
+    <div className="cb-detail-tags">
+      <span>{translateCardClass(card.cardClass, locale)}</span>
+      <span>{translateCardType(card.type, locale)}</span>
+      <span>{translateCardRarity(card.rarity, locale)}</span>
+    </div>
+  );
+}
+
+function DetailStats({ card, copy }) {
+  const unknown = copy.unknownValue;
+
+  return (
+    <div className="cb-detail-stats">
+      <div>
+        <span>{copy.cost}</span>
+        <strong>{card.cost ?? "?"}</strong>
+      </div>
+      <div>
+        <span>{copy.attack}</span>
+        <strong>{card.attack ?? unknown}</strong>
+      </div>
+      <div>
+        <span>{copy.health}</span>
+        <strong>{card.health ?? unknown}</strong>
+      </div>
+    </div>
+  );
+}
+
+function CardDetailPanel({ card, locale, copy, onClose }) {
   if (!card) {
-    return (
-      <aside className="cb-detail-panel cb-detail-empty">
-        <div className="cb-empty-orb">+</div>
-        <h2>Selecciona una carta</h2>
-        <p>Haz click en cualquier carta del archivo para abrir su ficha ampliada.</p>
-      </aside>
-    );
+    return <CardDetailEmpty copy={copy} />;
   }
+
+  const secondaryCardName = getSecondaryCardName(card, locale);
 
   return (
     <aside className="cb-detail-panel">
-      <button className="cb-detail-close" onClick={onClose} aria-label="Cerrar detalle">Ã—</button>
-      <CardLargeImage card={card} locale={locale} />
+      <button
+        type="button"
+        className="cb-detail-close"
+        onClick={onClose}
+        aria-label={copy.closeDetail}
+      >
+        ×
+      </button>
+
+      <CardLargeImage card={card} locale={locale} copy={copy} />
 
       <div className="cb-detail-info">
-        <p className="cb-detail-kicker">{t("database.cardDetail")} Â· {locale.toUpperCase()}</p>
+        <p className="cb-detail-kicker">
+          {copy.cardDetail} · {locale.toUpperCase()}
+        </p>
         <h2>{getCardName(card, locale)}</h2>
-        {getSecondaryCardName(card, locale) && <p className="cb-detail-english">{getSecondaryCardName(card, locale)}</p>}
+        {secondaryCardName ? <p className="cb-detail-english">{secondaryCardName}</p> : null}
 
-        <div className="cb-detail-tags">
-          <span>{translateCardClass(card.cardClass, locale)}</span>
-          <span>{translateCardType(card.type, locale)}</span>
-          <span>{translateCardRarity(card.rarity, locale)}</span>
-        </div>
-
-        <div className="cb-detail-stats">
-          <div><span>Coste</span><strong>{card.cost ?? "?"}</strong></div>
-          <div><span>Ataque</span><strong>{card.attack ?? "â€”"}</strong></div>
-          <div><span>Vida</span><strong>{card.health ?? "â€”"}</strong></div>
-        </div>
+        <DetailTags card={card} locale={locale} />
+        <DetailStats card={card} copy={copy} />
 
         <div className="cb-detail-text">
-          <span>Texto</span>
-          <p>{getCardText(card, locale) || t("database.noText")}</p>
+          <span>{copy.text}</span>
+          <p>{getCardText(card, locale) || copy.noText}</p>
         </div>
 
         <dl className="cb-detail-meta">
-          <div><dt>Set</dt><dd>{card.set ?? "â€”"}</dd></div>
-          <div><dt>ID</dt><dd>{card.id ?? "â€”"}</dd></div>
+          <div>
+            <dt>Set</dt>
+            <dd>{card.set ?? copy.unknownValue}</dd>
+          </div>
+          <div>
+            <dt>ID</dt>
+            <dd>{card.id ?? copy.unknownValue}</dd>
+          </div>
         </dl>
       </div>
     </aside>
   );
 }
 
-export default CardDatabase;
+function CardDatabase({ cards, loading, onBack }) {
+  const { locale } = useLanguage();
+  const copy = getDatabaseCopy(locale);
+  const [filters, setFilters] = useState(() => createInitialFilters());
+  const [selectedCard, setSelectedCard] = useState(null);
 
+  const availableClasses = useMemo(
+    () => getAvailableValues(cards, "cardClass", CLASS_ORDER),
+    [cards]
+  );
+
+  const availableTypes = useMemo(
+    () => getAvailableValues(cards, "type", TYPE_ORDER),
+    [cards]
+  );
+
+  const availableRarities = useMemo(
+    () => getAvailableValues(cards, "rarity", RARITY_ORDER),
+    [cards]
+  );
+
+  const filteredCards = useMemo(() => filterCards(cards, filters), [cards, filters]);
+  const visibleCards = useMemo(() => getVisibleCards(filteredCards), [filteredCards]);
+
+  useEffect(() => {
+    if (!hasSelectedCard(filteredCards, selectedCard)) {
+      setSelectedCard(null);
+    }
+  }, [filteredCards, selectedCard]);
+
+  function updateFilter(key, value) {
+    setFilters((currentFilters) => ({
+      ...currentFilters,
+      [key]: value,
+    }));
+  }
+
+  function clearFilters() {
+    setFilters(createInitialFilters());
+  }
+
+  return (
+    <main className="cb-page">
+      <Hero copy={copy} loading={loading} totalCards={cards.length} onBack={onBack} />
+
+      <section className="cb-layout">
+        <div className="cb-main-panel">
+          <Filters
+            copy={copy}
+            locale={locale}
+            filters={filters}
+            availableTypes={availableTypes}
+            availableClasses={availableClasses}
+            availableRarities={availableRarities}
+            onUpdateFilter={updateFilter}
+          />
+
+          <ResultsHeader
+            copy={copy}
+            visibleCount={visibleCards.length}
+            filteredCount={filteredCards.length}
+            onClearFilters={clearFilters}
+          />
+
+          <CardGrid
+            cards={visibleCards}
+            locale={locale}
+            copy={copy}
+            selectedCard={selectedCard}
+            onSelectCard={setSelectedCard}
+          />
+        </div>
+
+        <CardDetailPanel
+          card={selectedCard}
+          locale={locale}
+          copy={copy}
+          onClose={() => setSelectedCard(null)}
+        />
+      </section>
+    </main>
+  );
+}
+
+export default CardDatabase;
