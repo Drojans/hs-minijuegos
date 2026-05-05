@@ -1,471 +1,889 @@
-.gm-game {
-  --gm-accent: #71d9ff;
-  --gm-danger: #ff5f7a;
-  --gm-success: #81ffb4;
+/* =========================================================
+   GUESS MANA — BOOK PAGE V0.1
+   ---------------------------------------------------------
+   Base editable para que la página use el mismo universo visual
+   que la Home. Toca variables del :root para mover elementos.
+   ========================================================= */
+
+:root {
+  --gm-book-stage-max-w: 2400px;
+  --gm-book-stage-pad-x: 8px;
+  --gm-book-stage-pad-y: 4px;
+  --gm-backdrop-brightness: 1.19;
+  --gm-backdrop-saturation: 0.99;
+  --gm-book-x: 0%;
+  --gm-book-y: -4.9%;
+  --gm-book-scale: 1.09;
+  --gm-left-page-x: 15%;
+  --gm-left-page-y: 11.2%;
+  --gm-left-page-w: 36.8%;
+  --gm-left-page-h: 79.3%;
+  --gm-right-page-x: 52.2%;
+  --gm-right-page-y: 11.5%;
+  --gm-right-page-w: 37.7%;
+  --gm-right-page-h: 79.3%;
+  --gm-candle-x: -26.4%;
+  --gm-candle-y: 12.1%;
+  --gm-candle-w: 50.5%;
+  --gm-candle-h: 50.5%;
+  --gm-cards-x: -17.2%;
+  --gm-cards-bottom: -5%;
+  --gm-cards-w: 42.4%;
+  --gm-cards-h: 45.9%;
+  --gm-cards-rotate: 36deg;
+  --gm-coins-x: 76%;
+  --gm-coins-bottom: 25.1%;
+  --gm-coins-w: 43%;
+  --gm-coins-h: 40%;
+  --gm-mug-x: -25.6%;
+  --gm-mug-bottom: -10.2%;
+  --gm-mug-w: 53.4%;
+  --gm-mug-h: 55.1%;
+  --gm-back-x: -6%;
+  --gm-back-y: -2.2%;
+  --gm-back-w: 36%;
+  --gm-back-h: 11.2%;
+  --gm-card-area-x: 10.2%;
+  --gm-card-area-y: 10%;
+  --gm-card-area-w: 69%;
+  --gm-card-area-h: 69%;
+  --gm-card-frame-scale-x: 1;
+  --gm-card-frame-scale-y: 1;
+  --gm-card-render-w: 72%;
+  --gm-card-render-h: 92%;
+  --gm-card-render-x: 0%;
+  --gm-card-render-y: 0%;
+  --gm-card-render-scale: 1;
+  --gm-question-x: -11.7%;
+  --gm-question-y: -3.2%;
+  --gm-question-size: 180px;
+  --gm-season-x: -0.3%;
+  --gm-season-bottom: 2.8%;
+  --gm-score-x: 57.7%;
+  --gm-score-y: 9%;
+  --gm-score-w: 38.8%;
+  --gm-score-h: 14.6%;
+  --gm-title-x: 3.8%;
+  --gm-title-y: -5.5%;
+  --gm-title-font: 58px;
+  --gm-title-pr: 30.4%;
+  --gm-subtitle-font: 16px;
+  --gm-subtitle-w: 75.5%;
+  --gm-divider-x: -6.6%;
+  --gm-divider-y: -12.8%;
+  --gm-divider-w: 57.3%;
+  --gm-divider-h: 30.6%;
+  --gm-data-x: 5.8%;
+  --gm-data-y: -21.1%;
+  --gm-data-w: 87%;
+  --gm-data-h: 1%;
+  --gm-mana-x: 2.8%;
+  --gm-mana-y: -1.4%;
+  --gm-mana-w: 91%;
+  --gm-cost-size: 95px;
+  --gm-cost-gap: 0px;
+  --gm-feedback-x: 8%;
+  --gm-feedback-y: -2.4%;
+  --gm-feedback-w: 84%;
+  --gm-confirm-w: 62%;
+  --gm-confirm-h: 66px;
+  --gm-confirm-top: -1.8%;
+  --gm-z-book: 10;
+  --gm-z-page: 20;
+  --gm-z-props: 30;
+  --gm-z-candle: 0;
+  --gm-z-cards: 10;
+  --gm-z-coins: 5;
+  --gm-z-mug: 10;
+  --gm-z-ui: 40;
+
+  --gm-lang-right: -8.2%;
+  --gm-lang-top: 3.8%;
+  --gm-lang-scale: 1.27;
+  --gm-lang-button-size: 37px;
+  --gm-lang-gap: 6px;
+  --gm-lang-radius: 9px;
+  --gm-z-language: 90;
+  --gm-ink: #2b1208;
+  --gm-deep-ink: #1c0b04;
+  --gm-gold: #c97825;
+  --gm-gold-bright: #ffd46e;
+  --gm-purple: #6d29a9;
+  --gm-success: #2f8f3f;
+  --gm-danger: #b72d2d;
 }
 
-.gm-score-pill {
-  min-width: 136px;
-  border: 1px solid rgba(113, 217, 255, 0.24);
-  border-radius: 18px;
-  padding: 9px 12px;
-  background:
-    radial-gradient(circle at top right, rgba(113, 217, 255, 0.12), transparent 55%),
-    rgba(30, 18, 10, 0.7);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 236, 188, 0.08),
-    0 10px 24px rgba(0, 0, 0, 0.2);
-  text-align: right;
-}
-
-.gm-score-pill span {
-  display: block;
-  color: rgba(247, 237, 216, 0.72);
-  font-size: 0.76rem;
-  font-weight: 760;
-}
-
-.gm-score-pill strong {
-  display: block;
-  margin-top: 2px;
-  color: var(--hs-gold-strong, #ffcf70);
-  font-size: 0.98rem;
-}
-
-.gm-progress-track {
+.gm-book-page {
   position: relative;
-  width: 100%;
-  height: 8px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(113, 217, 255, 0.16);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
-  overflow: hidden;
-  box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.34);
-}
-
-.gm-progress-fill {
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--gm-accent), #b07dff 48%, #f05fff);
-  box-shadow: 0 0 12px rgba(240, 95, 255, 0.28);
-  transition: width 0.28s ease;
-}
-
-.gm-layout {
-  height: calc(100svh - 150px);
-  min-height: 500px;
-  max-height: 720px;
-  display: grid;
-  grid-template-columns: minmax(270px, 360px) minmax(0, 1fr);
-  gap: clamp(14px, 1.25vw, 22px);
-  align-items: stretch;
-}
-
-.gm-card-panel,
-.gm-control-panel {
-  min-height: 0;
-}
-
-.gm-card-panel {
-  padding: 12px;
-}
-
-.gm-card-frame {
-  height: 100%;
-  min-height: 0;
-  border: 1px solid rgba(113, 217, 255, 0.16);
-  border-radius: 22px;
-  padding: 14px 10px;
-  background:
-    radial-gradient(circle at 50% 35%, rgba(113, 217, 255, 0.07), transparent 56%),
-    linear-gradient(160deg, rgba(255, 239, 189, 0.035), rgba(255, 255, 255, 0.01));
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.26);
-}
-
-.gm-card-image-wrap {
-  position: relative;
-  width: min(255px, 100%);
-  max-height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.gm-card-image-wrap img {
-  width: 100%;
-  max-width: 255px;
-  max-height: calc(100svh - 226px);
-  display: block;
-  object-fit: contain;
-  filter:
-    drop-shadow(0 16px 32px rgba(0, 0, 0, 0.42))
-    drop-shadow(0 0 12px rgba(113, 217, 255, 0.06));
-}
-
-.gm-mana-cover {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 4;
-  width: 30%;
-  aspect-ratio: 1 / 1;
-  border: 3px solid rgba(255, 255, 255, 0.84);
-  border-radius: 50%;
+  width: 100vw;
+  min-height: 100svh;
   display: grid;
   place-items: center;
-  color: white;
-  background:
-    radial-gradient(circle at 30% 24%, rgba(255, 255, 255, 0.95), transparent 18%),
-    radial-gradient(circle at 30% 30%, #7de9ff, #2893ff 58%, #1250b9);
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.42),
-    0 0 0 8px rgba(20, 84, 195, 0.16),
-    0 0 22px rgba(78, 194, 255, 0.34);
-  font-size: clamp(1.2rem, 2.5vw, 1.75rem);
-  font-weight: 950;
-}
-
-.gm-image-fallback {
-  width: min(230px, 100%);
-  height: 320px;
-  border: 1px solid rgba(113, 217, 255, 0.2);
-  border-radius: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: rgba(247, 237, 216, 0.72);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.gm-control-panel {
-  padding: 14px;
-  display: grid;
-  grid-template-rows: auto auto minmax(0, auto);
-  gap: 12px;
   overflow: hidden;
-}
-
-.gm-info-card,
-.gm-mana-panel,
-.gm-feedback,
-.gm-empty-state,
-.gm-end-screen {
-  border: 1px solid rgba(216, 160, 86, 0.23);
-  border-radius: 22px;
-  padding: 16px;
+  isolation: isolate;
+  color: var(--gm-ink);
   background:
-    linear-gradient(180deg, rgba(255, 239, 189, 0.045), transparent 24%),
-    radial-gradient(circle at 88% 2%, rgba(113, 217, 255, 0.07), transparent 35%),
-    linear-gradient(180deg, rgba(21, 17, 14, 0.68), rgba(14, 11, 10, 0.76));
-  box-shadow: inset 0 1px 0 rgba(255, 236, 188, 0.07);
-  text-align: center;
+    radial-gradient(ellipse at 50% 42%, rgba(255, 190, 97, 0.12), transparent 42%),
+    linear-gradient(180deg, #160d08 0%, #080504 100%);
 }
 
-.gm-eyebrow {
-  margin: 0 0 8px;
-  color: var(--gm-accent);
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  font-size: 0.7rem;
-  font-weight: 850;
+.gm-book-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--gm-z-backdrop);
+  background-image: url("/ui/book/home-tavern-backdrop-cartoon.webp");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: saturate(var(--gm-backdrop-saturation)) brightness(var(--gm-backdrop-brightness));
+  transform: scale(1.015);
 }
 
-.gm-info-card h2,
-.gm-mana-panel h3,
-.gm-feedback h3 {
-  font-family: "Belwe HS", Georgia, serif;
-  color: var(--hs-gold-soft, #f9e1b4);
-  line-height: 1;
+.gm-book-page::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--gm-z-vignette);
+  background:
+    radial-gradient(circle at 50% 48%, transparent 32%, rgba(8, 4, 3, 0.1) 74%, rgba(8, 4, 3, 0.26) 100%),
+    linear-gradient(90deg, rgba(7, 3, 2, 0.16), transparent 11% 89%, rgba(7, 3, 2, 0.16));
+  pointer-events: none;
 }
 
-.gm-info-card h2 {
-  margin: 0;
-  font-size: clamp(1.35rem, 2.6vw, 2.25rem);
-  text-shadow: 0 3px 0 rgba(0, 0, 0, 0.22);
-}
-
-.gm-mana-panel h3 {
-  margin: 0 0 12px;
-  font-size: clamp(1.25rem, 2.3vw, 1.8rem);
-}
-
-.gm-tag-row,
-.gm-stat-row,
-.gm-end-actions {
-  display: flex;
-  justify-content: center;
-}
-
-.gm-tag-row {
-  flex-wrap: wrap;
-  gap: 7px;
-  margin-top: 12px;
-}
-
-.gm-tag-row span {
-  border: 1px solid rgba(113, 217, 255, 0.18);
-  border-radius: 999px;
-  padding: 6px 10px;
-  color: #d7ecff;
-  background: rgba(113, 217, 255, 0.08);
-  font-size: 0.78rem;
-  font-weight: 820;
-}
-
-.gm-stat-row {
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.gm-stat-row div {
-  min-width: 90px;
-  border: 1px solid rgba(113, 217, 255, 0.13);
-  border-radius: 16px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.045);
-}
-
-.gm-stat-row span {
-  display: block;
-  color: rgba(247, 237, 216, 0.7);
-  font-size: 0.72rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 800;
-}
-
-.gm-stat-row strong {
-  display: block;
-  margin-top: 2px;
-  color: var(--hs-gold-strong, #ffcf70);
-  font-size: 1.22rem;
-}
-
-.gm-no-stats {
-  margin: 12px 0 0;
-  color: var(--hs-gold-strong, #ffcf70);
-  font-weight: 850;
-}
-
-.gm-mana-grid {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(76px, 1fr));
-  gap: 8px;
-}
-
-.gm-mana-button {
+.gm-book-stage {
   position: relative;
-  min-height: 44px;
-  border: 1px solid rgba(113, 217, 255, 0.26);
-  border-radius: 15px;
-  color: white;
-  background:
-    radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.46), transparent 20%),
-    linear-gradient(180deg, #2a9dff, #1252c4 70%, #0c367e);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    0 7px 13px rgba(0, 0, 0, 0.22),
-    0 0 12px rgba(42, 157, 255, 0.08);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.18rem;
-  font-weight: 900;
-  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.46);
-  cursor: pointer;
-  transition:
-    transform 0.14s ease,
-    filter 0.14s ease,
-    border-color 0.14s ease;
+  z-index: var(--gm-z-stage);
+  width: min(calc(100vw - var(--gm-book-stage-pad-x)), calc((100svh - var(--gm-book-stage-pad-y)) * 16 / 9), var(--gm-book-stage-max-w));
+  aspect-ratio: 16 / 9;
+  overflow: visible;
+  isolation: isolate;
+  filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.35));
 }
 
-.gm-mana-button:hover:not(:disabled) {
-  transform: translateY(-1px);
-  filter: brightness(1.08);
-  border-color: rgba(255, 255, 255, 0.56);
+.gm-book-stage-book {
+  position: absolute;
+  inset: 0;
+  z-index: var(--gm-z-book);
+  pointer-events: none;
+  background-image: url("/ui/book/home-open-book-cartoon.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transform: translate(var(--gm-book-x), var(--gm-book-y)) scale(var(--gm-book-scale));
+  transform-origin: center;
 }
 
-.gm-mana-button:disabled {
-  cursor: default;
+/* Props compartidos con Home */
+.gm-book-prop {
+  position: absolute;
+  z-index: var(--gm-z-props);
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.24));
 }
 
-.gm-mana-button.is-correct {
-  border-color: rgba(129, 255, 180, 0.7);
-  background:
-    radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.46), transparent 20%),
-    linear-gradient(180deg, #50df91, #15985a 72%, #0a6339);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    0 0 18px rgba(129, 255, 180, 0.24);
+.gm-book-prop-candle {
+  left: var(--gm-candle-x);
+  top: var(--gm-candle-y);
+  width: var(--gm-candle-w);
+  height: var(--gm-candle-h);
+  background-image: url("/ui/book/prop-left-candle-cartoon.png");
+  z-index: var(--gm-z-candle);
 }
 
-.gm-mana-button.is-wrong {
-  border-color: rgba(255, 95, 122, 0.76);
-  background:
-    radial-gradient(circle at 32% 22%, rgba(255, 255, 255, 0.42), transparent 20%),
-    linear-gradient(180deg, #ff6680, #bd2441 72%, #771329);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.24),
-    0 0 18px rgba(255, 95, 122, 0.24);
+.gm-book-prop-cards {
+  left: var(--gm-cards-x);
+  bottom: var(--gm-cards-bottom);
+  width: var(--gm-cards-w);
+  height: var(--gm-cards-h);
+  background-image: url("/ui/book/prop-bottom-left-cards-cartoon.png");
+  rotate: var(--gm-cards-rotate);
+  z-index: var(--gm-z-cards);
 }
 
-.gm-feedback {
-  border-color: rgba(113, 217, 255, 0.24);
-  padding: 14px 16px;
+.gm-book-prop-coins {
+  left: var(--gm-coins-x);
+  bottom: var(--gm-coins-bottom);
+  width: var(--gm-coins-w);
+  height: var(--gm-coins-h);
+  background-image: url("/ui/book/prop-bottom-coins-cartoon.png");
+  z-index: var(--gm-z-coins);
 }
 
-.gm-feedback.is-correct {
-  border-color: rgba(129, 255, 180, 0.42);
-  background:
-    radial-gradient(circle at top, rgba(129, 255, 180, 0.1), transparent 45%),
-    rgba(13, 31, 21, 0.58);
+.gm-book-prop-mug {
+  right: var(--gm-mug-x);
+  bottom: var(--gm-mug-bottom);
+  width: var(--gm-mug-w);
+  height: var(--gm-mug-h);
+  background-image: url("/ui/book/prop-right-mug-cartoon.png");
+  z-index: var(--gm-z-mug);
 }
 
-.gm-feedback.is-wrong {
-  border-color: rgba(255, 95, 122, 0.42);
-  background:
-    radial-gradient(circle at top, rgba(255, 95, 122, 0.1), transparent 45%),
-    rgba(36, 14, 20, 0.58);
+.gm-book-left-page,
+.gm-book-right-page {
+  position: absolute;
+  z-index: var(--gm-z-page);
+  color: var(--gm-ink);
+  text-shadow: 0 1px 0 rgba(255, 235, 188, 0.22);
 }
 
-.gm-feedback h3 {
-  margin: 0;
-  font-size: 1.45rem;
+.gm-book-left-page {
+  left: var(--gm-left-page-x);
+  top: var(--gm-left-page-y);
+  width: var(--gm-left-page-w);
+  height: var(--gm-left-page-h);
 }
 
-.gm-feedback p {
-  margin: 6px 0 12px;
-  color: rgba(247, 237, 216, 0.82);
-  line-height: 1.35;
-  font-size: 0.92rem;
+.gm-book-right-page {
+  left: var(--gm-right-page-x);
+  top: var(--gm-right-page-y);
+  width: var(--gm-right-page-w);
+  height: var(--gm-right-page-h);
 }
 
-.gm-primary-button,
-.gm-secondary-button {
+/* Navegación */
+.gm-book-back-button {
+  position: absolute;
+  left: var(--gm-back-x);
+  top: var(--gm-back-y);
+  z-index: var(--gm-z-ui);
+  width: var(--gm-back-w);
+  min-height: var(--gm-back-h);
+  border: 0;
+  padding: 0.7em 1.1em;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border-radius: 999px;
-  padding: 10px 18px;
-  font-weight: 880;
+  gap: 0.45em;
+  color: #391a0b;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(0.48rem, 0.73vw, 0.82rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  background-color: transparent;
+  background-image: url("/ui/games/guess-mana/guess-mana-back-button-cartoon.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
-  transition:
-    transform 0.16s ease,
-    filter 0.16s ease,
-    border-color 0.16s ease;
+  filter: drop-shadow(0 5px 5px rgba(44, 21, 6, 0.16));
 }
 
-.gm-primary-button {
-  border: 0;
-  color: #241305;
-  background: linear-gradient(180deg, #ffe9a6, #ffbf4d 52%, #c77815);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.42),
-    0 10px 28px rgba(255, 191, 77, 0.2);
+.gm-book-back-button:hover {
+  transform: translateY(-1px) scale(1.02);
 }
 
-.gm-secondary-button {
-  border: 1px solid rgba(240, 185, 104, 0.3);
-  color: var(--hs-text, #f7edd8);
-  background: rgba(255, 255, 255, 0.055);
+.gm-book-back-button.is-inline {
+  position: relative;
+  inset: auto;
+  width: auto;
+  min-height: 48px;
+  padding-inline: 1.5em;
 }
 
-.gm-primary-button:hover,
-.gm-secondary-button:hover {
-  transform: translateY(-1px);
-  filter: brightness(1.05);
+/* Carta */
+.gm-book-card-area {
+  position: absolute;
+  left: var(--gm-card-area-x);
+  top: var(--gm-card-area-y);
+  width: var(--gm-card-area-w);
+  height: var(--gm-card-area-h);
+  z-index: var(--gm-z-ui);
 }
 
-.gm-empty-state,
-.gm-end-screen {
-  width: min(100%, 560px);
-  margin: 0 auto;
-  padding: 28px;
-}
-
-.gm-empty-state h2,
-.gm-end-screen h2 {
-  margin: 0 0 16px;
-  color: var(--hs-gold-soft, #f9e1b4);
-}
-
-.gm-end-score {
-  width: 160px;
-  aspect-ratio: 1 / 1;
-  margin: 0 auto 18px;
-  border: 3px solid rgba(255, 255, 255, 0.72);
-  border-radius: 50%;
+.gm-book-card-frame {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: none;
   display: grid;
   place-items: center;
-  color: white;
-  background:
-    radial-gradient(circle at 30% 25%, rgba(255, 255, 255, 0.38), transparent 22%),
-    linear-gradient(180deg, #2a9dff, #1252c4 70%, #0c367e);
-  box-shadow:
-    0 14px 32px rgba(0, 0, 0, 0.32),
-    0 0 24px rgba(42, 157, 255, 0.23);
+  transform: scale(var(--gm-card-frame-scale-x), var(--gm-card-frame-scale-y));
+  transform-origin: center;
+  filter: none;
+}
+
+.gm-book-card-image-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: none;
+  opacity: 0;
+  transition: opacity 160ms ease;
+}
+
+.gm-book-card-image-wrap.is-loaded img {
+  opacity: 1;
+}
+
+.gm-book-question-badge {
+  position: absolute;
+  left: var(--gm-question-x);
+  top: var(--gm-question-y);
+  z-index: 5;
+  width: var(--gm-question-size);
+  height: var(--gm-question-size);
+  display: grid;
+  place-items: center;
+  color: transparent;
+  font-size: 0;
+  background-image: url("/ui/games/guess-mana/guess-mana-question-badge-cartoon.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  filter: drop-shadow(0 5px 6px rgba(0, 0, 0, 0.25));
+}
+
+.gm-book-image-fallback {
+  min-width: 58%;
+  min-height: 64%;
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  color: rgba(38, 18, 8, 0.72);
+  background: rgba(255, 236, 180, 0.34);
+}
+
+.gm-book-season {
+  position: absolute;
+  left: var(--gm-season-x);
+  bottom: var(--gm-season-bottom);
+  margin: 0;
+  color: rgba(38, 18, 8, 0.88);
+  font-size: clamp(0.46rem, 0.74vw, 0.8rem);
+  font-weight: 850;
+}
+
+/* Score */
+.gm-book-score-panel {
+  position: absolute;
+  left: var(--gm-score-x);
+  top: var(--gm-score-y);
+  z-index: var(--gm-z-ui);
+  width: var(--gm-score-w);
+  min-height: var(--gm-score-h);
+  padding: 3.7% 5.5%;
+  display: grid;
+  align-content: center;
+  gap: 0.15em;
+  background-image: url("/ui/games/guess-mana/guess-mana-score-panel-cartoon.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  color: var(--gm-deep-ink);
+  font-size: clamp(0.48rem, 0.76vw, 0.84rem);
+  font-weight: 850;
+  text-align: left;
+  filter: drop-shadow(0 5px 6px rgba(44, 21, 6, 0.13));
+}
+
+.gm-book-score-panel strong {
+  color: #7b2d12;
+  font-weight: 950;
+}
+
+/* Título */
+.gm-book-title-block {
+  position: relative;
+  z-index: var(--gm-z-ui);
+  margin: var(--gm-title-y) 0 0 var(--gm-title-x);
+  padding-right: var(--gm-title-pr);
+}
+
+.gm-book-eyebrow {
+  margin: 0 0 0.35em;
+  color: #7b3619;
   font-family: "Belwe HS", Georgia, serif;
-  font-size: 2.25rem;
+  font-size: clamp(0.46rem, 0.76vw, 0.84rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.gm-book-title-block h1 {
+  margin: 0;
+  color: #612514;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: var(--gm-title-font);
+  line-height: 0.9;
+  text-transform: uppercase;
+  letter-spacing: -0.03em;
+}
+
+.gm-book-title-block span {
+  display: block;
+  max-width: var(--gm-subtitle-w);
+  margin-top: 0.35em;
+  color: #2b1309;
+  font-size: var(--gm-subtitle-font);
+  font-weight: 800;
+  line-height: 1.16;
+}
+
+.gm-book-divider {
+  position: relative;
+  z-index: var(--gm-z-ui);
+  width: var(--gm-divider-w);
+  height: var(--gm-divider-h);
+  margin: var(--gm-divider-y) 0 0 var(--gm-divider-x);
+  background-image: url("/ui/book/section-divider-cartoon.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: left center;
+  pointer-events: none;
+}
+
+/* Datos */
+.gm-book-data-panel {
+  position: relative;
+  z-index: var(--gm-z-ui);
+  width: var(--gm-data-w);
+  min-height: var(--gm-data-h);
+  margin: var(--gm-data-y) 0 0 var(--gm-data-x);
+  padding: 4.7% 6% 4.4%;
+  background-image: url("/ui/games/guess-mana/guess-mana-card-data-panel-cartoon.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  filter: drop-shadow(0 6px 7px rgba(44, 21, 6, 0.12));
+}
+
+.gm-book-data-panel h2 {
+  margin: 0;
+  color: #2b1309;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(0.82rem, 1.42vw, 1.58rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.gm-book-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.38em;
+  margin-top: 2.6%;
+}
+
+.gm-book-tag-row span {
+  padding: 0.35em 0.68em;
+  border-radius: 999px;
+  color: #3f1c0d;
+  background: rgba(255, 224, 148, 0.48);
+  border: 1px solid rgba(96, 47, 13, 0.15);
+  font-size: clamp(0.42rem, 0.66vw, 0.72rem);
   font-weight: 900;
 }
 
-.gm-end-actions {
+.gm-book-stat-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4%;
+  margin-top: 4%;
+}
+
+.gm-book-stat-row div {
+  min-height: clamp(40px, 4vw, 68px);
+  border-radius: 13px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 226, 157, 0.36);
+  border: 1px solid rgba(104, 56, 20, 0.16);
+}
+
+.gm-book-stat-row span {
+  color: #612514;
+  font-size: clamp(0.4rem, 0.62vw, 0.68rem);
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.gm-book-stat-row strong {
+  color: #281106;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(0.95rem, 1.75vw, 1.95rem);
+  line-height: 1;
+}
+
+.gm-book-no-stats {
+  margin: 3% 0 0;
+  color: rgba(43, 18, 8, 0.74);
+  font-size: clamp(0.46rem, 0.7vw, 0.76rem);
+  font-weight: 800;
+}
+
+/* Costes */
+.gm-book-mana-panel {
+  position: relative;
+  z-index: var(--gm-z-ui);
+  width: var(--gm-mana-w);
+  margin: var(--gm-mana-y) 0 0 var(--gm-mana-x);
+  text-align: center;
+}
+
+.gm-book-mana-panel h3 {
+  margin: 0 0 2.8%;
+  color: #2b1309;
+  font-size: clamp(0.62rem, 0.95vw, 1.02rem);
+  font-weight: 900;
+}
+
+.gm-book-mana-grid {
+  display: flex;
   flex-wrap: wrap;
-  gap: 12px;
+  justify-content: center;
+  gap: var(--gm-cost-gap);
 }
 
-@media (max-width: 560px) {
-  .gm-score-pill {
-    text-align: center;
+.gm-book-mana-button {
+  width: var(--gm-cost-size);
+  height: var(--gm-cost-size);
+  border: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  background-color: transparent;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+  filter: drop-shadow(0 4px 4px rgba(44, 21, 6, 0.16));
+  transition:
+    transform 140ms ease,
+    filter 140ms ease;
+}
+
+.gm-book-mana-button-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.gm-book-mana-button[data-cost="0"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-0.png"); }
+.gm-book-mana-button[data-cost="1"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-1.png"); }
+.gm-book-mana-button[data-cost="2"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-2.png"); }
+.gm-book-mana-button[data-cost="3"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-3.png"); }
+.gm-book-mana-button[data-cost="4"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-4.png"); }
+.gm-book-mana-button[data-cost="5"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-5.png"); }
+.gm-book-mana-button[data-cost="6"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-6.png"); }
+.gm-book-mana-button[data-cost="7"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-7.png"); }
+.gm-book-mana-button[data-cost="8"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-8.png"); }
+.gm-book-mana-button[data-cost="9"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-9.png"); }
+.gm-book-mana-button[data-cost="10"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-cartoon-10.png"); }
+
+.gm-book-mana-button:hover:not(:disabled),
+.gm-book-mana-button.is-selected {
+  transform: translateY(-2px) scale(1.07);
+  filter:
+    drop-shadow(0 0 8px rgba(255, 207, 82, 0.45))
+    drop-shadow(0 4px 4px rgba(44, 21, 6, 0.18));
+}
+
+.gm-book-mana-button.is-selected[data-cost="0"],
+.gm-book-mana-button.is-correct[data-cost="0"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-0.png"); }
+.gm-book-mana-button.is-selected[data-cost="1"],
+.gm-book-mana-button.is-correct[data-cost="1"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-1.png"); }
+.gm-book-mana-button.is-selected[data-cost="2"],
+.gm-book-mana-button.is-correct[data-cost="2"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-2.png"); }
+.gm-book-mana-button.is-selected[data-cost="3"],
+.gm-book-mana-button.is-correct[data-cost="3"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-3.png"); }
+.gm-book-mana-button.is-selected[data-cost="4"],
+.gm-book-mana-button.is-correct[data-cost="4"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-4.png"); }
+.gm-book-mana-button.is-selected[data-cost="5"],
+.gm-book-mana-button.is-correct[data-cost="5"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-5.png"); }
+.gm-book-mana-button.is-selected[data-cost="6"],
+.gm-book-mana-button.is-correct[data-cost="6"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-6.png"); }
+.gm-book-mana-button.is-selected[data-cost="7"],
+.gm-book-mana-button.is-correct[data-cost="7"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-7.png"); }
+.gm-book-mana-button.is-selected[data-cost="8"],
+.gm-book-mana-button.is-correct[data-cost="8"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-8.png"); }
+.gm-book-mana-button.is-selected[data-cost="9"],
+.gm-book-mana-button.is-correct[data-cost="9"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-9.png"); }
+.gm-book-mana-button.is-selected[data-cost="10"],
+.gm-book-mana-button.is-correct[data-cost="10"] { background-image: url("/ui/games/guess-mana/guess-mana-cost-button-active-cartoon-10.png"); }
+
+.gm-book-mana-button.is-correct {
+  filter:
+    drop-shadow(0 0 10px rgba(106, 255, 118, 0.45))
+    drop-shadow(0 4px 4px rgba(44, 21, 6, 0.18));
+}
+
+.gm-book-mana-button.is-wrong {
+  filter:
+    drop-shadow(0 0 8px rgba(255, 70, 70, 0.38))
+    grayscale(0.12);
+}
+
+/* Feedback */
+.gm-book-pending-note,
+.gm-book-feedback {
+  position: relative;
+  z-index: var(--gm-z-ui);
+  width: var(--gm-feedback-w);
+  margin: var(--gm-feedback-y) 0 0 var(--gm-feedback-x);
+  color: rgba(37, 16, 6, 0.84);
+  font-size: clamp(0.5rem, 0.78vw, 0.85rem);
+  font-weight: 850;
+  text-align: center;
+}
+
+.gm-book-feedback {
+  display: grid;
+  gap: 0.15em;
+  padding: 1.6% 4%;
+  border-radius: 15px;
+  background: rgba(255, 226, 157, 0.38);
+  border: 1px solid rgba(104, 56, 20, 0.14);
+}
+
+.gm-book-feedback strong {
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(0.68rem, 1.05vw, 1.15rem);
+  text-transform: uppercase;
+}
+
+.gm-book-feedback.is-correct strong {
+  color: var(--gm-success);
+}
+
+.gm-book-feedback.is-wrong strong {
+  color: var(--gm-danger);
+}
+
+/* Confirmar */
+.gm-book-confirm-button {
+  position: relative;
+  z-index: var(--gm-z-ui);
+  width: var(--gm-confirm-w);
+  min-height: var(--gm-confirm-h);
+  margin: var(--gm-confirm-top) auto 0;
+  border: 0;
+  padding: 0 1.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55em;
+  color: #fff1cb;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(0.58rem, 0.93vw, 1rem);
+  font-weight: 900;
+  text-transform: uppercase;
+  text-shadow:
+    0 2px 0 rgba(30, 0, 47, 0.58),
+    0 0 12px rgba(255, 201, 103, 0.18);
+  background-color: transparent;
+  background-image: url("/ui/book/button-primary-purple-cartoon.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px rgba(155, 50, 255, 0.28));
+  transition:
+    transform 140ms ease,
+    filter 140ms ease,
+    opacity 140ms ease;
+}
+
+.gm-book-confirm-button:hover:not(:disabled) {
+  transform: translateY(-2px) scale(1.015);
+  filter:
+    drop-shadow(0 0 13px rgba(178, 74, 255, 0.4))
+    brightness(1.06);
+}
+
+.gm-book-confirm-button:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+  filter: grayscale(0.22) brightness(0.86);
+}
+
+.gm-book-signature {
+  position: relative;
+  z-index: var(--gm-z-ui);
+  margin: 1.2% 0 0;
+  color: #2c1207;
+  font-family: "Segoe Print", "Bradley Hand", cursive;
+  font-size: clamp(0.48rem, 0.76vw, 0.82rem);
+  font-weight: 900;
+  text-align: center;
+  transform: rotate(-1deg);
+}
+
+/* Progreso */
+.gm-book-progress-track {
+  position: absolute;
+  z-index: var(--gm-z-ui);
+  left: 31%;
+  bottom: 6.9%;
+  width: 38%;
+  height: clamp(5px, 0.48vw, 9px);
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(59, 29, 10, 0.3);
+  box-shadow: inset 0 1px 5px rgba(0, 0, 0, 0.28);
+}
+
+.gm-book-progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #aa6123, #ffd46e 55%, #8f4b18);
+  transition: width 0.28s ease;
+}
+
+/* Empty / End */
+.gm-book-page-panel {
+  position: absolute;
+  z-index: var(--gm-z-ui);
+  left: 28%;
+  top: 23%;
+  width: 44%;
+  min-height: 42%;
+  padding: 5%;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 1.2em;
+  text-align: center;
+  background-image: url("/ui/games/guess-mana/guess-mana-card-data-panel-cartoon.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.gm-book-page-panel h1 {
+  margin: 0;
+  color: #612514;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(1.4rem, 2.4vw, 3rem);
+  text-transform: uppercase;
+}
+
+.gm-book-page-panel p {
+  margin: 0;
+  max-width: 70%;
+  color: #2b1309;
+  font-weight: 850;
+  line-height: 1.22;
+}
+
+.gm-book-end-score {
+  color: #281106;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2.1rem, 4vw, 4.6rem);
+  line-height: 1;
+}
+
+.gm-book-end-actions {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+
+/* Idiomas: misma variante de botones del libro/Home */
+.gm-book-language-anchor {
+  position: absolute;
+  right: var(--gm-lang-right);
+  top: var(--gm-lang-top);
+  z-index: var(--gm-z-language);
+  width: max-content;
+  height: max-content;
+  transform: scale(var(--gm-lang-scale));
+  transform-origin: top right;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+.gm-book-language-toggle.language-toggle.is-book {
+  display: inline-flex !important;
+  width: max-content !important;
+  min-width: 0 !important;
+  height: max-content !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  pointer-events: auto !important;
+}
+
+.gm-book-language-toggle.language-toggle.is-book > div,
+.gm-book-language-toggle.language-toggle.is-book .language-toggle-options {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--gm-lang-gap, 6px) !important;
+  width: max-content !important;
+  height: max-content !important;
+}
+
+.gm-book-language-toggle.language-toggle.is-book button,
+.gm-book-language-toggle.language-toggle.is-book .language-toggle-button {
+  flex: 0 0 auto !important;
+  position: relative !important;
+  display: block !important;
+  width: var(--gm-lang-button-size, 37px) !important;
+  height: var(--gm-lang-button-size, 37px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 0 !important;
+  border-radius: var(--gm-lang-radius, 9px) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  cursor: pointer !important;
+  overflow: visible !important;
+  pointer-events: auto !important;
+}
+
+.gm-book-language-toggle.language-toggle.is-book .language-toggle-button:hover {
+  transform: translateY(-1px) scale(1.03);
+  filter: brightness(1.08);
+}
+
+.gm-book-language-toggle.language-toggle.is-book .language-toggle-button.is-active .language-toggle-book-icon {
+  filter:
+    drop-shadow(0 0 5px rgba(255, 211, 83, 0.65))
+    drop-shadow(0 2px 3px rgba(0, 0, 0, 0.42));
+}
+
+@media (max-aspect-ratio: 4 / 5) {
+  body {
+    overflow: auto;
   }
 
-  .gm-control-panel,
-  .gm-info-card,
-  .gm-mana-panel,
-  .gm-feedback,
-  .gm-empty-state,
-  .gm-end-screen {
-    border-radius: 20px;
-    padding: 14px;
+  .gm-book-page {
+    overflow: auto;
+    place-items: start center;
   }
 
-  .gm-card-frame {
-    min-height: 330px;
-    padding: 16px 10px;
+  .gm-book-page::before,
+  .gm-book-page::after {
+    position: fixed;
   }
 
-  .gm-mana-button {
-    min-height: 44px;
+  .gm-book-stage {
+    width: min(1220px, 178vw);
+    min-width: 840px;
   }
 }
 
-@media (max-width: 980px) {
-  .gm-layout {
-    height: auto;
-    min-height: 0;
-    max-height: none;
-    grid-template-columns: 1fr;
+@media (max-width: 740px) {
+  body {
+    overflow: auto;
   }
 
-  .gm-card-frame {
-    height: auto;
-    min-height: 360px;
-  }
-
-  .gm-card-image-wrap {
-    width: min(240px, 100%);
-  }
-
-  .gm-card-image-wrap img {
-    max-width: 240px;
-    max-height: none;
-  }
-
-  .gm-mana-grid {
-    grid-template-columns: repeat(4, minmax(66px, 1fr));
+  .gm-book-stage {
+    width: 960px;
+    max-width: none;
   }
 }

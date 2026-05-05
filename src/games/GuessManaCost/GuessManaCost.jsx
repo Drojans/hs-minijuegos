@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import GameLayout from "../../shared/components/GameLayout/GameLayout";
 import { useLanguage } from "../../i18n/LanguageProvider";
+import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
+import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import {
   getCardName,
   translateCardClass,
@@ -16,68 +17,127 @@ import {
 } from "./guessManaConfig";
 import "./GuessManaCost.css";
 
-function GuessManaStatus({ round, score, t }) {
+
+const LOCAL_COPY = {
+  es: {
+    backHome: "Volver al menú",
+    round: "Ronda",
+    score: "Puntuación",
+    scoreSuffix: "aciertos",
+    minigame: "Minijuego",
+    title: "Adivina el Coste",
+    subtitle: "Observa la carta y selecciona su coste real de maná.",
+    cardData: "Datos de la carta",
+    attack: "Ataque",
+    health: "Vida",
+    noStats: "Esta carta no tiene ataque ni vida.",
+    manaSelector: "Selector de maná",
+    chooseCost: "Elige el coste real de la carta",
+    confirmCost: "Confirmar coste",
+    selectedCost: "Coste seleccionado",
+    chooseFirst: "Elige primero un coste",
+    correct: "¡Correcto!",
+    wrong: "Fallaste",
+    nextCard: "Siguiente carta",
+    seeResult: "Ver resultado",
+    playAgain: "Jugar otra vez",
+    finalTitle: "Gesta completada",
+    finalText: "Has acertado {score} de {maxRounds}. Precisión: {accuracy}%.",
+    loadingGame: "Preparando carta...",
+    noCards: "No hay cartas disponibles.",
+    noImage: "Sin imagen",
+    signature: "~ Firma aquí al completar tu gesta ~",
+    footerSeason: "Temporada Actual: El Gran Torneo",
+    costFeedback: "{name} costaba {cost} de maná.",
+  },
+  en: {
+    backHome: "Back to menu",
+    round: "Round",
+    score: "Score",
+    scoreSuffix: "correct",
+    minigame: "Minigame",
+    title: "Guess the Cost",
+    subtitle: "Look at the card and choose its real mana cost.",
+    cardData: "Card data",
+    attack: "Attack",
+    health: "Health",
+    noStats: "This card has no attack or health.",
+    manaSelector: "Mana selector",
+    chooseCost: "Choose the real mana cost",
+    confirmCost: "Confirm cost",
+    selectedCost: "Selected cost",
+    chooseFirst: "Choose a cost first",
+    correct: "Correct!",
+    wrong: "Wrong",
+    nextCard: "Next card",
+    seeResult: "See result",
+    playAgain: "Play again",
+    finalTitle: "Quest complete",
+    finalText: "You guessed {score} out of {maxRounds}. Accuracy: {accuracy}%.",
+    loadingGame: "Preparing card...",
+    noCards: "No cards available.",
+    noImage: "No image",
+    signature: "~ Sign here when your quest is complete ~",
+    footerSeason: "Current Season: The Grand Tournament",
+    costFeedback: "{name} cost {cost} mana.",
+  },
+};
+
+function formatText(template, values = {}) {
+  return Object.entries(values).reduce((text, [key, value]) => {
+    return text.replaceAll(`{${key}}`, value);
+  }, template);
+}
+
+function useGuessManaCopy(locale) {
+  return LOCAL_COPY[locale] ?? LOCAL_COPY.es;
+}
+
+function GuessManaLanguageToggle() {
   return (
-    <div className="gm-score-pill">
-      <span>{t("common.round", { round, maxRounds: MAX_ROUNDS })}</span>
-      <strong>{t("common.correctCount", { score })}</strong>
+    <div className="gm-book-language-anchor">
+      <LanguageToggle compact variant="book" className="gm-book-language-toggle" />
     </div>
   );
 }
 
-function GuessManaShell({ children, eyebrow, title, description, status, onBack, t }) {
+function BookProp({ name }) {
+  return <div className={`gm-book-prop gm-book-prop-${name}`} aria-hidden="true" />;
+}
+
+function ScorePanel({ copy, round, score }) {
   return (
-    <GameLayout
-      className="gm-game"
-      eyebrow={eyebrow}
-      title={title}
-      description={description}
-      status={status}
-      onBack={onBack}
-      backLabel={t("common.backHome")}
-    >
-      {children}
-    </GameLayout>
+    <aside className="gm-book-score-panel">
+      <span>
+        {copy.round}: <strong>{round}/{MAX_ROUNDS}</strong>
+      </span>
+      <span>
+        {copy.score}: <strong>{score}</strong> {copy.scoreSuffix}
+      </span>
+    </aside>
   );
 }
 
-function EmptyState({ title, buttonLabel, onBack }) {
+function BackButton({ copy, onBack }) {
   return (
-    <section className="gm-empty-state game-panel">
-      <h2>{title}</h2>
-      {buttonLabel ? (
-        <button className="gm-secondary-button" type="button" onClick={onBack}>
-          {buttonLabel}
-        </button>
-      ) : null}
-    </section>
+    <button type="button" className="gm-book-back-button" onClick={onBack}>
+      <span aria-hidden="true">←</span>
+      {copy.backHome}
+    </button>
   );
 }
 
-function EndScreen({ score, onBack, onRestart, t }) {
-  return (
-    <section className="gm-end-screen game-panel">
-      <div className="gm-end-score">
-        {score} / {MAX_ROUNDS}
-      </div>
+function CardPreview({ cardName, hasAnswered, imageFailed, imageSrc, onImageError, copy }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
 
-      <div className="gm-end-actions">
-        <button className="gm-primary-button" type="button" onClick={onRestart}>
-          {t("common.playAgain")}
-        </button>
-        <button className="gm-secondary-button" type="button" onClick={onBack}>
-          {t("guessMana.backHome")}
-        </button>
-      </div>
-    </section>
-  );
-}
+  useEffect(() => {
+    setImageLoaded(false);
+  }, [imageSrc]);
 
-function CardPreview({ cardName, hasAnswered, imageFailed, imageSrc, onImageError, t }) {
   return (
-    <aside className="gm-card-panel game-panel">
-      <div className="gm-card-frame">
-        <div className="gm-card-image-wrap">
+    <aside className="gm-book-card-area">
+      <div className="gm-book-card-frame">
+        <div className={`gm-book-card-image-wrap ${imageLoaded ? "is-loaded" : "is-loading"}`}>
           {!imageFailed ? (
             <img
               src={imageSrc}
@@ -85,59 +145,74 @@ function CardPreview({ cardName, hasAnswered, imageFailed, imageSrc, onImageErro
               loading="eager"
               decoding="async"
               fetchPriority="high"
+              onLoad={() => setImageLoaded(true)}
               onError={onImageError}
             />
           ) : (
-            <div className="gm-image-fallback">{t("guessMana.noImage")}</div>
+            <div className="gm-book-image-fallback">{copy.noImage}</div>
           )}
 
-          {!hasAnswered && !imageFailed ? <div className="gm-mana-cover">?</div> : null}
+          {!hasAnswered && !imageFailed && imageLoaded ? (
+            <div className="gm-book-question-badge" aria-label={copy.chooseCost}>
+              ?
+            </div>
+          ) : null}
         </div>
       </div>
     </aside>
   );
 }
 
-function CardInfo({ card, cardName, locale, t }) {
+function CardInfo({ card, cardName, locale, copy }) {
+  const hasStats = card.attack !== null && card.health !== null;
+
   return (
-    <section className="gm-info-card">
-      <p className="gm-eyebrow">{t("guessMana.cardData")}</p>
+    <section className="gm-book-data-panel">
+      <p className="gm-book-eyebrow">{copy.cardData}</p>
       <h2>{cardName}</h2>
 
-      <div className="gm-tag-row">
+      <div className="gm-book-tag-row">
         <span>{translateCardClass(card.cardClass, locale)}</span>
         <span>{translateCardType(card.type, locale)}</span>
         <span>{translateCardRarity(card.rarity, locale)}</span>
       </div>
 
-      {card.attack !== null && card.health !== null ? (
-        <div className="gm-stat-row">
+      {hasStats ? (
+        <div className="gm-book-stat-row">
           <div>
-            <span>{t("guessMana.attack")}</span>
+            <span>{copy.attack}</span>
             <strong>{card.attack}</strong>
           </div>
           <div>
-            <span>{t("guessMana.health")}</span>
+            <span>{copy.health}</span>
             <strong>{card.health}</strong>
           </div>
         </div>
       ) : (
-        <p className="gm-no-stats">{t("guessMana.noStats")}</p>
+        <p className="gm-book-no-stats">{copy.noStats}</p>
       )}
     </section>
   );
 }
 
-function ManaSelector({ correctCost, hasAnswered, onChooseCost, selectedCost, t }) {
+function ManaSelector({
+  copy,
+  correctCost,
+  hasAnswered,
+  pendingCost,
+  selectedCost,
+  onPickCost,
+}) {
   return (
-    <section className="gm-mana-panel">
-      <p className="gm-eyebrow">{t("guessMana.manaSelector")}</p>
-      <h3>{t("guessMana.chooseCost")}</h3>
+    <section className="gm-book-mana-panel">
+      <p className="gm-book-eyebrow">{copy.manaSelector}</p>
+      <h3>{copy.chooseCost}</h3>
 
-      <div className="gm-mana-grid">
+      <div className="gm-book-mana-grid">
         {MANA_VALUES.map((cost) => {
-          let buttonClass = "gm-mana-button";
+          let buttonClass = "gm-book-mana-button";
 
+          if (!hasAnswered && pendingCost === cost) buttonClass += " is-selected";
           if (hasAnswered && cost === correctCost) buttonClass += " is-correct";
           if (hasAnswered && cost === selectedCost && cost !== correctCost) buttonClass += " is-wrong";
 
@@ -146,10 +221,13 @@ function ManaSelector({ correctCost, hasAnswered, onChooseCost, selectedCost, t 
               key={cost}
               className={buttonClass}
               type="button"
+              data-cost={cost}
               disabled={hasAnswered}
-              onClick={() => onChooseCost(cost)}
+              onClick={() => onPickCost(cost)}
+              aria-label={`${copy.chooseCost}: ${cost}`}
+              aria-pressed={!hasAnswered && pendingCost === cost}
             >
-              {cost}
+              <span className="gm-book-mana-button-text">{cost}</span>
             </button>
           );
         })}
@@ -158,32 +236,118 @@ function ManaSelector({ correctCost, hasAnswered, onChooseCost, selectedCost, t 
   );
 }
 
-function RoundFeedback({ cardName, correctCost, isCorrect, isFinalRound, onNextRound, t }) {
+function ConfirmButton({ copy, disabled, hasAnswered, isFinalRound, onConfirm, onNextRound }) {
+  const label = hasAnswered
+    ? isFinalRound
+      ? copy.seeResult
+      : copy.nextCard
+    : copy.confirmCost;
+
   return (
-    <section className={`gm-feedback ${isCorrect ? "is-correct" : "is-wrong"}`} aria-live="polite">
-      <h3>{isCorrect ? t("guessMana.correct") : t("guessMana.wrong")}</h3>
-      <p>
-        {t("guessMana.costFeedback", {
+    <button
+      type="button"
+      className="gm-book-confirm-button"
+      disabled={disabled}
+      onClick={hasAnswered ? onNextRound : onConfirm}
+    >
+      <span aria-hidden="true">✦</span>
+      {label}
+    </button>
+  );
+}
+
+function RoundFeedback({ cardName, correctCost, copy, isCorrect }) {
+  return (
+    <section className={`gm-book-feedback ${isCorrect ? "is-correct" : "is-wrong"}`} aria-live="polite">
+      <strong>{isCorrect ? copy.correct : copy.wrong}</strong>
+      <span>
+        {formatText(copy.costFeedback, {
           name: cardName,
           cost: correctCost,
         })}
-      </p>
-
-      <button className="gm-primary-button" type="button" onClick={onNextRound}>
-        {isFinalRound ? t("common.seeResult") : t("guessMana.nextCard")}
-      </button>
+      </span>
     </section>
   );
 }
 
+function EndScreen({ copy, score, accuracy, onBack, onRestart }) {
+  return (
+    <main className="gm-book-page">
+      <section className="gm-book-stage">
+        <div className="gm-book-stage-book" aria-hidden="true" />
+        <BookProp name="candle" />
+        <BookProp name="cards" />
+        <BookProp name="coins" />
+        <BookProp name="mug" />
+
+        <GuessManaLanguageToggle />
+
+        <section className="gm-book-page-panel gm-book-end-panel">
+          <h1>{copy.finalTitle}</h1>
+          <p>
+            {formatText(copy.finalText, {
+              score,
+              maxRounds: MAX_ROUNDS,
+              accuracy,
+            })}
+          </p>
+          <div className="gm-book-end-score">
+            {score} / {MAX_ROUNDS}
+          </div>
+          <div className="gm-book-end-actions">
+            <button type="button" className="gm-book-confirm-button" onClick={onRestart}>
+              {copy.playAgain}
+            </button>
+            <button type="button" className="gm-book-back-button is-inline" onClick={onBack}>
+              <span aria-hidden="true">←</span>
+              {copy.backHome}
+            </button>
+          </div>
+        </section>
+      </section>
+    </main>
+  );
+}
+
+function EmptyState({ copy, title, onBack, showBack = true }) {
+  return (
+    <main className="gm-book-page">
+      <section className="gm-book-stage">
+        <div className="gm-book-stage-book" aria-hidden="true" />
+        <BookProp name="candle" />
+        <BookProp name="cards" />
+        <BookProp name="coins" />
+        <BookProp name="mug" />
+
+        <GuessManaLanguageToggle />
+
+        <section className="gm-book-page-panel gm-book-empty-panel">
+          <h1>{title}</h1>
+          {showBack ? (
+            <button type="button" className="gm-book-back-button is-inline" onClick={onBack}>
+              <span aria-hidden="true">←</span>
+              {copy.backHome}
+            </button>
+          ) : null}
+        </section>
+      </section>
+    </main>
+  );
+}
+
 function GuessManaCost({ cards = [], onBack }) {
-  const { locale, t } = useLanguage();
+  const { locale } = useLanguage();
+  const copy = useGuessManaCopy(locale);
+  const showLayoutEditor =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("layoutEditor") === "1";
 
   const playableCards = useMemo(() => {
     return cards.filter((card) => isPlayableGuessManaCard(card, locale));
   }, [cards, locale]);
 
   const [currentCard, setCurrentCard] = useState(null);
+  const [pendingCost, setPendingCost] = useState(null);
   const [selectedCost, setSelectedCost] = useState(null);
   const [score, setScore] = useState(0);
   const [round, setRound] = useState(1);
@@ -201,6 +365,7 @@ function GuessManaCost({ cards = [], onBack }) {
 
   function resetRoundState(nextCard) {
     setCurrentCard(nextCard);
+    setPendingCost(null);
     setSelectedCost(null);
     setImageFailed(false);
   }
@@ -212,12 +377,12 @@ function GuessManaCost({ cards = [], onBack }) {
     setFinished(false);
   }
 
-  function chooseCost(cost) {
-    if (selectedCost !== null || !currentCard) return;
+  function confirmCost() {
+    if (pendingCost === null || selectedCost !== null || !currentCard) return;
 
-    setSelectedCost(cost);
+    setSelectedCost(pendingCost);
 
-    if (cost === currentCard.cost) {
+    if (pendingCost === currentCard.cost) {
       setScore((previousScore) => previousScore + 1);
     }
   }
@@ -232,28 +397,12 @@ function GuessManaCost({ cards = [], onBack }) {
     setRound((previousRound) => previousRound + 1);
   }
 
-  const shellProps = {
-    eyebrow: t("guessMana.minigame"),
-    title: t("guessMana.title"),
-    description: t("guessMana.subtitle"),
-    onBack,
-    t,
-  };
-
   if (playableCards.length === 0) {
-    return (
-      <GuessManaShell {...shellProps}>
-        <EmptyState title={t("guessMana.noCards")} buttonLabel={t("common.back")} onBack={onBack} />
-      </GuessManaShell>
-    );
+    return <EmptyState copy={copy} title={copy.noCards} onBack={onBack} />;
   }
 
   if (!currentCard) {
-    return (
-      <GuessManaShell {...shellProps}>
-        <EmptyState title={t("guessMana.loadingGame")} />
-      </GuessManaShell>
-    );
+    return <EmptyState copy={copy} title={copy.loadingGame} onBack={onBack} showBack={false} />;
   }
 
   const hasAnswered = selectedCost !== null;
@@ -265,63 +414,98 @@ function GuessManaCost({ cards = [], onBack }) {
 
   if (finished) {
     return (
-      <GuessManaShell
-        {...shellProps}
-        eyebrow={t("guessMana.gameFinished")}
-        description={t("guessMana.finalText", {
-          score,
-          maxRounds: MAX_ROUNDS,
-          accuracy,
-        })}
-      >
-        <EndScreen score={score} onBack={onBack} onRestart={startNewGame} t={t} />
-      </GuessManaShell>
+      <EndScreen
+        copy={copy}
+        score={score}
+        accuracy={accuracy}
+        onBack={onBack}
+        onRestart={startNewGame}
+      />
     );
   }
 
   return (
-    <GuessManaShell
-      {...shellProps}
-      status={<GuessManaStatus round={round} score={score} t={t} />}
-    >
-      <div className="gm-progress-track">
-        <div className="gm-progress-fill" style={{ width: `${progressPercent}%` }} />
-      </div>
+    <main className="gm-book-page">
+      <section className="gm-book-stage" aria-label={copy.title}>
+        <div className="gm-book-stage-book" aria-hidden="true" />
+        <BookProp name="candle" />
+        <BookProp name="cards" />
+        <BookProp name="coins" />
+        <BookProp name="mug" />
 
-      <div className="gm-layout">
-        <CardPreview
-          cardName={currentCardName}
-          hasAnswered={hasAnswered}
-          imageFailed={imageFailed}
-          imageSrc={imageSrc}
-          onImageError={() => setImageFailed(true)}
-          t={t}
-        />
+        <GuessManaLanguageToggle />
 
-        <article className="gm-control-panel game-panel">
-          <CardInfo card={currentCard} cardName={currentCardName} locale={locale} t={t} />
+        <section className="gm-book-left-page">
+          <BackButton copy={copy} onBack={onBack} />
+
+          <CardPreview
+            cardName={currentCardName}
+            hasAnswered={hasAnswered}
+            imageFailed={imageFailed}
+            imageSrc={imageSrc}
+            onImageError={() => setImageFailed(true)}
+            copy={copy}
+          />
+
+          <p className="gm-book-season">{copy.footerSeason}</p>
+        </section>
+
+        <section className="gm-book-right-page">
+          <ScorePanel copy={copy} round={round} score={score} />
+
+          <header className="gm-book-title-block">
+            <p className="gm-book-eyebrow">{copy.minigame}</p>
+            <h1>{copy.title}</h1>
+            <span>{copy.subtitle}</span>
+          </header>
+
+          <div className="gm-book-divider" aria-hidden="true" />
+
+          <CardInfo card={currentCard} cardName={currentCardName} locale={locale} copy={copy} />
 
           <ManaSelector
+            copy={copy}
             correctCost={currentCard.cost}
             hasAnswered={hasAnswered}
-            onChooseCost={chooseCost}
+            pendingCost={pendingCost}
             selectedCost={selectedCost}
-            t={t}
+            onPickCost={setPendingCost}
           />
 
           {hasAnswered ? (
             <RoundFeedback
               cardName={currentCardName}
               correctCost={currentCard.cost}
+              copy={copy}
               isCorrect={isCorrect}
-              isFinalRound={round >= MAX_ROUNDS}
-              onNextRound={goNextRound}
-              t={t}
             />
-          ) : null}
-        </article>
-      </div>
-    </GuessManaShell>
+          ) : (
+            <p className="gm-book-pending-note">
+              {pendingCost === null
+                ? copy.chooseFirst
+                : `${copy.selectedCost}: ${pendingCost}`}
+            </p>
+          )}
+
+          <ConfirmButton
+            copy={copy}
+            disabled={!hasAnswered && pendingCost === null}
+            hasAnswered={hasAnswered}
+            isFinalRound={round >= MAX_ROUNDS}
+            onConfirm={confirmCost}
+            onNextRound={goNextRound}
+          />
+
+          <p className="gm-book-signature">{copy.signature}</p>
+        </section>
+
+        <div className="gm-book-progress-track" aria-hidden="true">
+          <span style={{ width: `${progressPercent}%` }} />
+        </div>
+      </section>
+
+      {showLayoutEditor ? <GuessManaLayoutEditor /> : null}
+    </main>
   );
 }
 
