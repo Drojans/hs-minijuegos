@@ -1,4 +1,4 @@
-
+﻿
 .cb-page {
   min-height: 100vh;
   width: 100%;
@@ -619,8 +619,8 @@
 }
 
 /* ==========================================================
-   TAVERN STYLE ALIGNMENT — CARD DATABASE
-   Quita el tono azul de archivo técnico y alinea la base de
+   TAVERN STYLE ALIGNMENT â€” CARD DATABASE
+   Quita el tono azul de archivo tÃ©cnico y alinea la base de
    datos con el estilo Hearthstone del hub y los minijuegos.
    ========================================================== */
 
@@ -750,3 +750,4 @@
   border-color: rgba(216, 160, 86, 0.22);
   background: rgba(39, 24, 13, 0.76);
 }
+

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
@@ -89,7 +89,7 @@ const KEYWORD_ICON_PATHS = {
 function getKeywordConditions(t) {
   return [
     { key: "BATTLECRY", label: t("grid.keyword.battlecry"), terms: ["battlecry", "grito de batalla"] },
-    { key: "DEATHRATTLE", label: t("grid.keyword.deathrattle"), terms: ["deathrattle", "último aliento", "ultimo aliento"] },
+    { key: "DEATHRATTLE", label: t("grid.keyword.deathrattle"), terms: ["deathrattle", "Ãºltimo aliento", "ultimo aliento"] },
     { key: "TAUNT", label: t("grid.keyword.taunt"), terms: ["taunt", "provocar"] },
     { key: "DISCOVER", label: t("grid.keyword.discover"), terms: ["discover", "descubre", "descubrir"] },
     { key: "DIVINE_SHIELD", label: t("grid.keyword.divineShield"), terms: ["divine shield", "escudo divino"] },
@@ -125,7 +125,7 @@ function normalize(value = "") {
   return String(value)
     .normalize("NFD")
     .replace(/\p{Diacritic}/gu, "")
-    .replace(/[’']/g, "")
+    .replace(/[â€™']/g, "")
     .replace(/[^\p{L}\p{N}]+/gu, " ")
     .trim()
     .toLowerCase();
@@ -886,3 +886,4 @@ function CardGridGame({ cards, onBack }) {
 }
 
 export default CardGridGame;
+

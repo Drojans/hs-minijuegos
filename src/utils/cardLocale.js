@@ -1,4 +1,4 @@
-export function getOppositeLocale(locale) {
+﻿export function getOppositeLocale(locale) {
   return locale === "en" ? "es" : "en";
 }
 
@@ -84,10 +84,10 @@ const CARD_CLASS_LABELS = {
     DRUID: "Druida",
     HUNTER: "Cazador",
     MAGE: "Mago",
-    PALADIN: "Paladín",
+    PALADIN: "PaladÃ­n",
     PRIEST: "Sacerdote",
-    ROGUE: "Pícaro",
-    SHAMAN: "Chamán",
+    ROGUE: "PÃ­caro",
+    SHAMAN: "ChamÃ¡n",
     WARLOCK: "Brujo",
     WARRIOR: "Guerrero",
     NEUTRAL: "Neutral",
@@ -113,8 +113,8 @@ const CARD_TYPE_LABELS = {
     MINION: "Esbirro",
     SPELL: "Hechizo",
     WEAPON: "Arma",
-    HERO: "Héroe",
-    HERO_POWER: "Poder de héroe",
+    HERO: "HÃ©roe",
+    HERO_POWER: "Poder de hÃ©roe",
     LOCATION: "Lugar",
   },
   en: {
@@ -130,9 +130,9 @@ const CARD_TYPE_LABELS = {
 const CARD_RARITY_LABELS = {
   es: {
     FREE: "Gratis",
-    COMMON: "Común",
+    COMMON: "ComÃºn",
     RARE: "Rara",
-    EPIC: "Épica",
+    EPIC: "Ã‰pica",
     LEGENDARY: "Legendaria",
   },
   en: {
@@ -149,15 +149,15 @@ const CARD_RACE_LABELS = {
     ALL: "Todos",
     BEAST: "Bestia",
     DEMON: "Demonio",
-    DRAGON: "Dragón",
+    DRAGON: "DragÃ³n",
     DRAENEI: "Draenei",
     ELEMENTAL: "Elemental",
     MECHANICAL: "Meca",
-    MURLOC: "Múrloc",
+    MURLOC: "MÃºrloc",
     NAGA: "Naga",
     PIRATE: "Pirata",
-    QUILBOAR: "Jabaespín",
-    TOTEM: "Tótem",
+    QUILBOAR: "JabaespÃ­n",
+    TOTEM: "TÃ³tem",
     UNDEAD: "No-muerto",
   },
   en: {
@@ -197,4 +197,5 @@ export function translateCardRarity(value, locale = "es") {
 export function translateCardRace(value, locale = "es") {
   return getLabel(CARD_RACE_LABELS, value, locale, value || "");
 }
+
 

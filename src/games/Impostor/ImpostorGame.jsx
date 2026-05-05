@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
@@ -56,7 +56,7 @@ const RACE_CONDITIONS = [
 const MECHANIC_LABELS = {
   es: {
     BATTLECRY: "Grito de batalla",
-    DEATHRATTLE: "Último aliento",
+    DEATHRATTLE: "Ãšltimo aliento",
     TAUNT: "Provocar",
     DISCOVER: "Descubrir",
     RUSH: "Embestir",
@@ -67,10 +67,10 @@ const MECHANIC_LABELS = {
     COMBO: "Combo",
     STEALTH: "Sigilo",
     OVERLOAD: "Sobrecarga",
-    SPELLPOWER: "Daño con hechizos",
+    SPELLPOWER: "DaÃ±o con hechizos",
     TRADEABLE: "Comerciable",
     CHARGE: "Cargar",
-    SPELLBURST: "Ráfaga de hechizos",
+    SPELLBURST: "RÃ¡faga de hechizos",
     WINDFURY: "Viento furioso",
     ELUSIVE: "Elusivo",
     CORRUPT: "Corruptible",
@@ -78,22 +78,22 @@ const MECHANIC_LABELS = {
     REBORN: "Renacer",
     POISONOUS: "Veneno",
     FREEZE: "Congelar",
-    QUEST: "Misión",
+    QUEST: "MisiÃ³n",
     INSPIRE: "Inspirar",
-    MAGNETIC: "Magnético",
+    MAGNETIC: "MagnÃ©tico",
     DREDGE: "Dragado",
     HONORABLE_KILL: "Muerte honorable",
     FORGE: "Forja",
     MINIATURIZE: "Miniaturizar",
-    FRENZY: "Frenesí",
-    MANATHIRST: "Sed de maná",
+    FRENZY: "FrenesÃ­",
+    MANATHIRST: "Sed de manÃ¡",
     EXCAVATE: "Excavar",
-    QUICKDRAW: "Robo rápido",
+    QUICKDRAW: "Robo rÃ¡pido",
     ECHO: "Eco",
     COLOSSAL: "Colosal",
-    TITAN: "Titán",
+    TITAN: "TitÃ¡n",
     TWINSPELL: "Hechizo doble",
-    OVERHEAL: "Sobrecuración",
+    OVERHEAL: "SobrecuraciÃ³n",
   },
   en: {
     BATTLECRY: "Battlecry",
@@ -138,7 +138,7 @@ const MECHANIC_LABELS = {
   },
 };
 
-const MECHANIC_CONDITIONS = Object.keys(MECHANIC_LABELS);
+const MECHANIC_CONDITIONS = Object.keys(MECHANIC_LABELS.es);
 
 function getTextConditions(t) {
   return [
@@ -146,7 +146,7 @@ function getTextConditions(t) {
       key: "text-damage",
       title: t("impostor.textCondition.damage.title"),
       description: t("impostor.textCondition.damage.description"),
-      patterns: ["inflige", "daño", "damage", "deal"],
+      patterns: ["inflige", "daÃ±o", "damage", "deal"],
     },
     {
       key: "text-summon",
@@ -176,7 +176,7 @@ function getTextConditions(t) {
       key: "text-add",
       title: t("impostor.textCondition.add.title"),
       description: t("impostor.textCondition.add.description"),
-      patterns: ["añade", "anade", "add"],
+      patterns: ["aÃ±ade", "anade", "add"],
     },
     {
       key: "text-discard",
@@ -227,7 +227,7 @@ function translateRace(value, locale) {
 
 function translateMechanic(value, locale) {
   const labels = MECHANIC_LABELS[locale] ?? MECHANIC_LABELS.es;
-  return labels[value] ?? value ?? (locale === "en" ? "Mechanic" : "Mecánica");
+  return labels[value] ?? value ?? (locale === "en" ? "Mechanic" : "MecÃ¡nica");
 }
 
 function normalizeSearchText(value) {
@@ -275,8 +275,8 @@ function getOriginalCardImageClassName(card) {
 }
 
 function getCardPreloadSources(card, locale) {
-  // Importante: precargamos solo las dos imágenes que se usan realmente en Impostor.
-  // Antes se pedían hasta 6 versiones por carta y eso saturaba la carga inicial.
+  // Importante: precargamos solo las dos imÃ¡genes que se usan realmente en Impostor.
+  // Antes se pedÃ­an hasta 6 versiones por carta y eso saturaba la carga inicial.
   return Array.from(new Set([
     getCardImage(card, locale),
     getOriginalCardImage(card, locale),
@@ -301,7 +301,7 @@ function preloadImageSource(src, fetchPriority = "auto") {
 
   if (typeof image.decode === "function") {
     image.decode().catch(() => {
-      // Si decode falla, el navegador igualmente puede usar la petición/cache normal.
+      // Si decode falla, el navegador igualmente puede usar la peticiÃ³n/cache normal.
     });
   }
 }
@@ -546,7 +546,7 @@ function ImpostorGame({ cards, onBack }) {
     return cards.filter((card) => card.id && getCardName(card, locale) && getCardImage(card, locale) && isAllowedType(card));
   }, [cards, locale]);
 
-  // Con muchas categorías, calcular validCards/invalidCards en cada ronda era caro.
+  // Con muchas categorÃ­as, calcular validCards/invalidCards en cada ronda era caro.
   // Lo calculamos una sola vez mientras no cambie la lista de cartas.
   const availableConditions = useMemo(() => buildConditions(playableCards, locale, t), [playableCards, locale, t]);
 
@@ -570,10 +570,10 @@ function ImpostorGame({ cards, onBack }) {
     if (!roundData || typeof window === "undefined") return undefined;
 
     // Precargamos desde el primer frame tanto la cara frontal como el render revelado.
-    // Así el giro no crea la imagen de cero justo al revelar.
+    // AsÃ­ el giro no crea la imagen de cero justo al revelar.
     preloadRoundImages(roundData, locale, "high");
 
-    // Mientras el jugador piensa, dejamos preparada la siguiente ronda y sus imágenes.
+    // Mientras el jugador piensa, dejamos preparada la siguiente ronda y sus imÃ¡genes.
     const prepareTimeout = window.setTimeout(() => {
       if (round >= MAX_ROUNDS || availableConditions.length === 0) return;
 
@@ -774,7 +774,7 @@ function ImpostorGame({ cards, onBack }) {
                     key={card.id}
                     className={`im-card ${stateClass} ${isRevealed ? "is-flipped" : ""}`}
                     onClick={() => selectCard(card.id)}
-                    title={`${getCardName(card, locale)} · ${translateType(card.type, locale)}`}
+                    title={`${getCardName(card, locale)} Â· ${translateType(card.type, locale)}`}
                   >
                     <div className="im-flip-card">
                       <div className="im-flip-face im-flip-front">
@@ -793,8 +793,8 @@ function ImpostorGame({ cards, onBack }) {
                       </div>
                     </div>
 
-                    {isRevealed && isCorrect && <div className="im-result-mark im-result-mark-correct">✓</div>}
-                    {isRevealed && isImpostor && <div className="im-result-mark im-result-mark-wrong">×</div>}
+                    {isRevealed && isCorrect && <div className="im-result-mark im-result-mark-correct">âœ“</div>}
+                    {isRevealed && isImpostor && <div className="im-result-mark im-result-mark-wrong">Ã—</div>}
                   </button>
                 );
               })}

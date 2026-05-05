@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 
 const CARDS_URL = "/data/cards.multilang.generated.json";
 
@@ -52,3 +52,4 @@ export function useCardsData() {
 
   return { cards, loading, error };
 }
+

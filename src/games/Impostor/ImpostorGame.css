@@ -1,4 +1,4 @@
-.im-page {
+﻿.im-page {
   min-height: 100vh;
   width: 100%;
   padding: 30px 20px 40px;
@@ -392,7 +392,7 @@
 }
 
 
-/* Animación de giro y revelado de carta original */
+/* AnimaciÃ³n de giro y revelado de carta original */
 .im-card {
   perspective: 1200px;
 }
@@ -437,7 +437,7 @@
   filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.42));
 }
 
-/* Las legendarias tienen el adorno de dragón y ocupan más caja transparente.
+/* Las legendarias tienen el adorno de dragÃ³n y ocupan mÃ¡s caja transparente.
    Las subimos un poco para que el cuerpo de la carta quede centrado en su celda. */
 .im-original-card-image.is-legendary-render {
   max-width: 88%;
@@ -446,8 +446,8 @@
   transform-origin: center center;
 }
 
-/* Los hechizos legendarios necesitan además recentrado hacia la derecha
-   porque el dragón sobresale más por ese lado. */
+/* Los hechizos legendarios necesitan ademÃ¡s recentrado hacia la derecha
+   porque el dragÃ³n sobresale mÃ¡s por ese lado. */
 .im-original-card-image.is-legendary-spell-render {
   max-width: 88%;
   max-height: 94%;
@@ -624,7 +624,7 @@
 }
 /* === TAVERN RESKIN OVERRIDES END === */
 /* ==========================================================
-   DESKTOP 1920x1080 FIT PATCH — IMPOSTOR
+   DESKTOP 1920x1080 FIT PATCH â€” IMPOSTOR
    Pegar al FINAL de src/games/Impostor/ImpostorGame.css.
    Objetivo: que el tablero completo quepa en 1920x1080 sin scroll.
    ========================================================== */
@@ -791,7 +791,7 @@
   }
 }
 
-/* Pantallas 1080p pero algo más estrechas */
+/* Pantallas 1080p pero algo mÃ¡s estrechas */
 @media (min-width: 1300px) and (max-width: 1499px) and (min-height: 800px) {
   .im-page {
     padding: 16px 14px 18px;
@@ -826,8 +826,8 @@
 
 /* ==========================================================
    HEARTHSTONE CLASSIC STYLE FINAL PATCH
-   Añadido automáticamente al final del archivo.
-   Mantiene layouts, tamaños, recortes, scroll y lógica existentes.
+   AÃ±adido automÃ¡ticamente al final del archivo.
+   Mantiene layouts, tamaÃ±os, recortes, scroll y lÃ³gica existentes.
    ========================================================== */
 
 :root {
@@ -965,7 +965,7 @@
 
 /* ==========================================================
    FULL WIDTH PLAYABLE LAYOUT PATCH
-   Aprovecha más pantalla para que las cartas del Impostor se lean.
+   Aprovecha mÃ¡s pantalla para que las cartas del Impostor se lean.
    ========================================================== */
 
 .im-page {
@@ -1069,8 +1069,8 @@
 }
 
 /* ==========================================================
-   BALANCED PLAYABLE WIDTH PATCH — IMPOSTOR
-   Mantiene el ancho útil, pero evita solapes verticales y
+   BALANCED PLAYABLE WIDTH PATCH â€” IMPOSTOR
+   Mantiene el ancho Ãºtil, pero evita solapes verticales y
    devuelve algo de aire entre filas sin deformar cartas.
    ========================================================== */
 
@@ -1133,3 +1133,4 @@
     max-width: 198px;
   }
 }
+

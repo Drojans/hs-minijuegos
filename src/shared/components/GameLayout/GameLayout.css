@@ -1,0 +1,292 @@
+﻿:root {
+  --hs-cyan: #71d9ff;
+  --hs-panel-dark: rgba(17, 11, 10, 0.86);
+  --hs-panel-warm: rgba(44, 27, 16, 0.82);
+  --hs-glass-border: rgba(216, 160, 86, 0.28);
+  --hs-glass-border-blue: rgba(113, 217, 255, 0.2);
+}
+
+.game-layout-page {
+  position: relative;
+  min-height: 100svh;
+  width: 100%;
+  padding: 18px 22px;
+  color: var(--hs-text, #f7edd8);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.game-layout-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 4%, rgba(255, 197, 96, 0.13), transparent 25%),
+    radial-gradient(circle at 14% 72%, rgba(91, 152, 255, 0.055), transparent 20%),
+    radial-gradient(circle at 88% 20%, rgba(171, 107, 255, 0.055), transparent 22%),
+    linear-gradient(90deg, rgba(255, 232, 183, 0.018) 0, rgba(255, 232, 183, 0.018) 50%, transparent 50%, transparent 100%),
+    linear-gradient(180deg, #21140d, #0d0908 57%, #150914);
+  background-size: auto, auto, auto, 26px 26px, auto;
+}
+
+.game-layout-bg::before,
+.game-layout-bg::after,
+.game-layout-orb,
+.game-layout-rune {
+  position: absolute;
+  pointer-events: none;
+  user-select: none;
+}
+
+.game-layout-bg::before,
+.game-layout-bg::after {
+  content: "";
+}
+
+.game-layout-bg::before {
+  inset: 18px;
+  border-radius: 30px;
+  border: 1px solid rgba(240, 185, 104, 0.075);
+  box-shadow:
+    inset 0 0 72px rgba(0, 0, 0, 0.32),
+    inset 0 0 28px rgba(255, 193, 92, 0.035);
+}
+
+.game-layout-bg::after {
+  left: 50%;
+  top: 33%;
+  width: min(92vw, 1180px);
+  height: min(62vh, 640px);
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 197, 96, 0.052), transparent 58%),
+    radial-gradient(circle at 50% 50%, rgba(113, 217, 255, 0.028), transparent 76%);
+}
+
+.game-layout-orb {
+  width: 260px;
+  height: 260px;
+  border-radius: 999px;
+  filter: blur(14px);
+  opacity: 0.22;
+}
+
+.game-layout-orb-a {
+  left: -90px;
+  top: 12%;
+  background: radial-gradient(circle, rgba(113, 217, 255, 0.18), transparent 66%);
+}
+
+.game-layout-orb-b {
+  right: -100px;
+  bottom: 4%;
+  background: radial-gradient(circle, rgba(255, 207, 112, 0.15), transparent 67%);
+}
+
+.game-layout-rune {
+  color: rgba(255, 225, 157, 0.11);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(3.5rem, 8vw, 6.5rem);
+  text-shadow: 0 0 22px rgba(255, 200, 100, 0.08);
+}
+
+.game-layout-rune-a {
+  left: 7%;
+  bottom: 7%;
+  transform: rotate(-12deg);
+}
+
+.game-layout-rune-b {
+  right: 8%;
+  top: 8%;
+  transform: rotate(14deg);
+}
+
+.game-layout-shell {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1180px);
+  min-height: calc(100svh - 36px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+}
+
+.game-layout-header {
+  display: grid;
+  grid-template-columns: minmax(135px, 0.7fr) minmax(0, 1.6fr) minmax(135px, 0.7fr);
+  gap: 16px;
+  align-items: center;
+}
+
+.game-layout-back-slot {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.game-layout-status-slot {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.game-layout-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  border: 1px solid rgba(240, 185, 104, 0.26);
+  border-radius: 999px;
+  padding: 8px 13px;
+  color: var(--hs-text, #f7edd8);
+  background: rgba(30, 18, 10, 0.7);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.08),
+    0 10px 24px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  font-weight: 850;
+  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+}
+
+.game-layout-back-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(240, 185, 104, 0.5);
+  background: rgba(44, 27, 16, 0.76);
+}
+
+.game-layout-title-block {
+  text-align: center;
+  min-width: 0;
+}
+
+.game-layout-eyebrow,
+.game-layout-description {
+  margin: 0;
+}
+
+.game-layout-eyebrow {
+  margin-bottom: 4px;
+  color: var(--hs-cyan);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-size: 0.68rem;
+  font-weight: 850;
+}
+
+.game-layout-title-block h1 {
+  margin: 0;
+  font-family: "Belwe HS", Georgia, serif;
+  color: transparent;
+  background: linear-gradient(180deg, #fff1a8 0%, #ffc51d 48%, #d8891a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  font-size: clamp(2.1rem, 4.2vw, 4.1rem);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  text-shadow:
+    0 2px 0 rgba(70, 34, 8, 0.72),
+    0 8px 22px rgba(0, 0, 0, 0.24);
+}
+
+.game-layout-description {
+  margin-top: 6px;
+  color: rgba(247, 237, 216, 0.78);
+  line-height: 1.35;
+  font-size: 0.92rem;
+}
+
+.game-layout-content {
+  min-width: 0;
+  min-height: 0;
+}
+
+.game-panel {
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 239, 189, 0.04), transparent 24%),
+    radial-gradient(circle at 88% 2%, rgba(113, 217, 255, 0.06), transparent 35%),
+    linear-gradient(180deg, rgba(43, 26, 16, 0.86), rgba(14, 11, 10, 0.92));
+  border: 1px solid var(--hs-glass-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 188, 0.09),
+    inset 0 -1px 0 rgba(77, 41, 14, 0.52),
+    0 18px 52px rgba(0, 0, 0, 0.32);
+}
+
+@media (max-width: 860px) {
+  .game-layout-page {
+    min-height: 100vh;
+    height: auto;
+    padding: 16px 12px 26px;
+    overflow: auto;
+  }
+
+  .game-layout-shell {
+    min-height: auto;
+  }
+
+  .game-layout-bg::before {
+    inset: 10px;
+    border-radius: 24px;
+  }
+
+  .game-layout-header {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .game-layout-back-slot,
+  .game-layout-status-slot {
+    justify-content: center;
+  }
+
+  .game-layout-title-block h1 {
+    font-size: clamp(2.1rem, 12vw, 3.6rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ==========================================================
+   FULL WIDTH PLAYABLE LAYOUT PATCH
+   Usa mÃ¡s anchura real de pantalla sin aÃ±adir scroll pesado.
+   ========================================================== */
+
+.game-layout-page {
+  padding: 14px clamp(12px, 1.25vw, 24px);
+}
+
+.game-layout-shell {
+  width: min(100%, 1600px);
+  min-height: calc(100svh - 28px);
+}
+
+.game-layout-header {
+  grid-template-columns: minmax(150px, 0.55fr) minmax(0, 1.9fr) minmax(150px, 0.55fr);
+}
+
+@media (min-width: 1500px) {
+  .game-layout-shell {
+    width: min(99vw, 1760px);
+  }
+}
+
+@media (max-width: 860px) {
+  .game-layout-page {
+    padding: 14px 12px;
+  }
+}
+

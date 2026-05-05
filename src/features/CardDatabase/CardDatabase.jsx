@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
@@ -89,7 +89,7 @@ function CardDatabase({ cards, loading, onBack }) {
   return (
     <main className="cb-page">
       <header className="cb-hero">
-        <button className="cb-back-button" onClick={onBack}>← Inicio</button>
+        <button className="cb-back-button" onClick={onBack}>â† Inicio</button>
 
         <div className="cb-hero-copy">
           <p>Archivo de cartas</p>
@@ -110,7 +110,7 @@ function CardDatabase({ cards, loading, onBack }) {
               <span>Buscar</span>
               <input
                 type="text"
-                placeholder="Nombre, texto o nombre inglés..."
+                placeholder="Nombre, texto o nombre inglÃ©s..."
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
               />
@@ -259,11 +259,11 @@ function CardDetailPanel({ card, locale, t, onClose }) {
 
   return (
     <aside className="cb-detail-panel">
-      <button className="cb-detail-close" onClick={onClose} aria-label="Cerrar detalle">×</button>
+      <button className="cb-detail-close" onClick={onClose} aria-label="Cerrar detalle">Ã—</button>
       <CardLargeImage card={card} locale={locale} />
 
       <div className="cb-detail-info">
-        <p className="cb-detail-kicker">{t("database.cardDetail")} · {locale.toUpperCase()}</p>
+        <p className="cb-detail-kicker">{t("database.cardDetail")} Â· {locale.toUpperCase()}</p>
         <h2>{getCardName(card, locale)}</h2>
         {getSecondaryCardName(card, locale) && <p className="cb-detail-english">{getSecondaryCardName(card, locale)}</p>}
 
@@ -275,8 +275,8 @@ function CardDetailPanel({ card, locale, t, onClose }) {
 
         <div className="cb-detail-stats">
           <div><span>Coste</span><strong>{card.cost ?? "?"}</strong></div>
-          <div><span>Ataque</span><strong>{card.attack ?? "—"}</strong></div>
-          <div><span>Vida</span><strong>{card.health ?? "—"}</strong></div>
+          <div><span>Ataque</span><strong>{card.attack ?? "â€”"}</strong></div>
+          <div><span>Vida</span><strong>{card.health ?? "â€”"}</strong></div>
         </div>
 
         <div className="cb-detail-text">
@@ -285,8 +285,8 @@ function CardDetailPanel({ card, locale, t, onClose }) {
         </div>
 
         <dl className="cb-detail-meta">
-          <div><dt>Set</dt><dd>{card.set ?? "—"}</dd></div>
-          <div><dt>ID</dt><dd>{card.id ?? "—"}</dd></div>
+          <div><dt>Set</dt><dd>{card.set ?? "â€”"}</dd></div>
+          <div><dt>ID</dt><dd>{card.id ?? "â€”"}</dd></div>
         </dl>
       </div>
     </aside>
@@ -294,3 +294,4 @@ function CardDetailPanel({ card, locale, t, onClose }) {
 }
 
 export default CardDatabase;
+

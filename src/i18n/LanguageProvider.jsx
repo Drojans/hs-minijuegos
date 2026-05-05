@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+﻿import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { DEFAULT_LOCALE, normalizeLocale, translate } from "./translations";
 
 const STORAGE_KEY = "hs-minijuegos-locale";
@@ -49,3 +49,4 @@ export function LanguageProvider({ children }) {
 export function useLanguage() {
   return useContext(LanguageContext);
 }
+

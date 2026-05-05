@@ -1,4 +1,4 @@
-import {
+﻿import {
   getAdaptedImage,
   getCardName,
   getGameImage,
@@ -151,3 +151,4 @@ function ImpostorNeutralCard({ card, locale = "es" }) {
 }
 
 export default ImpostorNeutralCard;
+
