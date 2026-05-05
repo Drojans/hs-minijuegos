@@ -1,4 +1,4 @@
-﻿.im-page {
+.im-page {
   min-height: 100vh;
   width: 100%;
   padding: 30px 20px 40px;
@@ -251,7 +251,6 @@
 }
 
 
-
 .im-action-panel {
   display: grid;
   gap: 14px;
@@ -454,7 +453,6 @@
   transform: translate(5.5%, -1%) scale(1.08);
   transform-origin: center center;
 }
-
 
 
 .im-result-mark {
@@ -964,8 +962,8 @@
 
 
 /* ==========================================================
-   FULL WIDTH PLAYABLE LAYOUT PATCH
-   Aprovecha mÃ¡s pantalla para que las cartas del Impostor se lean.
+   IMPOSTOR PLAYABLE LAYOUT — ancho útil
+   Aprovecha más pantalla para que las cartas del Impostor se lean.
    ========================================================== */
 
 .im-page {
@@ -1069,8 +1067,8 @@
 }
 
 /* ==========================================================
-   BALANCED PLAYABLE WIDTH PATCH â€” IMPOSTOR
-   Mantiene el ancho Ãºtil, pero evita solapes verticales y
+   IMPOSTOR PLAYABLE WIDTH — ajuste equilibrado
+   Mantiene el ancho útil, pero evita solapes verticales y
    devuelve algo de aire entre filas sin deformar cartas.
    ========================================================== */
 
