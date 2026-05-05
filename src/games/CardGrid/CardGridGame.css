@@ -1,4 +1,4 @@
-﻿@font-face {
+@font-face {
   font-family: "Belwe HS";
   src:
     local("Belwe Bold"),
@@ -654,7 +654,7 @@
   justify-content: center;
 }
 
-/* Marco interno de cada casilla: este es el "cajÃ³n" donde vive la carta. */
+/* Marco interno de cada casilla: este es el "cajón" donde vive la carta. */
 .cg-solved-card-frame {
   position: absolute;
   inset: 6px;
@@ -707,7 +707,7 @@
 
 /* ==========================================================
    CARD GRID V8 DIFFICULTY PATCH
-   Modos FÃ¡cil / Normal.
+   Modos Fácil / Normal.
    ========================================================== */
 
 .cg-mode-selector {
@@ -791,7 +791,7 @@
 
 /* ==========================================================
    CARD GRID V10 CLASS ICON PATCH
-   Muestra iconos PNG para las categorÃ­as de clase.
+   Muestra iconos PNG para las categorías de clase.
    ========================================================== */
 
 .cg-condition-icon {
@@ -852,7 +852,7 @@
   gap: 0;
 }
 
-/* Seguridad por si algÃºn JSX antiguo todavÃ­a deja el span "CLASE". */
+/* Seguridad por si algún JSX antiguo todavía deja el span "CLASE". */
 .cg-condition-cell:has(.cg-condition-icon) > span,
 .cg-condition-cell:has(.cg-condition-icon) > strong {
   display: none;
@@ -934,12 +934,12 @@
   pointer-events: none;
 }
 
-/* Top row: la celda es mÃ¡s baja, asÃ­ que usamos una caja mÃ¡s precisa. */
+/* Top row: la celda es más baja, así que usamos una caja más precisa. */
 .cg-column-cell .cg-condition-icon-frame {
   inset: 5px 8px;
 }
 
-/* Left column: conservamos el ajuste que ya se veÃ­a bien. */
+/* Left column: conservamos el ajuste que ya se veía bien. */
 .cg-row-cell .cg-condition-icon-frame {
   inset: 8px 6px;
 }
@@ -960,7 +960,7 @@
     drop-shadow(0 0 12px rgba(255, 197, 29, 0.1));
 }
 
-/* Algunos iconos PNG tienen aire interno. En la fila superior compensamos un pelÃ­n. */
+/* Algunos iconos PNG tienen aire interno. En la fila superior compensamos un pelín. */
 .cg-column-cell .cg-condition-icon-frame > img.cg-condition-icon {
   max-height: 92% !important;
   transform: translateY(-1px) !important;
@@ -1001,7 +1001,7 @@
 
 /* ==========================================================
    CARD GRID V13 EQUAL ICON SIZE PATCH
-   Normaliza el tamaÃ±o visual de iconos arriba/lateral.
+   Normaliza el tamaño visual de iconos arriba/lateral.
    Las celdas mantienen su forma; solo igualamos el icono.
    ========================================================== */
 
@@ -1045,8 +1045,8 @@
   display: block !important;
 }
 
-/* Ajuste especÃ­fico para 1080p: que el de arriba no quede pequeÃ±o
-   y el lateral no se dispare por tener mÃ¡s alto de celda. */
+/* Ajuste específico para 1080p: que el de arriba no quede pequeño
+   y el lateral no se dispare por tener más alto de celda. */
 @media (min-width: 1500px) and (min-height: 850px) {
   .cg-condition-icon-frame,
   .cg-column-cell .cg-condition-icon-frame,
@@ -1056,7 +1056,7 @@
   }
 }
 
-/* En mÃ³vil bajamos un poco para que no choque con los bordes. */
+/* En móvil bajamos un poco para que no choque con los bordes. */
 @media (max-width: 760px) {
   .cg-condition-icon-frame,
   .cg-column-cell .cg-condition-icon-frame,
@@ -1069,7 +1069,7 @@
 /* ==========================================================
    CARD GRID V14 ALL CATEGORY ICON PATCH
    Iconos para todas las familias: clase, tipo, rareza,
-   coste, estadÃ­stica, raza y texto/mecÃ¡nica.
+   coste, estadística, raza y texto/mecánica.
    ========================================================== */
 
 .cg-condition-cell:has(.cg-condition-icon-frame) {
@@ -1079,7 +1079,7 @@
   padding: 0;
 }
 
-/* Marco cuadrado comÃºn. Las casillas mantienen su forma, el icono no. */
+/* Marco cuadrado común. Las casillas mantienen su forma, el icono no. */
 .cg-condition-icon-frame,
 .cg-column-cell .cg-condition-icon-frame,
 .cg-row-cell .cg-condition-icon-frame {
@@ -1158,10 +1158,10 @@
 
 /* ==========================================================
    CARD GRID V15 BIGGER ICON + TOOLTIP PATCH
-   Iconos mÃ¡s grandes en cabeceras/lateral + tooltip custom.
+   Iconos más grandes en cabeceras/lateral + tooltip custom.
    ========================================================== */
 
-/* Dejamos respirar un poco mÃ¡s las cabeceras para que el icono pueda crecer. */
+/* Dejamos respirar un poco más las cabeceras para que el icono pueda crecer. */
 @media (min-width: 1500px) and (min-height: 850px) {
   .cg-board {
     grid-template-rows: 86px repeat(3, minmax(0, 1fr));
@@ -1169,7 +1169,7 @@
 }
 
 /* Los iconos pasan a tener un marco cuadrado mayor.
-   La celda no cambia radicalmente, solo se aprovecha mÃ¡s. */
+   La celda no cambia radicalmente, solo se aprovecha más. */
 .cg-condition-icon-frame,
 .cg-column-cell .cg-condition-icon-frame,
 .cg-row-cell .cg-condition-icon-frame {
@@ -1182,7 +1182,7 @@
   overflow: visible !important;
 }
 
-/* El lateral tiene mÃ¡s alto, asÃ­ que puede permitirse un poquito mÃ¡s. */
+/* El lateral tiene más alto, así que puede permitirse un poquito más. */
 .cg-row-cell .cg-condition-icon-frame {
   width: clamp(68px, 5.5vw, 90px) !important;
   height: clamp(68px, 5.5vw, 90px) !important;
@@ -1205,7 +1205,7 @@
   overflow: visible;
 }
 
-/* Tooltip propio al pasar el ratÃ³n por encima. */
+/* Tooltip propio al pasar el ratón por encima. */
 .cg-condition-icon-frame::after {
   content: attr(data-label);
   position: absolute;
@@ -1261,14 +1261,14 @@
   transform: translateY(-50%) translateX(0);
 }
 
-/* Un pequeÃ±o glow al hover para que se note que el icono tiene ayuda. */
+/* Un pequeño glow al hover para que se note que el icono tiene ayuda. */
 .cg-condition-icon-frame:hover > img.cg-condition-icon {
   filter:
     drop-shadow(0 9px 13px rgba(0, 0, 0, 0.46))
     drop-shadow(0 0 14px rgba(255, 197, 29, 0.26)) !important;
 }
 
-/* Ajuste en escritorio 1080p: tamaÃ±o consistente y legible. */
+/* Ajuste en escritorio 1080p: tamaño consistente y legible. */
 @media (min-width: 1500px) and (min-height: 850px) {
   .cg-condition-icon-frame,
   .cg-column-cell .cg-condition-icon-frame {
@@ -1282,7 +1282,7 @@
   }
 }
 
-/* En pantallas pequeÃ±as, volvemos a tamaÃ±os moderados y sin tooltip intrusivo. */
+/* En pantallas pequeñas, volvemos a tamaños moderados y sin tooltip intrusivo. */
 @media (max-width: 760px) {
   .cg-condition-icon-frame,
   .cg-column-cell .cg-condition-icon-frame,
@@ -1396,9 +1396,9 @@
 }
 
 /* ==========================================================
-   BALANCED PLAYABLE WIDTH PATCH â€” CARD GRID
+   BALANCED PLAYABLE WIDTH PATCH — CARD GRID
    Evita que las celdas se estiren demasiado en horizontal.
-   El tablero vuelve a proporciones mÃ¡s naturales y las cartas
+   El tablero vuelve a proporciones más naturales y las cartas
    resueltas ganan presencia sin deformarse.
    ========================================================== */
 
