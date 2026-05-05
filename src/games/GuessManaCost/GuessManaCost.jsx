@@ -1,41 +1,186 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import GameLayout from "../../shared/components/GameLayout/GameLayout";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import {
   getCardName,
-  getAdaptedImage,
   translateCardClass,
   translateCardRarity,
   translateCardType,
 } from "../../utils/cardLocale";
+import {
+  getGuessManaCardImage,
+  getNextRandomCard,
+  isPlayableGuessManaCard,
+  MANA_VALUES,
+  MAX_ROUNDS,
+} from "./guessManaConfig";
 import "./GuessManaCost.css";
 
-const MAX_ROUNDS = 10;
-const MANA_VALUES = Array.from({ length: 11 }, (_, index) => index);
-
-function getGameCardImage(card, locale) {
-  return getAdaptedImage(card, locale);
+function GuessManaStatus({ round, score, t }) {
+  return (
+    <div className="gm-score-pill">
+      <span>{t("common.round", { round, maxRounds: MAX_ROUNDS })}</span>
+      <strong>{t("common.correctCount", { score })}</strong>
+    </div>
+  );
 }
 
-function getRandomItem(array) {
-  return array[Math.floor(Math.random() * array.length)];
+function GuessManaShell({ children, eyebrow, title, description, status, onBack, t }) {
+  return (
+    <GameLayout
+      className="gm-game"
+      eyebrow={eyebrow}
+      title={title}
+      description={description}
+      status={status}
+      onBack={onBack}
+      backLabel={t("common.backHome")}
+    >
+      {children}
+    </GameLayout>
+  );
 }
 
-function GuessManaCost({ cards, onBack }) {
+function EmptyState({ title, buttonLabel, onBack }) {
+  return (
+    <section className="gm-empty-state game-panel">
+      <h2>{title}</h2>
+      {buttonLabel ? (
+        <button className="gm-secondary-button" type="button" onClick={onBack}>
+          {buttonLabel}
+        </button>
+      ) : null}
+    </section>
+  );
+}
+
+function EndScreen({ score, onBack, onRestart, t }) {
+  return (
+    <section className="gm-end-screen game-panel">
+      <div className="gm-end-score">
+        {score} / {MAX_ROUNDS}
+      </div>
+
+      <div className="gm-end-actions">
+        <button className="gm-primary-button" type="button" onClick={onRestart}>
+          {t("common.playAgain")}
+        </button>
+        <button className="gm-secondary-button" type="button" onClick={onBack}>
+          {t("guessMana.backHome")}
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function CardPreview({ cardName, hasAnswered, imageFailed, imageSrc, onImageError, t }) {
+  return (
+    <aside className="gm-card-panel game-panel">
+      <div className="gm-card-frame">
+        <div className="gm-card-image-wrap">
+          {!imageFailed ? (
+            <img
+              src={imageSrc}
+              alt={cardName}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              onError={onImageError}
+            />
+          ) : (
+            <div className="gm-image-fallback">{t("guessMana.noImage")}</div>
+          )}
+
+          {!hasAnswered && !imageFailed ? <div className="gm-mana-cover">?</div> : null}
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function CardInfo({ card, cardName, locale, t }) {
+  return (
+    <section className="gm-info-card">
+      <p className="gm-eyebrow">{t("guessMana.cardData")}</p>
+      <h2>{cardName}</h2>
+
+      <div className="gm-tag-row">
+        <span>{translateCardClass(card.cardClass, locale)}</span>
+        <span>{translateCardType(card.type, locale)}</span>
+        <span>{translateCardRarity(card.rarity, locale)}</span>
+      </div>
+
+      {card.attack !== null && card.health !== null ? (
+        <div className="gm-stat-row">
+          <div>
+            <span>{t("guessMana.attack")}</span>
+            <strong>{card.attack}</strong>
+          </div>
+          <div>
+            <span>{t("guessMana.health")}</span>
+            <strong>{card.health}</strong>
+          </div>
+        </div>
+      ) : (
+        <p className="gm-no-stats">{t("guessMana.noStats")}</p>
+      )}
+    </section>
+  );
+}
+
+function ManaSelector({ correctCost, hasAnswered, onChooseCost, selectedCost, t }) {
+  return (
+    <section className="gm-mana-panel">
+      <p className="gm-eyebrow">{t("guessMana.manaSelector")}</p>
+      <h3>{t("guessMana.chooseCost")}</h3>
+
+      <div className="gm-mana-grid">
+        {MANA_VALUES.map((cost) => {
+          let buttonClass = "gm-mana-button";
+
+          if (hasAnswered && cost === correctCost) buttonClass += " is-correct";
+          if (hasAnswered && cost === selectedCost && cost !== correctCost) buttonClass += " is-wrong";
+
+          return (
+            <button
+              key={cost}
+              className={buttonClass}
+              type="button"
+              disabled={hasAnswered}
+              onClick={() => onChooseCost(cost)}
+            >
+              {cost}
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function RoundFeedback({ cardName, correctCost, isCorrect, isFinalRound, onNextRound, t }) {
+  return (
+    <section className={`gm-feedback ${isCorrect ? "is-correct" : "is-wrong"}`} aria-live="polite">
+      <h3>{isCorrect ? t("guessMana.correct") : t("guessMana.wrong")}</h3>
+      <p>
+        {t("guessMana.costFeedback", {
+          name: cardName,
+          cost: correctCost,
+        })}
+      </p>
+
+      <button className="gm-primary-button" type="button" onClick={onNextRound}>
+        {isFinalRound ? t("common.seeResult") : t("guessMana.nextCard")}
+      </button>
+    </section>
+  );
+}
+
+function GuessManaCost({ cards = [], onBack }) {
   const { locale, t } = useLanguage();
 
   const playableCards = useMemo(() => {
-    return cards.filter((card) => {
-      return (
-        typeof card.cost === "number" &&
-        card.cost >= 0 &&
-        card.cost <= 10 &&
-        getCardName(card, locale) &&
-        getGameCardImage(card, locale) &&
-        card.type !== "HERO" &&
-        card.type !== "HERO_POWER"
-      );
-    });
+    return cards.filter((card) => isPlayableGuessManaCard(card, locale));
   }, [cards, locale]);
 
   const [currentCard, setCurrentCard] = useState(null);
@@ -47,25 +192,31 @@ function GuessManaCost({ cards, onBack }) {
 
   useEffect(() => {
     if (playableCards.length === 0 || currentCard) return;
-    setCurrentCard(getRandomItem(playableCards));
+    setCurrentCard(getNextRandomCard(playableCards));
   }, [playableCards, currentCard]);
 
   useEffect(() => {
     setImageFailed(false);
   }, [locale, currentCard?.id]);
 
-  function startNewGame() {
-    setCurrentCard(getRandomItem(playableCards));
+  function resetRoundState(nextCard) {
+    setCurrentCard(nextCard);
     setSelectedCost(null);
-    setScore(0);
-    setRound(1);
-    setFinished(false);
     setImageFailed(false);
   }
 
+  function startNewGame() {
+    resetRoundState(getNextRandomCard(playableCards));
+    setScore(0);
+    setRound(1);
+    setFinished(false);
+  }
+
   function chooseCost(cost) {
-    if (selectedCost !== null) return;
+    if (selectedCost !== null || !currentCard) return;
+
     setSelectedCost(cost);
+
     if (cost === currentCard.cost) {
       setScore((previousScore) => previousScore + 1);
     }
@@ -77,56 +228,31 @@ function GuessManaCost({ cards, onBack }) {
       return;
     }
 
-    let newCard = getRandomItem(playableCards);
-    let safety = 0;
-    while (newCard?.id === currentCard?.id && safety < 10) {
-      newCard = getRandomItem(playableCards);
-      safety += 1;
-    }
-
-    setCurrentCard(newCard);
-    setSelectedCost(null);
+    resetRoundState(getNextRandomCard(playableCards, currentCard?.id));
     setRound((previousRound) => previousRound + 1);
-    setImageFailed(false);
   }
 
-  const gameStatus = (
-    <div className="gm-score-pill">
-      <span>{t("common.round", { round, maxRounds: MAX_ROUNDS })}</span>
-      <strong>{t("common.correctCount", { score })}</strong>
-    </div>
-  );
+  const shellProps = {
+    eyebrow: t("guessMana.minigame"),
+    title: t("guessMana.title"),
+    description: t("guessMana.subtitle"),
+    onBack,
+    t,
+  };
 
   if (playableCards.length === 0) {
     return (
-      <GameLayout
-        className="gm-game"
-        eyebrow={t("guessMana.minigame")}
-        title={t("guessMana.title")}
-        description={t("guessMana.subtitle")}
-        onBack={onBack}
-        backLabel={t("common.backHome")}
-      >
-        <section className="gm-empty-state game-panel">
-          <h2>{t("guessMana.noCards")}</h2>
-          <button className="gm-secondary-button" onClick={onBack}>{t("common.back")}</button>
-        </section>
-      </GameLayout>
+      <GuessManaShell {...shellProps}>
+        <EmptyState title={t("guessMana.noCards")} buttonLabel={t("common.back")} onBack={onBack} />
+      </GuessManaShell>
     );
   }
 
   if (!currentCard) {
     return (
-      <GameLayout
-        className="gm-game"
-        eyebrow={t("guessMana.minigame")}
-        title={t("guessMana.title")}
-        description={t("guessMana.subtitle")}
-        onBack={onBack}
-        backLabel={t("common.backHome")}
-      >
-        <section className="gm-empty-state game-panel"><h2>{t("guessMana.loadingGame")}</h2></section>
-      </GameLayout>
+      <GuessManaShell {...shellProps}>
+        <EmptyState title={t("guessMana.loadingGame")} />
+      </GuessManaShell>
     );
   }
 
@@ -134,130 +260,69 @@ function GuessManaCost({ cards, onBack }) {
   const isCorrect = selectedCost === currentCard.cost;
   const accuracy = Math.round((score / MAX_ROUNDS) * 100);
   const progressPercent = (round / MAX_ROUNDS) * 100;
-  const imageSrc = getGameCardImage(currentCard, locale);
   const currentCardName = getCardName(currentCard, locale);
+  const imageSrc = getGuessManaCardImage(currentCard, locale);
 
   if (finished) {
     return (
-      <GameLayout
-        className="gm-game"
+      <GuessManaShell
+        {...shellProps}
         eyebrow={t("guessMana.gameFinished")}
-        title={t("guessMana.title")}
         description={t("guessMana.finalText", {
           score,
           maxRounds: MAX_ROUNDS,
           accuracy,
         })}
-        onBack={onBack}
-        backLabel={t("common.backHome")}
       >
-        <section className="gm-end-screen game-panel">
-          <div className="gm-end-score">{score} / {MAX_ROUNDS}</div>
-          <div className="gm-end-actions">
-            <button className="gm-primary-button" onClick={startNewGame}>{t("common.playAgain")}</button>
-            <button className="gm-secondary-button" onClick={onBack}>{t("guessMana.backHome")}</button>
-          </div>
-        </section>
-      </GameLayout>
+        <EndScreen score={score} onBack={onBack} onRestart={startNewGame} t={t} />
+      </GuessManaShell>
     );
   }
 
   return (
-    <GameLayout
-      className="gm-game"
-      eyebrow={t("guessMana.minigame")}
-      title={t("guessMana.title")}
-      description={t("guessMana.subtitle")}
-      status={gameStatus}
-      onBack={onBack}
-      backLabel={t("common.backHome")}
+    <GuessManaShell
+      {...shellProps}
+      status={<GuessManaStatus round={round} score={score} t={t} />}
     >
       <div className="gm-progress-track">
         <div className="gm-progress-fill" style={{ width: `${progressPercent}%` }} />
       </div>
 
       <div className="gm-layout">
-        <aside className="gm-card-panel game-panel">
-          <div className="gm-card-frame">
-            <div className="gm-card-image-wrap">
-              {!imageFailed ? (
-                <img
-                  src={imageSrc}
-                  alt={currentCardName}
-                  loading="eager"
-                  decoding="async"
-                  fetchPriority="high"
-                  onError={() => setImageFailed(true)}
-                />
-              ) : (
-                <div className="gm-image-fallback">{t("guessMana.noImage")}</div>
-              )}
-
-              {!hasAnswered && !imageFailed && <div className="gm-mana-cover">?</div>}
-              {!imageFailed && <div className="gm-scan-beam" />}
-            </div>
-          </div>
-        </aside>
+        <CardPreview
+          cardName={currentCardName}
+          hasAnswered={hasAnswered}
+          imageFailed={imageFailed}
+          imageSrc={imageSrc}
+          onImageError={() => setImageFailed(true)}
+          t={t}
+        />
 
         <article className="gm-control-panel game-panel">
-          <section className="gm-info-card">
-            <p className="gm-eyebrow">{t("guessMana.cardData")}</p>
-            <h2>{currentCardName}</h2>
+          <CardInfo card={currentCard} cardName={currentCardName} locale={locale} t={t} />
 
-            <div className="gm-tag-row">
-              <span>{translateCardClass(currentCard.cardClass, locale)}</span>
-              <span>{translateCardType(currentCard.type, locale)}</span>
-              <span>{translateCardRarity(currentCard.rarity, locale)}</span>
-            </div>
+          <ManaSelector
+            correctCost={currentCard.cost}
+            hasAnswered={hasAnswered}
+            onChooseCost={chooseCost}
+            selectedCost={selectedCost}
+            t={t}
+          />
 
-            {currentCard.attack !== null && currentCard.health !== null ? (
-              <div className="gm-stat-row">
-                <div><span>{t("guessMana.attack")}</span><strong>{currentCard.attack}</strong></div>
-                <div><span>{t("guessMana.health")}</span><strong>{currentCard.health}</strong></div>
-              </div>
-            ) : (
-              <p className="gm-no-stats">{t("guessMana.noStats")}</p>
-            )}
-          </section>
-
-          <section className="gm-mana-panel">
-            <p className="gm-eyebrow">{t("guessMana.manaSelector")}</p>
-            <h3>{t("guessMana.chooseCost")}</h3>
-
-            <div className="gm-mana-grid">
-              {MANA_VALUES.map((cost) => {
-                let buttonClass = "gm-mana-button";
-                if (hasAnswered && cost === currentCard.cost) buttonClass += " is-correct";
-                if (hasAnswered && cost === selectedCost && cost !== currentCard.cost) buttonClass += " is-wrong";
-
-                return (
-                  <button key={cost} className={buttonClass} disabled={hasAnswered} onClick={() => chooseCost(cost)}>
-                    {cost}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
-
-          {hasAnswered && (
-            <section className={`gm-feedback ${isCorrect ? "is-correct" : "is-wrong"}`}>
-              <h3>{isCorrect ? t("guessMana.correct") : t("guessMana.wrong")}</h3>
-              <p>
-                {t("guessMana.costFeedback", {
-                  name: currentCardName,
-                  cost: currentCard.cost,
-                })}
-              </p>
-              <button className="gm-primary-button" onClick={goNextRound}>
-                {round >= MAX_ROUNDS ? t("common.seeResult") : t("guessMana.nextCard")}
-              </button>
-            </section>
-          )}
+          {hasAnswered ? (
+            <RoundFeedback
+              cardName={currentCardName}
+              correctCost={currentCard.cost}
+              isCorrect={isCorrect}
+              isFinalRound={round >= MAX_ROUNDS}
+              onNextRound={goNextRound}
+              t={t}
+            />
+          ) : null}
         </article>
       </div>
-    </GameLayout>
+    </GuessManaShell>
   );
 }
 
 export default GuessManaCost;
-
