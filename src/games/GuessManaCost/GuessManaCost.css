@@ -44,16 +44,16 @@
   --gm-back-w: 36%;
   --gm-back-h: 11.2%;
   --gm-card-area-x: 10.2%;
-  --gm-card-area-y: 10%;
+  --gm-card-area-y: 16.3%;
   --gm-card-area-w: 69%;
   --gm-card-area-h: 69%;
   --gm-card-frame-scale-x: 1;
   --gm-card-frame-scale-y: 1;
-  --gm-card-render-w: 72%;
-  --gm-card-render-h: 92%;
+  --gm-card-render-w: 77.8%;
+  --gm-card-render-h: 96%;
   --gm-card-render-x: 0%;
   --gm-card-render-y: 0%;
-  --gm-card-render-scale: 1;
+  --gm-card-render-scale: 1.23;
   --gm-question-x: -11.7%;
   --gm-question-y: -3.2%;
   --gm-question-size: 180px;
@@ -96,14 +96,7 @@
   --gm-z-coins: 5;
   --gm-z-mug: 10;
   --gm-z-ui: 40;
-
-  --gm-lang-right: -8.2%;
-  --gm-lang-top: 3.8%;
-  --gm-lang-scale: 1.27;
-  --gm-lang-button-size: 37px;
-  --gm-lang-gap: 6px;
-  --gm-lang-radius: 9px;
-  --gm-z-language: 90;
+  
   --gm-ink: #2b1208;
   --gm-deep-ink: #1c0b04;
   --gm-gold: #c97825;
@@ -298,12 +291,24 @@
   position: relative;
   width: 100%;
   height: 100%;
-  background-image: none;
+  background-image: url("/ui/games/guess-mana/guess-mana-card-frame-cartoon.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   display: grid;
   place-items: center;
   transform: scale(var(--gm-card-frame-scale-x), var(--gm-card-frame-scale-y));
   transform-origin: center;
-  filter: none;
+  filter: drop-shadow(0 12px 16px rgba(42, 17, 4, 0.18));
+}
+
+.gm-book-card-image-wrap {
+  position: relative;
+  width: var(--gm-card-render-w);
+  height: var(--gm-card-render-h);
+  display: grid;
+  place-items: center;
+  transform: translate(var(--gm-card-render-x), var(--gm-card-render-y)) scale(var(--gm-card-render-scale));
+  transform-origin: center;
 }
 
 .gm-book-card-image-wrap img {
@@ -311,13 +316,9 @@
   height: 100%;
   object-fit: contain;
   display: block;
-  filter: none;
-  opacity: 0;
-  transition: opacity 160ms ease;
-}
-
-.gm-book-card-image-wrap.is-loaded img {
-  opacity: 1;
+  filter:
+    drop-shadow(0 12px 20px rgba(0, 0, 0, 0.35))
+    drop-shadow(0 0 6px rgba(255, 210, 105, 0.12));
 }
 
 .gm-book-question-badge {
@@ -785,75 +786,6 @@
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-}
-
-
-/* Idiomas: misma variante de botones del libro/Home */
-.gm-book-language-anchor {
-  position: absolute;
-  right: var(--gm-lang-right);
-  top: var(--gm-lang-top);
-  z-index: var(--gm-z-language);
-  width: max-content;
-  height: max-content;
-  transform: scale(var(--gm-lang-scale));
-  transform-origin: top right;
-  pointer-events: none;
-  isolation: isolate;
-}
-
-.gm-book-language-toggle.language-toggle.is-book {
-  display: inline-flex !important;
-  width: max-content !important;
-  min-width: 0 !important;
-  height: max-content !important;
-  padding: 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  pointer-events: auto !important;
-}
-
-.gm-book-language-toggle.language-toggle.is-book > div,
-.gm-book-language-toggle.language-toggle.is-book .language-toggle-options {
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: var(--gm-lang-gap, 6px) !important;
-  width: max-content !important;
-  height: max-content !important;
-}
-
-.gm-book-language-toggle.language-toggle.is-book button,
-.gm-book-language-toggle.language-toggle.is-book .language-toggle-button {
-  flex: 0 0 auto !important;
-  position: relative !important;
-  display: block !important;
-  width: var(--gm-lang-button-size, 37px) !important;
-  height: var(--gm-lang-button-size, 37px) !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border: 0 !important;
-  border-radius: var(--gm-lang-radius, 9px) !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  cursor: pointer !important;
-  overflow: visible !important;
-  pointer-events: auto !important;
-}
-
-.gm-book-language-toggle.language-toggle.is-book .language-toggle-button:hover {
-  transform: translateY(-1px) scale(1.03);
-  filter: brightness(1.08);
-}
-
-.gm-book-language-toggle.language-toggle.is-book .language-toggle-button.is-active .language-toggle-book-icon {
-  filter:
-    drop-shadow(0 0 5px rgba(255, 211, 83, 0.65))
-    drop-shadow(0 2px 3px rgba(0, 0, 0, 0.42));
 }
 
 @media (max-aspect-ratio: 4 / 5) {

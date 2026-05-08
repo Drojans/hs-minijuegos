@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import {
   getCardName,
@@ -93,14 +92,6 @@ function useGuessManaCopy(locale) {
   return LOCAL_COPY[locale] ?? LOCAL_COPY.es;
 }
 
-function GuessManaLanguageToggle() {
-  return (
-    <div className="gm-book-language-anchor">
-      <LanguageToggle compact variant="book" className="gm-book-language-toggle" />
-    </div>
-  );
-}
-
 function BookProp({ name }) {
   return <div className={`gm-book-prop gm-book-prop-${name}`} aria-hidden="true" />;
 }
@@ -128,16 +119,10 @@ function BackButton({ copy, onBack }) {
 }
 
 function CardPreview({ cardName, hasAnswered, imageFailed, imageSrc, onImageError, copy }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-
-  useEffect(() => {
-    setImageLoaded(false);
-  }, [imageSrc]);
-
   return (
     <aside className="gm-book-card-area">
       <div className="gm-book-card-frame">
-        <div className={`gm-book-card-image-wrap ${imageLoaded ? "is-loaded" : "is-loading"}`}>
+        <div className="gm-book-card-image-wrap">
           {!imageFailed ? (
             <img
               src={imageSrc}
@@ -145,14 +130,13 @@ function CardPreview({ cardName, hasAnswered, imageFailed, imageSrc, onImageErro
               loading="eager"
               decoding="async"
               fetchPriority="high"
-              onLoad={() => setImageLoaded(true)}
               onError={onImageError}
             />
           ) : (
             <div className="gm-book-image-fallback">{copy.noImage}</div>
           )}
 
-          {!hasAnswered && !imageFailed && imageLoaded ? (
+          {!hasAnswered && !imageFailed ? (
             <div className="gm-book-question-badge" aria-label={copy.chooseCost}>
               ?
             </div>
@@ -280,8 +264,6 @@ function EndScreen({ copy, score, accuracy, onBack, onRestart }) {
         <BookProp name="coins" />
         <BookProp name="mug" />
 
-        <GuessManaLanguageToggle />
-
         <section className="gm-book-page-panel gm-book-end-panel">
           <h1>{copy.finalTitle}</h1>
           <p>
@@ -318,8 +300,6 @@ function EmptyState({ copy, title, onBack, showBack = true }) {
         <BookProp name="cards" />
         <BookProp name="coins" />
         <BookProp name="mug" />
-
-        <GuessManaLanguageToggle />
 
         <section className="gm-book-page-panel gm-book-empty-panel">
           <h1>{title}</h1>
@@ -432,8 +412,6 @@ function GuessManaCost({ cards = [], onBack }) {
         <BookProp name="cards" />
         <BookProp name="coins" />
         <BookProp name="mug" />
-
-        <GuessManaLanguageToggle />
 
         <section className="gm-book-left-page">
           <BackButton copy={copy} onBack={onBack} />

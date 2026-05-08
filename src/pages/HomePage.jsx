@@ -1,7 +1,7 @@
-import HomeBook from "../features/HomeBook/HomeBook";
+import HomeV2 from "../features/HomeV2/HomeV2";
 
 function HomePage({ loading, onNavigate }) {
-  return <HomeBook loading={loading} onNavigate={onNavigate} />;
+  return <HomeV2 loading={loading} onNavigate={onNavigate} />;
 }
 
 export default HomePage;

@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
-const STORAGE_KEY = "hearthdle-guess-mana-layout-editor-v2";
+const LEGACY_STORAGE_KEY = "hearthdle-guess-mana-layout-editor-v2";
 const PANEL_STORAGE_KEY = "hearthdle-guess-mana-layout-editor-panel-v2";
 
 const SECTIONS = [
@@ -145,9 +145,64 @@ const SECTIONS = [
 
 const CONTROLS = SECTIONS.flatMap(([, controls]) => controls);
 
+const EXTRA_ROOT_VARIABLES = [
+  ["--gm-z-backdrop", "0"],
+  ["--gm-z-vignette", "1"],
+  ["--gm-z-stage", "2"],
+  ["--gm-ink", "#2b1208"],
+  ["--gm-deep-ink", "#1c0b04"],
+  ["--gm-gold", "#c97825"],
+  ["--gm-gold-bright", "#ffd46e"],
+  ["--gm-purple", "#6d29a9"],
+  ["--gm-success", "#2f8f3f"],
+  ["--gm-danger", "#b72d2d"],
+];
+
+function removeEditorInlineVariables() {
+  if (typeof document === "undefined") return;
+
+  CONTROLS.forEach(([name]) => {
+    document.documentElement.style.removeProperty(name);
+  });
+}
+
+function readCurrentCssValues(defaultValues, { clearInline = false } = {}) {
+  if (typeof window === "undefined") return defaultValues;
+
+  if (clearInline) {
+    removeEditorInlineVariables();
+  }
+
+  const styles = window.getComputedStyle(document.documentElement);
+  const nextValues = { ...defaultValues };
+
+  CONTROLS.forEach(([name, , , , , unit, fallback]) => {
+    const rawValue = styles.getPropertyValue(name);
+    const defaultValue = defaultValues[name] ?? fallback;
+    nextValues[name] = parseVariableValue(rawValue, unit, defaultValue);
+  });
+
+  return nextValues;
+}
+
+function getExtraRootLines() {
+  if (typeof window === "undefined") {
+    return EXTRA_ROOT_VARIABLES.map(([name, fallback]) => `  ${name}: ${fallback};`);
+  }
+
+  const styles = window.getComputedStyle(document.documentElement);
+
+  return EXTRA_ROOT_VARIABLES.map(([name, fallback]) => {
+    const value = styles.getPropertyValue(name).trim() || fallback;
+    return `  ${name}: ${value};`;
+  });
+}
+
 function getDefaultValues() {
   return Object.fromEntries(CONTROLS.map(([name, , , , , , defaultValue]) => [name, defaultValue]));
 }
+
+const DEFAULT_VALUES = getDefaultValues();
 
 function readJson(key, fallback) {
   if (typeof window === "undefined") return fallback;
@@ -181,25 +236,24 @@ function parseVariableValue(rawValue, unit, fallback) {
 function GuessManaLayoutEditor() {
   const panelRef = useRef(null);
   const dragRef = useRef(null);
-  const defaultValues = useMemo(() => getDefaultValues(), []);
-  const [values, setValues] = useState(() => ({
-    ...defaultValues,
-    ...readJson(STORAGE_KEY, {}),
-  }));
+  const defaultValues = useMemo(() => DEFAULT_VALUES, []);
+  const [values, setValues] = useState(() => readCurrentCssValues(DEFAULT_VALUES));
   const [panelPosition, setPanelPosition] = useState(() =>
     readJson(PANEL_STORAGE_KEY, { x: 24, y: 24 })
   );
   const [isHidden, setIsHidden] = useState(false);
-  const [message, setMessage] = useState("Editor Guess Mana v2");
+  const [message, setMessage] = useState("Editor Guess Mana v3 · lee el CSS actual");
+
+  useLayoutEffect(() => {
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+    setValues(readCurrentCssValues(DEFAULT_VALUES, { clearInline: true }));
+    setMessage("Valores cargados desde el :root actual del CSS");
+  }, []);
 
   useEffect(() => {
     CONTROLS.forEach(([name, , , , , unit]) => {
       document.documentElement.style.setProperty(name, getCssValue(name, values[name], unit));
     });
-  }, [values]);
-
-  useEffect(() => {
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(values));
   }, [values]);
 
   useEffect(() => {
@@ -239,21 +293,21 @@ function GuessManaLayoutEditor() {
     }));
   }
 
-  function resetEditor() {
-    setValues(defaultValues);
-    window.localStorage.removeItem(STORAGE_KEY);
-    setMessage("Reset v1 aplicado");
+  function readCssEditor() {
+    setValues(readCurrentCssValues(defaultValues, { clearInline: true }));
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
+    setMessage("CSS actual leído de nuevo");
   }
 
   async function copyRoot() {
-    const lines = CONTROLS.map(([name, , , , , unit]) => {
+    const controlledLines = CONTROLS.map(([name, , , , , unit]) => {
       return `  ${name}: ${getCssValue(name, values[name], unit)};`;
     });
 
-    const root = `:root {\n${lines.join("\n")}\n}`;
+    const root = `:root {\n${controlledLines.join("\n")}\n\n${getExtraRootLines().join("\n")}\n}`;
 
     await navigator.clipboard.writeText(root);
-    setMessage("ROOT copiado");
+    setMessage("ROOT copiado con variables extra");
   }
 
   async function pasteRoot() {
@@ -268,6 +322,7 @@ function GuessManaLayoutEditor() {
     });
 
     setValues(nextValues);
+    window.localStorage.removeItem(LEGACY_STORAGE_KEY);
     setMessage("Variables pegadas");
   }
 
@@ -315,7 +370,7 @@ function GuessManaLayoutEditor() {
 
         <div className="gm-layout-editor-actions">
           <button type="button" className="is-primary" onClick={copyRoot}>Copiar ROOT</button>
-          <button type="button" onClick={resetEditor}>Reset v1</button>
+          <button type="button" onClick={readCssEditor}>Leer CSS</button>
         </div>
 
         <div className="gm-layout-editor-body">
