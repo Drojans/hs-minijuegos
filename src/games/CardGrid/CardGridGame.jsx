@@ -1,5 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
+import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import {
   GRID_SIZE,
   TOTAL_CELLS,
@@ -15,6 +16,55 @@ import {
   normalize,
 } from "./cardGridGameConfig";
 import "./CardGridGame.css";
+
+const CARD_GRID_COPY = {
+  es: {
+    navMinigames: "Minijuegos",
+    navCards: "Base de datos",
+    navCollection: "Colección",
+    title: "Grid de cartas",
+    progressLabel: "Progreso",
+  },
+  en: {
+    navMinigames: "Minigames",
+    navCards: "Card database",
+    navCollection: "Collection",
+    title: "Card grid",
+    progressLabel: "Progress",
+  },
+};
+
+function useCardGridCopy(locale) {
+  return CARD_GRID_COPY[locale] ?? CARD_GRID_COPY.es;
+}
+
+function GameHeader({ copy, onBack }) {
+  return (
+    <header className="cg-v2-header">
+      <nav className="cg-v2-nav" aria-label="Principal">
+        <button type="button" className="is-active" onClick={onBack}>
+          {copy.navMinigames}
+        </button>
+        <button type="button" disabled>
+          {copy.navCards}
+        </button>
+        <button type="button" disabled>
+          {copy.navCollection}
+        </button>
+      </nav>
+
+      <button type="button" className="cg-v2-brand" onClick={onBack} aria-label="Hearthdle">
+        <img className="cg-v2-brand-mug is-left" src="/ui/home-v2/header-mug-cropped.png" alt="" />
+        <span>Hearthdle</span>
+        <img className="cg-v2-brand-mug" src="/ui/home-v2/header-mug-cropped.png" alt="" />
+      </button>
+
+      <div className="cg-v2-actions">
+        <LanguageToggle compact className="cg-v2-language" />
+      </div>
+    </header>
+  );
+}
 
 function ConditionContent({ condition }) {
   if (condition.icon) {
@@ -54,6 +104,7 @@ function ConditionContent({ condition }) {
 }
 
 function EmptyState({
+  copy,
   t,
   cards,
   gridMode,
@@ -65,7 +116,9 @@ function EmptyState({
 }) {
   return (
     <main className="cg-page">
-      <section className="cg-empty">
+      <GameHeader copy={copy} onBack={onBack} />
+      <section className="cg-shell">
+        <section className="cg-empty">
         <button type="button" className="cg-secondary-button" onClick={onBack}>
           {t("common.backHome")}
         </button>
@@ -98,29 +151,9 @@ function EmptyState({
             </button>
           </>
         ) : null}
+        </section>
       </section>
     </main>
-  );
-}
-
-function GridHeader({ t, onBack, correctCount }) {
-  return (
-    <header className="cg-header">
-      <button type="button" className="cg-secondary-button" onClick={onBack}>
-        {t("common.backHome")}
-      </button>
-
-      <div className="cg-title-block">
-        <p className="cg-eyebrow">{t("grid.minigame")}</p>
-        <h1>{t("grid.title")}</h1>
-        <p>{t("grid.subtitle")}</p>
-      </div>
-
-      <div className="cg-score-pill">
-        <span>{t("grid.progress")}</span>
-        <strong>{correctCount}/{TOTAL_CELLS}</strong>
-      </div>
-    </header>
   );
 }
 
@@ -249,6 +282,7 @@ function Suggestions({ suggestions, locale, isComplete, onPickSuggestion }) {
         <button
           type="button"
           key={card.id}
+          onMouseDown={(event) => event.preventDefault()}
           onClick={() => onPickSuggestion(getCardName(card, locale))}
         >
           {getCardName(card, locale)}
@@ -263,92 +297,136 @@ function AnswerForm({
   answer,
   suggestions,
   isComplete,
-  selectedKey,
-  answers,
   locale,
+  inputRef,
   onAnswerChange,
+  onPickSuggestion,
   onSubmitAnswer,
-  onRevealSelectedAnswer,
 }) {
   return (
     <form className="cg-answer-form" onSubmit={onSubmitAnswer}>
       <label htmlFor="grid-card-answer">{t("grid.cardLabel")}</label>
-      <div className="cg-input-row">
+      <div className="cg-input-row cg-input-row-single">
         <input
           id="grid-card-answer"
+          ref={inputRef}
           value={answer}
           onChange={(event) => onAnswerChange(event.target.value)}
           placeholder={t("grid.answerPlaceholder")}
           autoComplete="off"
           disabled={isComplete}
         />
-        <button type="submit" className="cg-primary-button" disabled={isComplete}>
-          {t("grid.tryAnswer")}
-        </button>
       </div>
+      <p className="cg-enter-hint">{t("grid.enterHint")}</p>
 
       <Suggestions
         suggestions={suggestions}
         locale={locale}
         isComplete={isComplete}
-        onPickSuggestion={onAnswerChange}
+        onPickSuggestion={onPickSuggestion}
       />
-
-      <button
-        type="button"
-        className="cg-reveal-button"
-        onClick={onRevealSelectedAnswer}
-        disabled={isComplete || Boolean(answers[selectedKey])}
-      >
-        {t("grid.revealAnswer")}
-      </button>
     </form>
   );
 }
 
-function ControlPanel({
+function ConditionChip({ condition }) {
+  if (!condition) return null;
+
+  return (
+    <div className="cg-selection-chip" title={condition.shortLabel}>
+      {condition.icon ? (
+        <img src={condition.icon} alt="" className="cg-selection-chip-icon" loading="eager" decoding="async" />
+      ) : null}
+      <span>{condition.shortLabel}</span>
+    </div>
+  );
+}
+
+function SelectionSummary({ t, selectedRow, selectedColumn }) {
+  return (
+    <div className="cg-selection-summary" aria-label={t("grid.selectedCell")}>
+      <ConditionChip condition={selectedRow} />
+      <span className="cg-selection-join">+</span>
+      <ConditionChip condition={selectedColumn} />
+    </div>
+  );
+}
+
+function GridResultOverlay({ t, result, onViewResults, onRestart }) {
+  const isWon = result === "won";
+  const confettiPieces = Array.from({ length: 34 });
+
+  return (
+    <div className="cg-result-backdrop" role="presentation">
+      <section className={`cg-result-card ${isWon ? "is-won" : "is-time"}`} role="status" aria-live="polite">
+        {isWon ? (
+          <div className="cg-result-confetti" aria-hidden="true">
+            {confettiPieces.map((_, index) => {
+              const angle = (Math.PI * 2 * index) / confettiPieces.length;
+              const distance = 120 + (index % 5) * 20;
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance - 20;
+
+              return (
+                <span
+                  key={index}
+                  style={{
+                    "--x": `${x.toFixed(0)}px`,
+                    "--y": `${y.toFixed(0)}px`,
+                    "--r": `${index * 37}deg`,
+                    "--delay": `${(index % 8) * 28}ms`,
+                  }}
+                />
+              );
+            })}
+          </div>
+        ) : null}
+
+        <div className="cg-result-icon" aria-hidden="true">
+          <span>{isWon ? "✓" : "×"}</span>
+        </div>
+
+        <p className="cg-result-kicker">{t("grid.resultKicker")}</p>
+        <h2>{isWon ? t("grid.resultVictoryTitle") : t("grid.resultTimeTitle")}</h2>
+        <p>{isWon ? t("grid.resultVictoryText") : t("grid.resultTimeText")}</p>
+
+        <div className="cg-result-actions">
+          <button type="button" className="cg-secondary-button" onClick={onViewResults}>
+            {t("grid.viewResults")}
+          </button>
+          <button type="button" className="cg-primary-button" onClick={onRestart}>
+            {t("grid.playAgain")}
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function BottomControls({
   t,
   grid,
-  gridMode,
-  gridModes,
-  modeConfig,
   selectedRow,
   selectedColumn,
-  selectedKey,
-  correctCount,
   mistakes,
   message,
   answer,
-  answers,
   suggestions,
   isComplete,
   locale,
-  onChangeMode,
+  inputRef,
   onAnswerChange,
+  onPickSuggestion,
   onSubmitAnswer,
-  onRevealSelectedAnswer,
-  onStartNewGrid,
 }) {
-  return (
-    <aside className="cg-control-panel">
-      <div className="cg-current-cell">
-        <p className="cg-eyebrow">{t("grid.selectedCell")}</p>
-        <h2>
-          {selectedRow?.shortLabel} + {selectedColumn?.shortLabel}
-        </h2>
-        <span>
-          {t("grid.possibleAnswers", {
-            count: grid.candidateMap[selectedKey]?.length ?? 0,
-          })}
-        </span>
-      </div>
+  const shouldShowMessage = Boolean(message) || mistakes > 0 || isComplete;
 
-      <ModeSelector
+  return (
+    <section className="cg-bottom-controls">
+      <SelectionSummary
         t={t}
-        gridMode={gridMode}
-        gridModes={gridModes}
-        modeConfig={modeConfig}
-        onChangeMode={onChangeMode}
+        selectedRow={selectedRow}
+        selectedColumn={selectedColumn}
       />
 
       <AnswerForm
@@ -356,28 +434,26 @@ function ControlPanel({
         answer={answer}
         suggestions={suggestions}
         isComplete={isComplete}
-        selectedKey={selectedKey}
-        answers={answers}
         locale={locale}
+        inputRef={inputRef}
         onAnswerChange={onAnswerChange}
+        onPickSuggestion={onPickSuggestion}
         onSubmitAnswer={onSubmitAnswer}
-        onRevealSelectedAnswer={onRevealSelectedAnswer}
       />
 
-      <div className="cg-message">
-        <p>{isComplete ? t("grid.completed") : message}</p>
-        <span>{t("grid.mistakes", { mistakes })}</span>
-      </div>
-
-      <button type="button" className="cg-secondary-button" onClick={onStartNewGrid}>
-        {t("grid.newGrid")}
-      </button>
-    </aside>
+      {shouldShowMessage ? (
+        <div className="cg-message cg-message-inline">
+          <p>{isComplete ? t("grid.completed") : message}</p>
+          <span>{t("grid.mistakes", { mistakes })}</span>
+        </div>
+      ) : null}
+    </section>
   );
 }
 
 function CardGridGame({ cards, onBack }) {
   const { locale, t } = useLanguage();
+  const copy = useCardGridCopy(locale);
   const [gridMode, setGridMode] = useState("easy");
   const gridModes = useMemo(() => getGridModes(t), [t]);
   const modeConfig = gridModes[gridMode];
@@ -393,9 +469,13 @@ function CardGridGame({ cards, onBack }) {
   const [selectedCell, setSelectedCell] = useState({ row: 0, column: 0 });
   const [answers, setAnswers] = useState({});
   const [answer, setAnswer] = useState("");
-  const [message, setMessage] = useState(() => t("grid.message.initial"));
+  const [message, setMessage] = useState("");
   const [mistakes, setMistakes] = useState(0);
   const [revealedCells, setRevealedCells] = useState(new Set());
+  const [suppressSuggestions, setSuppressSuggestions] = useState(false);
+  const [endOverlay, setEndOverlay] = useState(null);
+  const [resultsMode, setResultsMode] = useState(null);
+  const answerInputRef = useRef(null);
 
   const usedCardIds = useMemo(
     () => new Set(Object.values(answers).map((card) => card.id)),
@@ -415,10 +495,10 @@ function CardGridGame({ cards, onBack }) {
   }, [grid, selectedKey, usedCardIds]);
 
   const suggestions = useMemo(() => {
-    if (normalize(answer).length < 3) return [];
+    if (suppressSuggestions || normalize(answer).length < 3) return [];
 
     return getSuggestions(playableCards, answer, usedCardIds);
-  }, [playableCards, answer, usedCardIds]);
+  }, [playableCards, answer, usedCardIds, suppressSuggestions]);
 
   function resetGrid(nextGrid, nextMessage) {
     setGrid(nextGrid);
@@ -427,17 +507,62 @@ function CardGridGame({ cards, onBack }) {
     setRevealedCells(new Set());
     setSelectedCell({ row: 0, column: 0 });
     setAnswer("");
+    setSuppressSuggestions(false);
+    setEndOverlay(null);
+    setResultsMode(null);
     setMessage(nextMessage);
   }
 
-  function makeGridReadyMessage(nextGrid, isNewGrid = false) {
-    if (!nextGrid) return t("grid.message.generationFailed");
+  function makeGridReadyMessage() {
+    return "";
+  }
 
-    if (gridMode === "easy") {
-      return isNewGrid ? t("grid.message.easyNewReady") : t("grid.message.easyReady");
+
+  function handleAnswerChange(value) {
+    setSuppressSuggestions(false);
+    setAnswer(value);
+  }
+
+  function handleSuggestionPick(value) {
+    setAnswer(value);
+    setSuppressSuggestions(true);
+    requestAnimationFrame(() => {
+      answerInputRef.current?.focus();
+    });
+  }
+
+  function revealAllPendingAnswers() {
+    if (!grid) return;
+
+    const nextAnswers = { ...answers };
+    const nextRevealedCells = new Set(revealedCells);
+    const usedIds = new Set(Object.values(nextAnswers).map((card) => card.id));
+
+    grid.rows.forEach((_, rowIndex) => {
+      grid.columns.forEach((__, columnIndex) => {
+        const key = `${rowIndex}-${columnIndex}`;
+        if (nextAnswers[key]) return;
+
+        const fallbackCard = (grid.candidateMap[key] ?? []).find((card) => !usedIds.has(card.id));
+        if (!fallbackCard) return;
+
+        nextAnswers[key] = fallbackCard;
+        usedIds.add(fallbackCard.id);
+        nextRevealedCells.add(key);
+      });
+    });
+
+    setAnswers(nextAnswers);
+    setRevealedCells(nextRevealedCells);
+  }
+
+  function viewEndResults() {
+    if (endOverlay === "time") {
+      revealAllPendingAnswers();
     }
 
-    return isNewGrid ? t("grid.message.normalNewReady") : t("grid.message.normalReady");
+    setResultsMode(endOverlay ?? "won");
+    setEndOverlay(null);
   }
 
   function createNewGrid(isNewGrid = false) {
@@ -528,8 +653,19 @@ function CardGridGame({ cards, onBack }) {
       [selectedKey]: validCard,
     };
 
+    const didCompleteGrid = Object.keys(nextAnswers).length >= TOTAL_CELLS;
+
     setAnswers(nextAnswers);
     setAnswer("");
+    setSuppressSuggestions(false);
+
+    if (didCompleteGrid) {
+      setMessage("");
+      setEndOverlay("won");
+      setResultsMode(null);
+      return;
+    }
+
     setMessage(t("grid.message.correct", { name: getCardName(validCard, locale) }));
     moveToNextEmptyCell(nextAnswers);
   }
@@ -561,6 +697,7 @@ function CardGridGame({ cards, onBack }) {
       return updated;
     });
     setAnswer("");
+    setSuppressSuggestions(false);
     setMessage(t("grid.message.revealed", { name: getCardName(revealedCard, locale) }));
     moveToNextEmptyCell(nextAnswers);
   }
@@ -568,6 +705,7 @@ function CardGridGame({ cards, onBack }) {
   if (!cards.length || !grid) {
     return (
       <EmptyState
+        copy={copy}
         t={t}
         cards={cards}
         gridMode={gridMode}
@@ -582,17 +720,9 @@ function CardGridGame({ cards, onBack }) {
 
   return (
     <main className="cg-page">
+      <GameHeader copy={copy} onBack={onBack} />
       <section className="cg-shell">
-        <GridHeader t={t} onBack={onBack} correctCount={correctCount} />
-
-        <div className="cg-progress-track">
-          <span
-            className="cg-progress-fill"
-            style={{ width: `${(correctCount / TOTAL_CELLS) * 100}%` }}
-          />
-        </div>
-
-        <section className="cg-layout">
+        <section className="cg-layout cg-layout-single">
           <GridBoard
             grid={grid}
             answers={answers}
@@ -603,31 +733,33 @@ function CardGridGame({ cards, onBack }) {
             onSelectCell={setSelectedCell}
           />
 
-          <ControlPanel
+          <BottomControls
             t={t}
             grid={grid}
-            gridMode={gridMode}
-            gridModes={gridModes}
-            modeConfig={modeConfig}
             selectedRow={selectedRow}
             selectedColumn={selectedColumn}
-            selectedKey={selectedKey}
-            correctCount={correctCount}
             mistakes={mistakes}
             message={message}
             answer={answer}
-            answers={answers}
             suggestions={suggestions}
             isComplete={isComplete}
             locale={locale}
-            onChangeMode={changeGridMode}
-            onAnswerChange={setAnswer}
+            inputRef={answerInputRef}
+            onAnswerChange={handleAnswerChange}
+            onPickSuggestion={handleSuggestionPick}
             onSubmitAnswer={submitAnswer}
-            onRevealSelectedAnswer={revealSelectedAnswer}
-            onStartNewGrid={startNewGrid}
           />
         </section>
       </section>
+
+      {endOverlay ? (
+        <GridResultOverlay
+          t={t}
+          result={endOverlay}
+          onViewResults={viewEndResults}
+          onRestart={startNewGrid}
+        />
+      ) : null}
     </main>
   );
 }

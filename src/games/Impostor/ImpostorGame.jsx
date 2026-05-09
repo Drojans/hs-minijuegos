@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
+import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import ImpostorNeutralCard from "./ImpostorNeutralCard";
 import {
   CORRECT_COUNT,
-  IMPOSTOR_COUNT,
-  MAX_ROUNDS,
-  NEXT_ROUND_PRELOAD_DELAY_MS,
   ROUND_REVEAL_DELAY_MS,
   buildConditions,
   createRoundFromConditions,
@@ -19,86 +17,112 @@ import {
 } from "./impostorGameConfig";
 import "./ImpostorGame.css";
 
-function MessagePanel({ title, children, action }) {
-  return (
-    <main className="im-page">
-      <section className="im-message-panel">
-        <h1>{title}</h1>
-        {children}
-        {action}
-      </section>
-    </main>
-  );
+const IMPOSTOR_COPY = {
+  es: {
+    navMinigames: "Minijuegos",
+    navCards: "Base de datos",
+    navCollection: "Colección",
+    title: "Encuentra el impostor",
+    category: "Categoría",
+    objective: "Encuentra las cartas correctas y evita los impostores.",
+    found: "{found} / {total} encontradas",
+    foundLabel: "Cartas encontradas",
+    selectPrompt: "Elige una carta",
+    selectedPrompt: "Carta seleccionada",
+    confirm: "Comprobar carta",
+    noCards: "No hay cartas suficientes para crear una partida.",
+    loading: "Preparando partida...",
+    winTitle: "¡Perfecto!",
+    winText: "Has encontrado todas las cartas correctas.",
+    loseTitle: "Era un impostor",
+    loseText: "La carta elegida no cumplía la categoría.",
+    newGame: "Otra partida",
+    backHome: "Volver",
+    result: "Resultado",
+    viewResults: "Ver resultados",
+    playAgain: "Otra partida",
+    allFound: "Has encontrado todas las cartas correctas.",
+    correctMark: "Correcta",
+    impostorMark: "Impostor",
+  },
+  en: {
+    navMinigames: "Minigames",
+    navCards: "Card database",
+    navCollection: "Collection",
+    title: "Find the Impostor",
+    category: "Category",
+    objective: "Find the correct cards and avoid the impostors.",
+    found: "{found} / {total} found",
+    foundLabel: "Cards found",
+    selectPrompt: "Choose a card",
+    selectedPrompt: "Selected card",
+    confirm: "Check card",
+    noCards: "There are not enough cards to create a game.",
+    loading: "Preparing game...",
+    winTitle: "Perfect!",
+    winText: "You found every correct card.",
+    loseTitle: "That was an impostor",
+    loseText: "The chosen card did not match the category.",
+    newGame: "Another game",
+    backHome: "Back",
+    result: "Result",
+    viewResults: "View results",
+    playAgain: "Another game",
+    allFound: "You found every correct card.",
+    correctMark: "Correct",
+    impostorMark: "Impostor",
+  },
+};
+
+function formatCopy(template, values = {}) {
+  return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template);
 }
 
-function EndScreen({ t, score, onRestart, onBack }) {
-  const accuracy = Math.round((score / MAX_ROUNDS) * 100);
-
-  return (
-    <main className="im-page">
-      <section className="im-end-screen">
-        <p className="im-eyebrow">{t("impostor.gameFinished")}</p>
-        <h1>{t("impostor.title")}</h1>
-        <div className="im-end-score">
-          {score} / {MAX_ROUNDS}
-        </div>
-        <p>{t("impostor.finalAccuracy", { accuracy })}</p>
-        <div className="im-end-actions">
-          <button type="button" className="im-primary-button" onClick={onRestart}>
-            {t("common.playAgain")}
-          </button>
-          <button type="button" className="im-secondary-button" onClick={onBack}>
-            {t("impostor.backHome")}
-          </button>
-        </div>
-      </section>
-    </main>
-  );
+function useImpostorCopy(locale) {
+  return IMPOSTOR_COPY[locale] ?? IMPOSTOR_COPY.es;
 }
 
-function GameHeader({ t, round, score }) {
+function GameHeader({ copy, onBack }) {
   return (
-    <header className="im-header">
-      <button type="button" className="im-secondary-button" onClick={t.onBack}>
-        {t("common.backHome")}
+    <header className="im-v2-header">
+      <nav className="im-v2-nav" aria-label="Principal">
+        <button type="button" className="is-active" onClick={onBack}>
+          {copy.navMinigames}
+        </button>
+        <button type="button" disabled>
+          {copy.navCards}
+        </button>
+        <button type="button" disabled>
+          {copy.navCollection}
+        </button>
+      </nav>
+
+      <button type="button" className="im-v2-brand" onClick={onBack} aria-label="Hearthdle">
+        <img className="im-v2-brand-mug is-left" src="/ui/home-v2/header-mug-cropped.png" alt="" />
+        <span>Hearthdle</span>
+        <img className="im-v2-brand-mug" src="/ui/home-v2/header-mug-cropped.png" alt="" />
       </button>
 
-      <div className="im-title-block">
-        <p className="im-eyebrow">{t("impostor.minigame")}</p>
-        <h1>{t("impostor.title")}</h1>
-        <p>{t("impostor.subtitle", { correctCount: CORRECT_COUNT })}</p>
-      </div>
-
-      <div className="im-score-pill">
-        <span>{t("common.round", { round, maxRounds: MAX_ROUNDS })}</span>
-        <strong>{t("common.correctCount", { score })}</strong>
+      <div className="im-v2-actions">
+        <LanguageToggle compact className="im-v2-language" />
       </div>
     </header>
   );
 }
 
-function ConditionPanel({ t, condition }) {
+function MessagePanel({ copy, title, onBack }) {
   return (
-    <aside className="im-side-panel">
-      <p className="im-eyebrow">{t("impostor.category")}</p>
-      <h2>{condition.title}</h2>
-      <p>{condition.description}</p>
-
-      <div className="im-meta-box">
-        <span>{condition.kind}</span>
-        <strong>
-          {t("impostor.goodAndImpostors", {
-            correctCount: CORRECT_COUNT,
-            impostorCount: IMPOSTOR_COUNT,
-          })}
-        </strong>
-      </div>
-
-      <div className="im-help-box">
-        <strong>{t("impostor.howToPlay")}</strong>
-        <p>{t("impostor.howToPlayText", { correctCount: CORRECT_COUNT })}</p>
-      </div>
-    </aside>
+    <main className="im-page">
+      <GameHeader copy={copy} onBack={onBack} />
+      <section className="im-shell">
+        <section className="im-message-panel">
+          <h1>{title}</h1>
+          <button type="button" className="im-secondary-button" onClick={onBack}>
+            {copy.backHome}
+          </button>
+        </section>
+      </section>
+    </main>
   );
 }
 
@@ -150,6 +174,7 @@ function BoardCard({
       })}
       onClick={() => onSelect(card.id)}
       title={`${getCardName(card, locale)} · ${translateType(card.type, locale)}`}
+      disabled={roundResult !== "playing" || isRevealed}
     >
       <div className="im-flip-card">
         <div className="im-flip-face im-flip-front">
@@ -167,9 +192,6 @@ function BoardCard({
           />
         </div>
       </div>
-
-      {isRevealed && isCorrect ? <div className="im-result-mark im-result-mark-correct">✓</div> : null}
-      {isRevealed && isImpostor ? <div className="im-result-mark im-result-mark-wrong">×</div> : null}
     </button>
   );
 }
@@ -186,53 +208,108 @@ function Board(props) {
   );
 }
 
-function ActionPanel({
-  t,
-  round,
-  roundResult,
-  selectedId,
-  foundCount,
-  isRoundWon,
-  onCheck,
-  onNextRound,
-}) {
+function ActionBar({ copy, selectedCardName, roundResult, foundCount, onCheck }) {
+  if (roundResult !== "playing") return null;
+
   return (
-    <aside className="im-action-panel">
-      {roundResult === "playing" ? (
-        <>
-          <p className="im-eyebrow">{t("impostor.analysis")}</p>
-          <h2>{t("impostor.findGood")}</h2>
-          <p>{t("impostor.found", { foundCount, correctCount: CORRECT_COUNT })}</p>
-          <button
-            type="button"
-            className="im-primary-button"
-            disabled={!selectedId}
-            onClick={onCheck}
-          >
-            {t("impostor.checkCard")}
+    <section className="im-action-bar">
+      <div className="im-found-counter" aria-live="polite">
+        <span>{copy.foundLabel}</span>
+        <strong>
+          {foundCount} / {CORRECT_COUNT}
+        </strong>
+      </div>
+
+      {selectedCardName ? (
+        <div className="im-selected-card-pill">
+          <span>{copy.selectedPrompt}</span>
+          <strong>{selectedCardName}</strong>
+        </div>
+      ) : null}
+
+      <button
+        type="button"
+        className="im-primary-button"
+        disabled={!selectedCardName}
+        onClick={onCheck}
+      >
+        {copy.confirm}
+      </button>
+    </section>
+  );
+}
+
+function ResultOverlay({
+  copy,
+  isWon,
+  failedCardId,
+  roundData,
+  locale,
+  onRestart,
+  onShowResults,
+}) {
+  const failedCard = failedCardId ? roundData.cards.find((card) => card.id === failedCardId) : null;
+  const confettiPieces = Array.from({ length: 34 });
+
+  return (
+    <div className="im-result-backdrop" role="presentation">
+      <section className={`im-result-card ${isWon ? "is-won" : "is-lost"}`} role="status" aria-live="polite">
+        {isWon ? (
+          <div className="im-result-confetti" aria-hidden="true">
+            {confettiPieces.map((_, index) => {
+              const angle = (Math.PI * 2 * index) / confettiPieces.length;
+              const distance = 120 + (index % 5) * 22;
+              const x = Math.cos(angle) * distance;
+              const y = Math.sin(angle) * distance - 22;
+              const rotation = index * 37;
+
+              return (
+                <span
+                  key={index}
+                  style={{
+                    "--x": `${x.toFixed(0)}px`,
+                    "--y": `${y.toFixed(0)}px`,
+                    "--r": `${rotation}deg`,
+                    "--delay": `${(index % 8) * 26}ms`,
+                  }}
+                />
+              );
+            })}
+          </div>
+        ) : null}
+
+        <div className="im-result-icon" aria-hidden="true">
+          <span>{isWon ? "✓" : "×"}</span>
+        </div>
+
+        {isWon ? (
+          <>
+            <h2>{copy.winTitle}</h2>
+            <p>{copy.allFound}</p>
+          </>
+        ) : (
+          <>
+            <div className="im-result-card-name">{failedCard ? getCardName(failedCard, locale) : ""}</div>
+            <h2>{copy.loseTitle}</h2>
+          </>
+        )}
+
+        <div className="im-result-actions is-centered">
+          <button type="button" className="im-secondary-button" onClick={onShowResults}>
+            {copy.viewResults}
           </button>
-        </>
-      ) : (
-        <>
-          <p className="im-eyebrow">{t("common.result")}</p>
-          <h2>{isRoundWon ? t("impostor.perfectRound") : t("impostor.wasImpostor")}</h2>
-          <p>
-            {isRoundWon
-              ? t("impostor.perfectRoundText", { correctCount: CORRECT_COUNT })
-              : t("impostor.wasImpostorText")}
-          </p>
-          <button type="button" className="im-primary-button" onClick={onNextRound}>
-            {round >= MAX_ROUNDS ? t("common.seeResult") : t("impostor.nextRound")}
+          <button type="button" className="im-primary-button" onClick={onRestart}>
+            {copy.playAgain}
           </button>
-        </>
-      )}
-    </aside>
+        </div>
+      </section>
+    </div>
   );
 }
 
 function ImpostorGame({ cards, onBack }) {
   const { locale, t: translate } = useLanguage();
-  const t = Object.assign((...args) => translate(...args), { onBack });
+  const copy = useImpostorCopy(locale);
 
   const playableCards = useMemo(() => {
     return cards.filter(
@@ -246,15 +323,12 @@ function ImpostorGame({ cards, onBack }) {
   );
 
   const [roundData, setRoundData] = useState(null);
-  const [preparedRoundData, setPreparedRoundData] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [foundCorrectIds, setFoundCorrectIds] = useState(new Set());
   const [failedCardId, setFailedCardId] = useState(null);
   const [revealedIds, setRevealedIds] = useState(new Set());
   const [roundResult, setRoundResult] = useState("playing");
-  const [score, setScore] = useState(0);
-  const [round, setRound] = useState(1);
-  const [finished, setFinished] = useState(false);
+  const [showResultOverlay, setShowResultOverlay] = useState(false);
 
   useEffect(() => {
     if (availableConditions.length === 0 || roundData) return;
@@ -262,26 +336,9 @@ function ImpostorGame({ cards, onBack }) {
   }, [availableConditions, roundData]);
 
   useEffect(() => {
-    if (!roundData || typeof window === "undefined") return undefined;
-
+    if (!roundData) return;
     preloadRoundImages(roundData, locale, "high");
-
-    const prepareTimeout = window.setTimeout(() => {
-      if (round >= MAX_ROUNDS || availableConditions.length === 0) return;
-
-      const nextPreparedRound = createRoundFromConditions(
-        availableConditions,
-        roundData.condition.id
-      );
-
-      setPreparedRoundData(nextPreparedRound);
-      preloadRoundImages(nextPreparedRound, locale, "low");
-    }, NEXT_ROUND_PRELOAD_DELAY_MS);
-
-    return () => {
-      window.clearTimeout(prepareTimeout);
-    };
-  }, [availableConditions, round, roundData, locale]);
+  }, [roundData, locale]);
 
   function revealAllCards(cardsToReveal = roundData?.cards ?? []) {
     setRevealedIds(new Set(cardsToReveal.map((card) => card.id)));
@@ -289,10 +346,7 @@ function ImpostorGame({ cards, onBack }) {
 
   function selectCard(cardId) {
     if (roundResult !== "playing" || revealedIds.has(cardId)) return;
-
-    setSelectedId((previousSelectedId) => {
-      return previousSelectedId === cardId ? null : cardId;
-    });
+    setSelectedId((previousSelectedId) => (previousSelectedId === cardId ? null : cardId));
   }
 
   function checkSelectedCard() {
@@ -306,6 +360,7 @@ function ImpostorGame({ cards, onBack }) {
     if (!selectedIsCorrect) {
       setFailedCardId(selectedId);
       setRoundResult("lost");
+      setShowResultOverlay(true);
 
       window.setTimeout(() => {
         revealAllCards(roundData.cards);
@@ -321,8 +376,8 @@ function ImpostorGame({ cards, onBack }) {
     setSelectedId(null);
 
     if (nextFoundCorrectIds.size >= roundData.correctCount) {
-      setScore((previousScore) => previousScore + 1);
       setRoundResult("won");
+      setShowResultOverlay(true);
 
       window.setTimeout(() => {
         revealAllCards(roundData.cards);
@@ -330,100 +385,77 @@ function ImpostorGame({ cards, onBack }) {
     }
   }
 
-  function resetRoundState(nextRoundData) {
+  function resetGame(nextRoundData) {
     setRoundData(nextRoundData);
-    setPreparedRoundData(null);
     setSelectedId(null);
     setFoundCorrectIds(new Set());
     setFailedCardId(null);
     setRevealedIds(new Set());
     setRoundResult("playing");
+    setShowResultOverlay(false);
   }
 
-  function nextRound() {
-    if (round >= MAX_ROUNDS) {
-      setFinished(true);
-      return;
-    }
-
-    const nextRoundData =
-      preparedRoundData || createRoundFromConditions(availableConditions, roundData?.condition?.id);
-
-    resetRoundState(nextRoundData);
-    setRound((previousRound) => previousRound + 1);
-  }
-
-  function restartGame() {
-    resetRoundState(createRoundFromConditions(availableConditions));
-    setScore(0);
-    setRound(1);
-    setFinished(false);
+  function startNewGame() {
+    resetGame(createRoundFromConditions(availableConditions, roundData?.condition?.id));
   }
 
   if (playableCards.length === 0 || availableConditions.length === 0) {
-    return (
-      <MessagePanel
-        title={translate("impostor.title")}
-        action={
-          <button type="button" className="im-secondary-button" onClick={onBack}>
-            {translate("common.back")}
-          </button>
-        }
-      >
-        <p>{translate("impostor.noCards")}</p>
-      </MessagePanel>
-    );
+    return <MessagePanel copy={copy} title={copy.noCards} onBack={onBack} />;
   }
 
   if (!roundData) {
-    return (
-      <MessagePanel title={translate("impostor.loadingGame")} />
-    );
+    return <MessagePanel copy={copy} title={copy.loading} onBack={onBack} />;
   }
 
-  if (finished) {
-    return <EndScreen t={translate} score={score} onRestart={restartGame} onBack={onBack} />;
-  }
-
-  const progressPercent = (round / MAX_ROUNDS) * 100;
   const foundCount = foundCorrectIds.size;
   const isRoundWon = roundResult === "won";
+  const selectedCardName = selectedId
+    ? getCardName(roundData.cards.find((card) => card.id === selectedId), locale)
+    : "";
 
   return (
     <main className="im-page">
+      <GameHeader copy={copy} onBack={onBack} />
+
       <section className="im-shell">
-        <GameHeader t={t} round={round} score={score} />
-
-        <div className="im-progress-track">
-          <span className="im-progress-fill" style={{ width: `${progressPercent}%` }} />
-        </div>
-
-        <section className="im-game-layout">
-          <ConditionPanel t={translate} condition={roundData.condition} />
-
-          <Board
-            locale={locale}
-            roundData={roundData}
-            selectedId={selectedId}
-            foundCorrectIds={foundCorrectIds}
-            failedCardId={failedCardId}
-            revealedIds={revealedIds}
-            roundResult={roundResult}
-            onSelect={selectCard}
-          />
-
-          <ActionPanel
-            t={translate}
-            round={round}
-            roundResult={roundResult}
-            selectedId={selectedId}
-            foundCount={foundCount}
-            isRoundWon={isRoundWon}
-            onCheck={checkSelectedCard}
-            onNextRound={nextRound}
-          />
+        <section className="im-intro-row" aria-label={copy.category}>
+          <div>
+            <p className="im-mode-label">{copy.category}</p>
+            <h1>{roundData.condition.title}</h1>
+          </div>
         </section>
+
+        <Board
+          locale={locale}
+          roundData={roundData}
+          selectedId={selectedId}
+          foundCorrectIds={foundCorrectIds}
+          failedCardId={failedCardId}
+          revealedIds={revealedIds}
+          roundResult={roundResult}
+          onSelect={selectCard}
+        />
+
+        <ActionBar
+          copy={copy}
+          selectedCardName={selectedCardName}
+          roundResult={roundResult}
+          foundCount={foundCount}
+          onCheck={checkSelectedCard}
+        />
       </section>
+
+      {roundResult !== "playing" && showResultOverlay ? (
+        <ResultOverlay
+          copy={copy}
+          isWon={isRoundWon}
+          failedCardId={failedCardId}
+          roundData={roundData}
+          locale={locale}
+          onRestart={startNewGame}
+          onShowResults={() => setShowResultOverlay(false)}
+        />
+      ) : null}
     </main>
   );
 }
