@@ -3529,3 +3529,31 @@
 .cg-answer-cell.is-selected {
   z-index: 3 !important;
 }
+
+
+/* GRID V2 spacing pass: separate right panel and remove tiny page scroll */
+@media (min-width: 1181px) {
+  .cg-layout-single {
+    grid-template-columns: minmax(0, 945px) minmax(340px, 410px) !important;
+    gap: 44px !important;
+  }
+
+  .cg-board-panel {
+    max-width: 945px !important;
+  }
+
+  .cg-board {
+    max-width: 945px !important;
+    grid-template-columns: 84px repeat(3, 277px) !important;
+    grid-template-rows: 62px repeat(3, 277px) !important;
+  }
+
+  .cg-answer-cell {
+    min-height: 277px !important;
+  }
+
+  .cg-shell {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+}

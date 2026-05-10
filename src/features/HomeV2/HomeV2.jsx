@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
+import { getPackCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import { HOME_V2_COPY, HOME_V2_MODES } from "./homeV2Config";
 import "./HomeV2.css";
@@ -26,6 +27,7 @@ function getTimeUntilNextLocalMidnight() {
 function HomeV2({ loading = false, onNavigate }) {
   const { locale } = useLanguage();
   const [resetTime, setResetTime] = useState(() => getTimeUntilNextLocalMidnight());
+  const [packCount, setPackCount] = useState(() => getPackCount());
   const copy = HOME_V2_COPY[locale] ?? HOME_V2_COPY.es;
 
   useEffect(() => {
@@ -34,6 +36,23 @@ function HomeV2({ loading = false, onNavigate }) {
     }, 1000);
 
     return () => window.clearInterval(intervalId);
+  }, []);
+
+  useEffect(() => {
+    function syncPackCount() {
+      setPackCount(getPackCount());
+    }
+
+    syncPackCount();
+    window.addEventListener(REWARDS_UPDATED_EVENT, syncPackCount);
+    window.addEventListener("storage", syncPackCount);
+    window.addEventListener("focus", syncPackCount);
+
+    return () => {
+      window.removeEventListener(REWARDS_UPDATED_EVENT, syncPackCount);
+      window.removeEventListener("storage", syncPackCount);
+      window.removeEventListener("focus", syncPackCount);
+    };
   }, []);
 
   const modes = useMemo(
@@ -118,17 +137,32 @@ function HomeV2({ loading = false, onNavigate }) {
       </header>
 
       <section className="home-v2-shell" aria-label={copy.navMinigames}>
-        <motion.div
-          className="home-v2-reset-pill"
-          aria-live="polite"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <span className="home-v2-reset-dot" aria-hidden="true" />
-          <span>{copy.resetPrefix}</span>
-          <strong>{resetTime}</strong>
-        </motion.div>
+        <div className="home-v2-status-row">
+          <span aria-hidden="true" />
+          <motion.div
+            className="home-v2-reset-pill"
+            aria-live="polite"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="home-v2-reset-dot" aria-hidden="true" />
+            <span>{copy.resetPrefix}</span>
+            <strong>{resetTime}</strong>
+          </motion.div>
+
+          <motion.div
+            className="home-v2-pack-counter"
+            aria-live="polite"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.32, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <span className="home-v2-pack-icon" aria-hidden="true">✦</span>
+            <span>{copy.packLabel}</span>
+            <strong>{packCount}</strong>
+          </motion.div>
+        </div>
 
         <motion.section
           className="home-v2-modes-section"

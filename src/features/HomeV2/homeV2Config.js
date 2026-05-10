@@ -13,6 +13,7 @@ export const HOME_V2_COPY = {
     soon: "Próximamente",
     daily: "Diario",
     available: "Disponible",
+    packLabel: "Sobres",
   },
   en: {
     navMinigames: "Minigames",
@@ -28,6 +29,7 @@ export const HOME_V2_COPY = {
     soon: "Coming soon",
     daily: "Daily",
     available: "Available",
+    packLabel: "Packs",
   },
 };
 

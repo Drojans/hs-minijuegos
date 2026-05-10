@@ -1,11 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
+import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
+import {
+  completeDailyChallenge,
+  getDailyGameProgress,
+  getTodayKey,
+  markDailyRewardClaimed,
+  saveDailyChallengeResult,
+} from "../../shared/progress/dailyProgress";
+import { addPackReward } from "../../shared/rewards/rewardStore";
 import ImpostorNeutralCard from "./ImpostorNeutralCard";
 import {
   CORRECT_COUNT,
   ROUND_REVEAL_DELAY_MS,
   buildConditions,
+  createDailyRoundFromConditions,
   createRoundFromConditions,
   getCardImage,
   getCardName,
@@ -17,12 +28,36 @@ import {
 } from "./impostorGameConfig";
 import "./ImpostorGame.css";
 
+const IMPOSTOR_GAME_ID = "impostor";
+const DAILY_REWARD_PACK_ID = "standard";
+
 const IMPOSTOR_COPY = {
   es: {
     navMinigames: "Minijuegos",
     navCards: "Base de datos",
     navCollection: "Colección",
     title: "Encuentra el impostor",
+    exampleLabel: "Ejemplo del minijuego Encuentra el impostor",
+    howToPlayTitle: "Cómo se juega",
+    stepHiddenIcon: "?",
+    stepHiddenTitle: "Hay una categoría",
+    stepHiddenText: "Todas las cartas buenas cumplen la categoría del día. Lee bien el objetivo antes de elegir.",
+    stepChooseIcon: "✓",
+    stepChooseIconSrc: "",
+    stepChooseTitle: "Encuentra las correctas",
+    stepChooseText: "Selecciona las cartas que encajan. Cada acierto se descubre y te acerca al objetivo.",
+    stepModesIcon: "×",
+    stepModesTitle: "Evita al impostor",
+    stepModesText: "Si eliges una carta que no cumple la categoría, la ronda termina y se revelan los resultados.",
+    modeSelectorLabel: "Selecciona modo",
+    dailyTitle: "Reto diario",
+    infiniteTitle: "Modo infinito",
+    completedStatus: "Completado",
+    startMode: "Empezar",
+    dailyChallenge: "Reto diario",
+    infiniteChallenge: "Modo infinito",
+    dailyRewardEarned: "Has ganado 1 sobre.",
+    dailyRewardAlreadyClaimed: "Reto diario completado. Hoy ya tenías esta recompensa.",
     category: "Categoría",
     objective: "Encuentra las cartas correctas y evita los impostores.",
     found: "{found} / {total} encontradas",
@@ -50,6 +85,27 @@ const IMPOSTOR_COPY = {
     navCards: "Card database",
     navCollection: "Collection",
     title: "Find the Impostor",
+    exampleLabel: "Find the Impostor minigame example",
+    howToPlayTitle: "How to play",
+    stepHiddenIcon: "?",
+    stepHiddenTitle: "There is a category",
+    stepHiddenText: "Every good card matches the daily category. Read the target before you pick.",
+    stepChooseIcon: "✓",
+    stepChooseIconSrc: "",
+    stepChooseTitle: "Find the correct ones",
+    stepChooseText: "Select the cards that fit. Every correct pick is revealed and gets you closer.",
+    stepModesIcon: "×",
+    stepModesTitle: "Avoid the impostor",
+    stepModesText: "Pick a card that does not match and the round ends with the results revealed.",
+    modeSelectorLabel: "Select mode",
+    dailyTitle: "Daily challenge",
+    infiniteTitle: "Infinite mode",
+    completedStatus: "Completed",
+    startMode: "Start",
+    dailyChallenge: "Daily challenge",
+    infiniteChallenge: "Infinite mode",
+    dailyRewardEarned: "You earned 1 pack.",
+    dailyRewardAlreadyClaimed: "Daily challenge completed. You already had today’s reward.",
     category: "Category",
     objective: "Find the correct cards and avoid the impostors.",
     found: "{found} / {total} found",
@@ -245,6 +301,8 @@ function ResultOverlay({
   failedCardId,
   roundData,
   locale,
+  rewardMessage,
+  restartLabel,
   onRestart,
   onShowResults,
 }) {
@@ -294,12 +352,14 @@ function ResultOverlay({
           </>
         )}
 
+        {rewardMessage ? <p className="im-result-reward-message">{rewardMessage}</p> : null}
+
         <div className="im-result-actions is-centered">
           <button type="button" className="im-secondary-button" onClick={onShowResults}>
             {copy.viewResults}
           </button>
           <button type="button" className="im-primary-button" onClick={onRestart}>
-            {copy.playAgain}
+            {restartLabel ?? copy.playAgain}
           </button>
         </div>
       </section>
@@ -310,6 +370,7 @@ function ResultOverlay({
 function ImpostorGame({ cards, onBack }) {
   const { locale, t: translate } = useLanguage();
   const copy = useImpostorCopy(locale);
+  const todayKey = useMemo(() => getTodayKey(), []);
 
   const playableCards = useMemo(() => {
     return cards.filter(
@@ -322,6 +383,11 @@ function ImpostorGame({ cards, onBack }) {
     [playableCards, locale, translate]
   );
 
+  const dailyRoundData = useMemo(() => {
+    return createDailyRoundFromConditions(availableConditions, IMPOSTOR_GAME_ID, todayKey);
+  }, [availableConditions, todayKey]);
+
+  const [selectedMode, setSelectedMode] = useState(null);
   const [roundData, setRoundData] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [foundCorrectIds, setFoundCorrectIds] = useState(new Set());
@@ -329,11 +395,12 @@ function ImpostorGame({ cards, onBack }) {
   const [revealedIds, setRevealedIds] = useState(new Set());
   const [roundResult, setRoundResult] = useState("playing");
   const [showResultOverlay, setShowResultOverlay] = useState(false);
+  const [dailyProgress, setDailyProgress] = useState(() => getDailyGameProgress(IMPOSTOR_GAME_ID, todayKey));
+  const [rewardMessage, setRewardMessage] = useState("");
 
   useEffect(() => {
-    if (availableConditions.length === 0 || roundData) return;
-    setRoundData(createRoundFromConditions(availableConditions));
-  }, [availableConditions, roundData]);
+    setDailyProgress(getDailyGameProgress(IMPOSTOR_GAME_ID, todayKey));
+  }, [todayKey]);
 
   useEffect(() => {
     if (!roundData) return;
@@ -342,6 +409,91 @@ function ImpostorGame({ cards, onBack }) {
 
   function revealAllCards(cardsToReveal = roundData?.cards ?? []) {
     setRevealedIds(new Set(cardsToReveal.map((card) => card.id)));
+  }
+
+  function resetGame(nextRoundData) {
+    setRoundData(nextRoundData);
+    setSelectedId(null);
+    setFoundCorrectIds(new Set());
+    setFailedCardId(null);
+    setRevealedIds(new Set());
+    setRoundResult("playing");
+    setShowResultOverlay(false);
+    setRewardMessage("");
+  }
+
+  function restoreCompletedDailyRound(nextRoundData, progress) {
+    setRoundData(nextRoundData);
+    setSelectedId(null);
+    setFoundCorrectIds(new Set(progress.foundCorrectIds ?? []));
+    setFailedCardId(progress.failedCardId ?? null);
+    setRevealedIds(new Set(nextRoundData?.cards?.map((card) => card.id) ?? []));
+    setRoundResult(progress.lastWasWon ? "won" : "lost");
+    setShowResultOverlay(false);
+    setRewardMessage("");
+  }
+
+  function startMode(modeId) {
+    const latestProgress = getDailyGameProgress(IMPOSTOR_GAME_ID, todayKey);
+    setDailyProgress(latestProgress);
+    setSelectedMode(modeId);
+
+    if (modeId === GAME_MODE_IDS.DAILY) {
+      if (latestProgress.completed && dailyRoundData) {
+        restoreCompletedDailyRound(dailyRoundData, latestProgress);
+        return;
+      }
+
+      resetGame(dailyRoundData);
+      return;
+    }
+
+    resetGame(createRoundFromConditions(availableConditions));
+  }
+
+  function returnToModes() {
+    setSelectedMode(null);
+    setRoundData(null);
+    setSelectedId(null);
+    setFoundCorrectIds(new Set());
+    setFailedCardId(null);
+    setRevealedIds(new Set());
+    setRoundResult("playing");
+    setShowResultOverlay(false);
+    setRewardMessage("");
+    setDailyProgress(getDailyGameProgress(IMPOSTOR_GAME_ID, todayKey));
+  }
+
+  function saveDailyResult({ isWon, failedId = null, foundIds = foundCorrectIds } = {}) {
+    if (selectedMode !== GAME_MODE_IDS.DAILY || !roundData) return;
+
+    completeDailyChallenge(IMPOSTOR_GAME_ID, todayKey);
+    saveDailyChallengeResult(IMPOSTOR_GAME_ID, todayKey, {
+      lastWasWon: isWon,
+      lastConditionId: roundData.condition.id,
+      lastRoundId: roundData.id,
+      failedCardId: failedId,
+      foundCorrectIds: Array.from(foundIds),
+    });
+
+    let latestProgress = getDailyGameProgress(IMPOSTOR_GAME_ID, todayKey);
+
+    if (isWon) {
+      if (!latestProgress.rewardClaimed) {
+        addPackReward({
+          packId: DAILY_REWARD_PACK_ID,
+          amount: 1,
+          source: IMPOSTOR_GAME_ID,
+          dateKey: todayKey,
+        });
+        latestProgress = markDailyRewardClaimed(IMPOSTOR_GAME_ID, todayKey);
+        setRewardMessage(copy.dailyRewardEarned);
+      } else {
+        setRewardMessage(copy.dailyRewardAlreadyClaimed);
+      }
+    }
+
+    setDailyProgress(latestProgress);
   }
 
   function selectCard(cardId) {
@@ -361,6 +513,7 @@ function ImpostorGame({ cards, onBack }) {
       setFailedCardId(selectedId);
       setRoundResult("lost");
       setShowResultOverlay(true);
+      saveDailyResult({ isWon: false, failedId: selectedId });
 
       window.setTimeout(() => {
         revealAllCards(roundData.cards);
@@ -378,6 +531,7 @@ function ImpostorGame({ cards, onBack }) {
     if (nextFoundCorrectIds.size >= roundData.correctCount) {
       setRoundResult("won");
       setShowResultOverlay(true);
+      saveDailyResult({ isWon: true, foundIds: nextFoundCorrectIds });
 
       window.setTimeout(() => {
         revealAllCards(roundData.cards);
@@ -385,22 +539,35 @@ function ImpostorGame({ cards, onBack }) {
     }
   }
 
-  function resetGame(nextRoundData) {
-    setRoundData(nextRoundData);
-    setSelectedId(null);
-    setFoundCorrectIds(new Set());
-    setFailedCardId(null);
-    setRevealedIds(new Set());
-    setRoundResult("playing");
-    setShowResultOverlay(false);
-  }
-
   function startNewGame() {
+    if (selectedMode === GAME_MODE_IDS.DAILY) {
+      returnToModes();
+      return;
+    }
+
     resetGame(createRoundFromConditions(availableConditions, roundData?.condition?.id));
   }
 
   if (playableCards.length === 0 || availableConditions.length === 0) {
     return <MessagePanel copy={copy} title={copy.noCards} onBack={onBack} />;
+  }
+
+  if (!selectedMode) {
+    return (
+      <main className="im-page">
+        <GameHeader copy={copy} onBack={onBack} />
+        <section className="im-shell is-mode-select">
+          <GameModeSelect
+            copy={copy}
+            title={copy.title}
+            dailyCompleted={dailyProgress.completed}
+            previewSrc="/ui/games/impostor-v2/mode-example.svg"
+            previewAlt={copy.exampleLabel}
+            onSelectMode={startMode}
+          />
+        </section>
+      </main>
+    );
   }
 
   if (!roundData) {
@@ -418,6 +585,10 @@ function ImpostorGame({ cards, onBack }) {
       <GameHeader copy={copy} onBack={onBack} />
 
       <section className="im-shell">
+        <div className="im-v2-mode-pill">
+          {selectedMode === GAME_MODE_IDS.DAILY ? copy.dailyChallenge : copy.infiniteChallenge}
+        </div>
+
         <section className="im-intro-row" aria-label={copy.category}>
           <div>
             <p className="im-mode-label">{copy.category}</p>
@@ -452,6 +623,8 @@ function ImpostorGame({ cards, onBack }) {
           failedCardId={failedCardId}
           roundData={roundData}
           locale={locale}
+          rewardMessage={rewardMessage}
+          restartLabel={selectedMode === GAME_MODE_IDS.DAILY ? copy.backHome : copy.playAgain}
           onRestart={startNewGame}
           onShowResults={() => setShowResultOverlay(false)}
         />
@@ -459,5 +632,4 @@ function ImpostorGame({ cards, onBack }) {
     </main>
   );
 }
-
 export default ImpostorGame;

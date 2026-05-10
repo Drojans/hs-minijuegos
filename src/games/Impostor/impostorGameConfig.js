@@ -341,6 +341,51 @@ function shuffle(array) {
   return [...array].sort(() => Math.random() - 0.5);
 }
 
+function getSeededRandom(seedInput) {
+  let seed = 2166136261;
+
+  for (let index = 0; index < seedInput.length; index += 1) {
+    seed ^= seedInput.charCodeAt(index);
+    seed = Math.imul(seed, 16777619);
+  }
+
+  return () => {
+    seed += 0x6d2b79f5;
+    let value = seed;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function seededShuffle(array, seedInput) {
+  const random = getSeededRandom(seedInput);
+  const result = [...array];
+
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swapIndex = Math.floor(random() * (index + 1));
+    [result[index], result[swapIndex]] = [result[swapIndex], result[index]];
+  }
+
+  return result;
+}
+
+function takeSeededUniqueForRound(cards, amount, usedIdentities, seedInput) {
+  const selectedCards = [];
+
+  for (const card of seededShuffle(cards, seedInput)) {
+    const identity = getRoundIdentity(card);
+    if (!identity || usedIdentities.has(identity)) continue;
+
+    selectedCards.push(card);
+    usedIdentities.add(identity);
+
+    if (selectedCards.length === amount) break;
+  }
+
+  return selectedCards;
+}
+
 function uniqueById(cards) {
   const seen = new Set();
 
@@ -562,4 +607,55 @@ export function createRoundFromConditions(conditions, previousConditionId = null
     correctCount: correctCards.length,
     impostorCount: impostorCards.length,
   };
+}
+
+
+export function createRoundFromCondition(condition, seedInput = "impostor-round") {
+  if (!condition) return null;
+
+  const usedIdentities = new Set();
+  const correctCardsRaw = takeSeededUniqueForRound(
+    condition.validCards,
+    CORRECT_COUNT,
+    usedIdentities,
+    `${seedInput}:correct`
+  );
+
+  const impostorCardsRaw = takeSeededUniqueForRound(
+    condition.invalidCards,
+    IMPOSTOR_COUNT,
+    usedIdentities,
+    `${seedInput}:impostor`
+  );
+
+  const correctCards = correctCardsRaw.map((card) => ({
+    ...card,
+    impostorGameIsCorrect: true,
+    impostorGameIsImpostor: false,
+  }));
+
+  const impostorCards = impostorCardsRaw.map((card) => ({
+    ...card,
+    impostorGameIsCorrect: false,
+    impostorGameIsImpostor: true,
+  }));
+
+  return {
+    id: `${condition.id}-${seedInput}`,
+    condition,
+    cards: seededShuffle([...correctCards, ...impostorCards], `${seedInput}:board`),
+    correctIds: new Set(correctCards.map((card) => card.id)),
+    impostorIds: new Set(impostorCards.map((card) => card.id)),
+    correctCount: correctCards.length,
+    impostorCount: impostorCards.length,
+  };
+}
+
+export function createDailyRoundFromConditions(conditions, gameId, dateKey) {
+  if (!conditions || conditions.length === 0) return null;
+
+  const random = getSeededRandom(`${gameId}:${dateKey}:condition`);
+  const condition = conditions[Math.floor(random() * conditions.length)] ?? conditions[0];
+
+  return createRoundFromCondition(condition, `${gameId}:${dateKey}:${condition.id}`);
 }

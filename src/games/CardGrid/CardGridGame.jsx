@@ -1,6 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
+import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
+import {
+  completeDailyChallenge,
+  getDailyGameProgress,
+  getTodayKey,
+  markDailyRewardClaimed,
+  saveDailyChallengeResult,
+} from "../../shared/progress/dailyProgress";
+import { addPackReward } from "../../shared/rewards/rewardStore";
 import {
   GRID_SIZE,
   TOTAL_CELLS,
@@ -17,6 +27,9 @@ import {
 } from "./cardGridGameConfig";
 import "./CardGridGame.css";
 
+const CARD_GRID_GAME_ID = "card-grid";
+const DAILY_REWARD_PACK_ID = "standard";
+
 const CARD_GRID_COPY = {
   es: {
     navMinigames: "Minijuegos",
@@ -24,6 +37,27 @@ const CARD_GRID_COPY = {
     navCollection: "Colección",
     title: "Grid de cartas",
     progressLabel: "Progreso",
+    exampleLabel: "Ejemplo del minijuego Grid de cartas",
+    howToPlayTitle: "Cómo se juega",
+    stepHiddenIcon: "3×3",
+    stepHiddenTitle: "Cruza fila y columna",
+    stepHiddenText: "Cada casilla mezcla dos condiciones. Busca una carta que cumpla las dos a la vez.",
+    stepChooseIcon: "+",
+    stepChooseIconSrc: "",
+    stepChooseTitle: "Escribe la carta",
+    stepChooseText: "Selecciona una casilla, escribe el nombre y pulsa Enter para colocarla en el grid.",
+    stepModesIcon: "⚔",
+    stepModesTitle: "Dos formas de jugar",
+    stepModesText: "Reto diario para la cuadrícula del día o modo infinito para practicar sin parar.",
+    modeSelectorLabel: "Selecciona modo",
+    dailyTitle: "Reto diario",
+    infiniteTitle: "Modo infinito",
+    completedStatus: "Completado",
+    startMode: "Empezar",
+    dailyChallenge: "Reto diario",
+    infiniteChallenge: "Modo infinito",
+    dailyRewardEarned: "Has ganado 1 sobre.",
+    dailyRewardAlreadyClaimed: "Grid diario completado. Hoy ya tenías esta recompensa.",
   },
   en: {
     navMinigames: "Minigames",
@@ -31,11 +65,54 @@ const CARD_GRID_COPY = {
     navCollection: "Collection",
     title: "Card grid",
     progressLabel: "Progress",
+    exampleLabel: "Card Grid minigame example",
+    howToPlayTitle: "How to play",
+    stepHiddenIcon: "3×3",
+    stepHiddenTitle: "Match row and column",
+    stepHiddenText: "Each cell combines two conditions. Find one card that satisfies both at once.",
+    stepChooseIcon: "+",
+    stepChooseIconSrc: "",
+    stepChooseTitle: "Type the card",
+    stepChooseText: "Select a cell, type the card name and press Enter to place it in the grid.",
+    stepModesIcon: "⚔",
+    stepModesTitle: "Two ways to play",
+    stepModesText: "Daily challenge for today's grid or infinite mode to practice without limits.",
+    modeSelectorLabel: "Select mode",
+    dailyTitle: "Daily challenge",
+    infiniteTitle: "Infinite mode",
+    completedStatus: "Completed",
+    startMode: "Start",
+    dailyChallenge: "Daily challenge",
+    infiniteChallenge: "Infinite mode",
+    dailyRewardEarned: "You earned 1 pack.",
+    dailyRewardAlreadyClaimed: "Daily grid completed. You already had today’s reward.",
   },
 };
 
 function useCardGridCopy(locale) {
   return CARD_GRID_COPY[locale] ?? CARD_GRID_COPY.es;
+}
+
+function getDailyGridSeed(dateKey, gridMode) {
+  return `${CARD_GRID_GAME_ID}:${dateKey}:${gridMode}`;
+}
+
+function serializeAnswerIds(answers) {
+  return Object.fromEntries(
+    Object.entries(answers).map(([key, card]) => [key, card.id])
+  );
+}
+
+function restoreAnswersFromIds(answerIds = {}, cards = []) {
+  const cardById = new Map(cards.map((card) => [card.id, card]));
+  const restored = {};
+
+  Object.entries(answerIds).forEach(([key, cardId]) => {
+    const card = cardById.get(cardId);
+    if (card) restored[key] = card;
+  });
+
+  return restored;
 }
 
 function GameHeader({ copy, onBack }) {
@@ -352,7 +429,7 @@ function SelectionSummary({ t, selectedRow, selectedColumn }) {
   );
 }
 
-function GridResultOverlay({ t, result, onViewResults, onRestart }) {
+function GridResultOverlay({ t, result, rewardMessage, onViewResults, onRestart }) {
   const isWon = result === "won";
   const confettiPieces = Array.from({ length: 34 });
 
@@ -389,6 +466,7 @@ function GridResultOverlay({ t, result, onViewResults, onRestart }) {
         <p className="cg-result-kicker">{t("grid.resultKicker")}</p>
         <h2>{isWon ? t("grid.resultVictoryTitle") : t("grid.resultTimeTitle")}</h2>
         <p>{isWon ? t("grid.resultVictoryText") : t("grid.resultTimeText")}</p>
+        {rewardMessage ? <p className="cg-result-reward">{rewardMessage}</p> : null}
 
         <div className="cg-result-actions">
           <button type="button" className="cg-secondary-button" onClick={onViewResults}>
@@ -454,7 +532,9 @@ function BottomControls({
 function CardGridGame({ cards, onBack }) {
   const { locale, t } = useLanguage();
   const copy = useCardGridCopy(locale);
+  const todayKey = useMemo(() => getTodayKey(), []);
   const [gridMode, setGridMode] = useState("easy");
+  const [selectedMode, setSelectedMode] = useState(null);
   const gridModes = useMemo(() => getGridModes(t), [t]);
   const modeConfig = gridModes[gridMode];
 
@@ -475,6 +555,8 @@ function CardGridGame({ cards, onBack }) {
   const [suppressSuggestions, setSuppressSuggestions] = useState(false);
   const [endOverlay, setEndOverlay] = useState(null);
   const [resultsMode, setResultsMode] = useState(null);
+  const [dailyProgress, setDailyProgress] = useState(() => getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
+  const [rewardMessage, setRewardMessage] = useState("");
   const answerInputRef = useRef(null);
 
   const usedCardIds = useMemo(
@@ -500,16 +582,23 @@ function CardGridGame({ cards, onBack }) {
     return getSuggestions(playableCards, answer, usedCardIds);
   }, [playableCards, answer, usedCardIds, suppressSuggestions]);
 
-  function resetGrid(nextGrid, nextMessage) {
+  useEffect(() => {
+    setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
+  }, [todayKey]);
+
+  function resetGrid(nextGrid, nextMessage, options = {}) {
+    const restoredAnswers = options.answers ?? {};
+
     setGrid(nextGrid);
-    setAnswers({});
-    setMistakes(0);
-    setRevealedCells(new Set());
-    setSelectedCell({ row: 0, column: 0 });
+    setAnswers(restoredAnswers);
+    setMistakes(options.mistakes ?? 0);
+    setRevealedCells(new Set(options.revealedCells ?? []));
+    setSelectedCell(options.selectedCell ?? { row: 0, column: 0 });
     setAnswer("");
     setSuppressSuggestions(false);
     setEndOverlay(null);
-    setResultsMode(null);
+    setResultsMode(options.resultsMode ?? null);
+    setRewardMessage("");
     setMessage(nextMessage);
   }
 
@@ -517,6 +606,22 @@ function CardGridGame({ cards, onBack }) {
     return "";
   }
 
+  function getDailyReviewState(nextGrid) {
+    const latestProgress = getDailyGameProgress(CARD_GRID_GAME_ID, todayKey);
+
+    if (!latestProgress.completed || !latestProgress.answerIds || !nextGrid) {
+      return null;
+    }
+
+    const restoredAnswers = restoreAnswersFromIds(latestProgress.answerIds, playableCards);
+    const restoredKeys = Object.keys(restoredAnswers);
+
+    return {
+      answers: restoredAnswers,
+      revealedCells: restoredKeys,
+      resultsMode: latestProgress.completed ? "won" : null,
+    };
+  }
 
   function handleAnswerChange(value) {
     setSuppressSuggestions(false);
@@ -565,20 +670,23 @@ function CardGridGame({ cards, onBack }) {
     setEndOverlay(null);
   }
 
-  function createNewGrid(isNewGrid = false) {
+  function createNewGrid(isNewGrid = false, modeOverride = selectedMode) {
+    const isDailyMode = modeOverride === GAME_MODE_IDS.DAILY;
     const nextGrid = generateGrid(
       playableCards,
       conditionPool,
-      modeConfig.minCandidatesPerCell
+      modeConfig.minCandidatesPerCell,
+      isDailyMode ? getDailyGridSeed(todayKey, gridMode) : null
     );
 
-    resetGrid(nextGrid, makeGridReadyMessage(nextGrid, isNewGrid));
+    const reviewState = isDailyMode ? getDailyReviewState(nextGrid) : null;
+    resetGrid(nextGrid, makeGridReadyMessage(nextGrid, isNewGrid), reviewState ?? {});
   }
 
   useEffect(() => {
-    if (!cards.length) return;
+    if (!cards.length || !selectedMode) return;
 
-    createNewGrid(false);
+    createNewGrid(false, selectedMode);
     // createNewGrid depends on current state by design; keep explicit deps to avoid
     // regenerating more often than the previous implementation.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -588,10 +696,19 @@ function CardGridGame({ cards, onBack }) {
     conditionPool,
     modeConfig.minCandidatesPerCell,
     gridMode,
+    selectedMode,
     t,
   ]);
 
   function startNewGrid() {
+    if (selectedMode === GAME_MODE_IDS.DAILY) {
+      setSelectedMode(null);
+      setGrid(null);
+      resetGrid(null, "");
+      setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
+      return;
+    }
+
     createNewGrid(true);
   }
 
@@ -600,12 +717,44 @@ function CardGridGame({ cards, onBack }) {
     setGridMode(nextMode);
   }
 
+  function startMode(modeId) {
+    setSelectedMode(modeId);
+    setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
+    resetGrid(null, "");
+  }
+
   function moveToNextEmptyCell(nextAnswers) {
     const nextCell = getNextEmptyCell(selectedKey, nextAnswers);
 
     if (nextCell) {
       setSelectedCell(nextCell);
     }
+  }
+
+  function completeDailyGrid(nextAnswers) {
+    completeDailyChallenge(CARD_GRID_GAME_ID, todayKey);
+    saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
+      answerIds: serializeAnswerIds(nextAnswers),
+      completedGridMode: gridMode,
+      lastWasCorrect: true,
+    });
+
+    let latestProgress = getDailyGameProgress(CARD_GRID_GAME_ID, todayKey);
+
+    if (!latestProgress.rewardClaimed) {
+      addPackReward({
+        packId: DAILY_REWARD_PACK_ID,
+        amount: 1,
+        source: CARD_GRID_GAME_ID,
+        dateKey: todayKey,
+      });
+      latestProgress = markDailyRewardClaimed(CARD_GRID_GAME_ID, todayKey);
+      setRewardMessage(copy.dailyRewardEarned);
+    } else {
+      setRewardMessage(copy.dailyRewardAlreadyClaimed);
+    }
+
+    setDailyProgress(latestProgress);
   }
 
   function submitAnswer(event) {
@@ -660,6 +809,10 @@ function CardGridGame({ cards, onBack }) {
     setSuppressSuggestions(false);
 
     if (didCompleteGrid) {
+      if (selectedMode === GAME_MODE_IDS.DAILY) {
+        completeDailyGrid(nextAnswers);
+      }
+
       setMessage("");
       setEndOverlay("won");
       setResultsMode(null);
@@ -702,7 +855,41 @@ function CardGridGame({ cards, onBack }) {
     moveToNextEmptyCell(nextAnswers);
   }
 
-  if (!cards.length || !grid) {
+  if (!cards.length) {
+    return (
+      <EmptyState
+        copy={copy}
+        t={t}
+        cards={cards}
+        gridMode={gridMode}
+        gridModes={gridModes}
+        modeConfig={modeConfig}
+        onBack={onBack}
+        onChangeMode={changeGridMode}
+        onStartNewGrid={startNewGrid}
+      />
+    );
+  }
+
+  if (!selectedMode) {
+    return (
+      <main className="cg-page">
+        <GameHeader copy={copy} onBack={onBack} />
+        <section className="cg-shell is-mode-select">
+          <GameModeSelect
+            copy={copy}
+            title={copy.title}
+            dailyCompleted={dailyProgress.completed}
+            previewSrc="/ui/games/card-grid-v2/mode-example.svg"
+            previewAlt={copy.exampleLabel}
+            onSelectMode={startMode}
+          />
+        </section>
+      </main>
+    );
+  }
+
+  if (!grid) {
     return (
       <EmptyState
         copy={copy}
@@ -719,7 +906,7 @@ function CardGridGame({ cards, onBack }) {
   }
 
   return (
-    <main className="cg-page">
+    <main className={`cg-page ${resultsMode ? `is-results-${resultsMode}` : ""}`}>
       <GameHeader copy={copy} onBack={onBack} />
       <section className="cg-shell">
         <section className="cg-layout cg-layout-single">
@@ -756,6 +943,7 @@ function CardGridGame({ cards, onBack }) {
         <GridResultOverlay
           t={t}
           result={endOverlay}
+          rewardMessage={rewardMessage}
           onViewResults={viewEndResults}
           onRestart={startNewGrid}
         />

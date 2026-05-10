@@ -198,11 +198,29 @@ function hasRepeatedDisplayCondition(conditions) {
   return new Set(keys).size !== keys.length;
 }
 
-function shuffle(array) {
+function createSeededRandom(seed) {
+  let state = 2166136261;
+  const seedText = String(seed ?? "");
+
+  for (let index = 0; index < seedText.length; index += 1) {
+    state ^= seedText.charCodeAt(index);
+    state = Math.imul(state, 16777619);
+  }
+
+  return () => {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffle(array, random = Math.random) {
   const copy = [...array];
 
   for (let index = copy.length - 1; index > 0; index -= 1) {
-    const randomIndex = Math.floor(Math.random() * (index + 1));
+    const randomIndex = Math.floor(random() * (index + 1));
     [copy[index], copy[randomIndex]] = [copy[randomIndex], copy[index]];
   }
 
@@ -402,19 +420,22 @@ export function getCellCandidates(cards, rowCondition, columnCondition) {
 export function generateGrid(
   cards,
   conditionPool,
-  minCandidatesPerCell = MIN_CANDIDATES_PER_CELL
+  minCandidatesPerCell = MIN_CANDIDATES_PER_CELL,
+  seed = null
 ) {
   if (conditionPool.length < GRID_SIZE * 2) return null;
 
+  const random = seed ? createSeededRandom(seed) : Math.random;
   const rowPool = conditionPool.filter((condition) => ROW_FAMILIES.includes(condition.family));
   const columnPool = conditionPool.filter((condition) =>
     COLUMN_FAMILIES.includes(condition.family)
   );
 
   for (let attempt = 0; attempt < MAX_GENERATION_ATTEMPTS; attempt += 1) {
-    const rows = shuffle(rowPool).slice(0, GRID_SIZE);
+    const rows = shuffle(rowPool, random).slice(0, GRID_SIZE);
     const columns = shuffle(
-      columnPool.filter((condition) => !rows.some((row) => row.id === condition.id))
+      columnPool.filter((condition) => !rows.some((row) => row.id === condition.id)),
+      random
     ).slice(0, GRID_SIZE);
 
     if (rows.length < GRID_SIZE || columns.length < GRID_SIZE) continue;
@@ -438,7 +459,7 @@ export function generateGrid(
 
     if (isValid) {
       return {
-        id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+        id: seed ? `daily-${seed}` : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
         rows,
         columns,
         candidateMap,
