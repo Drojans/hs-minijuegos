@@ -744,3 +744,370 @@
     padding-block: 5px;
   }
 }
+
+/* Home progress panel: daily challenges + collection snapshot */
+.home-v2-progress-panel {
+  width: min(100%, 860px);
+  display: grid;
+  grid-template-columns: minmax(150px, 210px) minmax(0, 1fr);
+  gap: 12px;
+  margin: 0 auto clamp(12px, 2vh, 18px);
+  padding: 10px;
+  border-radius: 22px;
+  border: 1px solid rgba(240, 207, 130, 0.14);
+  background:
+    radial-gradient(circle at 10% 0%, rgba(217, 164, 65, 0.12), transparent 34%),
+    radial-gradient(circle at 88% 0%, rgba(105, 167, 255, 0.1), transparent 34%),
+    rgba(8, 13, 24, 0.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 16px 38px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.home-v2-progress-summary {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 4px;
+  min-height: 72px;
+  border: 1px solid rgba(217, 164, 65, 0.2);
+  border-radius: 18px;
+  color: var(--home-v2-text);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.015)),
+    rgba(19, 25, 39, 0.76);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+  cursor: pointer;
+  font: inherit;
+  transition: transform 0.16s ease, border-color 0.16s ease, filter 0.16s ease;
+}
+
+.home-v2-progress-summary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(240, 207, 130, 0.38);
+  filter: brightness(1.05);
+}
+
+.home-v2-progress-summary span,
+.home-v2-daily-progress-head span,
+.home-v2-daily-chip strong {
+  color: var(--home-v2-gold-soft);
+  font-size: 0.66rem;
+  font-weight: 950;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.home-v2-progress-summary strong {
+  color: var(--home-v2-text);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.42rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-v2-daily-progress {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+}
+
+.home-v2-daily-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 4px;
+}
+
+.home-v2-daily-progress-head strong {
+  color: var(--home-v2-text);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.12rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-v2-daily-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.home-v2-daily-chip {
+  min-width: 0;
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "icon name"
+    "icon status";
+  align-items: center;
+  column-gap: 9px;
+  row-gap: 1px;
+  padding: 7px 9px;
+  border: 1px solid rgba(240, 207, 130, 0.16);
+  border-radius: 16px;
+  color: var(--home-v2-text);
+  background:
+    radial-gradient(circle at 90% 0%, var(--daily-glow, rgba(105, 167, 255, 0.1)), transparent 42%),
+    rgba(17, 23, 37, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.045);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, filter 0.16s ease;
+}
+
+.home-v2-daily-chip:hover {
+  transform: translateY(-2px);
+  border-color: rgba(240, 207, 130, 0.34);
+  filter: brightness(1.05);
+}
+
+.home-v2-daily-chip.is-blue { --daily-glow: rgba(105, 167, 255, 0.16); }
+.home-v2-daily-chip.is-violet { --daily-glow: rgba(170, 124, 255, 0.16); }
+.home-v2-daily-chip.is-gold { --daily-glow: rgba(240, 207, 130, 0.16); }
+
+.home-v2-daily-chip.is-completed {
+  border-color: rgba(124, 228, 146, 0.28);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(124, 228, 146, 0.12), transparent 42%),
+    rgba(15, 31, 27, 0.78);
+}
+
+.home-v2-daily-icon {
+  grid-area: icon;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  color: #140f08;
+  background: linear-gradient(135deg, #f5d782, #d99b30);
+  box-shadow: 0 0 16px rgba(217, 164, 65, 0.18);
+  font-size: 0.88rem;
+  font-weight: 950;
+}
+
+.home-v2-daily-chip.is-completed .home-v2-daily-icon {
+  background: linear-gradient(135deg, #98f4ae, #35c96d);
+}
+
+.home-v2-daily-name {
+  grid-area: name;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--home-v2-text);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1rem;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-v2-daily-chip strong {
+  grid-area: status;
+  color: rgba(247, 236, 212, 0.62);
+  font-size: 0.58rem;
+}
+
+.home-v2-daily-chip.is-completed strong {
+  color: rgba(124, 228, 146, 0.92);
+}
+
+@media (max-width: 880px) {
+  .home-v2-progress-panel {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .home-v2-daily-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-height: 720px) and (min-width: 981px) {
+  .home-v2-progress-panel {
+    margin-bottom: 10px;
+    padding: 8px;
+  }
+
+  .home-v2-progress-summary {
+    min-height: 60px;
+  }
+
+  .home-v2-daily-chip {
+    min-height: 42px;
+    padding-block: 5px;
+  }
+
+  .home-v2-daily-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .home-v2-daily-name {
+    font-size: 0.92rem;
+  }
+}
+
+/* Home daily-status card pass: collection remains in top row, daily chips removed */
+.home-v2-status-row {
+  grid-template-columns: minmax(150px, 1fr) auto minmax(150px, 1fr);
+}
+
+.home-v2-collection-pill {
+  justify-self: start;
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 1px solid rgba(240, 207, 130, 0.2);
+  border-radius: 999px;
+  color: rgba(247, 236, 212, 0.78);
+  background:
+    radial-gradient(circle at 18% 50%, rgba(105, 167, 255, 0.14), transparent 38%),
+    rgba(12, 18, 31, 0.76);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 30px rgba(0, 0, 0, 0.22),
+    0 0 22px rgba(105, 167, 255, 0.07);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 850;
+  cursor: pointer;
+  transition: transform 0.16s ease, border-color 0.16s ease, filter 0.16s ease;
+}
+
+.home-v2-collection-pill:hover {
+  transform: translateY(-1px);
+  border-color: rgba(240, 207, 130, 0.34);
+  filter: brightness(1.06);
+}
+
+.home-v2-collection-pill span {
+  color: rgba(247, 236, 212, 0.72);
+}
+
+.home-v2-collection-pill strong {
+  color: var(--home-v2-gold-soft);
+  font-size: 1rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.home-v2-mode-card.is-daily-won,
+.home-v2-mode-card.is-daily-lost {
+  border-color: var(--daily-result-border);
+}
+
+.home-v2-mode-card.is-daily-won {
+  --daily-result-border: rgba(124, 228, 146, 0.42);
+  --daily-result-glow: rgba(92, 237, 130, 0.25);
+  --daily-result-line: rgba(124, 228, 146, 0.62);
+  background:
+    radial-gradient(circle at 50% 44%, rgba(92, 237, 130, 0.2), transparent 34%),
+    linear-gradient(180deg, rgba(255,255,255,0.055), transparent 36%),
+    radial-gradient(circle at 82% 12%, rgba(124, 228, 146, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(15, 37, 31, 0.9), rgba(10, 18, 18, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.09),
+    0 18px 56px rgba(0,0,0,0.26),
+    0 0 34px rgba(92, 237, 130, 0.12);
+}
+
+.home-v2-mode-card.is-daily-lost {
+  --daily-result-border: rgba(255, 89, 112, 0.36);
+  --daily-result-glow: rgba(255, 76, 104, 0.24);
+  --daily-result-line: rgba(255, 89, 112, 0.58);
+  background:
+    radial-gradient(circle at 50% 44%, rgba(255, 76, 104, 0.22), transparent 33%),
+    linear-gradient(180deg, rgba(255,255,255,0.035), transparent 36%),
+    radial-gradient(circle at 82% 12%, rgba(255, 89, 112, 0.12), transparent 34%),
+    linear-gradient(180deg, rgba(35, 23, 29, 0.9), rgba(15, 14, 18, 0.93));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.06),
+    0 18px 56px rgba(0,0,0,0.28),
+    0 0 34px rgba(255, 76, 104, 0.1);
+}
+
+.home-v2-mode-card.is-daily-won::after,
+.home-v2-mode-card.is-daily-lost::after {
+  background: linear-gradient(90deg, transparent, var(--daily-result-line), transparent);
+  opacity: 0.78;
+}
+
+.home-v2-mode-card.is-daily-lost .home-v2-mode-icon img,
+.home-v2-mode-card.is-daily-lost h3 {
+  opacity: 0.56;
+  filter: grayscale(0.28) blur(0.2px);
+}
+
+.home-v2-mode-card.is-daily-won .home-v2-mode-icon img {
+  filter:
+    drop-shadow(0 12px 16px rgba(0,0,0,0.42))
+    drop-shadow(0 0 16px rgba(124, 228, 146, 0.22));
+}
+
+.home-v2-daily-state-mark {
+  position: absolute;
+  z-index: 4;
+  left: 50%;
+  top: 48%;
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  transform: translate(-50%, -50%);
+  color: #100d0a;
+  font-size: 2.3rem;
+  font-weight: 1000;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.24),
+    0 0 0 1px rgba(255,255,255,0.11),
+    0 16px 34px rgba(0,0,0,0.32),
+    0 0 42px var(--daily-result-glow);
+  pointer-events: none;
+}
+
+.home-v2-daily-state-mark.is-won {
+  background: linear-gradient(135deg, #9cfab2, #2ed46d);
+}
+
+.home-v2-daily-state-mark.is-lost {
+  color: #18080a;
+  background: linear-gradient(135deg, #ff6e86, #c4123b);
+}
+
+.home-v2-mode-card:hover:not(:disabled).is-daily-won,
+.home-v2-mode-card:focus-visible.is-daily-won {
+  border-color: rgba(150, 255, 176, 0.58);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    0 26px 70px rgba(0,0,0,0.38),
+    0 0 0 1px rgba(124, 228, 146, 0.18),
+    0 0 42px rgba(124, 228, 146, 0.16);
+}
+
+.home-v2-mode-card:hover:not(:disabled).is-daily-lost,
+.home-v2-mode-card:focus-visible.is-daily-lost {
+  border-color: rgba(255, 89, 112, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 26px 70px rgba(0,0,0,0.38),
+    0 0 0 1px rgba(255, 89, 112, 0.14),
+    0 0 42px rgba(255, 76, 104, 0.14);
+}
+
+@media (max-width: 680px) {
+  .home-v2-collection-pill {
+    justify-self: center;
+  }
+}

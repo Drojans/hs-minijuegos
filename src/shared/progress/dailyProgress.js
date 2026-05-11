@@ -1,5 +1,7 @@
 const DAILY_PROGRESS_KEY = "hearthdle:daily-progress:v1";
 
+export const DAILY_PROGRESS_UPDATED_EVENT = "hearthdle:daily-progress-updated";
+
 function readJson(key, fallback) {
   if (typeof window === "undefined") return fallback;
 
@@ -16,6 +18,7 @@ function writeJson(key, value) {
 
   try {
     window.localStorage.setItem(key, JSON.stringify(value));
+    window.dispatchEvent(new CustomEvent(DAILY_PROGRESS_UPDATED_EVENT));
   } catch {
     // localStorage can fail in private browsing; game should keep working.
   }

@@ -56,7 +56,7 @@ const LOCAL_COPY = {
     exampleLabel: "Ejemplo visual del minijuego",
     modeSelectorLabel: "Selecciona modo",
     startMode: "Empezar",
-    dailyRewardEarned: "Has ganado 1 sobre.",
+    dailyRewardEarned: "Has ganado 1 caja arcana.",
     dailyRewardAlreadyClaimed: "Reto diario completado. Hoy ya tenías esta recompensa.",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
@@ -104,7 +104,7 @@ const LOCAL_COPY = {
     exampleLabel: "Visual example of the minigame",
     modeSelectorLabel: "Select mode",
     startMode: "Start",
-    dailyRewardEarned: "You earned 1 pack.",
+    dailyRewardEarned: "You earned 1 arcane box.",
     dailyRewardAlreadyClaimed: "Daily challenge completed. You already had today’s reward.",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
@@ -427,17 +427,22 @@ function GuessManaCost({ cards = [], onBack }) {
     setSelectedCost(nextSelectedCost);
     setShowResultOverlay(true);
 
-    if (selectedMode !== GAME_MODE_IDS.DAILY || !answeredCorrectly) return;
+    if (selectedMode !== GAME_MODE_IDS.DAILY) return;
 
     completeDailyChallenge(GUESS_MANA_GAME_ID, todayKey);
     saveDailyChallengeResult(GUESS_MANA_GAME_ID, todayKey, {
       lastSelectedCost: nextSelectedCost,
       lastCorrectCost: currentCard.cost,
       lastCardId: currentCard.id,
-      lastWasCorrect: true,
+      lastWasCorrect: answeredCorrectly,
     });
 
     let latestProgress = getDailyGameProgress(GUESS_MANA_GAME_ID, todayKey);
+
+    if (!answeredCorrectly) {
+      setDailyProgress(latestProgress);
+      return;
+    }
 
     if (!latestProgress.rewardClaimed) {
       addPackReward({

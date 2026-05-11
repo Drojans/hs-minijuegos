@@ -79,3 +79,43 @@ export function addPackReward({ packId = "standard", amount = 1, source = "unkno
   notifyRewardStoreUpdated();
   return nextStore;
 }
+
+export function consumePackReward({ packId = "standard", amount = 1, source = "open-pack" } = {}) {
+  const store = getRewardStore();
+  const currentAmount = store.packs?.[packId] ?? 0;
+
+  if (currentAmount < amount) {
+    return {
+      ok: false,
+      store,
+      remaining: currentAmount,
+    };
+  }
+
+  const nextStore = {
+    ...store,
+    packs: {
+      ...store.packs,
+      [packId]: currentAmount - amount,
+    },
+    history: [
+      ...store.history,
+      {
+        type: "pack-consumed",
+        packId,
+        amount,
+        source,
+        createdAt: new Date().toISOString(),
+      },
+    ],
+  };
+
+  writeJson(REWARD_STORE_KEY, nextStore);
+  notifyRewardStoreUpdated();
+
+  return {
+    ok: true,
+    store: nextStore,
+    remaining: nextStore.packs[packId],
+  };
+}

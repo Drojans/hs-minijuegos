@@ -4,6 +4,7 @@ import GuessManaPage from "./pages/GuessManaPage";
 import ImpostorPage from "./pages/ImpostorPage";
 import CardGridPage from "./pages/CardGridPage";
 import CardDatabasePage from "./pages/CardDatabasePage";
+import CollectionPage from "./pages/CollectionPage";
 import { useCardsData } from "./hooks/useCardsData";
 import "./App.css";
 
@@ -13,6 +14,7 @@ const APP_ROUTES = {
   "/impostor": "impostor",
   "/grid": "grid",
   "/cards": "cards",
+  "/collection": "collection",
 };
 
 function normalizePath(pathname) {
@@ -63,8 +65,11 @@ function App() {
     case "/cards":
       return <CardDatabasePage cards={cards} loading={loading} onBack={goHome} />;
 
+    case "/collection":
+      return <CollectionPage cards={cards} loading={loading} onNavigate={navigate} />;
+
     default:
-      return <HomePage loading={loading} onNavigate={navigate} />;
+      return <HomePage cards={cards} loading={loading} onNavigate={navigate} />;
   }
 }
 

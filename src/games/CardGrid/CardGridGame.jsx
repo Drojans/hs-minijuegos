@@ -56,7 +56,7 @@ const CARD_GRID_COPY = {
     startMode: "Empezar",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
-    dailyRewardEarned: "Has ganado 1 sobre.",
+    dailyRewardEarned: "Has ganado 1 caja arcana.",
     dailyRewardAlreadyClaimed: "Grid diario completado. Hoy ya tenías esta recompensa.",
   },
   en: {
@@ -84,7 +84,7 @@ const CARD_GRID_COPY = {
     startMode: "Start",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
-    dailyRewardEarned: "You earned 1 pack.",
+    dailyRewardEarned: "You earned 1 arcane box.",
     dailyRewardAlreadyClaimed: "Daily grid completed. You already had today’s reward.",
   },
 };
