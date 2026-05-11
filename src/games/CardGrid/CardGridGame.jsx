@@ -3,6 +3,7 @@ import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
+import { ARCANE_BOX_ID, CARD_GRID_DAILY_TIME_SECONDS, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
   completeDailyChallenge,
   getDailyGameProgress,
@@ -10,7 +11,7 @@ import {
   markDailyRewardClaimed,
   saveDailyChallengeResult,
 } from "../../shared/progress/dailyProgress";
-import { addPackReward } from "../../shared/rewards/rewardStore";
+import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
 import {
   GRID_SIZE,
   TOTAL_CELLS,
@@ -27,9 +28,7 @@ import {
 } from "./cardGridGameConfig";
 import "./CardGridGame.css";
 
-const CARD_GRID_GAME_ID = "card-grid";
-const DAILY_REWARD_PACK_ID = "standard";
-const DAILY_GRID_TIME_SECONDS = 90;
+const CARD_GRID_GAME_ID = GAME_IDS.CARD_GRID;
 
 const CARD_GRID_COPY = {
   es: {
@@ -784,7 +783,7 @@ function CardGridGame({ cards, onBack }) {
         mistakes: 0,
       });
       setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
-      setTimeLeft(DAILY_GRID_TIME_SECONDS);
+      setTimeLeft(CARD_GRID_DAILY_TIME_SECONDS);
     }
   }
 
@@ -916,9 +915,9 @@ function CardGridGame({ cards, onBack }) {
     let latestProgress = getDailyGameProgress(CARD_GRID_GAME_ID, todayKey);
 
     if (!latestProgress.rewardClaimed) {
-      addPackReward({
-        packId: DAILY_REWARD_PACK_ID,
-        amount: 1,
+      addArcaneBoxReward({
+        boxId: ARCANE_BOX_ID,
+        amount: DAILY_REWARD_BOX_AMOUNT,
         source: CARD_GRID_GAME_ID,
         dateKey: todayKey,
       });

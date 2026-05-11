@@ -7,11 +7,12 @@ import {
   addCardsToCollection,
   getCollectionStore,
 } from "../../shared/collection/collectionStore";
-import { DEFAULT_PACK_SIZE, getEligiblePackCards, openCardPack } from "../../shared/packs/packOpening";
-import { consumePackReward, getPackCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
+import { ARCANE_BOX_CARD_COUNT, ARCANE_BOX_ID } from "../../shared/config/gameRules";
+import { DEFAULT_ARCANE_BOX_SIZE, getEligibleCollectionCards, openArcaneBox } from "../../shared/packs/packOpening";
+import { consumeArcaneBox, getArcaneBoxCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
 import "./CollectionHub.css";
 
-const BOX_ID = "standard";
+const BOX_ID = ARCANE_BOX_ID;
 const PAGE_SIZE = 24;
 
 const COPY = {
@@ -26,7 +27,7 @@ const COPY = {
     openBox: "Abrir caja",
     openAnotherBox: "Abrir otra caja",
     noBoxes: "No tienes cajas todavía",
-    boxHint: `Cada caja arcana contiene ${DEFAULT_PACK_SIZE} cartas para tu colección.`,
+    boxHint: `Cada caja arcana contiene ${DEFAULT_ARCANE_BOX_SIZE} cartas para tu colección.`,
     collectionProgress: "Progreso de colección",
     uniqueCards: "cartas únicas",
     totalCopies: "copias totales",
@@ -72,7 +73,7 @@ const COPY = {
     openBox: "Open box",
     openAnotherBox: "Open another box",
     noBoxes: "No boxes yet",
-    boxHint: `Each arcane box contains ${DEFAULT_PACK_SIZE} cards for your collection.`,
+    boxHint: `Each arcane box contains ${DEFAULT_ARCANE_BOX_SIZE} cards for your collection.`,
     collectionProgress: "Collection progress",
     uniqueCards: "unique cards",
     totalCopies: "total copies",
@@ -290,7 +291,7 @@ function BoxOpeningModal({ copy, locale, opening, onClose, onOpenAnother, canOpe
 function CollectionHub({ cards = [], loading = false, onNavigate }) {
   const { locale } = useLanguage();
   const copy = COPY[locale] ?? COPY.es;
-  const [boxCount, setBoxCount] = useState(() => getPackCount(BOX_ID));
+  const [boxCount, setBoxCount] = useState(() => getArcaneBoxCount(BOX_ID));
   const [collectionStore, setCollectionStore] = useState(() => getCollectionStore());
   const [query, setQuery] = useState("");
   const [ownershipFilter, setOwnershipFilter] = useState("all");
@@ -300,7 +301,7 @@ function CollectionHub({ cards = [], loading = false, onNavigate }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [opening, setOpening] = useState(null);
 
-  const eligibleCards = useMemo(() => getEligiblePackCards(cards), [cards]);
+  const eligibleCards = useMemo(() => getEligibleCollectionCards(cards), [cards]);
   const ownedEntries = collectionStore.cards ?? {};
 
   const classOptions = useMemo(() => {
@@ -360,7 +361,7 @@ function CollectionHub({ cards = [], loading = false, onNavigate }) {
 
   useEffect(() => {
     function syncStores() {
-      setBoxCount(getPackCount(BOX_ID));
+      setBoxCount(getArcaneBoxCount(BOX_ID));
       setCollectionStore(getCollectionStore());
     }
 
@@ -381,13 +382,13 @@ function CollectionHub({ cards = [], loading = false, onNavigate }) {
   function openBox() {
     if (loading || boxCount <= 0 || opening?.phase === "opening") return;
 
-    const consumeResult = consumePackReward({ packId: BOX_ID, amount: 1, source: "collection" });
+    const consumeResult = consumeArcaneBox({ boxId: BOX_ID, amount: 1, source: "collection" });
     if (!consumeResult.ok) return;
 
-    const openedCards = openCardPack(cards);
-    const collectionResult = addCardsToCollection(openedCards, { packId: BOX_ID, source: "collection" });
+    const openedCards = openArcaneBox(cards, { size: ARCANE_BOX_CARD_COUNT });
+    const collectionResult = addCardsToCollection(openedCards, { boxId: BOX_ID, source: "collection" });
 
-    setBoxCount(getPackCount(BOX_ID));
+    setBoxCount(getArcaneBoxCount(BOX_ID));
     setCollectionStore(getCollectionStore());
     setOpening({ phase: "opening", results: collectionResult.results });
 

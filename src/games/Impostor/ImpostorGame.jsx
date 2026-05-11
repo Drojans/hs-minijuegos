@@ -3,6 +3,7 @@ import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
+import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
   completeDailyChallenge,
   getDailyGameProgress,
@@ -10,7 +11,7 @@ import {
   markDailyRewardClaimed,
   saveDailyChallengeResult,
 } from "../../shared/progress/dailyProgress";
-import { addPackReward } from "../../shared/rewards/rewardStore";
+import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
 import ImpostorNeutralCard from "./ImpostorNeutralCard";
 import {
   CORRECT_COUNT,
@@ -28,8 +29,7 @@ import {
 } from "./impostorGameConfig";
 import "./ImpostorGame.css";
 
-const IMPOSTOR_GAME_ID = "impostor";
-const DAILY_REWARD_PACK_ID = "standard";
+const IMPOSTOR_GAME_ID = GAME_IDS.IMPOSTOR;
 
 const IMPOSTOR_COPY = {
   es: {
@@ -480,9 +480,9 @@ function ImpostorGame({ cards, onBack }) {
 
     if (isWon) {
       if (!latestProgress.rewardClaimed) {
-        addPackReward({
-          packId: DAILY_REWARD_PACK_ID,
-          amount: 1,
+        addArcaneBoxReward({
+          boxId: ARCANE_BOX_ID,
+          amount: DAILY_REWARD_BOX_AMOUNT,
           source: IMPOSTOR_GAME_ID,
           dateKey: todayKey,
         });

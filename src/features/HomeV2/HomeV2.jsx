@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
-import { getPackCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
+import { getArcaneBoxCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
 import { COLLECTION_UPDATED_EVENT, getOwnedCardCount } from "../../shared/collection/collectionStore";
-import { getEligiblePackCards } from "../../shared/packs/packOpening";
+import { DAILY_MODE_GAME_IDS_BY_HOME_MODE } from "../../shared/config/gameRules";
+import { getEligibleCollectionCards } from "../../shared/packs/packOpening";
 import { DAILY_PROGRESS_UPDATED_EVENT, getDailyGameProgress, getTodayKey } from "../../shared/progress/dailyProgress";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import { HOME_V2_COPY, HOME_V2_MODES } from "./homeV2Config";
@@ -34,22 +35,16 @@ function getDailyCardState(progress) {
   return won ? "won" : "lost";
 }
 
-const DAILY_GAME_IDS_BY_MODE_ID = {
-  guessMana: "guess-mana",
-  impostor: "impostor",
-  grid: "card-grid",
-};
-
 function HomeV2({ cards = [], loading = false, onNavigate }) {
   const { locale } = useLanguage();
   const [resetTime, setResetTime] = useState(() => getTimeUntilNextLocalMidnight());
-  const [packCount, setPackCount] = useState(() => getPackCount());
+  const [packCount, setPackCount] = useState(() => getArcaneBoxCount());
   const copy = HOME_V2_COPY[locale] ?? HOME_V2_COPY.es;
   const todayKey = useMemo(() => getTodayKey(), []);
 
   function readDailyModeProgress() {
     return Object.fromEntries(
-      Object.entries(DAILY_GAME_IDS_BY_MODE_ID).map(([modeId, gameId]) => [
+      Object.entries(DAILY_MODE_GAME_IDS_BY_HOME_MODE).map(([modeId, gameId]) => [
         modeId,
         getDailyGameProgress(gameId, todayKey),
       ]),
@@ -59,7 +54,7 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
   const [dailyModeProgress, setDailyModeProgress] = useState(readDailyModeProgress);
   const [ownedCardCount, setOwnedCardCount] = useState(() => getOwnedCardCount());
 
-  const collectibleCardCount = useMemo(() => getEligiblePackCards(cards).length, [cards]);
+  const collectibleCardCount = useMemo(() => getEligibleCollectionCards(cards).length, [cards]);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -71,7 +66,7 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
 
   useEffect(() => {
     function syncPackCount() {
-      setPackCount(getPackCount());
+      setPackCount(getArcaneBoxCount());
     }
 
     syncPackCount();

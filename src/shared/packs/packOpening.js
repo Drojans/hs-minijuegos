@@ -1,6 +1,8 @@
+import { ARCANE_BOX_CARD_COUNT } from "../config/gameRules";
 import { getGameImage, getThumbImage } from "../../utils/cardLocale";
 
-export const DEFAULT_PACK_SIZE = 10;
+export const DEFAULT_ARCANE_BOX_SIZE = ARCANE_BOX_CARD_COUNT;
+export const DEFAULT_PACK_SIZE = DEFAULT_ARCANE_BOX_SIZE;
 
 const RARITY_WEIGHTS = {
   LEGENDARY: 2,
@@ -14,7 +16,7 @@ function hasUsableImage(card) {
   return Boolean(getThumbImage(card, "es") || getThumbImage(card, "en") || getGameImage(card, "es") || getGameImage(card, "en"));
 }
 
-export function getEligiblePackCards(cards = []) {
+export function getEligibleCollectionCards(cards = []) {
   return cards.filter((card) => {
     if (!card?.id) return false;
     if (!hasUsableImage(card)) return false;
@@ -39,9 +41,13 @@ function pickWeightedCard(cards) {
   return cards[cards.length - 1];
 }
 
-export function openCardPack(cards, { size = DEFAULT_PACK_SIZE } = {}) {
-  const eligibleCards = getEligiblePackCards(cards);
+export function openArcaneBox(cards, { size = DEFAULT_ARCANE_BOX_SIZE } = {}) {
+  const eligibleCards = getEligibleCollectionCards(cards);
   if (eligibleCards.length === 0) return [];
 
   return Array.from({ length: size }, () => pickWeightedCard(eligibleCards));
 }
+
+// Backwards-compatible aliases used by earlier collection/database code.
+export const getEligiblePackCards = getEligibleCollectionCards;
+export const openCardPack = openArcaneBox;

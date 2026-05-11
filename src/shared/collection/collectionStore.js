@@ -1,3 +1,6 @@
+import { ARCANE_BOX_ID } from "../config/gameRules";
+import { emitWindowEvent, readLocalJson, writeLocalJson } from "../storage/localStorage";
+
 const COLLECTION_STORE_KEY = "hearthdle:collection:v1";
 
 export const COLLECTION_UPDATED_EVENT = "hearthdle:collection-updated";
@@ -7,34 +10,12 @@ const DEFAULT_COLLECTION_STORE = {
   history: [],
 };
 
-function readJson(key, fallback) {
-  if (typeof window === "undefined") return fallback;
-
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(key, value) {
-  if (typeof window === "undefined") return;
-
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Keep the app usable even if localStorage is blocked.
-  }
-}
-
 function notifyCollectionUpdated() {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent(COLLECTION_UPDATED_EVENT));
+  emitWindowEvent(COLLECTION_UPDATED_EVENT);
 }
 
 export function getCollectionStore() {
-  const stored = readJson(COLLECTION_STORE_KEY, DEFAULT_COLLECTION_STORE);
+  const stored = readLocalJson(COLLECTION_STORE_KEY, DEFAULT_COLLECTION_STORE);
 
   return {
     ...DEFAULT_COLLECTION_STORE,
@@ -58,11 +39,12 @@ export function getOwnedCardEntry(cardId) {
   return getCollectionStore().cards?.[cardId] ?? null;
 }
 
-export function addCardsToCollection(cards, { source = "pack", packId = "standard" } = {}) {
+export function addCardsToCollection(cards, { source = "arcane-box", boxId = ARCANE_BOX_ID, packId } = {}) {
   const store = getCollectionStore();
   const openedAt = new Date().toISOString();
   const results = [];
   const nextCards = { ...store.cards };
+  const resolvedBoxId = boxId ?? packId ?? ARCANE_BOX_ID;
 
   for (const card of cards) {
     if (!card?.id) continue;
@@ -96,8 +78,8 @@ export function addCardsToCollection(cards, { source = "pack", packId = "standar
     history: [
       ...store.history,
       {
-        type: "pack-opened",
-        packId,
+        type: "arcane-box-opened",
+        boxId: resolvedBoxId,
         source,
         cardIds: results.map((result) => result.cardId),
         createdAt: openedAt,
@@ -105,7 +87,7 @@ export function addCardsToCollection(cards, { source = "pack", packId = "standar
     ],
   };
 
-  writeJson(COLLECTION_STORE_KEY, nextStore);
+  writeLocalJson(COLLECTION_STORE_KEY, nextStore);
   notifyCollectionUpdated();
 
   return {

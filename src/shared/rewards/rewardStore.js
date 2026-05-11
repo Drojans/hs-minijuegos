@@ -1,42 +1,24 @@
+import { ARCANE_BOX_ID } from "../config/gameRules";
+import { emitWindowEvent, readLocalJson, writeLocalJson } from "../storage/localStorage";
+
 const REWARD_STORE_KEY = "hearthdle:rewards:v1";
 
 export const REWARDS_UPDATED_EVENT = "hearthdle:rewards-updated";
 
 const DEFAULT_REWARD_STORE = {
+  // Kept as `packs` for localStorage backward compatibility.
   packs: {
-    standard: 0,
+    [ARCANE_BOX_ID]: 0,
   },
   history: [],
 };
 
-function readJson(key, fallback) {
-  if (typeof window === "undefined") return fallback;
-
-  try {
-    const raw = window.localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(key, value) {
-  if (typeof window === "undefined") return;
-
-  try {
-    window.localStorage.setItem(key, JSON.stringify(value));
-  } catch {
-    // Keep game playable even if localStorage is blocked.
-  }
-}
-
 function notifyRewardStoreUpdated() {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent(REWARDS_UPDATED_EVENT));
+  emitWindowEvent(REWARDS_UPDATED_EVENT);
 }
 
 export function getRewardStore() {
-  const stored = readJson(REWARD_STORE_KEY, DEFAULT_REWARD_STORE);
+  const stored = readLocalJson(REWARD_STORE_KEY, DEFAULT_REWARD_STORE);
 
   return {
     ...DEFAULT_REWARD_STORE,
@@ -49,24 +31,29 @@ export function getRewardStore() {
   };
 }
 
-export function getPackCount(packId = "standard") {
-  return getRewardStore().packs?.[packId] ?? 0;
+export function getArcaneBoxCount(boxId = ARCANE_BOX_ID) {
+  return getRewardStore().packs?.[boxId] ?? 0;
 }
 
-export function addPackReward({ packId = "standard", amount = 1, source = "unknown", dateKey } = {}) {
+export function addArcaneBoxReward({
+  boxId = ARCANE_BOX_ID,
+  amount = 1,
+  source = "unknown",
+  dateKey,
+} = {}) {
   const store = getRewardStore();
-  const currentAmount = store.packs?.[packId] ?? 0;
+  const currentAmount = store.packs?.[boxId] ?? 0;
   const nextStore = {
     ...store,
     packs: {
       ...store.packs,
-      [packId]: currentAmount + amount,
+      [boxId]: currentAmount + amount,
     },
     history: [
       ...store.history,
       {
-        type: "pack",
-        packId,
+        type: "arcane-box-earned",
+        boxId,
         amount,
         source,
         dateKey,
@@ -75,14 +62,14 @@ export function addPackReward({ packId = "standard", amount = 1, source = "unkno
     ],
   };
 
-  writeJson(REWARD_STORE_KEY, nextStore);
+  writeLocalJson(REWARD_STORE_KEY, nextStore);
   notifyRewardStoreUpdated();
   return nextStore;
 }
 
-export function consumePackReward({ packId = "standard", amount = 1, source = "open-pack" } = {}) {
+export function consumeArcaneBox({ boxId = ARCANE_BOX_ID, amount = 1, source = "open-box" } = {}) {
   const store = getRewardStore();
-  const currentAmount = store.packs?.[packId] ?? 0;
+  const currentAmount = store.packs?.[boxId] ?? 0;
 
   if (currentAmount < amount) {
     return {
@@ -96,13 +83,13 @@ export function consumePackReward({ packId = "standard", amount = 1, source = "o
     ...store,
     packs: {
       ...store.packs,
-      [packId]: currentAmount - amount,
+      [boxId]: currentAmount - amount,
     },
     history: [
       ...store.history,
       {
-        type: "pack-consumed",
-        packId,
+        type: "arcane-box-consumed",
+        boxId,
         amount,
         source,
         createdAt: new Date().toISOString(),
@@ -110,12 +97,21 @@ export function consumePackReward({ packId = "standard", amount = 1, source = "o
     ],
   };
 
-  writeJson(REWARD_STORE_KEY, nextStore);
+  writeLocalJson(REWARD_STORE_KEY, nextStore);
   notifyRewardStoreUpdated();
 
   return {
     ok: true,
     store: nextStore,
-    remaining: nextStore.packs[packId],
+    remaining: nextStore.packs[boxId],
   };
+}
+
+// Backwards-compatible aliases. Keep these until all old code/old browser data is fully migrated.
+export const getPackCount = getArcaneBoxCount;
+export function addPackReward({ packId = ARCANE_BOX_ID, ...rest } = {}) {
+  return addArcaneBoxReward({ boxId: packId, ...rest });
+}
+export function consumePackReward({ packId = ARCANE_BOX_ID, ...rest } = {}) {
+  return consumeArcaneBox({ boxId: packId, ...rest });
 }

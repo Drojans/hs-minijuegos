@@ -4,6 +4,7 @@ import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggl
 import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
+import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
   completeDailyChallenge,
   getDailyGameProgress,
@@ -11,7 +12,7 @@ import {
   markDailyRewardClaimed,
   saveDailyChallengeResult,
 } from "../../shared/progress/dailyProgress";
-import { addPackReward } from "../../shared/rewards/rewardStore";
+import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
 import { getCardName } from "../../utils/cardLocale";
 import {
   getGuessManaCardImage,
@@ -21,8 +22,7 @@ import {
 } from "./guessManaConfig";
 import "./GuessManaCost.css";
 
-const GUESS_MANA_GAME_ID = "guess-mana";
-const DAILY_REWARD_PACK_ID = "standard";
+const GUESS_MANA_GAME_ID = GAME_IDS.GUESS_MANA;
 
 const LOCAL_COPY = {
   es: {
@@ -445,14 +445,13 @@ function GuessManaCost({ cards = [], onBack }) {
     }
 
     if (!latestProgress.rewardClaimed) {
-      addPackReward({
-        packId: DAILY_REWARD_PACK_ID,
-        amount: 1,
+      addArcaneBoxReward({
+        boxId: ARCANE_BOX_ID,
+        amount: DAILY_REWARD_BOX_AMOUNT,
         source: GUESS_MANA_GAME_ID,
         dateKey: todayKey,
       });
       latestProgress = markDailyRewardClaimed(GUESS_MANA_GAME_ID, todayKey);
-      setPackCount(getPackCount(DAILY_REWARD_PACK_ID));
       setRewardMessage(copy.dailyRewardEarned);
     } else {
       setRewardMessage(copy.dailyRewardAlreadyClaimed);
