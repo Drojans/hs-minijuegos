@@ -63,7 +63,7 @@ function App() {
       return <CardGridPage cards={cards} onBack={goHome} />;
 
     case "/cards":
-      return <CardDatabasePage cards={cards} loading={loading} onBack={goHome} />;
+      return <CardDatabasePage cards={cards} loading={loading} onNavigate={navigate} onBack={goHome} />;
 
     case "/collection":
       return <CollectionPage cards={cards} loading={loading} onNavigate={navigate} />;
