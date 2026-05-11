@@ -614,6 +614,14 @@ function ImpostorGame({ cards, onBack }) {
           foundCount={foundCount}
           onCheck={checkSelectedCard}
         />
+
+        {selectedMode === GAME_MODE_IDS.INFINITE && roundResult !== "playing" && !showResultOverlay ? (
+          <div className="im-post-result-actions">
+            <button type="button" className="im-primary-button" onClick={startNewGame}>
+              {copy.playAgain}
+            </button>
+          </div>
+        ) : null}
       </section>
 
       {roundResult !== "playing" && showResultOverlay ? (

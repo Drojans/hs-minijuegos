@@ -29,6 +29,7 @@ import "./CardGridGame.css";
 
 const CARD_GRID_GAME_ID = "card-grid";
 const DAILY_REWARD_PACK_ID = "standard";
+const DAILY_GRID_TIME_SECONDS = 90;
 
 const CARD_GRID_COPY = {
   es: {
@@ -58,6 +59,8 @@ const CARD_GRID_COPY = {
     infiniteChallenge: "Modo infinito",
     dailyRewardEarned: "Has ganado 1 caja arcana.",
     dailyRewardAlreadyClaimed: "Grid diario completado. Hoy ya tenías esta recompensa.",
+    dailyTimeLabel: "Tiempo",
+    dailyTimeExpiredMessage: "Se acabó el tiempo. El reto diario queda marcado como fallado.",
   },
   en: {
     navMinigames: "Minigames",
@@ -86,6 +89,8 @@ const CARD_GRID_COPY = {
     infiniteChallenge: "Infinite mode",
     dailyRewardEarned: "You earned 1 arcane box.",
     dailyRewardAlreadyClaimed: "Daily grid completed. You already had today’s reward.",
+    dailyTimeLabel: "Time",
+    dailyTimeExpiredMessage: "Time is up. The daily challenge is marked as failed.",
   },
 };
 
@@ -113,6 +118,23 @@ function restoreAnswersFromIds(answerIds = {}, cards = []) {
   });
 
   return restored;
+}
+
+function formatGridTime(totalSeconds) {
+  const minutes = Math.floor(Math.max(0, totalSeconds) / 60);
+  const seconds = Math.max(0, totalSeconds) % 60;
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function DailyTimer({ copy, timeLeft }) {
+  if (typeof timeLeft !== "number") return null;
+
+  return (
+    <div className={`cg-daily-timer ${timeLeft <= 15 ? "is-danger" : ""}`} aria-live="polite">
+      <span>{copy.dailyTimeLabel}</span>
+      <strong>{formatGridTime(timeLeft)}</strong>
+    </div>
+  );
 }
 
 function GameHeader({ copy, onBack }) {
@@ -389,6 +411,11 @@ function AnswerForm({
           ref={inputRef}
           value={answer}
           onChange={(event) => onAnswerChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+            event.preventDefault();
+            onSubmitAnswer(event);
+          }}
           placeholder={t("grid.answerPlaceholder")}
           autoComplete="off"
           disabled={isComplete}
@@ -557,7 +584,10 @@ function CardGridGame({ cards, onBack }) {
   const [resultsMode, setResultsMode] = useState(null);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
   const [rewardMessage, setRewardMessage] = useState("");
+  const [timeLeft, setTimeLeft] = useState(null);
   const answerInputRef = useRef(null);
+  const latestDailyRunRef = useRef(null);
+  const didFinalizeDailyRef = useRef(false);
 
   const usedCardIds = useMemo(
     () => new Set(Object.values(answers).map((card) => card.id)),
@@ -569,6 +599,16 @@ function CardGridGame({ cards, onBack }) {
   const selectedRow = grid?.rows[selectedCell.row];
   const selectedColumn = grid?.columns[selectedCell.column];
   const isComplete = correctCount >= TOTAL_CELLS;
+  const isDailyMode = selectedMode === GAME_MODE_IDS.DAILY;
+  const hasConsumedDailyAttempt = isDailyMode && dailyProgress.completed;
+  const isDailyTimerRunning =
+    isDailyMode &&
+    grid &&
+    !hasConsumedDailyAttempt &&
+    !isComplete &&
+    !endOverlay &&
+    !resultsMode &&
+    typeof timeLeft === "number";
 
   const selectedCandidates = useMemo(() => {
     if (!grid) return [];
@@ -599,11 +639,38 @@ function CardGridGame({ cards, onBack }) {
     setEndOverlay(null);
     setResultsMode(options.resultsMode ?? null);
     setRewardMessage("");
+    setTimeLeft(null);
     setMessage(nextMessage);
   }
 
   function makeGridReadyMessage() {
     return "";
+  }
+
+  function buildRevealedAnswerState(baseAnswers = answers, targetGrid = grid, baseRevealedCells = revealedCells) {
+    if (!targetGrid) {
+      return { answers: baseAnswers, revealedCells: new Set(baseRevealedCells) };
+    }
+
+    const nextAnswers = { ...baseAnswers };
+    const nextRevealedCells = new Set(baseRevealedCells);
+    const usedIds = new Set(Object.values(nextAnswers).map((card) => card.id));
+
+    targetGrid.rows.forEach((_, rowIndex) => {
+      targetGrid.columns.forEach((__, columnIndex) => {
+        const key = `${rowIndex}-${columnIndex}`;
+        if (nextAnswers[key]) return;
+
+        const fallbackCard = (targetGrid.candidateMap[key] ?? []).find((card) => !usedIds.has(card.id));
+        if (!fallbackCard) return;
+
+        nextAnswers[key] = fallbackCard;
+        usedIds.add(fallbackCard.id);
+        nextRevealedCells.add(key);
+      });
+    });
+
+    return { answers: nextAnswers, revealedCells: nextRevealedCells };
   }
 
   function getDailyReviewState(nextGrid) {
@@ -614,12 +681,22 @@ function CardGridGame({ cards, onBack }) {
     }
 
     const restoredAnswers = restoreAnswersFromIds(latestProgress.answerIds, playableCards);
-    const restoredKeys = Object.keys(restoredAnswers);
+
+    if (latestProgress.lastWasCorrect) {
+      const restoredKeys = Object.keys(restoredAnswers);
+      return {
+        answers: restoredAnswers,
+        revealedCells: restoredKeys,
+        resultsMode: "won",
+      };
+    }
+
+    const revealedState = buildRevealedAnswerState(restoredAnswers, nextGrid, Object.keys(restoredAnswers));
 
     return {
-      answers: restoredAnswers,
-      revealedCells: restoredKeys,
-      resultsMode: latestProgress.completed ? "won" : null,
+      answers: revealedState.answers,
+      revealedCells: Array.from(revealedState.revealedCells),
+      resultsMode: latestProgress.failedReason === "time" ? "time" : "time",
     };
   }
 
@@ -639,26 +716,39 @@ function CardGridGame({ cards, onBack }) {
   function revealAllPendingAnswers() {
     if (!grid) return;
 
-    const nextAnswers = { ...answers };
-    const nextRevealedCells = new Set(revealedCells);
-    const usedIds = new Set(Object.values(nextAnswers).map((card) => card.id));
+    const revealedState = buildRevealedAnswerState();
+    setAnswers(revealedState.answers);
+    setRevealedCells(revealedState.revealedCells);
 
-    grid.rows.forEach((_, rowIndex) => {
-      grid.columns.forEach((__, columnIndex) => {
-        const key = `${rowIndex}-${columnIndex}`;
-        if (nextAnswers[key]) return;
+    return revealedState;
+  }
 
-        const fallbackCard = (grid.candidateMap[key] ?? []).find((card) => !usedIds.has(card.id));
-        if (!fallbackCard) return;
+  function finalizeDailyGridFailure(reason = "exit", snapshot = latestDailyRunRef.current) {
+    if (!snapshot?.grid || snapshot.selectedMode !== GAME_MODE_IDS.DAILY || snapshot.dailyProgress?.completed) return null;
+    if (didFinalizeDailyRef.current) return null;
 
-        nextAnswers[key] = fallbackCard;
-        usedIds.add(fallbackCard.id);
-        nextRevealedCells.add(key);
-      });
+    didFinalizeDailyRef.current = true;
+
+    const revealedState = buildRevealedAnswerState(
+      snapshot.answers,
+      snapshot.grid,
+      snapshot.revealedCells,
+    );
+
+    const nextProgress = saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
+      completed: true,
+      completedAt: new Date().toISOString(),
+      rewardClaimed: false,
+      inProgress: false,
+      answerIds: serializeAnswerIds(revealedState.answers),
+      completedGridMode: snapshot.gridMode,
+      lastWasCorrect: false,
+      failedReason: reason,
+      mistakes: snapshot.mistakes,
     });
 
-    setAnswers(nextAnswers);
-    setRevealedCells(nextRevealedCells);
+    setDailyProgress(nextProgress);
+    return revealedState;
   }
 
   function viewEndResults() {
@@ -681,6 +771,21 @@ function CardGridGame({ cards, onBack }) {
 
     const reviewState = isDailyMode ? getDailyReviewState(nextGrid) : null;
     resetGrid(nextGrid, makeGridReadyMessage(nextGrid, isNewGrid), reviewState ?? {});
+
+    if (isDailyMode && !reviewState) {
+      didFinalizeDailyRef.current = false;
+      saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
+        inProgress: true,
+        startedAt: new Date().toISOString(),
+        answerIds: {},
+        completedGridMode: gridMode,
+        lastWasCorrect: false,
+        failedReason: null,
+        mistakes: 0,
+      });
+      setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
+      setTimeLeft(DAILY_GRID_TIME_SECONDS);
+    }
   }
 
   useEffect(() => {
@@ -731,12 +836,81 @@ function CardGridGame({ cards, onBack }) {
     }
   }
 
+  function failDailyGridByTime() {
+    if (!grid || selectedMode !== GAME_MODE_IDS.DAILY || dailyProgress.completed) return;
+
+    const revealedState = finalizeDailyGridFailure("time");
+    if (!revealedState) return;
+
+    setAnswers(revealedState.answers);
+    setRevealedCells(revealedState.revealedCells);
+    setTimeLeft(0);
+    setMessage(copy.dailyTimeExpiredMessage);
+    setRewardMessage("");
+    setEndOverlay("time");
+    setResultsMode(null);
+  }
+
+  useEffect(() => {
+    latestDailyRunRef.current = {
+      grid,
+      answers,
+      revealedCells,
+      selectedMode,
+      dailyProgress,
+      gridMode,
+      mistakes,
+      timeLeft,
+    };
+  }, [answers, dailyProgress, grid, gridMode, mistakes, revealedCells, selectedMode, timeLeft]);
+
+  useEffect(() => {
+    if (!isDailyTimerRunning) return;
+
+    function handlePageHide() {
+      finalizeDailyGridFailure("exit", latestDailyRunRef.current);
+    }
+
+    window.addEventListener("pagehide", handlePageHide);
+    window.addEventListener("beforeunload", handlePageHide);
+
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+      window.removeEventListener("beforeunload", handlePageHide);
+      finalizeDailyGridFailure("exit", latestDailyRunRef.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDailyTimerRunning]);
+
+  useEffect(() => {
+    if (!isDailyTimerRunning) return;
+
+    const intervalId = window.setInterval(() => {
+      setTimeLeft((current) => {
+        if (typeof current !== "number") return current;
+        return Math.max(0, current - 1);
+      });
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [isDailyTimerRunning]);
+
+  useEffect(() => {
+    if (!isDailyTimerRunning || timeLeft !== 0) return;
+    failDailyGridByTime();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDailyTimerRunning, timeLeft]);
+
   function completeDailyGrid(nextAnswers) {
     completeDailyChallenge(CARD_GRID_GAME_ID, todayKey);
+    didFinalizeDailyRef.current = true;
     saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
       answerIds: serializeAnswerIds(nextAnswers),
       completedGridMode: gridMode,
       lastWasCorrect: true,
+      failedReason: null,
+      inProgress: false,
+      mistakes,
     });
 
     let latestProgress = getDailyGameProgress(CARD_GRID_GAME_ID, todayKey);
@@ -760,7 +934,7 @@ function CardGridGame({ cards, onBack }) {
   function submitAnswer(event) {
     event?.preventDefault();
 
-    if (!grid || isComplete) return;
+    if (!grid || isComplete || hasConsumedDailyAttempt) return;
 
     if (answers[selectedKey]) {
       setMessage(t("grid.message.cellCompleted"));
@@ -786,7 +960,18 @@ function CardGridGame({ cards, onBack }) {
     );
 
     if (!validCard) {
-      setMistakes((current) => current + 1);
+      const nextMistakes = mistakes + 1;
+      setMistakes(nextMistakes);
+      if (selectedMode === GAME_MODE_IDS.DAILY) {
+        saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
+          inProgress: true,
+          answerIds: serializeAnswerIds(answers),
+          completedGridMode: gridMode,
+          lastWasCorrect: false,
+          failedReason: null,
+          mistakes: nextMistakes,
+        });
+      }
       setMessage(
         t("grid.message.wrongCell", {
           name: getCardName(unusedMatches[0], locale),
@@ -803,6 +988,17 @@ function CardGridGame({ cards, onBack }) {
     };
 
     const didCompleteGrid = Object.keys(nextAnswers).length >= TOTAL_CELLS;
+
+    if (selectedMode === GAME_MODE_IDS.DAILY && !didCompleteGrid) {
+      saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
+        inProgress: true,
+        answerIds: serializeAnswerIds(nextAnswers),
+        completedGridMode: gridMode,
+        lastWasCorrect: false,
+        failedReason: null,
+        mistakes,
+      });
+    }
 
     setAnswers(nextAnswers);
     setAnswer("");
@@ -824,7 +1020,7 @@ function CardGridGame({ cards, onBack }) {
   }
 
   function revealSelectedAnswer() {
-    if (!grid || isComplete) return;
+    if (!grid || isComplete || hasConsumedDailyAttempt) return;
 
     if (answers[selectedKey]) {
       setMessage(t("grid.message.cellCompleted"));
@@ -909,6 +1105,7 @@ function CardGridGame({ cards, onBack }) {
     <main className={`cg-page ${resultsMode ? `is-results-${resultsMode}` : ""}`}>
       <GameHeader copy={copy} onBack={onBack} />
       <section className="cg-shell">
+        <DailyTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
         <section className="cg-layout cg-layout-single">
           <GridBoard
             grid={grid}
@@ -937,6 +1134,14 @@ function CardGridGame({ cards, onBack }) {
             onSubmitAnswer={submitAnswer}
           />
         </section>
+
+        {selectedMode === GAME_MODE_IDS.INFINITE && resultsMode && !endOverlay ? (
+          <div className="cg-post-result-actions">
+            <button type="button" className="cg-primary-button" onClick={startNewGrid}>
+              {t("grid.playAgain")}
+            </button>
+          </div>
+        ) : null}
       </section>
 
       {endOverlay ? (

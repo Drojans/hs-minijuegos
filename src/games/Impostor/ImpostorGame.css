@@ -955,3 +955,14 @@
   color: rgba(240, 207, 130, 0.96);
   font-weight: 950;
 }
+
+.im-post-result-actions {
+  width: min(100%, 1040px);
+  margin: 16px auto 0;
+  display: flex;
+  justify-content: center;
+}
+
+.im-post-result-actions .im-primary-button {
+  min-width: 220px;
+}
