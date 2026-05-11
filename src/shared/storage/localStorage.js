@@ -24,3 +24,15 @@ export function emitWindowEvent(eventName, detail) {
   if (typeof window === "undefined" || !eventName) return;
   window.dispatchEvent(new CustomEvent(eventName, { detail }));
 }
+
+
+export function removeLocalItem(key) {
+  if (typeof window === "undefined") return false;
+
+  try {
+    window.localStorage.removeItem(key);
+    return true;
+  } catch {
+    return false;
+  }
+}

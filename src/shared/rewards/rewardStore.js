@@ -1,7 +1,7 @@
 import { ARCANE_BOX_ID } from "../config/gameRules";
 import { emitWindowEvent, readLocalJson, writeLocalJson } from "../storage/localStorage";
 
-const REWARD_STORE_KEY = "hearthdle:rewards:v1";
+export const REWARD_STORE_KEY = "hearthdle:rewards:v1";
 
 export const REWARDS_UPDATED_EVENT = "hearthdle:rewards-updated";
 
@@ -29,6 +29,27 @@ export function getRewardStore() {
     },
     history: Array.isArray(stored.history) ? stored.history : [],
   };
+}
+
+
+export function replaceRewardStore(nextStore = DEFAULT_REWARD_STORE) {
+  const safeStore = {
+    ...DEFAULT_REWARD_STORE,
+    ...(nextStore && typeof nextStore === "object" ? nextStore : {}),
+    packs: {
+      ...DEFAULT_REWARD_STORE.packs,
+      ...((nextStore && typeof nextStore === "object" ? nextStore.packs : {}) ?? {}),
+    },
+    history: Array.isArray(nextStore?.history) ? nextStore.history : [],
+  };
+
+  writeLocalJson(REWARD_STORE_KEY, safeStore);
+  notifyRewardStoreUpdated();
+  return safeStore;
+}
+
+export function clearRewardStore() {
+  return replaceRewardStore(DEFAULT_REWARD_STORE);
 }
 
 export function getArcaneBoxCount(boxId = ARCANE_BOX_ID) {

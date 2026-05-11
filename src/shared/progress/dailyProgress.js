@@ -1,6 +1,6 @@
 import { emitWindowEvent, readLocalJson, writeLocalJson } from "../storage/localStorage";
 
-const DAILY_PROGRESS_KEY = "hearthdle:daily-progress:v1";
+export const DAILY_PROGRESS_KEY = "hearthdle:daily-progress:v1";
 
 export const DAILY_PROGRESS_UPDATED_EVENT = "hearthdle:daily-progress-updated";
 
@@ -84,4 +84,16 @@ export function saveDailyChallengeResult(gameId, dateKey = getTodayKey(), result
     ...current,
     ...result,
   }));
+}
+
+
+export function replaceDailyProgressStore(nextStore = {}) {
+  const safeStore = nextStore && typeof nextStore === "object" ? nextStore : {};
+  writeLocalJson(DAILY_PROGRESS_KEY, safeStore);
+  notifyDailyProgressUpdated();
+  return safeStore;
+}
+
+export function clearDailyProgressStore() {
+  return replaceDailyProgressStore({});
 }

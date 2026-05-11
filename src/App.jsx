@@ -5,6 +5,7 @@ import ImpostorPage from "./pages/ImpostorPage";
 import CardGridPage from "./pages/CardGridPage";
 import CardDatabasePage from "./pages/CardDatabasePage";
 import CollectionPage from "./pages/CollectionPage";
+import PlayerProfilePage from "./pages/PlayerProfilePage";
 import { useCardsData } from "./hooks/useCardsData";
 import "./App.css";
 
@@ -15,6 +16,7 @@ const APP_ROUTES = {
   "/grid": "grid",
   "/cards": "cards",
   "/collection": "collection",
+  "/player": "player",
 };
 
 function normalizePath(pathname) {
@@ -67,6 +69,9 @@ function App() {
 
     case "/collection":
       return <CollectionPage cards={cards} loading={loading} onNavigate={navigate} />;
+
+    case "/player":
+      return <PlayerProfilePage cards={cards} loading={loading} onNavigate={navigate} />;
 
     default:
       return <HomePage cards={cards} loading={loading} onNavigate={navigate} />;

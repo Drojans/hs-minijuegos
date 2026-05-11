@@ -1,0 +1,525 @@
+
+:root {
+  --player-bg: #070a11;
+  --player-gold: #d9a441;
+  --player-gold-soft: #f0cf82;
+  --player-text: #f7ecd4;
+  --player-border: rgba(217, 164, 65, 0.24);
+  --player-blue: #69a7ff;
+  --player-panel: rgba(12, 16, 26, 0.86);
+}
+
+.player-profile-page {
+  position: relative;
+  min-height: 100svh;
+  width: 100%;
+  color: var(--player-text);
+  overflow-x: hidden;
+  isolation: isolate;
+  background: var(--player-bg);
+}
+
+.player-profile-page::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -4;
+  background:
+    linear-gradient(180deg, rgba(5, 7, 12, 0.26), rgba(5, 7, 12, 0.95)),
+    radial-gradient(circle at 48% 10%, rgba(240, 185, 104, 0.13), transparent 28%),
+    url("/ui/book/home-tavern-backdrop-cartoon.webp") center / cover no-repeat;
+  transform: scale(1.035);
+  filter: blur(2px) saturate(0.78) brightness(0.55);
+}
+
+.player-profile-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(105, 167, 255, 0.1), transparent 30%),
+    radial-gradient(circle at 50% 54%, rgba(217, 164, 65, 0.08), transparent 34%),
+    linear-gradient(180deg, rgba(7, 10, 17, 0.28), rgba(7, 10, 17, 0.96));
+}
+
+.player-profile-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.player-profile-bg::before {
+  content: "";
+  position: absolute;
+  inset: 82px 22px 22px;
+  border: 1px solid rgba(240, 207, 130, 0.07);
+  border-radius: 34px;
+  box-shadow: inset 0 0 70px rgba(0, 0, 0, 0.32), 0 0 80px rgba(0, 0, 0, 0.18);
+}
+
+.player-profile-glow {
+  position: absolute;
+  width: 360px;
+  height: 360px;
+  border-radius: 999px;
+  filter: blur(26px);
+  opacity: 0.42;
+}
+
+.player-profile-glow-a {
+  left: -160px;
+  top: 12%;
+  background: radial-gradient(circle, rgba(47, 109, 255, 0.22), transparent 68%);
+}
+
+.player-profile-glow-b {
+  right: -150px;
+  bottom: 4%;
+  background: radial-gradient(circle, rgba(217, 164, 65, 0.18), transparent 67%);
+}
+
+.player-profile-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  min-height: 66px;
+  padding: 8px clamp(16px, 4vw, 46px);
+  background: linear-gradient(180deg, rgba(15, 19, 29, 0.96), rgba(11, 14, 22, 0.84));
+  border-bottom: 1px solid rgba(217, 164, 65, 0.16);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.player-profile-brand,
+.player-profile-nav button {
+  font: inherit;
+}
+
+.player-profile-brand {
+  justify-self: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--player-gold-soft);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  line-height: 0.9;
+  letter-spacing: -0.045em;
+  text-shadow: 0 2px 0 rgba(66, 32, 7, 0.85), 0 12px 26px rgba(0, 0, 0, 0.38), 0 0 20px rgba(217, 164, 65, 0.1);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.player-profile-brand::before,
+.player-profile-brand::after {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240, 207, 130, 0.62), transparent);
+  opacity: 0.65;
+}
+
+.player-profile-brand-mug {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.34));
+  opacity: 0.95;
+}
+
+.player-profile-brand-mug.is-left {
+  transform: scaleX(-1);
+}
+
+.player-profile-nav {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.player-profile-nav button {
+  border: 0;
+  border-radius: 999px;
+  padding: 8px 12px;
+  color: rgba(247, 236, 212, 0.72);
+  background: transparent;
+  font-size: 0.86rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: color 0.16s ease, background 0.16s ease, transform 0.16s ease;
+}
+
+.player-profile-nav button:hover {
+  color: var(--player-text);
+  transform: translateY(-1px);
+}
+
+.player-profile-actions {
+  justify-self: end;
+}
+
+.player-profile-language.language-toggle {
+  min-width: auto;
+  padding: 4px;
+  border-color: rgba(240, 207, 130, 0.14);
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.player-profile-shell {
+  width: min(100% - 32px, 1320px);
+  margin: 0 auto;
+  padding: 22px 0 44px;
+}
+
+.player-profile-hero {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-bottom: 18px;
+  text-align: center;
+}
+
+.player-profile-hero p,
+.player-profile-panel-head p,
+.player-profile-stat span,
+.player-profile-meta dt,
+.player-profile-chip {
+  margin: 0;
+  color: var(--player-gold-soft);
+  font-size: 0.74rem;
+  font-weight: 950;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.player-profile-hero h1 {
+  margin: 0;
+  color: var(--player-text);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2.4rem, 4.4vw, 4.8rem);
+  line-height: 0.9;
+  letter-spacing: -0.055em;
+  text-shadow: 0 18px 34px rgba(0, 0, 0, 0.42);
+}
+
+.player-profile-hero span,
+.player-profile-muted {
+  margin: 0;
+  max-width: 720px;
+  color: rgba(247, 236, 212, 0.76);
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.player-profile-message {
+  width: fit-content;
+  margin: 0 auto 16px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(105, 167, 255, 0.28);
+  color: rgba(247, 236, 212, 0.9);
+  background: rgba(17, 35, 72, 0.72);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.18);
+  font-weight: 850;
+}
+
+.player-profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(260px, 0.8fr) minmax(260px, 0.9fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.player-profile-panel {
+  border: 1px solid var(--player-border);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(105, 167, 255, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(12, 16, 26, 0.92), rgba(8, 12, 20, 0.96));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 44px rgba(0,0,0,0.26);
+  padding: 20px;
+}
+
+.player-profile-main-panel {
+  min-width: 0;
+}
+
+.player-profile-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
+.player-profile-panel-head h2 {
+  margin: 4px 0 0;
+  color: var(--player-text);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(1.55rem, 2.5vw, 2.25rem);
+  line-height: 0.95;
+}
+
+.player-profile-chip {
+  border: 1px solid rgba(240, 207, 130, 0.18);
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(217, 164, 65, 0.08);
+}
+
+.player-profile-name-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.player-profile-name-form input,
+.player-profile-storage textarea {
+  width: 100%;
+  border: 1px solid rgba(240, 207, 130, 0.16);
+  border-radius: 16px;
+  color: var(--player-text);
+  background: rgba(255,255,255,0.045);
+  outline: none;
+  font: inherit;
+}
+
+.player-profile-name-form input {
+  min-height: 46px;
+  padding: 0 14px;
+  font-weight: 800;
+}
+
+.player-profile-name-form input:focus,
+.player-profile-storage textarea:focus {
+  border-color: rgba(105, 167, 255, 0.5);
+  box-shadow: 0 0 0 3px rgba(105, 167, 255, 0.12);
+}
+
+.player-profile-name-form button,
+.player-profile-action-row button {
+  border: 1px solid rgba(240, 207, 130, 0.2);
+  border-radius: 999px;
+  padding: 0 16px;
+  min-height: 42px;
+  color: var(--player-text);
+  background: rgba(255,255,255,0.06);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.player-profile-name-form button:hover,
+.player-profile-action-row button:hover:not(:disabled) {
+  border-color: rgba(240, 207, 130, 0.36);
+  background: rgba(217, 164, 65, 0.1);
+}
+
+.player-profile-action-row button:disabled {
+  opacity: 0.46;
+  cursor: not-allowed;
+}
+
+.player-profile-action-row button.is-danger {
+  color: #ffd8d2;
+  border-color: rgba(255, 106, 131, 0.34);
+  background: rgba(255, 70, 94, 0.08);
+}
+
+.player-profile-meta {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.player-profile-meta div {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.player-profile-meta dd {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: rgba(247, 236, 212, 0.8);
+  font-weight: 750;
+}
+
+.player-profile-stats,
+.player-profile-daily-stats {
+  display: grid;
+  gap: 10px;
+}
+
+.player-profile-stat {
+  display: grid;
+  gap: 3px;
+  padding: 13px 14px;
+  border: 1px solid rgba(240, 207, 130, 0.12);
+  border-radius: 18px;
+  background: rgba(255,255,255,0.035);
+}
+
+.player-profile-stat strong {
+  color: var(--player-text);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.85rem;
+  line-height: 0.95;
+}
+
+.player-profile-stat small {
+  color: rgba(247, 236, 212, 0.6);
+  font-weight: 750;
+}
+
+.player-profile-daily-list {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.player-profile-daily-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 16px;
+  border: 1px solid rgba(240, 207, 130, 0.12);
+  background: rgba(255,255,255,0.035);
+}
+
+.player-profile-daily-row span {
+  color: rgba(247, 236, 212, 0.82);
+  font-weight: 850;
+}
+
+.player-profile-daily-row strong {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.player-profile-daily-row.is-done strong {
+  color: #8dffbf;
+}
+
+.player-profile-daily-row.is-failed strong {
+  color: #ff9a93;
+}
+
+.player-profile-daily-row.is-pending strong {
+  color: rgba(247, 236, 212, 0.56);
+}
+
+.player-profile-storage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.player-profile-storage-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.player-profile-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.player-profile-storage textarea {
+  min-height: 240px;
+  padding: 14px;
+  resize: vertical;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgba(247, 236, 212, 0.82);
+}
+
+.player-profile-backend-details {
+  border: 1px solid rgba(240, 207, 130, 0.1);
+  border-radius: 18px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.03);
+}
+
+.player-profile-backend-details summary {
+  cursor: pointer;
+  color: var(--player-gold-soft);
+  font-weight: 900;
+}
+
+.player-profile-backend-details pre {
+  max-height: 260px;
+  overflow: auto;
+  margin: 12px 0 0;
+  color: rgba(247, 236, 212, 0.76);
+  font-size: 0.75rem;
+  line-height: 1.45;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 1060px) {
+  .player-profile-grid,
+  .player-profile-storage {
+    grid-template-columns: 1fr;
+  }
+
+  .player-profile-header {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .player-profile-nav,
+  .player-profile-actions {
+    justify-self: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .player-profile-shell {
+    width: min(100% - 20px, 1320px);
+    padding-bottom: 28px;
+  }
+
+  .player-profile-panel {
+    padding: 16px;
+    border-radius: 22px;
+  }
+
+  .player-profile-name-form {
+    grid-template-columns: 1fr;
+  }
+
+  .player-profile-name-form button {
+    min-height: 44px;
+  }
+
+  .player-profile-brand-mug,
+  .player-profile-brand::before,
+  .player-profile-brand::after {
+    display: none;
+  }
+}

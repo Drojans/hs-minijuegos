@@ -1,7 +1,7 @@
 import { ARCANE_BOX_ID } from "../config/gameRules";
 import { emitWindowEvent, readLocalJson, writeLocalJson } from "../storage/localStorage";
 
-const COLLECTION_STORE_KEY = "hearthdle:collection:v1";
+export const COLLECTION_STORE_KEY = "hearthdle:collection:v1";
 
 export const COLLECTION_UPDATED_EVENT = "hearthdle:collection-updated";
 
@@ -23,6 +23,24 @@ export function getCollectionStore() {
     cards: stored.cards && typeof stored.cards === "object" ? stored.cards : {},
     history: Array.isArray(stored.history) ? stored.history : [],
   };
+}
+
+
+export function replaceCollectionStore(nextStore = DEFAULT_COLLECTION_STORE) {
+  const safeStore = {
+    ...DEFAULT_COLLECTION_STORE,
+    ...(nextStore && typeof nextStore === "object" ? nextStore : {}),
+    cards: nextStore?.cards && typeof nextStore.cards === "object" ? nextStore.cards : {},
+    history: Array.isArray(nextStore?.history) ? nextStore.history : [],
+  };
+
+  writeLocalJson(COLLECTION_STORE_KEY, safeStore);
+  notifyCollectionUpdated();
+  return safeStore;
+}
+
+export function clearCollectionStore() {
+  return replaceCollectionStore(DEFAULT_COLLECTION_STORE);
 }
 
 export function getOwnedCardCount() {

@@ -186,7 +186,9 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
 
         <div className="home-v2-actions">
           <LanguageToggle compact className="home-v2-language" />
-          <button type="button" className="home-v2-icon-button" aria-label={copy.infoLabel}>?</button>
+          <button type="button" className="home-v2-profile-button" onClick={() => handleNavigate("/player")}>
+            {copy.profileLabel}
+          </button>
         </div>
       </header>
 
