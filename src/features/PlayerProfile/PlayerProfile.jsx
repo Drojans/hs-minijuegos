@@ -70,6 +70,7 @@ const COPY = {
     guessMana: "Adivina el coste",
     impostor: "Encuentra el impostor",
     grid: "Grid de cartas",
+    pyramid: "La Pirámide",
   },
   en: {
     navMinigames: "Minigames",
@@ -117,6 +118,7 @@ const COPY = {
     guessMana: "Guess the Cost",
     impostor: "Find the Impostor",
     grid: "Card Grid",
+    pyramid: "The Pyramid",
   },
 };
 
@@ -124,6 +126,7 @@ const DAILY_LABELS = {
   guessMana: "guessMana",
   impostor: "impostor",
   grid: "grid",
+  pyramid: "pyramid",
 };
 
 function formatDate(value, locale) {
