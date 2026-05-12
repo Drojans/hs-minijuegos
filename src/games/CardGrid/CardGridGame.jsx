@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
-import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
@@ -14,11 +13,23 @@ import {
   saveDailyChallengeResult,
 } from "../../shared/progress/dailyProgress";
 import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
+import CardGridBoard from "./components/CardGridBoard";
+import CardGridControls from "./components/CardGridControls";
+import CardGridEmptyState from "./components/CardGridEmptyState";
+import CardGridResultOverlay from "./components/CardGridResultOverlay";
+import CardGridTimer from "./components/CardGridTimer";
+import { getCardGridCopy } from "./cardGridCopy";
+import {
+  buildRevealedAnswerState,
+  getDailyGridSeed,
+  getGridCellKey,
+  restoreAnswersFromIds,
+  serializeAnswerIds,
+} from "./cardGridState";
 import {
   TOTAL_CELLS,
   buildConditionPool,
   generateGrid,
-  getCardImage,
   getCardName,
   getCardsByExactName,
   getGridModes,
@@ -31,406 +42,9 @@ import "./CardGridGame.css";
 
 const CARD_GRID_GAME_ID = GAME_IDS.CARD_GRID;
 
-const CARD_GRID_COPY = {
-  es: {
-    progressLabel: "Progreso",
-    dailyChallenge: "Reto diario",
-    infiniteChallenge: "Modo infinito",
-    dailyRewardEarned: "Has ganado 1 caja arcana.",
-    dailyRewardAlreadyClaimed: "Grid diario completado. Hoy ya tenías esta recompensa.",
-    dailyTimeLabel: "Tiempo",
-    dailyTimeExpiredMessage: "Se acabó el tiempo. El reto diario queda marcado como fallado.",
-    backHome: "Volver",
-  },
-  en: {
-    progressLabel: "Progress",
-    dailyChallenge: "Daily challenge",
-    infiniteChallenge: "Infinite mode",
-    dailyRewardEarned: "You earned 1 arcane box.",
-    dailyRewardAlreadyClaimed: "Daily grid completed. You already had today’s reward.",
-    dailyTimeLabel: "Time",
-    dailyTimeExpiredMessage: "Time is up. The daily challenge is marked as failed.",
-    backHome: "Back",
-  },
-};
-
-function useCardGridCopy(locale) {
-  return CARD_GRID_COPY[locale] ?? CARD_GRID_COPY.es;
-}
-
-function getDailyGridSeed(dateKey, gridMode) {
-  return `${CARD_GRID_GAME_ID}:${dateKey}:${gridMode}`;
-}
-
-function serializeAnswerIds(answers) {
-  return Object.fromEntries(
-    Object.entries(answers).map(([key, card]) => [key, card.id])
-  );
-}
-
-function restoreAnswersFromIds(answerIds = {}, cards = []) {
-  const cardById = new Map(cards.map((card) => [card.id, card]));
-  const restored = {};
-
-  Object.entries(answerIds).forEach(([key, cardId]) => {
-    const card = cardById.get(cardId);
-    if (card) restored[key] = card;
-  });
-
-  return restored;
-}
-
-function formatGridTime(totalSeconds) {
-  const minutes = Math.floor(Math.max(0, totalSeconds) / 60);
-  const seconds = Math.max(0, totalSeconds) % 60;
-  return `${minutes}:${String(seconds).padStart(2, "0")}`;
-}
-
-function DailyTimer({ copy, timeLeft }) {
-  if (typeof timeLeft !== "number") return null;
-
-  return (
-    <div className={`cg-daily-timer ${timeLeft <= 15 ? "is-danger" : ""}`} aria-live="polite">
-      <span>{copy.dailyTimeLabel}</span>
-      <strong>{formatGridTime(timeLeft)}</strong>
-    </div>
-  );
-}
-
-function ConditionContent({ condition }) {
-  if (condition.icon) {
-    return (
-      <div
-        className="cg-condition-icon-frame"
-        title={condition.shortLabel}
-        data-label={condition.shortLabel}
-      >
-        <img
-          className="cg-condition-icon"
-          src={condition.icon}
-          alt={condition.shortLabel}
-          loading="eager"
-          decoding="async"
-          onError={(event) => {
-            const icon = event.currentTarget;
-            const fallback = icon.parentElement?.querySelector(".cg-condition-icon-fallback");
-
-            icon.style.display = "none";
-            if (fallback) fallback.hidden = false;
-          }}
-        />
-        <span className="cg-condition-icon-fallback" hidden>
-          {condition.shortLabel}
-        </span>
-      </div>
-    );
-  }
-
-  return (
-    <>
-      <span>{condition.description}</span>
-      <strong>{condition.shortLabel}</strong>
-    </>
-  );
-}
-
-function EmptyState({
-  t,
-  cards,
-  gridMode,
-  gridModes,
-  modeConfig,
-  onBack,
-  onChangeMode,
-  onStartNewGrid,
-}) {
-  return (
-    <GamePageShell className="cg-page">
-      <section className="cg-shell">
-        <section className="cg-empty">
-        <button type="button" className="cg-secondary-button" onClick={onBack}>
-          {t("common.backHome")}
-        </button>
-        <h1>{t("grid.title")}</h1>
-        <p>
-          {!cards.length ? t("grid.preparing") : t("grid.generationFailedShort")}
-        </p>
-
-        {cards.length ? (
-          <>
-            <div className="cg-mode-selector cg-mode-selector-empty">
-              <span>{t("grid.modeLabelFull")}</span>
-              <div className="cg-mode-buttons">
-                {Object.values(gridModes).map((mode) => (
-                  <button
-                    key={mode.id}
-                    type="button"
-                    className={gridMode === mode.id ? "is-active" : ""}
-                    onClick={() => onChangeMode(mode.id)}
-                  >
-                    {mode.label}
-                  </button>
-                ))}
-              </div>
-              <p>{modeConfig.description}</p>
-            </div>
-
-            <button type="button" className="cg-primary-button" onClick={onStartNewGrid}>
-              {t("grid.retry")}
-            </button>
-          </>
-        ) : null}
-        </section>
-      </section>
-    </GamePageShell>
-  );
-}
-
-function SolvedCard({ card, locale }) {
-  const imageSrc = getCardImage(card, locale);
-
-  if (!imageSrc) {
-    return <strong>{getCardName(card, locale)}</strong>;
-  }
-
-  return (
-    <div className="cg-solved-card-frame">
-      <img
-        className="cg-solved-card-image"
-        src={imageSrc}
-        alt={getCardName(card, locale)}
-        loading="lazy"
-        decoding="async"
-      />
-    </div>
-  );
-}
-
-function AnswerCell({
-  answerKey,
-  solvedCard,
-  selected,
-  revealed,
-  rowIndex,
-  columnIndex,
-  locale,
-  t,
-  onSelectCell,
-}) {
-  return (
-    <button
-      type="button"
-      className={`cg-answer-cell ${selected ? "is-selected" : ""} ${
-        solvedCard ? "is-solved" : ""
-      } ${revealed ? "is-revealed" : ""}`}
-      onClick={() => onSelectCell({ row: rowIndex, column: columnIndex })}
-      title={solvedCard ? getCardName(solvedCard, locale) : t("grid.emptyCell")}
-      data-cell-key={answerKey}
-    >
-      {solvedCard ? <SolvedCard card={solvedCard} locale={locale} /> : <span>+</span>}
-    </button>
-  );
-}
-
-function GridBoard({ grid, answers, revealedCells, selectedCell, locale, t, onSelectCell }) {
-  return (
-    <div className="cg-board-panel">
-      <div className="cg-board" role="grid" aria-label={t("grid.title")}>
-        <div className="cg-corner-cell">
-          <span>GRID</span>
-        </div>
-
-        {grid.columns.map((column) => (
-          <div className="cg-condition-cell cg-column-cell" key={column.id}>
-            <ConditionContent condition={column} />
-          </div>
-        ))}
-
-        {grid.rows.map((row, rowIndex) => (
-          <div className="cg-row-fragment" key={row.id}>
-            <div className="cg-condition-cell cg-row-cell">
-              <ConditionContent condition={row} />
-            </div>
-
-            {grid.columns.map((column, columnIndex) => {
-              const answerKey = `${rowIndex}-${columnIndex}`;
-              const solvedCard = answers[answerKey];
-              const selected =
-                selectedCell.row === rowIndex && selectedCell.column === columnIndex;
-              const revealed = revealedCells.has(answerKey);
-
-              return (
-                <AnswerCell
-                  key={answerKey}
-                  answerKey={answerKey}
-                  solvedCard={solvedCard}
-                  selected={selected}
-                  revealed={revealed}
-                  rowIndex={rowIndex}
-                  columnIndex={columnIndex}
-                  locale={locale}
-                  t={t}
-                  onSelectCell={onSelectCell}
-                />
-              );
-            })}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Suggestions({ suggestions, locale, isComplete, onPickSuggestion }) {
-  if (suggestions.length === 0 || isComplete) return null;
-
-  return (
-    <div className="cg-suggestions">
-      {suggestions.map((card) => (
-        <button
-          type="button"
-          key={card.id}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => onPickSuggestion(getCardName(card, locale))}
-        >
-          {getCardName(card, locale)}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function AnswerForm({
-  t,
-  answer,
-  suggestions,
-  isComplete,
-  locale,
-  inputRef,
-  onAnswerChange,
-  onPickSuggestion,
-  onSubmitAnswer,
-}) {
-  return (
-    <form className="cg-answer-form" onSubmit={onSubmitAnswer}>
-      <label htmlFor="grid-card-answer">{t("grid.cardLabel")}</label>
-      <div className="cg-input-row cg-input-row-single">
-        <input
-          id="grid-card-answer"
-          ref={inputRef}
-          value={answer}
-          onChange={(event) => onAnswerChange(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
-            event.preventDefault();
-            onSubmitAnswer(event);
-          }}
-          placeholder={t("grid.answerPlaceholder")}
-          autoComplete="off"
-          disabled={isComplete}
-        />
-      </div>
-      <p className="cg-enter-hint">{t("grid.enterHint")}</p>
-
-      <Suggestions
-        suggestions={suggestions}
-        locale={locale}
-        isComplete={isComplete}
-        onPickSuggestion={onPickSuggestion}
-      />
-    </form>
-  );
-}
-
-function ConditionChip({ condition }) {
-  if (!condition) return null;
-
-  return (
-    <div className="cg-selection-chip" title={condition.shortLabel}>
-      {condition.icon ? (
-        <img src={condition.icon} alt="" className="cg-selection-chip-icon" loading="eager" decoding="async" />
-      ) : null}
-      <span>{condition.shortLabel}</span>
-    </div>
-  );
-}
-
-function SelectionSummary({ t, selectedRow, selectedColumn }) {
-  return (
-    <div className="cg-selection-summary" aria-label={t("grid.selectedCell")}>
-      <ConditionChip condition={selectedRow} />
-      <span className="cg-selection-join">+</span>
-      <ConditionChip condition={selectedColumn} />
-    </div>
-  );
-}
-
-function GridResultOverlay({ t, copy, result, rewardMessage, onViewResults, onBack }) {
-  const isWon = result === "won";
-
-  return (
-    <GameResultOverlay
-      tone={isWon ? "success" : "danger"}
-      kicker={t("grid.resultKicker")}
-      title={isWon ? t("grid.resultVictoryTitle") : t("grid.resultTimeTitle")}
-      text={isWon ? t("grid.resultVictoryText") : t("grid.resultTimeText")}
-      rewardMessage={rewardMessage}
-      primaryAction={{ label: t("grid.viewResults"), onClick: onViewResults }}
-      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
-    />
-  );
-}
-
-function BottomControls({
-  t,
-  selectedRow,
-  selectedColumn,
-  mistakes,
-  message,
-  answer,
-  suggestions,
-  isComplete,
-  locale,
-  inputRef,
-  onAnswerChange,
-  onPickSuggestion,
-  onSubmitAnswer,
-}) {
-  const shouldShowMessage = Boolean(message) || mistakes > 0 || isComplete;
-
-  return (
-    <section className="cg-bottom-controls">
-      <SelectionSummary
-        t={t}
-        selectedRow={selectedRow}
-        selectedColumn={selectedColumn}
-      />
-
-      <AnswerForm
-        t={t}
-        answer={answer}
-        suggestions={suggestions}
-        isComplete={isComplete}
-        locale={locale}
-        inputRef={inputRef}
-        onAnswerChange={onAnswerChange}
-        onPickSuggestion={onPickSuggestion}
-        onSubmitAnswer={onSubmitAnswer}
-      />
-
-      {shouldShowMessage ? (
-        <div className="cg-message cg-message-inline">
-          <p>{isComplete ? t("grid.completed") : message}</p>
-          <span>{t("grid.mistakes", { mistakes })}</span>
-        </div>
-      ) : null}
-    </section>
-  );
-}
-
 function CardGridGame({ cards, onBack }) {
   const { locale, t } = useLanguage();
-  const copy = useCardGridCopy(locale);
+  const copy = getCardGridCopy(locale);
   const introCopy = useMemo(() => getGameIntroCopy(CARD_GRID_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
   const [gridMode, setGridMode] = useState("easy");
@@ -468,7 +82,7 @@ function CardGridGame({ cards, onBack }) {
   );
 
   const correctCount = Object.keys(answers).length;
-  const selectedKey = `${selectedCell.row}-${selectedCell.column}`;
+  const selectedKey = getGridCellKey(selectedCell.row, selectedCell.column);
   const selectedRow = grid?.rows[selectedCell.row];
   const selectedColumn = grid?.columns[selectedCell.column];
   const isComplete = correctCount >= TOTAL_CELLS;
@@ -515,32 +129,6 @@ function CardGridGame({ cards, onBack }) {
     return "";
   }
 
-  function buildRevealedAnswerState(baseAnswers = answers, targetGrid = grid, baseRevealedCells = revealedCells) {
-    if (!targetGrid) {
-      return { answers: baseAnswers, revealedCells: new Set(baseRevealedCells) };
-    }
-
-    const nextAnswers = { ...baseAnswers };
-    const nextRevealedCells = new Set(baseRevealedCells);
-    const usedIds = new Set(Object.values(nextAnswers).map((card) => card.id));
-
-    targetGrid.rows.forEach((_, rowIndex) => {
-      targetGrid.columns.forEach((__, columnIndex) => {
-        const key = `${rowIndex}-${columnIndex}`;
-        if (nextAnswers[key]) return;
-
-        const fallbackCard = (targetGrid.candidateMap[key] ?? []).find((card) => !usedIds.has(card.id));
-        if (!fallbackCard) return;
-
-        nextAnswers[key] = fallbackCard;
-        usedIds.add(fallbackCard.id);
-        nextRevealedCells.add(key);
-      });
-    });
-
-    return { answers: nextAnswers, revealedCells: nextRevealedCells };
-  }
-
   function getDailyReviewState(nextGrid) {
     const latestProgress = getDailyGameProgress(CARD_GRID_GAME_ID, todayKey);
 
@@ -559,7 +147,7 @@ function CardGridGame({ cards, onBack }) {
       };
     }
 
-    const revealedState = buildRevealedAnswerState(restoredAnswers, nextGrid, Object.keys(restoredAnswers));
+    const revealedState = buildRevealedAnswerState({ answers: restoredAnswers, grid: nextGrid, revealedCells: Object.keys(restoredAnswers) });
 
     return {
       answers: revealedState.answers,
@@ -584,7 +172,7 @@ function CardGridGame({ cards, onBack }) {
   function revealAllPendingAnswers() {
     if (!grid) return;
 
-    const revealedState = buildRevealedAnswerState();
+    const revealedState = buildRevealedAnswerState({ answers, grid, revealedCells });
     setAnswers(revealedState.answers);
     setRevealedCells(revealedState.revealedCells);
 
@@ -597,11 +185,11 @@ function CardGridGame({ cards, onBack }) {
 
     didFinalizeDailyRef.current = true;
 
-    const revealedState = buildRevealedAnswerState(
-      snapshot.answers,
-      snapshot.grid,
-      snapshot.revealedCells,
-    );
+    const revealedState = buildRevealedAnswerState({
+      answers: snapshot.answers,
+      grid: snapshot.grid,
+      revealedCells: snapshot.revealedCells,
+    });
 
     const nextProgress = saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
       completed: true,
@@ -634,7 +222,7 @@ function CardGridGame({ cards, onBack }) {
       playableCards,
       conditionPool,
       modeConfig.minCandidatesPerCell,
-      isDailyMode ? getDailyGridSeed(todayKey, gridMode) : null
+      isDailyMode ? getDailyGridSeed(CARD_GRID_GAME_ID, todayKey, gridMode) : null
     );
 
     const reviewState = isDailyMode ? getDailyReviewState(nextGrid) : null;
@@ -893,7 +481,7 @@ function CardGridGame({ cards, onBack }) {
 
   if (!cards.length) {
     return (
-      <EmptyState
+      <CardGridEmptyState
         t={t}
         cards={cards}
         gridMode={gridMode}
@@ -922,7 +510,7 @@ function CardGridGame({ cards, onBack }) {
 
   if (!grid) {
     return (
-      <EmptyState
+      <CardGridEmptyState
         t={t}
         cards={cards}
         gridMode={gridMode}
@@ -938,9 +526,9 @@ function CardGridGame({ cards, onBack }) {
   return (
     <GamePageShell className={`cg-page ${resultsMode ? `is-results-${resultsMode}` : ""}`}>
       <section className="cg-shell">
-        <DailyTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
+        <CardGridTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
         <section className="cg-layout cg-layout-single">
-          <GridBoard
+          <CardGridBoard
             grid={grid}
             answers={answers}
             revealedCells={revealedCells}
@@ -950,7 +538,7 @@ function CardGridGame({ cards, onBack }) {
             onSelectCell={setSelectedCell}
           />
 
-          <BottomControls
+          <CardGridControls
             t={t}
             selectedRow={selectedRow}
             selectedColumn={selectedColumn}
@@ -977,9 +565,10 @@ function CardGridGame({ cards, onBack }) {
       </section>
 
       {endOverlay ? (
-        <GridResultOverlay
+        <CardGridResultOverlay
           t={t}
-            result={endOverlay}
+          copy={copy}
+          result={endOverlay}
           rewardMessage={rewardMessage}
           onViewResults={viewEndResults}
           onBack={returnToModes}
