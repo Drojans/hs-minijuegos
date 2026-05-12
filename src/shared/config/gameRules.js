@@ -3,6 +3,7 @@ export const GAME_IDS = {
   IMPOSTOR: "impostor",
   CARD_GRID: "card-grid",
   PYRAMID: "pyramid",
+  HIGHER_LOWER: "higher-lower",
 };
 
 export const DAILY_MODE_GAME_IDS_BY_HOME_MODE = {
@@ -10,6 +11,7 @@ export const DAILY_MODE_GAME_IDS_BY_HOME_MODE = {
   impostor: GAME_IDS.IMPOSTOR,
   grid: GAME_IDS.CARD_GRID,
   pyramid: GAME_IDS.PYRAMID,
+  higherLower: GAME_IDS.HIGHER_LOWER,
 };
 
 // Internal id kept as "standard" to preserve existing localStorage progress.
@@ -18,3 +20,5 @@ export const DAILY_REWARD_BOX_AMOUNT = 1;
 export const ARCANE_BOX_CARD_COUNT = 10;
 export const CARD_GRID_DAILY_TIME_SECONDS = 90;
 export const PYRAMID_DAILY_TIME_SECONDS = 120;
+export const HIGHER_LOWER_DAILY_TIME_SECONDS = 90;
+export const HIGHER_LOWER_DAILY_TARGET = 10;

@@ -23,6 +23,7 @@ export const HOME_V2_COPY = {
     dailyImpostor: "Impostor",
     dailyGrid: "Grid",
     dailyPyramid: "Pirámide",
+    dailyHigherLower: "Mayor o menor",
     dailyWon: "Reto diario completado",
     dailyLost: "Reto diario fallado",
   },
@@ -50,6 +51,7 @@ export const HOME_V2_COPY = {
     dailyImpostor: "Impostor",
     dailyGrid: "Grid",
     dailyPyramid: "Pyramid",
+    dailyHigherLower: "Higher/lower",
     dailyWon: "Daily challenge completed",
     dailyLost: "Daily challenge failed",
   },
@@ -129,6 +131,26 @@ export const HOME_V2_MODES = [
     en: {
       title: "The Pyramid",
       description: "Fill 10 cards that match the category.",
+      cta: "play",
+    },
+  },
+
+  {
+    id: "higherLower",
+    group: "games",
+    route: "/higher-lower",
+    icon: "↕",
+    iconSrc: "",
+    accent: "emerald",
+    kind: "daily",
+    es: {
+      title: "Mayor o menor",
+      description: "Compara dos cartas y encadena aciertos.",
+      cta: "play",
+    },
+    en: {
+      title: "Higher or Lower",
+      description: "Compare two cards and build a streak.",
       cta: "play",
     },
   },

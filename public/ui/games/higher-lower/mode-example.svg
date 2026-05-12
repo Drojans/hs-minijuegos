@@ -1,0 +1,43 @@
+<svg width="420" height="520" viewBox="0 0 420 520" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="420" height="520" rx="28" fill="#080d18"/>
+  <rect x="18" y="18" width="384" height="484" rx="24" fill="url(#bg)" stroke="#CFA44A" stroke-opacity="0.28"/>
+  <text x="210" y="58" text-anchor="middle" fill="#F0CF82" font-family="Georgia" font-size="28" font-weight="700">Mayor o menor</text>
+  <g filter="url(#shadow)">
+    <rect x="44" y="100" width="116" height="172" rx="18" fill="#162035" stroke="#E4B65D" stroke-opacity="0.32"/>
+    <rect x="62" y="122" width="80" height="108" rx="42" fill="#276AC8" opacity="0.62"/>
+    <path d="M78 188C92 146 115 142 132 175C121 205 98 216 78 188Z" fill="#7CEBFF" opacity="0.78"/>
+    <circle cx="68" cy="120" r="20" fill="#2F6DFF" stroke="#BBD7FF" stroke-width="3"/>
+    <text x="68" y="128" text-anchor="middle" fill="white" font-family="Georgia" font-size="24" font-weight="700">4</text>
+    <rect x="56" y="238" width="92" height="22" rx="11" fill="#261C12" stroke="#E4B65D" stroke-opacity="0.35"/>
+    <text x="102" y="254" text-anchor="middle" fill="#F7ECD4" font-family="Georgia" font-size="12" font-weight="700">Carta A</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="260" y="100" width="116" height="172" rx="18" fill="#162035" stroke="#E4B65D" stroke-opacity="0.32"/>
+    <rect x="278" y="122" width="80" height="108" rx="42" fill="#C66A24" opacity="0.72"/>
+    <path d="M288 196C306 146 336 154 348 183C330 219 306 221 288 196Z" fill="#FFE18A" opacity="0.84"/>
+    <circle cx="284" cy="120" r="20" fill="#2F6DFF" stroke="#BBD7FF" stroke-width="3"/>
+    <text x="284" y="128" text-anchor="middle" fill="white" font-family="Georgia" font-size="24" font-weight="700">7</text>
+    <rect x="272" y="238" width="92" height="22" rx="11" fill="#261C12" stroke="#E4B65D" stroke-opacity="0.35"/>
+    <text x="318" y="254" text-anchor="middle" fill="#F7ECD4" font-family="Georgia" font-size="12" font-weight="700">Carta B</text>
+  </g>
+  <circle cx="210" cy="178" r="42" fill="#080D18" stroke="#F0CF82" stroke-opacity="0.36" stroke-width="2"/>
+  <text x="210" y="189" text-anchor="middle" fill="#F7ECD4" font-family="Georgia" font-size="28" font-weight="900">VS</text>
+  <rect x="76" y="320" width="268" height="72" rx="22" fill="#0D172A" stroke="#D9A441" stroke-opacity="0.34"/>
+  <text x="210" y="350" text-anchor="middle" fill="#F0CF82" font-family="Georgia" font-size="16" font-weight="700">¿Cuál tiene mayor coste?</text>
+  <text x="210" y="374" text-anchor="middle" fill="#BFC8D5" font-family="Arial" font-size="13" font-weight="700">Elige una de las dos cartas</text>
+  <rect x="98" y="428" width="224" height="44" rx="22" fill="url(#button)" stroke="#7EAFFF" stroke-opacity="0.5"/>
+  <text x="210" y="456" text-anchor="middle" fill="white" font-family="Georgia" font-size="18" font-weight="700">Encadena aciertos</text>
+  <defs>
+    <linearGradient id="bg" x1="210" y1="18" x2="210" y2="502" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#14213A"/>
+      <stop offset="1" stop-color="#050811"/>
+    </linearGradient>
+    <linearGradient id="button" x1="210" y1="428" x2="210" y2="472" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4F8EF6"/>
+      <stop offset="1" stop-color="#1D54BC"/>
+    </linearGradient>
+    <filter id="shadow" x="24" y="80" width="372" height="212" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+</svg>

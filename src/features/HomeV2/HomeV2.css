@@ -1150,3 +1150,14 @@
   font-size: 4.6rem;
   text-shadow: 0 12px 24px rgba(0,0,0,0.34), 0 0 22px rgba(217, 164, 65, 0.18);
 }
+
+/* Higher/lower mode: five daily cards on desktop */
+@media (min-width: 981px) {
+  .home-v2-shell {
+    width: min(100% - 32px, 1280px);
+  }
+
+  .home-v2-mode-grid.is-games {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}

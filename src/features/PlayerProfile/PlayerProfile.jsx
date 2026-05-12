@@ -71,6 +71,7 @@ const COPY = {
     impostor: "Encuentra el impostor",
     grid: "Grid de cartas",
     pyramid: "La Pirámide",
+    higherLower: "Mayor o menor",
   },
   en: {
     navMinigames: "Minigames",
@@ -119,6 +120,7 @@ const COPY = {
     impostor: "Find the Impostor",
     grid: "Card Grid",
     pyramid: "The Pyramid",
+    higherLower: "Higher or Lower",
   },
 };
 
@@ -127,6 +129,7 @@ const DAILY_LABELS = {
   impostor: "impostor",
   grid: "grid",
   pyramid: "pyramid",
+  higherLower: "higherLower",
 };
 
 function formatDate(value, locale) {

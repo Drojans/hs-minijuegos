@@ -99,6 +99,116 @@ const CATEGORY_DEFINITIONS = [
     labels: { es: "Demonios", en: "Demons" },
     predicate: (card) => card.race === "DEMON",
   },
+  {
+    id: "beasts",
+    labels: { es: "Bestias", en: "Beasts" },
+    predicate: (card) => card.race === "BEAST",
+  },
+  {
+    id: "elementals",
+    labels: { es: "Elementales", en: "Elementals" },
+    predicate: (card) => card.race === "ELEMENTAL",
+  },
+  {
+    id: "undead",
+    labels: { es: "No-muertos", en: "Undead" },
+    predicate: (card) => card.race === "UNDEAD",
+  },
+  {
+    id: "totems",
+    labels: { es: "Tótems", en: "Totems" },
+    predicate: (card) => card.race === "TOTEM",
+  },
+  {
+    id: "nagas",
+    labels: { es: "Nagas", en: "Nagas" },
+    predicate: (card) => card.race === "NAGA",
+  },
+  {
+    id: "mechs",
+    labels: { es: "Mecas", en: "Mechs" },
+    predicate: (card) => card.race === "MECHANICAL",
+  },
+  {
+    id: "cost-one",
+    labels: { es: "Cartas de coste 1", en: "1-Cost cards" },
+    predicate: (card) => card.cost === 1,
+  },
+  {
+    id: "cost-two",
+    labels: { es: "Cartas de coste 2", en: "2-Cost cards" },
+    predicate: (card) => card.cost === 2,
+  },
+  {
+    id: "cost-three",
+    labels: { es: "Cartas de coste 3", en: "3-Cost cards" },
+    predicate: (card) => card.cost === 3,
+  },
+  {
+    id: "neutral-spells",
+    labels: { es: "Hechizos neutrales", en: "Neutral spells" },
+    predicate: (card) => card.type === "SPELL" && card.cardClass === "NEUTRAL",
+  },
+  {
+    id: "mage-minions",
+    labels: { es: "Esbirros de Mago", en: "Mage minions" },
+    predicate: (card) => card.type === "MINION" && card.cardClass === "MAGE",
+  },
+  {
+    id: "hunter-minions",
+    labels: { es: "Esbirros de Cazador", en: "Hunter minions" },
+    predicate: (card) => card.type === "MINION" && card.cardClass === "HUNTER",
+  },
+  {
+    id: "druid-minions",
+    labels: { es: "Esbirros de Druida", en: "Druid minions" },
+    predicate: (card) => card.type === "MINION" && card.cardClass === "DRUID",
+  },
+  {
+    id: "warlock-minions",
+    labels: { es: "Esbirros de Brujo", en: "Warlock minions" },
+    predicate: (card) => card.type === "MINION" && card.cardClass === "WARLOCK",
+  },
+  {
+    id: "divine-shield",
+    labels: { es: "Cartas con Escudo divino", en: "Cards with Divine Shield" },
+    predicate: (card) => hasMechanic(card, "DIVINE_SHIELD"),
+  },
+  {
+    id: "lifesteal",
+    labels: { es: "Cartas con Robo de vida", en: "Cards with Lifesteal" },
+    predicate: (card) => hasMechanic(card, "LIFESTEAL"),
+  },
+  {
+    id: "charge",
+    labels: { es: "Cartas con Cargar", en: "Cards with Charge" },
+    predicate: (card) => hasMechanic(card, "CHARGE"),
+  },
+  {
+    id: "stealth",
+    labels: { es: "Cartas con Sigilo", en: "Cards with Stealth" },
+    predicate: (card) => hasMechanic(card, "STEALTH"),
+  },
+  {
+    id: "epic-cards",
+    labels: { es: "Cartas épicas", en: "Epic cards" },
+    predicate: (card) => card.rarity === "EPIC",
+  },
+  {
+    id: "common-cards",
+    labels: { es: "Cartas comunes", en: "Common cards" },
+    predicate: (card) => card.rarity === "COMMON",
+  },
+  {
+    id: "rare-cards",
+    labels: { es: "Cartas raras", en: "Rare cards" },
+    predicate: (card) => card.rarity === "RARE",
+  },
+  {
+    id: "legendary-cards",
+    labels: { es: "Cartas legendarias", en: "Legendary cards" },
+    predicate: (card) => card.rarity === "LEGENDARY",
+  },
 ];
 
 export function getCategoryLabel(category, locale = "es") {
