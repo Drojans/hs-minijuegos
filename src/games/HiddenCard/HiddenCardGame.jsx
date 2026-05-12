@@ -281,7 +281,7 @@ function GuessesList({ copy, guesses }) {
   );
 }
 
-function ResultOverlay({ copy, result, rewardMessage, onViewResults, onNext, onBack }) {
+function ResultOverlay({ copy, result, rewardMessage, onViewResults, onBack }) {
   const isWon = result === "won";
 
   return (

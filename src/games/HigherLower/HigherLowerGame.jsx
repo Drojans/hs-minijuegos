@@ -228,7 +228,7 @@ function DuelCard({ side, card, locale, copy, disabled, feedback, onChoose, reve
   );
 }
 
-function ResultOverlay({ copy, result, rewardMessage, onViewResults, onNext, onBack }) {
+function ResultOverlay({ copy, result, rewardMessage, onViewResults, onBack }) {
   const isWon = result === "won";
 
   return (

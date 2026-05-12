@@ -11,7 +11,7 @@
   color: var(--hidden-text);
   background:
     linear-gradient(180deg, rgba(3, 6, 12, 0.35), rgba(3, 6, 12, 0.92)),
-    url("/ui/home-v2/tavern-bg.png") center/cover fixed,
+    url("/ui/book/home-tavern-backdrop-cartoon.webp") center/cover fixed,
     var(--hidden-bg);
   overflow-x: hidden;
 }

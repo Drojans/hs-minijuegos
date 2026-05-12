@@ -6,7 +6,6 @@ import { ARCANE_BOX_ID, DAILY_MODE_GAME_IDS_BY_HOME_MODE } from "../../shared/co
 import { getEligibleCollectionCards } from "../../shared/packs/packOpening";
 import {
   COLLECTION_UPDATED_EVENT,
-  getCollectionStore,
   getOwnedCardCount,
   getTotalOwnedCopies,
 } from "../../shared/collection/collectionStore";
@@ -235,7 +234,6 @@ function PlayerProfile({ cards = [], loading = false, onNavigate }) {
     };
   }, []);
 
-  const collectionStore = snapshot.collection ?? getCollectionStore();
   const dailyProgress = snapshot.dailyProgress ?? {};
   const arcaneBoxes = getArcaneBoxCount(ARCANE_BOX_ID);
   const ownedUnique = getOwnedCardCount();

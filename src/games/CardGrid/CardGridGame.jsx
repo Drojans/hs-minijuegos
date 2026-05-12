@@ -14,7 +14,6 @@ import {
 } from "../../shared/progress/dailyProgress";
 import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
 import {
-  GRID_SIZE,
   TOTAL_CELLS,
   buildConditionPool,
   generateGrid,
@@ -353,27 +352,6 @@ function GridBoard({ grid, answers, revealedCells, selectedCell, locale, t, onSe
   );
 }
 
-function ModeSelector({ t, gridMode, gridModes, modeConfig, onChangeMode }) {
-  return (
-    <div className="cg-mode-selector">
-      <span>{t("grid.modeLabel")}</span>
-      <div className="cg-mode-buttons">
-        {Object.values(gridModes).map((mode) => (
-          <button
-            key={mode.id}
-            type="button"
-            className={gridMode === mode.id ? "is-active" : ""}
-            onClick={() => onChangeMode(mode.id)}
-          >
-            {mode.label}
-          </button>
-        ))}
-      </div>
-      <p>{modeConfig.description}</p>
-    </div>
-  );
-}
-
 function Suggestions({ suggestions, locale, isComplete, onPickSuggestion }) {
   if (suggestions.length === 0 || isComplete) return null;
 
@@ -476,7 +454,6 @@ function GridResultOverlay({ t, copy, result, rewardMessage, onViewResults, onBa
 
 function BottomControls({
   t,
-  grid,
   selectedRow,
   selectedColumn,
   mistakes,
@@ -576,11 +553,6 @@ function CardGridGame({ cards, onBack }) {
     !resultsMode &&
     typeof timeLeft === "number";
 
-  const selectedCandidates = useMemo(() => {
-    if (!grid) return [];
-
-    return (grid.candidateMap[selectedKey] ?? []).filter((card) => !usedCardIds.has(card.id));
-  }, [grid, selectedKey, usedCardIds]);
 
   const suggestions = useMemo(() => {
     if (suppressSuggestions || normalize(answer).length < 3) return [];
@@ -1046,7 +1018,6 @@ function CardGridGame({ cards, onBack }) {
         <DailyTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
         <section className="cg-layout cg-layout-single">
           <GridBoard
-            grid={grid}
             answers={answers}
             revealedCells={revealedCells}
             selectedCell={selectedCell}
@@ -1057,7 +1028,6 @@ function CardGridGame({ cards, onBack }) {
 
           <BottomControls
             t={t}
-            grid={grid}
             selectedRow={selectedRow}
             selectedColumn={selectedColumn}
             mistakes={mistakes}

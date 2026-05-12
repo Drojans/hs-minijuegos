@@ -441,9 +441,7 @@ function GuessManaCost({ cards = [], onBack }) {
           <GameModeSelect
             copy={copy}
             title={copy.modeSelectTitle}
-            description={copy.modeSelectDescription}
             dailyCompleted={dailyProgress.completed}
-            dailyRewardClaimed={dailyProgress.rewardClaimed}
             previewSrc="/ui/games/guess-mana-v3/mode-example.png"
             previewAlt={copy.exampleLabel}
             onSelectMode={startMode}
