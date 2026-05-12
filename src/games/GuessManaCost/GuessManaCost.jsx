@@ -1,6 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
@@ -25,6 +24,8 @@ import {
   isPlayableGuessManaCard,
 } from "./guessManaConfig";
 import "./GuessManaCost.css";
+
+const GuessManaLayoutEditor = lazy(() => import("../../dev/GuessManaLayoutEditor"));
 
 const GUESS_MANA_GAME_ID = GAME_IDS.GUESS_MANA;
 
@@ -195,7 +196,11 @@ function GuessManaCost({ cards = [], onBack }) {
             onSelectMode={startMode}
           />
         </section>
-        {showLayoutEditor ? <GuessManaLayoutEditor /> : null}
+        {showLayoutEditor ? (
+          <Suspense fallback={null}>
+            <GuessManaLayoutEditor />
+          </Suspense>
+        ) : null}
       </GamePageShell>
     );
   }
@@ -256,7 +261,11 @@ function GuessManaCost({ cards = [], onBack }) {
         />
       ) : null}
 
-      {showLayoutEditor ? <GuessManaLayoutEditor /> : null}
+      {showLayoutEditor ? (
+        <Suspense fallback={null}>
+          <GuessManaLayoutEditor />
+        </Suspense>
+      ) : null}
     </GamePageShell>
   );
 }

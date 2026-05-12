@@ -1,224 +1,118 @@
-# Estructura del proyecto
+# Estructura actual del proyecto
 
-Estado actualizado después de separar la Home, limpiar assets de `public/ui/book` y añadir rutas/páginas por minijuego.
+Este documento describe la estructura activa. Los documentos históricos de fases/parches se eliminaron del árbol de trabajo para reducir ruido; si hace falta recuperarlos, están en el historial de Git.
 
 ## Raíz
 
 ```text
-src/                 Código React de la app
-public/data/         JSON activo de cartas
-public/card-images/  Imágenes generadas de cartas, ignoradas por Git
-public/ui/book/      Assets activos de la Home/libro
-public/fonts/        Fuentes necesarias para UI/cartas
-scripts/v2/          Pipeline actual de generación de imágenes
-scripts/cleanup/     Scripts auxiliares de auditoría/limpieza
-docs/                Documentación del proyecto
+src/                Código React de la app
+public/             Datos, fuentes y assets estáticos ligeros
+scripts/v2/         Script activo para regenerar imágenes de cartas
+docs/               Documentación mantenida
 ```
 
-## Rutas de la app
-
-La app usa rutas internas mediante History API, sin dependencia externa de router.
+No deben versionarse ni incluirse en zips de revisión:
 
 ```text
-/             Home / libro de misiones
-/guess-mana   Adivina el coste
-/impostor     Impostor
-/grid         Grid de cartas
-/cards        Base de datos
+node_modules/
+dist/
+public/card-images/
+reports/
 ```
 
-## `src/`
+## Código principal
 
 ```text
-src/App.jsx
-src/App.css
-src/index.css
-src/main.jsx
+src/App.jsx         Router simple y header global
+src/main.jsx        Entrada React
+src/index.css       Reset global mínimo
+src/App.css         Variables globales, fuente y layout base
 ```
 
-`App.jsx` actúa como router/controlador de vistas. Carga los datos de cartas con `useCardsData()` y renderiza la página correspondiente.
+El header global vive en:
 
-`App.css` mantiene estilos globales mínimos.
+```text
+src/shared/components/SiteHeader/
+```
 
 ## Páginas
 
 ```text
-src/pages/HomePage.jsx
-src/pages/GuessManaPage.jsx
-src/pages/ImpostorPage.jsx
-src/pages/CardGridPage.jsx
-src/pages/CardDatabasePage.jsx
+src/pages/          Adaptadores de ruta
+src/features/       Páginas no jugables: Home, base de datos, colección y perfil
+src/games/          Minijuegos
 ```
 
-Las páginas son envoltorios finos. Sirven para que cada sección tenga su ruta propia sin mezclar la lógica interna de cada minijuego.
+`src/pages/*Page.jsx` debe ser fino: solo conecta la ruta con el feature/juego correspondiente.
 
-## Home / libro de misiones
+## Minijuegos
+
+Cada minijuego mantiene esta idea:
 
 ```text
-src/features/HomeBook/HomeBook.jsx
-src/features/HomeBook/HomeBook.css
-src/features/HomeBook/homeBookConfig.js
+<Minijuego>Game.jsx     Estado principal y flujo del juego
+<minijuego>Copy.js      Textos propios del juego
+<minijuego>Config.js    Reexports/config pública del juego
+components/             UI interna del minijuego
+*.css                   Estilos específicos del minijuego
 ```
 
-Responsabilidades:
+La estructura visual común ya no debe duplicarse dentro de cada juego. Está centralizada en:
 
 ```text
-HomeBook.jsx        Estructura React de la Home
-HomeBook.css        Layout, assets, hitboxes y animaciones de la Home
-homeBookConfig.js   Configuración de modos, rutas, textos y variantes
+src/shared/components/GamePageShell/      Fondo/layout base de minijuegos
+src/shared/components/GameModeSelect/     Instrucciones y selección de modo
+src/shared/components/GameResultOverlay/  Modal final de resultado
 ```
 
-La Home ya no vive directamente en `App.jsx`.
-
-## Base de datos
+## Shared
 
 ```text
-src/features/CardDatabase/CardDatabase.jsx
-src/features/CardDatabase/CardDatabase.css
+src/shared/collection/  LocalStorage de colección
+src/shared/config/      IDs, reglas comunes y textos de intro
+src/shared/gameModes/   Diario/infinito y selección diaria determinista
+src/shared/packs/       Apertura de cajas
+src/shared/player/      Perfil local y snapshots futuros de backend
+src/shared/progress/    Progreso diario
+src/shared/rewards/     Recompensas/cajas
+src/shared/storage/     Helpers de localStorage
 ```
 
-Usa los helpers de idioma e imágenes de cartas para mostrar la colección.
-
-## Juegos
+## Dev tools
 
 ```text
-src/games/GuessManaCost/
-src/games/CardGrid/
-src/games/Impostor/
+src/dev/GuessManaLayoutEditor.jsx
 ```
 
-Cada juego conserva su propia carpeta, CSS y lógica.
+Se carga de forma diferida y solo aparece en `Adivina el coste` con:
 
 ```text
-src/games/GuessManaCost/GuessManaCost.jsx
-src/games/GuessManaCost/GuessManaCost.css
-
-src/games/CardGrid/CardGridGame.jsx
-src/games/CardGrid/CardGridGame.css
-src/games/CardGrid/assets/
-
-src/games/Impostor/ImpostorGame.jsx
-src/games/Impostor/ImpostorGame.css
-src/games/Impostor/ImpostorNeutralCard.jsx
-src/games/Impostor/ImpostorNeutralCard.css
+/guess-mana?layoutEditor=1
 ```
 
-## Componentes compartidos
+No debe importarse de forma estática en otros sitios.
+
+## Assets activos
+
+Assets públicos activos:
 
 ```text
-src/shared/components/GameLayout/
-src/shared/components/LanguageToggle/
-```
-
-`LanguageToggle` controla ES/EN y en la Home usa la variante visual tipo libro con assets:
-
-```text
+public/data/cards.multilang.generated.json
+public/fonts/Belwe Bold.otf
+public/ui/book/home-tavern-backdrop-cartoon.webp
 public/ui/book/language-es-frame-cartoon.png
 public/ui/book/language-en-frame-cartoon.png
+public/ui/book/prop-right-mug-cartoon.png
+public/ui/games/*/mode-example.*
+public/ui/games/guess-mana-v3/mana-cover.png
+public/ui/games/guess-mana-v3/mana-crystal.png
+public/ui/home-v2-icons/icon-mode-*.png
 ```
 
-## Idioma
+Assets de cartas generados:
 
 ```text
-src/i18n/LanguageProvider.jsx
-src/i18n/translations.js
+public/card-images/{es,en}/{thumb,game,adapted}/ID.webp
 ```
 
-Controlan idioma global ES/EN y textos de interfaz.
-
-## Datos de cartas
-
-```text
-src/hooks/useCardsData.js
-public/data/cards.multilang.generated.json
-```
-
-`useCardsData()` carga el JSON activo.
-
-## Helpers de cartas
-
-```text
-src/utils/cardLocale.js
-```
-
-Responsable de:
-
-```text
-nombres por idioma
-texto por idioma
-rutas de imágenes por idioma
-traducciones de clase/tipo/rareza/raza
-```
-
-Los componentes no deben construir rutas de imágenes manualmente. Deben pedirlas a estos helpers.
-
-## Assets de la Home
-
-La estructura activa está aplanada en:
-
-```text
-public/ui/book/
-```
-
-Assets activos principales:
-
-```text
-button-primary-purple-cartoon.png
-divider-thin-black-cartoon.png
-home-open-book-cartoon.png
-home-tavern-backdrop-cartoon.webp
-icon-featured-mission-star-cartoon.png
-icon-mode-database-cartoon.png
-icon-mode-grid-cartoon.png
-icon-mode-impostor-cartoon.png
-icon-mode-mana-cartoon.png
-language-en-frame-cartoon.png
-language-es-frame-cartoon.png
-panel-featured-mission-cartoon.png
-panel-game-row-cartoon.png
-parchment-note-render.png
-prop-bottom-coins-cartoon.png
-prop-bottom-left-cards-cartoon.png
-prop-left-candle-cartoon.png
-prop-right-mug-cartoon.png
-section-divider-cartoon.png
-status-check-cartoon.png
-status-cross-cartoon.png
-status-minus-cartoon.png
-```
-
-Ya no deberían existir referencias activas a:
-
-```text
-public/ui/book/cartoon-v1/
-public/ui/book/render-v1/
-```
-
-## Imágenes de cartas
-
-`public/card-images/` no está en Git. Se genera con `scripts/v2/generate-card-images-multilang.mjs`.
-
-Estructura:
-
-```text
-public/card-images/es/thumb/ID.webp
-public/card-images/es/game/ID.webp
-public/card-images/es/adapted/ID.webp
-public/card-images/en/thumb/ID.webp
-public/card-images/en/game/ID.webp
-public/card-images/en/adapted/ID.webp
-```
-
-## Editor temporal de layout
-
-```text
-src/dev/LayoutEditor.jsx
-```
-
-Sigue disponible para ajustar la Home con:
-
-```text
-/?layoutEditor=1
-```
-
-Cuando el diseño quede cerrado, se puede decidir si mantenerlo solo en desarrollo o retirarlo.
+No están en Git y se regeneran con `scripts/v2/generate-card-images-multilang.mjs`.
