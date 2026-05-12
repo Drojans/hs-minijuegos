@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { GAME_MODE_IDS } from "../../gameModes/gameModes";
 import "./GameModeSelect.css";
 
 function StepIcon({ icon, iconSrc, className = "" }) {
@@ -28,12 +29,12 @@ function GameModeSelect({
   const modes = useMemo(
     () => [
       {
-        id: "daily",
+        id: GAME_MODE_IDS.DAILY,
         title: copy.dailyTitle,
         ariaLabel: dailyCompleted ? `${copy.dailyTitle}. ${copy.completedStatus}` : copy.dailyTitle,
       },
       {
-        id: "infinite",
+        id: GAME_MODE_IDS.INFINITE,
         title: copy.infiniteTitle,
         ariaLabel: copy.infiniteTitle,
       },
@@ -41,7 +42,7 @@ function GameModeSelect({
     [copy, dailyCompleted],
   );
 
-  const [selectedModeId, setSelectedModeId] = useState(modes[0]?.id ?? "daily");
+  const [selectedModeId, setSelectedModeId] = useState(modes[0]?.id ?? GAME_MODE_IDS.DAILY);
   const selectedMode = modes.find((mode) => mode.id === selectedModeId) ?? modes[0];
 
   return (

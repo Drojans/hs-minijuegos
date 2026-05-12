@@ -10,7 +10,7 @@ import {
   getOwnedCardCount,
   getTotalOwnedCopies,
 } from "../../shared/collection/collectionStore";
-import { getTodayKey, DAILY_PROGRESS_UPDATED_EVENT } from "../../shared/progress/dailyProgress";
+import { DAILY_CHALLENGE_STATES, getTodayKey, DAILY_PROGRESS_UPDATED_EVENT, getDailyChallengeState } from "../../shared/progress/dailyProgress";
 import { getArcaneBoxCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
 import {
   createEmptyPlayerDataSnapshot,
@@ -152,12 +152,6 @@ function safeStringify(value) {
   return JSON.stringify(value, null, 2);
 }
 
-function getDailyState(progress) {
-  if (!progress?.completed) return "pending";
-  const won = progress.lastWasCorrect === true || progress.lastWasWon === true;
-  return won ? "done" : "failed";
-}
-
 function PlayerHeader({ copy, onNavigate }) {
   function go(path) {
     onNavigate?.(path);
@@ -249,7 +243,12 @@ function PlayerProfile({ cards = [], loading = false, onNavigate }) {
 
   const dailyRows = Object.entries(DAILY_MODE_GAME_IDS_BY_HOME_MODE).map(([homeModeId, gameId]) => {
     const progress = dailyProgress?.[gameId]?.[todayKey];
-    const state = getDailyState(progress);
+    const rawState = getDailyChallengeState(progress);
+    const state = rawState === DAILY_CHALLENGE_STATES.WON
+      ? "done"
+      : rawState === DAILY_CHALLENGE_STATES.LOST
+        ? "failed"
+        : "pending";
 
     return {
       homeModeId,

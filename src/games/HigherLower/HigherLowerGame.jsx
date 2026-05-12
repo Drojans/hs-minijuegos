@@ -400,15 +400,6 @@ function HigherLowerGame({ cards = [], onBack }) {
     setDuel(createInitialHigherLowerDuel(playableCards, locale), "right");
   }
 
-  function returnToModes() {
-    setSelectedMode(null);
-    setLeftCard(null);
-    setRightCard(null);
-    setQuestion(null);
-    clearRoundState();
-    setDailyProgress(getDailyGameProgress(HIGHER_LOWER_GAME_ID, todayKey));
-  }
-
   function handleBack() {
     if (selectedMode === GAME_MODE_IDS.DAILY && !dailyProgress.completed && !result) {
       markDailyLost(history, false);
@@ -442,7 +433,7 @@ function HigherLowerGame({ cards = [], onBack }) {
         source: HIGHER_LOWER_GAME_ID,
         dateKey: todayKey,
       });
-      latestProgress = markDailyRewardClaimed(HIGHER_LOWER_GAME_ID, todayKey);
+      markDailyRewardClaimed(HIGHER_LOWER_GAME_ID, todayKey);
       saveDailyChallengeResult(HIGHER_LOWER_GAME_ID, todayKey, {
         lastWasWon: true,
         lastWasCorrect: true,

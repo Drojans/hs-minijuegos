@@ -5,7 +5,7 @@ import { getArcaneBoxCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/r
 import { COLLECTION_UPDATED_EVENT, getOwnedCardCount } from "../../shared/collection/collectionStore";
 import { DAILY_MODE_GAME_IDS_BY_HOME_MODE } from "../../shared/config/gameRules";
 import { getEligibleCollectionCards } from "../../shared/packs/packOpening";
-import { DAILY_PROGRESS_UPDATED_EVENT, getDailyGameProgress, getTodayKey } from "../../shared/progress/dailyProgress";
+import { DAILY_CHALLENGE_STATES, DAILY_PROGRESS_UPDATED_EVENT, getDailyChallengeState, getDailyGameProgress, getTodayKey } from "../../shared/progress/dailyProgress";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import { HOME_V2_COPY, HOME_V2_MODES } from "./homeV2Config";
 import "./HomeV2.css";
@@ -26,13 +26,6 @@ function getTimeUntilNextLocalMidnight() {
   const seconds = totalSeconds % 60;
 
   return `${padTimePart(hours)}:${padTimePart(minutes)}:${padTimePart(seconds)}`;
-}
-
-function getDailyCardState(progress) {
-  if (!progress?.completed) return null;
-
-  const won = progress.lastWasCorrect === true || progress.lastWasWon === true;
-  return won ? "won" : "lost";
 }
 
 function HomeV2({ cards = [], loading = false, onNavigate }) {
@@ -132,7 +125,8 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
     const disabled = !mode.route || loading;
     const showBadge = mode.kind === "soon";
     const badgeLabel = copy[mode.kind] ?? mode.kind;
-    const dailyState = getDailyCardState(dailyModeProgress[mode.id]);
+    const rawDailyState = getDailyChallengeState(dailyModeProgress[mode.id]);
+    const dailyState = rawDailyState === DAILY_CHALLENGE_STATES.PENDING ? null : rawDailyState;
     const dailyStateLabel = dailyState === "won" ? copy.dailyWon : dailyState === "lost" ? copy.dailyLost : "";
 
     return (

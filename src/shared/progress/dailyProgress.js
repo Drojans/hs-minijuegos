@@ -17,7 +17,27 @@ function getDefaultProgress() {
     lastCorrectCost: null,
     lastCardId: null,
     lastWasCorrect: false,
+    lastWasWon: false,
   };
+}
+
+export const DAILY_CHALLENGE_STATES = {
+  PENDING: "pending",
+  WON: "won",
+  LOST: "lost",
+};
+
+export function wasDailyChallengeWon(progress) {
+  return Boolean(progress?.completed && (progress.lastWasCorrect === true || progress.lastWasWon === true));
+}
+
+export function wasDailyChallengeLost(progress) {
+  return Boolean(progress?.completed && !wasDailyChallengeWon(progress));
+}
+
+export function getDailyChallengeState(progress) {
+  if (!progress?.completed) return DAILY_CHALLENGE_STATES.PENDING;
+  return wasDailyChallengeWon(progress) ? DAILY_CHALLENGE_STATES.WON : DAILY_CHALLENGE_STATES.LOST;
 }
 
 export function getTodayKey(date = new Date()) {

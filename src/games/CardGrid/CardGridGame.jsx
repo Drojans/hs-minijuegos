@@ -1018,38 +1018,6 @@ function CardGridGame({ cards, onBack }) {
     moveToNextEmptyCell(nextAnswers);
   }
 
-  function revealSelectedAnswer() {
-    if (!grid || isComplete || hasConsumedDailyAttempt) return;
-
-    if (answers[selectedKey]) {
-      setMessage(t("grid.message.cellCompleted"));
-      return;
-    }
-
-    const revealedCard = selectedCandidates.find((card) => !usedCardIds.has(card.id));
-
-    if (!revealedCard) {
-      setMessage(t("grid.message.noRevealAvailable"));
-      return;
-    }
-
-    const nextAnswers = {
-      ...answers,
-      [selectedKey]: revealedCard,
-    };
-
-    setAnswers(nextAnswers);
-    setRevealedCells((current) => {
-      const updated = new Set(current);
-      updated.add(selectedKey);
-      return updated;
-    });
-    setAnswer("");
-    setSuppressSuggestions(false);
-    setMessage(t("grid.message.revealed", { name: getCardName(revealedCard, locale) }));
-    moveToNextEmptyCell(nextAnswers);
-  }
-
   if (!cards.length) {
     return (
       <EmptyState

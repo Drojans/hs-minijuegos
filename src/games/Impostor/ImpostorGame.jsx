@@ -130,10 +130,6 @@ const IMPOSTOR_COPY = {
   },
 };
 
-function formatCopy(template, values = {}) {
-  return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template);
-}
-
 function useImpostorCopy(locale) {
   return IMPOSTOR_COPY[locale] ?? IMPOSTOR_COPY.es;
 }

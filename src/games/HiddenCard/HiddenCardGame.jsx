@@ -421,13 +421,6 @@ function HiddenCardGame({ cards = [], onBack }) {
     setCurrentCard(pickHiddenCard(playableCards));
   }
 
-  function returnToModes() {
-    setSelectedMode(null);
-    setCurrentCard(null);
-    clearGameState();
-    setDailyProgress(getDailyGameProgress(HIDDEN_CARD_GAME_ID, todayKey));
-  }
-
   function saveDailyPartial(nextGuesses) {
     saveDailyChallengeResult(HIDDEN_CARD_GAME_ID, todayKey, {
       lastCardId: dailyCard?.id,
@@ -462,7 +455,7 @@ function HiddenCardGame({ cards = [], onBack }) {
         source: HIDDEN_CARD_GAME_ID,
         dateKey: todayKey,
       });
-      latestProgress = markDailyRewardClaimed(HIDDEN_CARD_GAME_ID, todayKey);
+      markDailyRewardClaimed(HIDDEN_CARD_GAME_ID, todayKey);
       saveDailyChallengeResult(HIDDEN_CARD_GAME_ID, todayKey, {
         lastWasWon: true,
         lastWasCorrect: true,

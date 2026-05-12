@@ -365,20 +365,6 @@ function PyramidGame({ cards = [], onBack }) {
     resetRound(getRandomCategory(categories));
   }
 
-  function returnToModes() {
-    setSelectedMode(null);
-    setCategory(null);
-    setFoundCards([]);
-    setAnswer("");
-    setMessage("");
-    setSuppressSuggestions(false);
-    setResult(null);
-    setShowResultOverlay(false);
-    setShowResults(false);
-    setTimeLeft(PYRAMID_DAILY_TIME_SECONDS);
-    setDailyProgress(getDailyGameProgress(PYRAMID_GAME_ID, todayKey));
-  }
-
   function handleBack() {
     if (selectedMode === GAME_MODE_IDS.DAILY && !dailyProgress.completed && !result) {
       markDailyLost(foundCards, false);
@@ -405,7 +391,7 @@ function PyramidGame({ cards = [], onBack }) {
         source: PYRAMID_GAME_ID,
         dateKey: todayKey,
       });
-      latestProgress = markDailyRewardClaimed(PYRAMID_GAME_ID, todayKey);
+      markDailyRewardClaimed(PYRAMID_GAME_ID, todayKey);
       saveDailyChallengeResult(PYRAMID_GAME_ID, todayKey, {
         lastWasWon: true,
         lastWasCorrect: true,
