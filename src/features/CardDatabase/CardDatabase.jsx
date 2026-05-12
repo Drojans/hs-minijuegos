@@ -142,7 +142,7 @@ function DatabaseFilters({ copy, locale, filters, availableTypes, availableClass
 function DatabaseCardTile({ card, locale, copy, selected, onSelect }) {
   const imageSrc = getDatabaseImage(card, locale);
   const cardName = getCardName(card, locale);
-  const entry = getOwnedCardEntry(card.id);
+  const entry = getOwnedCardEntry(card);
   const owned = Boolean(entry);
 
   return (
@@ -208,7 +208,7 @@ function CardDetailPanel({ card, locale, copy, onClose }) {
   const imageSrc = getDatabaseImage(card, locale);
   const cardName = getCardName(card, locale);
   const secondaryCardName = getSecondaryCardName(card, locale);
-  const collectionEntry = getOwnedCardEntry(card.id);
+  const collectionEntry = getOwnedCardEntry(card);
 
   return (
     <aside className="card-db-detail-panel">

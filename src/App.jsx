@@ -1,6 +1,8 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useCardsData } from "./hooks/useCardsData";
 import SiteHeader from "./shared/components/SiteHeader/SiteHeader";
+import DailyRolloverNotice from "./shared/components/DailyRolloverNotice/DailyRolloverNotice";
+import { useDailyRollover } from "./shared/hooks/useDailyRollover";
 import "./App.css";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
@@ -45,6 +47,11 @@ function AppRouteFallback() {
 
 function App() {
   const { cards, loading } = useCardsData();
+  const {
+    dateKey: dailyDateKey,
+    notice: dailyRolloverNotice,
+    dismissNotice: dismissDailyRolloverNotice,
+  } = useDailyRollover();
   const [pathname, setPathname] = useState(() => normalizePath(window.location.pathname));
 
   useEffect(() => {
@@ -119,9 +126,10 @@ function App() {
   return (
     <div className="app-shell">
       <SiteHeader pathname={pathname} onNavigate={navigate} />
-      <div className="app-page">
+      <div className="app-page" key={dailyDateKey}>
         <Suspense fallback={<AppRouteFallback />}>{page}</Suspense>
       </div>
+      <DailyRolloverNotice notice={dailyRolloverNotice} onDismiss={dismissDailyRolloverNotice} />
     </div>
   );
 }

@@ -175,6 +175,14 @@ src/shared/packs/packOpening.js
 src/shared/collection/collectionStore.js
 ```
 
+### Agrupar cartas repetidas
+
+```text
+src/shared/cards/cardIdentity.js
+```
+
+Ahí se decide cuándo dos cartas de distintos sets se consideran la misma carta jugable.
+
 ### Perfil del jugador
 
 ```text
@@ -189,6 +197,8 @@ src/shared/player/playerDataAdapter.js
 ```text
 public/data/cards.multilang.generated.json
 ```
+
+La app no muestra este JSON tal cual: al cargarlo, `src/hooks/useCardsData.js` aplica la agrupación de duplicados de `src/shared/cards/cardIdentity.js`.
 
 ### Renders de cartas
 

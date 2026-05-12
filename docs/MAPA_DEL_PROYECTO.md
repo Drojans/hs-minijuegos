@@ -14,6 +14,7 @@ Este documento explica qué controla cada carpeta y qué archivo tocar cuando qu
 - **Reglas/config de un minijuego:** archivo `*Config.js`, `*Definitions.js`, `*Constants.js` o `*Utils.js` dentro de ese minijuego
 - **Estilos concretos de un minijuego:** su archivo `*Game.css`
 - **Datos de cartas:** `public/data/cards.multilang.generated.json`
+- **Agrupación de cartas repetidas:** `src/shared/cards/cardIdentity.js`
 - **Imágenes renderizadas de cartas:** `public/card-images/` — no se mete en zip ni Git normalmente
 
 ---
@@ -319,12 +320,23 @@ packOpening.js
 ```
 Lógica de apertura de cajas/sobres.
 
+### `src/shared/cards/`
+
+```text
+cardIdentity.js
+```
+Controla cómo se agrupan cartas repetidas que son la misma carta jugable en distintos sets.
+
+Se usa al cargar el JSON para que la base de datos, la colección y los minijuegos reciban una lista sin duplicados jugables.
+
+**Si ves cartas duplicadas que deberían agruparse o cartas agrupadas que no deberían:** revisa aquí.
+
 ### `src/shared/collection/`
 
 ```text
 collectionStore.js
 ```
-Controla cartas que el jugador posee en localStorage.
+Controla cartas que el jugador posee en localStorage. También migra IDs antiguos de copias duplicadas al ID canónico de la carta agrupada.
 
 ### `src/shared/player/`
 
@@ -368,9 +380,9 @@ Diccionario general ES/EN. Aquí están textos comunes de navegación, botones, 
 ```text
 useCardsData.js
 ```
-Carga `public/data/cards.multilang.generated.json` y devuelve `cards` y `loading`.
+Carga `public/data/cards.multilang.generated.json`, agrupa cartas repetidas mediante `src/shared/cards/cardIdentity.js` y devuelve `cards` y `loading`.
 
-Si la web no carga cartas, revisa aquí o el JSON de `public/data/`.
+Si la web no carga cartas, revisa aquí o el JSON de `public/data/`. Si aparecen duplicados jugables, revisa `cardIdentity.js`.
 
 ---
 

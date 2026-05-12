@@ -5,6 +5,7 @@ import {
   COLLECTION_UPDATED_EVENT,
   addCardsToCollection,
   getCollectionStore,
+  getOwnedCardEntryFromMap,
 } from "../../shared/collection/collectionStore";
 import { ARCANE_BOX_CARD_COUNT, ARCANE_BOX_ID } from "../../shared/config/gameRules";
 import { DEFAULT_ARCANE_BOX_SIZE, getEligibleCollectionCards, openArcaneBox } from "../../shared/packs/packOpening";
@@ -297,7 +298,7 @@ function CollectionHub({ cards = [], loading = false }) {
     const normalizedQuery = normalizeText(query);
 
     const visibleCards = eligibleCards.filter((card) => {
-      const entry = ownedEntries[String(card.id)] ?? ownedEntries[card.id] ?? null;
+      const entry = getOwnedCardEntryFromMap(ownedEntries, card);
       const isOwned = Boolean(entry);
 
       if (ownershipFilter === "owned" && !isOwned) return false;
@@ -501,7 +502,7 @@ function CollectionHub({ cards = [], loading = false }) {
             ) : currentPageCards.length > 0 ? (
               <div className="collection-card-page" key={`${safePageIndex}-${query}-${ownershipFilter}-${classFilter}-${rarityFilter}-${sortMode}`}>
                 {currentPageCards.map((card) => {
-                  const entry = ownedEntries[String(card.id)] ?? ownedEntries[card.id] ?? null;
+                  const entry = getOwnedCardEntryFromMap(ownedEntries, card);
                   return <CollectionCardTile key={card.id} card={card} entry={entry} locale={locale} copy={copy} />;
                 })}
               </div>

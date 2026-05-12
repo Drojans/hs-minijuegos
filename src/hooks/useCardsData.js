@@ -1,4 +1,6 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { dedupeCardsByIdentity } from "../shared/cards/cardIdentity";
+import { migrateCollectionCardAliases } from "../shared/collection/collectionStore";
 
 const CARDS_URL = "/data/cards.multilang.generated.json";
 
@@ -27,8 +29,11 @@ export function useCardsData() {
           throw new Error(`${CARDS_URL} no contiene un array de cartas.`);
         }
 
+        const uniqueCards = dedupeCardsByIdentity(data);
+        migrateCollectionCardAliases(uniqueCards);
+
         if (!cancelled) {
-          setCards(data);
+          setCards(uniqueCards);
         }
       } catch (loadError) {
         if (!cancelled) {
