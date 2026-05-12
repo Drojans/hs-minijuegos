@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -54,6 +55,7 @@ const IMPOSTOR_COPY = {
     infiniteTitle: "Modo infinito",
     completedStatus: "Completado",
     startMode: "Empezar",
+    resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
     dailyRewardEarned: "Has ganado 1 caja arcana.",
@@ -102,6 +104,7 @@ const IMPOSTOR_COPY = {
     infiniteTitle: "Infinite mode",
     completedStatus: "Completed",
     startMode: "Start",
+    resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
     dailyRewardEarned: "You earned 1 arcane box.",
@@ -298,68 +301,22 @@ function ResultOverlay({
   roundData,
   locale,
   rewardMessage,
-  restartLabel,
-  onRestart,
+  onBack,
   onShowResults,
 }) {
   const failedCard = failedCardId ? roundData.cards.find((card) => card.id === failedCardId) : null;
-  const confettiPieces = Array.from({ length: 34 });
 
   return (
-    <div className="im-result-backdrop" role="presentation">
-      <section className={`im-result-card ${isWon ? "is-won" : "is-lost"}`} role="status" aria-live="polite">
-        {isWon ? (
-          <div className="im-result-confetti" aria-hidden="true">
-            {confettiPieces.map((_, index) => {
-              const angle = (Math.PI * 2 * index) / confettiPieces.length;
-              const distance = 120 + (index % 5) * 22;
-              const x = Math.cos(angle) * distance;
-              const y = Math.sin(angle) * distance - 22;
-              const rotation = index * 37;
-
-              return (
-                <span
-                  key={index}
-                  style={{
-                    "--x": `${x.toFixed(0)}px`,
-                    "--y": `${y.toFixed(0)}px`,
-                    "--r": `${rotation}deg`,
-                    "--delay": `${(index % 8) * 26}ms`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-
-        <div className="im-result-icon" aria-hidden="true">
-          <span>{isWon ? "✓" : "×"}</span>
-        </div>
-
-        {isWon ? (
-          <>
-            <h2>{copy.winTitle}</h2>
-            <p>{copy.allFound}</p>
-          </>
-        ) : (
-          <>
-            <div className="im-result-card-name">{failedCard ? getCardName(failedCard, locale) : ""}</div>
-            <h2>{copy.loseTitle}</h2>
-          </>
-        )}
-
-        {rewardMessage ? <p className="im-result-reward-message">{rewardMessage}</p> : null}
-
-        <div className="im-result-actions is-centered">
-          <button type="button" className="im-secondary-button" onClick={onShowResults}>
-            {copy.viewResults}
-          </button>
-          <button type="button" className="im-primary-button" onClick={onRestart}>
-            {restartLabel ?? copy.playAgain}
-          </button>
-        </div>
-      </section>
-    </div>
+    <GameResultOverlay
+      tone={isWon ? "success" : "danger"}
+      kicker={copy.resultKicker}
+      title={isWon ? copy.winTitle : copy.loseTitle}
+      text={isWon ? copy.winText : copy.loseText}
+      detail={!isWon && failedCard ? <strong className="im-result-card-name">{getCardName(failedCard, locale)}</strong> : null}
+      rewardMessage={rewardMessage}
+      primaryAction={{ label: copy.viewResults, onClick: onShowResults }}
+      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
+    />
   );
 }
 
@@ -628,8 +585,7 @@ function ImpostorGame({ cards, onBack }) {
           roundData={roundData}
           locale={locale}
           rewardMessage={rewardMessage}
-          restartLabel={selectedMode === GAME_MODE_IDS.DAILY ? copy.backHome : copy.playAgain}
-          onRestart={startNewGame}
+          onBack={returnToModes}
           onShowResults={() => setShowResultOverlay(false)}
         />
       ) : null}

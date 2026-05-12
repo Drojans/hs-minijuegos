@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import ImpostorNeutralCard from "../Impostor/ImpostorNeutralCard";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import {
@@ -57,6 +58,7 @@ const COPY = {
     infiniteTitle: "Modo infinito",
     completedStatus: "Completado",
     startMode: "Empezar",
+    resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
     scoreLabel: "Fases",
@@ -108,6 +110,7 @@ const COPY = {
     infiniteTitle: "Infinite mode",
     completedStatus: "Completed",
     startMode: "Start",
+    resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
     scoreLabel: "Phases",
@@ -227,42 +230,17 @@ function DuelCard({ side, card, locale, copy, disabled, feedback, onChoose, reve
 
 function ResultOverlay({ copy, result, rewardMessage, onViewResults, onNext, onBack }) {
   const isWon = result === "won";
-  const confettiPieces = Array.from({ length: 36 });
 
   return (
-    <div className="hl-result-backdrop">
-      <section className={`hl-result-card ${isWon ? "is-won" : "is-lost"}`} role="status" aria-live="polite">
-        {isWon ? (
-          <div className="hl-confetti" aria-hidden="true">
-            {confettiPieces.map((_, index) => {
-              const angle = (Math.PI * 2 * index) / confettiPieces.length;
-              const distance = 138 + (index % 6) * 16;
-              return (
-                <span
-                  key={index}
-                  style={{
-                    "--x": `${Math.cos(angle) * distance}px`,
-                    "--y": `${Math.sin(angle) * distance - 20}px`,
-                    "--r": `${index * 38}deg`,
-                    "--delay": `${(index % 8) * 28}ms`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-
-        <div className="hl-result-icon"><span>{isWon ? "✓" : "×"}</span></div>
-        <h2>{isWon ? copy.winTitle : copy.loseTitle}</h2>
-        <p>{isWon ? copy.winText : copy.loseText}</p>
-        {rewardMessage ? <p className="hl-reward-message">{rewardMessage}</p> : null}
-        <div className="hl-result-actions">
-          <button type="button" className="hl-button is-primary" onClick={onViewResults}>{copy.viewResults}</button>
-          {onNext ? <button type="button" className="hl-button is-secondary" onClick={onNext}>{copy.playAgain}</button> : null}
-          {onBack ? <button type="button" className="hl-button is-secondary" onClick={onBack}>{copy.backHome}</button> : null}
-        </div>
-      </section>
-    </div>
+    <GameResultOverlay
+      tone={isWon ? "success" : "danger"}
+      kicker={copy.resultKicker}
+      title={isWon ? copy.winTitle : copy.loseTitle}
+      text={isWon ? copy.winText : copy.loseText}
+      rewardMessage={rewardMessage}
+      primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
+      secondaryActions={onBack ? [{ label: copy.backHome, onClick: onBack }] : []}
+    />
   );
 }
 
@@ -512,7 +490,7 @@ function HigherLowerGame({ cards = [], onBack }) {
         setResult("lost");
         setShowResultOverlay(true);
         if (selectedMode === GAME_MODE_IDS.DAILY) {
-          markDailyLost(nextHistory, false);
+          markDailyLost(nextHistory, true);
         }
       }, 420);
       return;

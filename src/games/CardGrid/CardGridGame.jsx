@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, CARD_GRID_DAILY_TIME_SECONDS, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -60,6 +61,7 @@ const CARD_GRID_COPY = {
     dailyRewardAlreadyClaimed: "Grid diario completado. Hoy ya tenías esta recompensa.",
     dailyTimeLabel: "Tiempo",
     dailyTimeExpiredMessage: "Se acabó el tiempo. El reto diario queda marcado como fallado.",
+    backHome: "Volver",
   },
   en: {
     navMinigames: "Minigames",
@@ -90,6 +92,7 @@ const CARD_GRID_COPY = {
     dailyRewardAlreadyClaimed: "Daily grid completed. You already had today’s reward.",
     dailyTimeLabel: "Time",
     dailyTimeExpiredMessage: "Time is up. The daily challenge is marked as failed.",
+    backHome: "Back",
   },
 };
 
@@ -455,55 +458,19 @@ function SelectionSummary({ t, selectedRow, selectedColumn }) {
   );
 }
 
-function GridResultOverlay({ t, result, rewardMessage, onViewResults, onRestart }) {
+function GridResultOverlay({ t, copy, result, rewardMessage, onViewResults, onBack }) {
   const isWon = result === "won";
-  const confettiPieces = Array.from({ length: 34 });
 
   return (
-    <div className="cg-result-backdrop" role="presentation">
-      <section className={`cg-result-card ${isWon ? "is-won" : "is-time"}`} role="status" aria-live="polite">
-        {isWon ? (
-          <div className="cg-result-confetti" aria-hidden="true">
-            {confettiPieces.map((_, index) => {
-              const angle = (Math.PI * 2 * index) / confettiPieces.length;
-              const distance = 120 + (index % 5) * 20;
-              const x = Math.cos(angle) * distance;
-              const y = Math.sin(angle) * distance - 20;
-
-              return (
-                <span
-                  key={index}
-                  style={{
-                    "--x": `${x.toFixed(0)}px`,
-                    "--y": `${y.toFixed(0)}px`,
-                    "--r": `${index * 37}deg`,
-                    "--delay": `${(index % 8) * 28}ms`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-
-        <div className="cg-result-icon" aria-hidden="true">
-          <span>{isWon ? "✓" : "×"}</span>
-        </div>
-
-        <p className="cg-result-kicker">{t("grid.resultKicker")}</p>
-        <h2>{isWon ? t("grid.resultVictoryTitle") : t("grid.resultTimeTitle")}</h2>
-        <p>{isWon ? t("grid.resultVictoryText") : t("grid.resultTimeText")}</p>
-        {rewardMessage ? <p className="cg-result-reward">{rewardMessage}</p> : null}
-
-        <div className="cg-result-actions">
-          <button type="button" className="cg-secondary-button" onClick={onViewResults}>
-            {t("grid.viewResults")}
-          </button>
-          <button type="button" className="cg-primary-button" onClick={onRestart}>
-            {t("grid.playAgain")}
-          </button>
-        </div>
-      </section>
-    </div>
+    <GameResultOverlay
+      tone={isWon ? "success" : "danger"}
+      kicker={t("grid.resultKicker")}
+      title={isWon ? t("grid.resultVictoryTitle") : t("grid.resultTimeTitle")}
+      text={isWon ? t("grid.resultVictoryText") : t("grid.resultTimeText")}
+      rewardMessage={rewardMessage}
+      primaryAction={{ label: t("grid.viewResults"), onClick: onViewResults }}
+      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
+    />
   );
 }
 
@@ -804,12 +771,16 @@ function CardGridGame({ cards, onBack }) {
     t,
   ]);
 
+  function returnToModes() {
+    setSelectedMode(null);
+    setGrid(null);
+    resetGrid(null, "");
+    setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
+  }
+
   function startNewGrid() {
     if (selectedMode === GAME_MODE_IDS.DAILY) {
-      setSelectedMode(null);
-      setGrid(null);
-      resetGrid(null, "");
-      setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
+      returnToModes();
       return;
     }
 
@@ -1114,10 +1085,11 @@ function CardGridGame({ cards, onBack }) {
       {endOverlay ? (
         <GridResultOverlay
           t={t}
+          copy={copy}
           result={endOverlay}
           rewardMessage={rewardMessage}
           onViewResults={viewEndResults}
-          onRestart={startNewGrid}
+          onBack={returnToModes}
         />
       ) : null}
     </main>

@@ -3,6 +3,7 @@ import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -56,6 +57,7 @@ const LOCAL_COPY = {
     exampleLabel: "Ejemplo visual del minijuego",
     modeSelectorLabel: "Selecciona modo",
     startMode: "Empezar",
+    resultKicker: "Resultado",
     dailyRewardEarned: "Has ganado 1 caja arcana.",
     dailyRewardAlreadyClaimed: "Reto diario completado. Hoy ya tenías esta recompensa.",
     dailyChallenge: "Reto diario",
@@ -65,6 +67,7 @@ const LOCAL_COPY = {
     chooseFirst: "Selecciona una opción para continuar.",
     confirmCost: "Confirmar coste",
     playAgain: "Otra carta",
+    viewResults: "Ver resultados",
     correct: "¡Correcto!",
     wrong: "No era ese.",
     resultCostBefore: "cuesta",
@@ -104,6 +107,7 @@ const LOCAL_COPY = {
     exampleLabel: "Visual example of the minigame",
     modeSelectorLabel: "Select mode",
     startMode: "Start",
+    resultKicker: "Result",
     dailyRewardEarned: "You earned 1 arcane box.",
     dailyRewardAlreadyClaimed: "Daily challenge completed. You already had today’s reward.",
     dailyChallenge: "Daily challenge",
@@ -113,6 +117,7 @@ const LOCAL_COPY = {
     chooseFirst: "Select an option to continue.",
     confirmCost: "Confirm cost",
     playAgain: "Another card",
+    viewResults: "View results",
     correct: "Correct!",
     wrong: "Not that one.",
     resultCostBefore: "costs",
@@ -245,65 +250,29 @@ function ManaSelector({
   );
 }
 
-function ResultOverlay({ copy, isCorrect, cardName, correctCost, imageSrc, rewardMessage, continueLabel, onContinue }) {
-  const confettiPieces = Array.from({ length: 42 });
-
+function ResultOverlay({ copy, isCorrect, cardName, correctCost, rewardMessage, onViewResults, onBack }) {
   return (
-    <div className="guess-v3-result-backdrop" role="presentation">
-      <section className={`guess-v3-result-card ${isCorrect ? "is-correct" : "is-wrong"}`} role="status" aria-live="polite">
-        {isCorrect ? (
-          <div className="guess-v3-confetti" aria-hidden="true">
-            {confettiPieces.map((_, index) => {
-              const angle = (Math.PI * 2 * index) / confettiPieces.length;
-              const distance = 150 + (index % 6) * 18;
-              const x = Math.cos(angle) * distance;
-              const y = Math.sin(angle) * distance - 28;
-              const rotation = index * 41;
-
-              return (
-                <span
-                  key={index}
-                  style={{
-                    "--x": `${x.toFixed(0)}px`,
-                    "--y": `${y.toFixed(0)}px`,
-                    "--r": `${rotation}deg`,
-                    "--delay": `${(index % 9) * 24}ms`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-
-        <div className="guess-v3-result-layout">
-          <div className="guess-v3-result-copy">
-            <div className="guess-v3-result-icon" aria-hidden="true">
-              <span>{isCorrect ? "✓" : "×"}</span>
+    <GameResultOverlay
+      tone={isCorrect ? "success" : "danger"}
+      kicker={copy.resultKicker}
+      title={isCorrect ? copy.correct : copy.wrong}
+      rewardMessage={rewardMessage}
+      detail={(
+        <>
+          <strong className="guess-v3-result-card-name">{cardName}</strong>
+          <div className="guess-v3-result-cost-row">
+            <span className="guess-v3-result-cost-line">{copy.resultCostBefore}</span>
+            <div className="guess-v3-result-cost-crystal" aria-hidden="true">
+              <img src="/ui/games/guess-mana-v3/mana-crystal.png" alt="" />
+              <span>{correctCost}</span>
             </div>
-            <h2>{isCorrect ? copy.correct : copy.wrong}</h2>
-            <div className="guess-v3-result-text">
-              <strong className="guess-v3-result-card-name">{cardName}</strong>
-              {rewardMessage ? <span className="guess-v3-reward-message">{rewardMessage}</span> : null}
-              <div className="guess-v3-result-cost-row">
-                <span className="guess-v3-result-cost-line">{copy.resultCostBefore}</span>
-                <div className="guess-v3-result-cost-crystal" aria-hidden="true">
-                  <img src="/ui/games/guess-mana-v3/mana-crystal.png" alt="" />
-                  <span>{correctCost}</span>
-                </div>
-                <span className="guess-v3-result-cost-line">{copy.resultCostAfter}</span>
-              </div>
-            </div>
-            <button type="button" className="guess-v3-button is-primary" onClick={onContinue}>
-              {continueLabel ?? copy.playAgain}
-            </button>
+            <span className="guess-v3-result-cost-line">{copy.resultCostAfter}</span>
           </div>
-
-          <div className="guess-v3-result-preview" aria-label={cardName}>
-            <img src={imageSrc} alt={cardName} />
-          </div>
-        </div>
-      </section>
-    </div>
+        </>
+      )}
+      primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
+      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
+    />
   );
 }
 
@@ -548,6 +517,12 @@ function GuessManaCost({ cards = [], onBack }) {
                 {copy.confirmCost}
               </button>
             ) : null}
+
+            {hasAnswered && !showResultOverlay && selectedMode === GAME_MODE_IDS.INFINITE ? (
+              <button type="button" className="guess-v3-button is-primary is-confirm" onClick={() => loadCard(currentCard?.id)}>
+                {copy.playAgain}
+              </button>
+            ) : null}
           </div>
         </section>
       </section>
@@ -558,17 +533,9 @@ function GuessManaCost({ cards = [], onBack }) {
           isCorrect={isCorrect}
           cardName={currentCardName}
           correctCost={currentCard.cost}
-          imageSrc={imageSrc}
           rewardMessage={rewardMessage}
-          continueLabel={selectedMode === GAME_MODE_IDS.DAILY ? copy.backHome : copy.playAgain}
-          onContinue={() => {
-            if (selectedMode === GAME_MODE_IDS.DAILY) {
-              returnToModes();
-              return;
-            }
-
-            loadCard(currentCard?.id);
-          }}
+          onViewResults={() => setShowResultOverlay(false)}
+          onBack={returnToModes}
         />
       ) : null}
 

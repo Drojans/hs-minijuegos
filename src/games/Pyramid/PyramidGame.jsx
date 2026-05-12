@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -51,6 +52,7 @@ const COPY = {
     infiniteTitle: "Modo infinito",
     completedStatus: "Completado",
     startMode: "Empezar",
+    resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
     dailyRewardEarned: "Has ganado 1 caja arcana.",
@@ -98,6 +100,7 @@ const COPY = {
     infiniteTitle: "Infinite mode",
     completedStatus: "Completed",
     startMode: "Start",
+    resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
     dailyRewardEarned: "You earned 1 arcane box.",
@@ -217,42 +220,20 @@ function Suggestions({ suggestions, locale, onPick }) {
   );
 }
 
-function ResultOverlay({ copy, result, onViewResults, onNext }) {
+function ResultOverlay({ copy, result, selectedMode, onViewResults, onBack }) {
   const isWon = result === "won";
-  const confettiPieces = Array.from({ length: 36 });
+  const rewardMessage = isWon && selectedMode === GAME_MODE_IDS.DAILY ? copy.dailyRewardEarned : null;
 
   return (
-    <div className="py-result-backdrop">
-      <section className={`py-result-card ${isWon ? "is-won" : "is-lost"}`} role="status" aria-live="polite">
-        {isWon ? (
-          <div className="py-confetti" aria-hidden="true">
-            {confettiPieces.map((_, index) => {
-              const angle = (Math.PI * 2 * index) / confettiPieces.length;
-              const distance = 138 + (index % 6) * 16;
-              return (
-                <span
-                  key={index}
-                  style={{
-                    "--x": `${Math.cos(angle) * distance}px`,
-                    "--y": `${Math.sin(angle) * distance - 20}px`,
-                    "--r": `${index * 38}deg`,
-                    "--delay": `${(index % 8) * 28}ms`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-
-        <div className="py-result-icon"><span>{isWon ? "✓" : "×"}</span></div>
-        <h2>{isWon ? copy.winTitle : copy.loseTitle}</h2>
-        <p>{isWon ? copy.winText : copy.loseText}</p>
-        <div className="py-result-actions">
-          <button type="button" className="py-button is-primary" onClick={onViewResults}>{copy.viewResults}</button>
-          {onNext ? <button type="button" className="py-button is-secondary" onClick={onNext}>{copy.playAgain}</button> : null}
-        </div>
-      </section>
-    </div>
+    <GameResultOverlay
+      tone={isWon ? "success" : "danger"}
+      kicker={copy.resultKicker}
+      title={isWon ? copy.winTitle : copy.loseTitle}
+      text={isWon ? copy.winText : copy.loseText}
+      rewardMessage={rewardMessage}
+      primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
+      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
+    />
   );
 }
 
@@ -554,11 +535,12 @@ function PyramidGame({ cards = [], onBack }) {
         <ResultOverlay
           copy={copy}
           result={result}
+          selectedMode={selectedMode}
           onViewResults={() => {
             setShowResultOverlay(false);
             setShowResults(true);
           }}
-          onNext={selectedMode === GAME_MODE_IDS.INFINITE ? startNextInfiniteRound : null}
+          onBack={handleBack}
         />
       ) : null}
     </main>

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
+import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import {
   ARCANE_BOX_ID,
@@ -55,6 +56,7 @@ const COPY = {
     infiniteTitle: "Modo infinito",
     completedStatus: "Completado",
     startMode: "Empezar",
+    resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
     attemptsLabel: "Intentos",
@@ -112,6 +114,7 @@ const COPY = {
     infiniteTitle: "Infinite mode",
     completedStatus: "Completed",
     startMode: "Start",
+    resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
     attemptsLabel: "Attempts",
@@ -280,41 +283,17 @@ function GuessesList({ copy, guesses }) {
 
 function ResultOverlay({ copy, result, rewardMessage, onViewResults, onNext, onBack }) {
   const isWon = result === "won";
-  const confettiPieces = Array.from({ length: 34 });
 
   return (
-    <div className="hidden-card-result-backdrop">
-      <section className={`hidden-card-result-card ${isWon ? "is-won" : "is-lost"}`} role="status" aria-live="polite">
-        {isWon ? (
-          <div className="hidden-card-confetti" aria-hidden="true">
-            {confettiPieces.map((_, index) => {
-              const angle = (Math.PI * 2 * index) / confettiPieces.length;
-              const distance = 126 + (index % 5) * 18;
-              return (
-                <span
-                  key={index}
-                  style={{
-                    "--x": `${Math.cos(angle) * distance}px`,
-                    "--y": `${Math.sin(angle) * distance - 18}px`,
-                    "--r": `${index * 39}deg`,
-                    "--delay": `${(index % 8) * 28}ms`,
-                  }}
-                />
-              );
-            })}
-          </div>
-        ) : null}
-        <div className="hidden-card-result-icon"><span>{isWon ? "✓" : "×"}</span></div>
-        <h2>{isWon ? copy.winTitle : copy.loseTitle}</h2>
-        <p>{isWon ? copy.winText : copy.loseText}</p>
-        {rewardMessage ? <p className="hidden-card-reward-message">{rewardMessage}</p> : null}
-        <div className="hidden-card-result-actions">
-          <button type="button" className="hidden-card-button is-primary" onClick={onViewResults}>{copy.viewResults}</button>
-          {onNext ? <button type="button" className="hidden-card-button is-secondary" onClick={onNext}>{copy.playAgain}</button> : null}
-          <button type="button" className="hidden-card-button is-secondary" onClick={onBack}>{copy.backHome}</button>
-        </div>
-      </section>
-    </div>
+    <GameResultOverlay
+      tone={isWon ? "success" : "danger"}
+      kicker={copy.resultKicker}
+      title={isWon ? copy.winTitle : copy.loseTitle}
+      text={isWon ? copy.winText : copy.loseText}
+      rewardMessage={rewardMessage}
+      primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
+      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
+    />
   );
 }
 
