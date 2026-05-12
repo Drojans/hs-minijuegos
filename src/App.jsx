@@ -1,17 +1,18 @@
-import { useCallback, useEffect, useState } from "react";
-import HomePage from "./pages/HomePage";
-import GuessManaPage from "./pages/GuessManaPage";
-import ImpostorPage from "./pages/ImpostorPage";
-import CardGridPage from "./pages/CardGridPage";
-import PyramidPage from "./pages/PyramidPage";
-import HigherLowerPage from "./pages/HigherLowerPage";
-import HiddenCardPage from "./pages/HiddenCardPage";
-import CardDatabasePage from "./pages/CardDatabasePage";
-import CollectionPage from "./pages/CollectionPage";
-import PlayerProfilePage from "./pages/PlayerProfilePage";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useCardsData } from "./hooks/useCardsData";
 import SiteHeader from "./shared/components/SiteHeader/SiteHeader";
 import "./App.css";
+
+const HomePage = lazy(() => import("./pages/HomePage"));
+const GuessManaPage = lazy(() => import("./pages/GuessManaPage"));
+const ImpostorPage = lazy(() => import("./pages/ImpostorPage"));
+const CardGridPage = lazy(() => import("./pages/CardGridPage"));
+const PyramidPage = lazy(() => import("./pages/PyramidPage"));
+const HigherLowerPage = lazy(() => import("./pages/HigherLowerPage"));
+const HiddenCardPage = lazy(() => import("./pages/HiddenCardPage"));
+const CardDatabasePage = lazy(() => import("./pages/CardDatabasePage"));
+const CollectionPage = lazy(() => import("./pages/CollectionPage"));
+const PlayerProfilePage = lazy(() => import("./pages/PlayerProfilePage"));
 
 const APP_ROUTES = {
   "/": "home",
@@ -29,6 +30,17 @@ const APP_ROUTES = {
 function normalizePath(pathname) {
   const path = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
   return APP_ROUTES[path] ? path : "/";
+}
+
+function AppRouteFallback() {
+  return (
+    <main className="app-route-loading" aria-live="polite" aria-busy="true">
+      <div className="app-route-loading__card">
+        <span className="app-route-loading__spinner" aria-hidden="true" />
+        <p>Cargando...</p>
+      </div>
+    </main>
+  );
 }
 
 function App() {
@@ -107,7 +119,9 @@ function App() {
   return (
     <div className="app-shell">
       <SiteHeader pathname={pathname} onNavigate={navigate} />
-      <div className="app-page">{page}</div>
+      <div className="app-page">
+        <Suspense fallback={<AppRouteFallback />}>{page}</Suspense>
+      </div>
     </div>
   );
 }
