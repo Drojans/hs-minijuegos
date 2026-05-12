@@ -72,6 +72,7 @@ const COPY = {
     grid: "Grid de cartas",
     pyramid: "La Pirámide",
     higherLower: "Mayor o menor",
+    hiddenCard: "La Carta Oculta",
   },
   en: {
     navMinigames: "Minigames",
@@ -121,6 +122,7 @@ const COPY = {
     grid: "Card Grid",
     pyramid: "The Pyramid",
     higherLower: "Higher or Lower",
+    hiddenCard: "The Hidden Card",
   },
 };
 
@@ -130,6 +132,7 @@ const DAILY_LABELS = {
   grid: "grid",
   pyramid: "pyramid",
   higherLower: "higherLower",
+  hiddenCard: "hiddenCard",
 };
 
 function formatDate(value, locale) {

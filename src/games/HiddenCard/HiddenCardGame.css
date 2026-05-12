@@ -1,0 +1,562 @@
+.hidden-card-page {
+  --hidden-bg: #050911;
+  --hidden-panel: rgba(11, 17, 29, 0.88);
+  --hidden-panel-strong: rgba(14, 24, 42, 0.94);
+  --hidden-border: rgba(240, 207, 130, 0.18);
+  --hidden-gold: #f0cf82;
+  --hidden-text: #f7ecd4;
+  --hidden-blue: #5c96ff;
+  position: relative;
+  min-height: 100svh;
+  color: var(--hidden-text);
+  background:
+    linear-gradient(180deg, rgba(3, 6, 12, 0.35), rgba(3, 6, 12, 0.92)),
+    url("/ui/home-v2/tavern-bg.png") center/cover fixed,
+    var(--hidden-bg);
+  overflow-x: hidden;
+}
+
+.hidden-card-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 76px;
+  padding: 0 36px;
+  border-bottom: 1px solid rgba(240, 207, 130, 0.12);
+  background: rgba(7, 10, 17, 0.88);
+  backdrop-filter: blur(12px);
+}
+
+.hidden-card-nav,
+.hidden-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.hidden-card-actions {
+  justify-content: flex-end;
+}
+
+.hidden-card-nav button {
+  min-height: 36px;
+  padding: 0 15px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: rgba(247, 236, 212, 0.62);
+  background: transparent;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.hidden-card-nav button.is-active {
+  color: var(--hidden-gold);
+  border-color: rgba(240, 207, 130, 0.2);
+  background: rgba(240, 207, 130, 0.08);
+}
+
+.hidden-card-nav button:disabled {
+  color: rgba(247, 236, 212, 0.35);
+  cursor: not-allowed;
+}
+
+.hidden-card-brand {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  border: 0;
+  color: var(--hidden-gold);
+  background: transparent;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2rem, 3vw, 2.8rem);
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 6px 14px rgba(0,0,0,0.5);
+}
+
+.hidden-card-brand::before,
+.hidden-card-brand::after {
+  content: "";
+  width: 34px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(240, 207, 130, 0.36));
+}
+
+.hidden-card-brand::after {
+  background: linear-gradient(90deg, rgba(240, 207, 130, 0.36), transparent);
+}
+
+.hidden-card-brand-mug {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.4));
+}
+
+.hidden-card-brand-mug.is-left {
+  transform: scaleX(-1);
+}
+
+.hidden-card-language.language-toggle {
+  min-width: auto;
+}
+
+.hidden-card-shell {
+  width: min(100% - 36px, 1180px);
+  margin: 0 auto;
+  padding: clamp(18px, 3vh, 30px) 0 34px;
+}
+
+.hidden-card-shell.is-mode-select {
+  width: min(100% - 36px, 1120px);
+}
+
+.hidden-card-topbar {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.hidden-card-mode-pill,
+.hidden-card-score-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid rgba(240, 207, 130, 0.18);
+  border-radius: 999px;
+  color: var(--hidden-gold);
+  background: rgba(7, 12, 21, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 12px 24px rgba(0,0,0,0.22);
+  font-weight: 950;
+  font-size: 0.9rem;
+}
+
+.hidden-card-score-pill span {
+  color: rgba(247, 236, 212, 0.68);
+}
+
+.hidden-card-stage {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.78fr) minmax(340px, 1fr);
+  gap: clamp(18px, 3.5vw, 42px);
+  align-items: start;
+}
+
+.hidden-card-preview,
+.hidden-card-side-panel,
+.hidden-card-message-panel {
+  border: 1px solid rgba(240, 207, 130, 0.16);
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top, rgba(91, 143, 255, 0.12), transparent 42%),
+    linear-gradient(180deg, rgba(18, 26, 43, 0.9), rgba(6, 10, 18, 0.94));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 24px 70px rgba(0,0,0,0.35);
+}
+
+.hidden-card-preview {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 24px;
+}
+
+.hidden-card-image-frame {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 340px);
+  min-height: 460px;
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.hidden-card-image-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.24;
+  filter: blur(24px) brightness(0.28) saturate(0.45) contrast(0.72);
+  transform: scale(1.1);
+  transition: opacity 0.35s ease, filter 0.35s ease, transform 0.35s ease;
+}
+
+.hidden-card-preview.level-1 .hidden-card-image-frame img {
+  opacity: 0.34;
+  filter: blur(18px) brightness(0.38) saturate(0.62) contrast(0.82);
+  transform: scale(1.08);
+}
+
+.hidden-card-preview.level-2 .hidden-card-image-frame img {
+  opacity: 0.48;
+  filter: blur(13px) brightness(0.5) saturate(0.78) contrast(0.92);
+  transform: scale(1.06);
+}
+
+.hidden-card-preview.level-3 .hidden-card-image-frame img {
+  opacity: 0.64;
+  filter: blur(8px) brightness(0.64) saturate(0.94) contrast(1);
+  transform: scale(1.04);
+}
+
+.hidden-card-preview.level-4 .hidden-card-image-frame img {
+  opacity: 0.82;
+  filter: blur(4px) brightness(0.82) saturate(1.06) contrast(1.05);
+  transform: scale(1.02);
+}
+
+.hidden-card-preview.level-5 .hidden-card-image-frame img,
+.hidden-card-preview.is-revealed .hidden-card-image-frame img {
+  opacity: 1;
+  filter: drop-shadow(0 18px 30px rgba(0,0,0,0.45));
+  transform: scale(1);
+}
+
+.hidden-card-real-name {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 207, 130, 0.24);
+  color: var(--hidden-text);
+  background: rgba(17, 13, 8, 0.7);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.hidden-card-side-panel {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+}
+
+.hidden-card-hints {
+  display: grid;
+  gap: 12px;
+}
+
+.hidden-card-hints > p,
+.hidden-card-form label,
+.hidden-card-guesses > p {
+  margin: 0;
+  color: var(--hidden-gold);
+  font-weight: 950;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.76rem;
+}
+
+.hidden-card-hint-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.hidden-card-hint {
+  display: grid;
+  gap: 4px;
+  min-height: 72px;
+  align-content: center;
+  padding: 12px 14px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(0,0,0,0.18);
+  color: rgba(247, 236, 212, 0.42);
+}
+
+.hidden-card-hint.is-unlocked {
+  border-color: rgba(105, 167, 255, 0.22);
+  color: rgba(247, 236, 212, 0.86);
+  background: linear-gradient(180deg, rgba(26, 45, 78, 0.54), rgba(7, 12, 20, 0.72));
+}
+
+.hidden-card-hint span {
+  color: rgba(240, 207, 130, 0.74);
+  font-size: 0.72rem;
+  font-weight: 900;
+}
+
+.hidden-card-hint strong {
+  font-size: 0.98rem;
+  line-height: 1.18;
+}
+
+.hidden-card-form {
+  display: grid;
+  gap: 10px;
+}
+
+.hidden-card-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.hidden-card-input-row input {
+  min-height: 50px;
+  padding: 0 16px;
+  border: 1px solid rgba(105, 167, 255, 0.24);
+  border-radius: 14px;
+  color: var(--hidden-text);
+  background: rgba(4, 8, 14, 0.82);
+  font: inherit;
+  font-weight: 800;
+  outline: none;
+}
+
+.hidden-card-input-row input:focus {
+  border-color: rgba(105, 167, 255, 0.72);
+  box-shadow: 0 0 0 3px rgba(105, 167, 255, 0.15);
+}
+
+.hidden-card-input-row button,
+.hidden-card-button {
+  min-height: 50px;
+  padding: 0 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(63, 114, 226, 0.72);
+  color: #eef4ff;
+  background: linear-gradient(180deg, #4f8ef6, #1d54bc);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 16px 30px rgba(20, 61, 148, 0.2);
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.hidden-card-input-row button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.hidden-card-button.is-secondary {
+  border-color: rgba(240, 207, 130, 0.2);
+  color: rgba(247, 236, 212, 0.82);
+  background: rgba(255,255,255,0.05);
+  box-shadow: none;
+}
+
+.hidden-card-form-message {
+  min-height: 18px;
+  margin: 0;
+  color: rgba(247, 236, 212, 0.68);
+  font-weight: 800;
+}
+
+.hidden-card-suggestions {
+  display: grid;
+  gap: 7px;
+  max-height: 248px;
+  overflow: auto;
+  padding-right: 4px;
+}
+
+.hidden-card-suggestions button {
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 12px;
+  color: rgba(247, 236, 212, 0.88);
+  background: rgba(4, 8, 14, 0.82);
+  font-weight: 850;
+  text-align: left;
+  cursor: pointer;
+}
+
+.hidden-card-suggestions button:hover {
+  border-color: rgba(240, 207, 130, 0.25);
+  background: rgba(240, 207, 130, 0.08);
+}
+
+.hidden-card-guesses {
+  display: grid;
+  gap: 10px;
+}
+
+.hidden-card-guesses > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hidden-card-guesses span {
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.07);
+  color: rgba(247, 236, 212, 0.72);
+  background: rgba(0,0,0,0.2);
+  font-weight: 800;
+  font-size: 0.86rem;
+}
+
+.hidden-card-message-panel {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+  padding: 34px;
+  text-align: center;
+}
+
+.hidden-card-message-panel h2 {
+  margin: 0;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2rem, 4vw, 3.4rem);
+}
+
+.hidden-card-result-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(2, 4, 9, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+.hidden-card-result-card {
+  position: relative;
+  width: min(100%, 560px);
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  padding: 34px;
+  border-radius: 30px;
+  border: 1px solid rgba(240, 207, 130, 0.16);
+  background:
+    radial-gradient(circle at top, rgba(91, 143, 255, 0.14), transparent 44%),
+    linear-gradient(180deg, rgba(18, 26, 43, 0.96), rgba(6, 10, 18, 0.98));
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
+  text-align: center;
+  overflow: hidden;
+}
+
+.hidden-card-result-card.is-won {
+  border-color: rgba(99, 229, 150, 0.48);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 0 42px rgba(70, 220, 130, 0.16), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.hidden-card-result-card.is-lost {
+  border-color: rgba(232, 84, 84, 0.5);
+  box-shadow: 0 30px 90px rgba(0,0,0,0.55), 0 0 42px rgba(232, 84, 84, 0.12), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.hidden-card-result-icon {
+  display: grid;
+  place-items: center;
+  width: 82px;
+  height: 82px;
+  border-radius: 999px;
+  color: white;
+  background: linear-gradient(180deg, #2fbf6b, #147237);
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.hidden-card-result-card.is-lost .hidden-card-result-icon {
+  background: linear-gradient(180deg, #d54f42, #8c2421);
+}
+
+.hidden-card-result-icon span {
+  transform: translateY(-2px);
+}
+
+.hidden-card-result-card h2 {
+  margin: 0;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  line-height: 0.95;
+}
+
+.hidden-card-result-card p {
+  margin: 0;
+  color: rgba(247, 236, 212, 0.78);
+  font-weight: 800;
+}
+
+.hidden-card-reward-message {
+  color: var(--hidden-gold) !important;
+}
+
+.hidden-card-result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.hidden-card-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hidden-card-confetti span {
+  position: absolute;
+  left: 50%;
+  top: 35%;
+  width: 8px;
+  height: 14px;
+  border-radius: 3px;
+  background: var(--hidden-gold);
+  transform: translate(-50%, -50%);
+  animation: hidden-card-confetti 1.15s ease-out both;
+  animation-delay: var(--delay);
+}
+
+.hidden-card-confetti span:nth-child(3n) { background: #69a7ff; }
+.hidden-card-confetti span:nth-child(4n) { background: #57e093; }
+.hidden-card-confetti span:nth-child(5n) { background: #ff7b7b; }
+
+@keyframes hidden-card-confetti {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.4) rotate(0deg); }
+  18% { opacity: 1; }
+  100% { opacity: 0; transform: translate(calc(-50% + var(--x)), calc(-50% + var(--y))) scale(1) rotate(var(--r)); }
+}
+
+@media (max-width: 900px) {
+  .hidden-card-header {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    padding: 12px 18px;
+  }
+
+  .hidden-card-nav,
+  .hidden-card-actions {
+    justify-content: center;
+  }
+
+  .hidden-card-stage {
+    grid-template-columns: 1fr;
+  }
+
+  .hidden-card-image-frame {
+    width: min(100%, 280px);
+    min-height: 380px;
+  }
+}
+
+@media (max-width: 620px) {
+  .hidden-card-shell {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .hidden-card-hint-grid,
+  .hidden-card-input-row {
+    grid-template-columns: 1fr;
+  }
+
+  .hidden-card-input-row button,
+  .hidden-card-button {
+    width: 100%;
+  }
+}

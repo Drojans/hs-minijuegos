@@ -24,6 +24,7 @@ export const HOME_V2_COPY = {
     dailyGrid: "Grid",
     dailyPyramid: "Pirámide",
     dailyHigherLower: "Mayor o menor",
+    dailyHiddenCard: "Carta oculta",
     dailyWon: "Reto diario completado",
     dailyLost: "Reto diario fallado",
   },
@@ -52,6 +53,7 @@ export const HOME_V2_COPY = {
     dailyGrid: "Grid",
     dailyPyramid: "Pyramid",
     dailyHigherLower: "Higher/lower",
+    dailyHiddenCard: "Hidden card",
     dailyWon: "Daily challenge completed",
     dailyLost: "Daily challenge failed",
   },
@@ -151,6 +153,26 @@ export const HOME_V2_MODES = [
     en: {
       title: "Higher or Lower",
       description: "Compare two cards and build a streak.",
+      cta: "play",
+    },
+  },
+
+  {
+    id: "hiddenCard",
+    group: "games",
+    route: "/hidden-card",
+    icon: "?",
+    iconSrc: "",
+    accent: "violet",
+    kind: "daily",
+    es: {
+      title: "La Carta Oculta",
+      description: "Descubre una carta con pistas progresivas.",
+      cta: "play",
+    },
+    en: {
+      title: "The Hidden Card",
+      description: "Reveal a card through progressive clues.",
       cta: "play",
     },
   },

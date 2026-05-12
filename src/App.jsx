@@ -5,6 +5,7 @@ import ImpostorPage from "./pages/ImpostorPage";
 import CardGridPage from "./pages/CardGridPage";
 import PyramidPage from "./pages/PyramidPage";
 import HigherLowerPage from "./pages/HigherLowerPage";
+import HiddenCardPage from "./pages/HiddenCardPage";
 import CardDatabasePage from "./pages/CardDatabasePage";
 import CollectionPage from "./pages/CollectionPage";
 import PlayerProfilePage from "./pages/PlayerProfilePage";
@@ -18,6 +19,7 @@ const APP_ROUTES = {
   "/grid": "grid",
   "/pyramid": "pyramid",
   "/higher-lower": "higherLower",
+  "/hidden-card": "hiddenCard",
   "/cards": "cards",
   "/collection": "collection",
   "/player": "player",
@@ -73,6 +75,9 @@ function App() {
 
     case "/higher-lower":
       return <HigherLowerPage cards={cards} onBack={goHome} />;
+
+    case "/hidden-card":
+      return <HiddenCardPage cards={cards} onBack={goHome} />;
 
     case "/cards":
       return <CardDatabasePage cards={cards} loading={loading} onNavigate={navigate} onBack={goHome} />;
