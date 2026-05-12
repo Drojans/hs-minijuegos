@@ -1,4 +1,4 @@
-﻿.language-toggle {
+.language-toggle {
   display: inline-flex;
   flex-direction: column;
   gap: 8px;
@@ -57,8 +57,8 @@
   padding: 6px 10px;
 }
 
-/* Variante del libro: el botÃ³n ES/EN es literalmente el asset con marco.
-   La zona clickable queda ceÃ±ida al tamaÃ±o visible del botÃ³n. */
+/* Variante del libro: el botón ES/EN es literalmente el asset con marco.
+   La zona clickable queda ceñida al tamaño visible del botón. */
 .language-toggle.is-book {
   display: inline-flex;
   min-width: 0;
@@ -145,3 +145,188 @@
     drop-shadow(0 2px 3px rgba(0, 0, 0, 0.42));
 }
 
+
+/* Dropdown de banderas usado en el header global. */
+.language-toggle.is-flag-dropdown {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: left;
+  z-index: 30;
+}
+
+.language-toggle-current {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 0;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  box-shadow: none;
+  color: rgba(255, 229, 160, 0.82);
+  cursor: pointer;
+  transition: transform 0.16s ease, filter 0.16s ease;
+}
+
+.language-toggle-current:hover,
+.language-toggle-current.is-open {
+  transform: translateY(-1px);
+  background: transparent;
+  filter: brightness(1.08);
+}
+
+.language-toggle-current-text,
+.language-toggle-menu-text {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.language-toggle-flag {
+  display: block;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 auto;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.42));
+  pointer-events: none;
+}
+
+.language-toggle-flag-es {
+  background-image: url("/ui/book/language-es-frame-cartoon.png");
+}
+
+.language-toggle-flag-en {
+  background-image: url("/ui/book/language-en-frame-cartoon.png");
+}
+
+.language-toggle-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 11px;
+  color: rgba(255, 229, 160, 0.82);
+  font-size: 0.8rem;
+  line-height: 1;
+  transform-origin: 50% 46%;
+  transition: transform 0.16s ease;
+}
+
+.language-toggle-current.is-open .language-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+.language-toggle-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 34px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  animation: language-toggle-menu-in 0.14s ease-out both;
+}
+
+.language-toggle-menu::before {
+  content: none;
+}
+
+.language-toggle-menu-option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  color: var(--hs-text, #fff2d0);
+  cursor: pointer;
+  transition: transform 0.14s ease, filter 0.14s ease;
+}
+
+.language-toggle-menu-option:hover {
+  transform: translateY(-1px) scale(1.04);
+  background: transparent;
+  filter: brightness(1.08);
+}
+
+.language-toggle-menu-option .language-toggle-flag {
+  width: 32px;
+  height: 32px;
+}
+
+@keyframes language-toggle-menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-5px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 640px) {
+  .language-toggle-current {
+    height: 32px;
+  }
+
+  .language-toggle-flag,
+  .language-toggle-menu-option .language-toggle-flag {
+    width: 28px;
+    height: 28px;
+  }
+
+  .language-toggle-menu-option {
+    width: 30px;
+    height: 30px;
+  }
+}
+
+
+/* Reset fuerte para que el dropdown de banderas no herede fondos del header ni estilos nativos de botón. */
+.language-toggle.is-flag-dropdown,
+.language-toggle.is-flag-dropdown button,
+.language-toggle.is-flag-dropdown .language-toggle-current,
+.language-toggle.is-flag-dropdown .language-toggle-menu,
+.language-toggle.is-flag-dropdown .language-toggle-menu-option {
+  background: transparent;
+  box-shadow: none;
+}
+
+.language-toggle.is-flag-dropdown button {
+  appearance: none;
+  -webkit-appearance: none;
+}

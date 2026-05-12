@@ -72,7 +72,7 @@ export default function SiteHeader({ pathname = "/", onNavigate }) {
       </button>
 
       <div className="site-header__actions">
-        <LanguageToggle compact className="site-header__language" />
+        <LanguageToggle compact variant="flag-dropdown" className="site-header__language" />
         <button type="button" className="site-header__profile-button" onClick={() => go("/player")}>
           {copy.profileLabel}
         </button>

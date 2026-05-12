@@ -232,3 +232,17 @@
     white-space: nowrap;
   }
 }
+
+
+/* El selector de idioma con banderas debe quedar limpio: sin píldora, sin fondo ni borde heredado. */
+.site-header__language.language-toggle.is-flag-dropdown {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.site-header__language.language-toggle.is-flag-dropdown .language-toggle-current {
+  background: transparent;
+  box-shadow: none;
+}
