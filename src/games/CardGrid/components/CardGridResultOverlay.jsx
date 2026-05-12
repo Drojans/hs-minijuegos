@@ -1,6 +1,6 @@
 import GameResultOverlay from "../../../shared/components/GameResultOverlay/GameResultOverlay";
 
-function CardGridResultOverlay({ t, copy, result, rewardMessage, onViewResults, onBack }) {
+function CardGridResultOverlay({ t, result, rewardMessage, onViewResults }) {
   const isWon = result === "won";
 
   return (
@@ -11,7 +11,6 @@ function CardGridResultOverlay({ t, copy, result, rewardMessage, onViewResults, 
       text={isWon ? t("grid.resultVictoryText") : t("grid.resultTimeText")}
       rewardMessage={rewardMessage}
       primaryAction={{ label: t("grid.viewResults"), onClick: onViewResults }}
-      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
     />
   );
 }

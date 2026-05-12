@@ -305,3 +305,12 @@
   
   
 }
+
+/* Shared card autocomplete */
+.py-answer-form {
+  grid-template-columns: 1fr;
+}
+
+.py-answer-form .card-autocomplete {
+  grid-column: 1 / -1;
+}

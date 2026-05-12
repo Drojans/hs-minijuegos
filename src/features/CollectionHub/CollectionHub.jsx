@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LoadAwareImage from "../../shared/components/LoadAwareImage/LoadAwareImage";
+import PackOpeningModal, { ArcaneBoxVisual } from "./components/PackOpeningModal";
 import useWarmImageCache from "../../shared/hooks/useWarmImageCache";
 import { getCardName, getDetailImage, getGameImage, getThumbImage, translateCardClass, translateCardRarity } from "../../utils/cardLocale";
 import {
@@ -58,8 +59,14 @@ const COPY = {
     noImage: "Sin imagen",
     openingTitle: "Caja arcana",
     openingText: "La caja está despertando...",
+    tapBoxText: "Haz clic en la caja para romper el sello arcano.",
+    openingInProgress: "La caja está despertando...",
     revealTitle: "Cartas obtenidas",
     revealText: "Las cartas nuevas brillan; las copias se guardan igualmente en tu colección.",
+    revealCard: "Revelar carta",
+    hiddenCard: "Carta oculta",
+    clickToReveal: "Haz clic para revelar",
+    revealedCount: "{count} de {total} cartas reveladas.",
     revealAll: "Revelar todas",
     continue: "Continuar",
     openingSummary: "{newCount} nuevas · {copyCount} copias",
@@ -104,8 +111,14 @@ const COPY = {
     noImage: "No image",
     openingTitle: "Arcane box",
     openingText: "The box is waking up...",
+    tapBoxText: "Click the box to break the arcane seal.",
+    openingInProgress: "The box is waking up...",
     revealTitle: "Cards obtained",
     revealText: "New cards glow; copies are still saved in your collection.",
+    revealCard: "Reveal card",
+    hiddenCard: "Hidden card",
+    clickToReveal: "Click to reveal",
+    revealedCount: "{count} of {total} cards revealed.",
     revealAll: "Reveal all",
     continue: "Continue",
     openingSummary: "{newCount} new · {copyCount} copies",
@@ -167,16 +180,6 @@ function sortCollectionCards(cards, locale, sortMode = "default") {
   });
 }
 
-function ArcaneBoxVisual({ isOpening = false }) {
-  return (
-    <div className={`collection-arcane-box ${isOpening ? "is-opening" : ""}`} aria-hidden="true">
-      <div className="collection-arcane-box-core">
-        <span className="collection-arcane-box-gem" />
-      </div>
-    </div>
-  );
-}
-
 function CollectionCardTile({ card, entry, locale, copy }) {
   const unlocked = Boolean(entry);
   const imageSrc = getCollectionImage(card, locale);
@@ -203,71 +206,6 @@ function CollectionCardTile({ card, entry, locale, copy }) {
   );
 }
 
-function OpenedCardTile({ result, locale, copy }) {
-  const imageSrc = getCollectionImage(result.card, locale);
-  const cardName = getCardName(result.card, locale);
-
-  return (
-    <article className={`collection-opened-card ${result.isNew ? "is-new" : "is-copy"}`}>
-      <span className="collection-opened-badge">{result.isNew ? copy.newCard : copy.repeatedCard}</span>
-      <div className="collection-opened-image">
-        {imageSrc ? <LoadAwareImage src={imageSrc} alt={cardName} loading="eager" decoding="async" fetchPriority="high" /> : <span>{copy.noImage}</span>}
-      </div>
-      <h3>{cardName}</h3>
-      <p>{translateCardRarity(result.card.rarity, locale)}</p>
-      {!result.isNew ? <strong>{formatCopy(copy.copyCount, { count: result.count })}</strong> : null}
-    </article>
-  );
-}
-
-function BoxOpeningModal({ copy, locale, opening, onClose, onOpenAnother, canOpenAnother }) {
-  if (!opening) return null;
-
-  const isReveal = opening.phase === "revealed";
-  const newCount = opening.results.filter((result) => result.isNew).length;
-  const copyCount = opening.results.length - newCount;
-
-  return (
-    <div className="collection-opening-backdrop" role="presentation">
-      <section className={`collection-opening-modal ${isReveal ? "is-revealed" : "is-opening"}`} role="dialog" aria-modal="true">
-        {!isReveal ? (
-          <div className="collection-opening-loading">
-            <ArcaneBoxVisual isOpening />
-            <h2>{copy.openingTitle}</h2>
-            <p>{copy.openingText}</p>
-          </div>
-        ) : (
-          <>
-            <header className="collection-opening-head">
-              <p>{copy.openingTitle}</p>
-              <h2>{copy.revealTitle}</h2>
-              <span>{copy.revealText}</span>
-              <strong>{formatCopy(copy.openingSummary, { newCount, copyCount })}</strong>
-            </header>
-
-            <div className="collection-opening-grid">
-              {opening.results.map((result, index) => (
-                <OpenedCardTile key={`${result.cardId}-${index}`} result={result} locale={locale} copy={copy} />
-              ))}
-            </div>
-
-            <div className="collection-opening-actions">
-              {canOpenAnother ? (
-                <button type="button" className="collection-opening-secondary" onClick={onOpenAnother}>
-                  {copy.openAnotherBox}
-                </button>
-              ) : null}
-              <button type="button" className="collection-opening-continue" onClick={onClose}>
-                {copy.continue}
-              </button>
-            </div>
-          </>
-        )}
-      </section>
-    </div>
-  );
-}
-
 function CollectionHub({ cards = [], loading = false }) {
   const { locale } = useLanguage();
   const copy = COPY[locale] ?? COPY.es;
@@ -280,6 +218,7 @@ function CollectionHub({ cards = [], loading = false }) {
   const [sortMode, setSortMode] = useState("default");
   const [pageIndex, setPageIndex] = useState(0);
   const [opening, setOpening] = useState(null);
+  const openingTimerRef = useRef(null);
 
   const eligibleCards = useMemo(() => getEligibleCollectionCards(cards), [cards]);
   const ownedEntries = useMemo(() => collectionStore.cards ?? {}, [collectionStore.cards]);
@@ -340,7 +279,8 @@ function CollectionHub({ cards = [], loading = false }) {
   const uniqueOwned = Object.values(ownedEntries).filter(Boolean).length;
   const totalCopies = Object.values(ownedEntries).reduce((total, entry) => total + (Number(entry?.count) || 0), 0);
   const totalCards = eligibleCards.length;
-  const progressPercent = totalCards > 0 ? Math.round((uniqueOwned / totalCards) * 100) : 0;
+  const progressPercent = totalCards > 0 ? (uniqueOwned / totalCards) * 100 : 0;
+  const progressPercentLabel = progressPercent.toFixed(2);
 
   useEffect(() => {
     setPageIndex(0);
@@ -366,8 +306,17 @@ function CollectionHub({ cards = [], loading = false }) {
     };
   }, []);
 
-  function openBox() {
-    if (loading || boxCount <= 0 || opening?.phase === "opening") return;
+  useEffect(() => {
+    return () => {
+      if (openingTimerRef.current) {
+        window.clearTimeout(openingTimerRef.current);
+      }
+    };
+  }, []);
+
+  function openBox({ allowWhileOpening = false } = {}) {
+    const availableBoxes = getArcaneBoxCount(BOX_ID);
+    if (loading || availableBoxes <= 0 || (!allowWhileOpening && opening)) return;
 
     const consumeResult = consumeArcaneBox({ boxId: BOX_ID, amount: 1, source: "collection" });
     if (!consumeResult.ok) return;
@@ -377,16 +326,60 @@ function CollectionHub({ cards = [], loading = false }) {
 
     setBoxCount(getArcaneBoxCount(BOX_ID));
     setCollectionStore(getCollectionStore());
-    setOpening({ phase: "opening", results: collectionResult.results });
+    setOpening({
+      phase: "waiting",
+      results: collectionResult.results,
+      revealed: collectionResult.results.map(() => false),
+    });
+  }
 
-    window.setTimeout(() => {
-      setOpening({ phase: "revealed", results: collectionResult.results });
+  function startOpeningAnimation() {
+    setOpening((current) => {
+      if (!current || current.phase !== "waiting") return current;
+      return { ...current, phase: "opening" };
+    });
+
+    if (openingTimerRef.current) {
+      window.clearTimeout(openingTimerRef.current);
+    }
+
+    openingTimerRef.current = window.setTimeout(() => {
+      setOpening((current) => {
+        if (!current || current.phase !== "opening") return current;
+        return { ...current, phase: "cards" };
+      });
     }, 1050);
   }
 
-  function handleOpenAnotherBox() {
+  function revealOpeningCard(index) {
+    setOpening((current) => {
+      if (!current || current.phase !== "cards" || current.revealed[index]) return current;
+
+      const nextRevealed = [...current.revealed];
+      nextRevealed[index] = true;
+
+      return { ...current, revealed: nextRevealed };
+    });
+  }
+
+  function revealAllOpeningCards() {
+    setOpening((current) => {
+      if (!current || current.phase !== "cards") return current;
+      return { ...current, revealed: current.results.map(() => true) };
+    });
+  }
+
+  function closeOpeningModal() {
+    if (openingTimerRef.current) {
+      window.clearTimeout(openingTimerRef.current);
+      openingTimerRef.current = null;
+    }
     setOpening(null);
-    window.setTimeout(openBox, 80);
+  }
+
+  function handleOpenAnotherBox() {
+    closeOpeningModal();
+    window.setTimeout(() => openBox({ allowWhileOpening: true }), 80);
   }
 
   function goToPreviousPage() {
@@ -427,7 +420,7 @@ function CollectionHub({ cards = [], loading = false }) {
 
           <article className="collection-progress-panel">
             <span>{copy.collectionProgress}</span>
-            <strong>{progressPercent}%</strong>
+            <strong>{progressPercentLabel}%</strong>
             <div className="collection-progress-bar" aria-hidden="true">
               <span style={{ width: `${Math.min(100, progressPercent)}%` }} />
             </div>
@@ -522,11 +515,14 @@ function CollectionHub({ cards = [], loading = false }) {
         </section>
       </section>
 
-      <BoxOpeningModal
+      <PackOpeningModal
         copy={copy}
         locale={locale}
         opening={opening}
-        onClose={() => setOpening(null)}
+        onStartOpening={startOpeningAnimation}
+        onRevealCard={revealOpeningCard}
+        onRevealAll={revealAllOpeningCards}
+        onClose={closeOpeningModal}
         onOpenAnother={handleOpenAnotherBox}
         canOpenAnother={boxCount > 0}
       />

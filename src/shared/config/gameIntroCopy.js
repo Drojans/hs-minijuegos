@@ -18,7 +18,7 @@ const COMMON = {
     infiniteMeta: "Sin recompensa",
     completedStatus: "Completado",
     startMode: "Empezar",
-    startCompletedDaily: "Revisar reto",
+    startCompletedDaily: "Ver resultado",
     rewardLabel: "Recompensa diaria",
   },
   en: {
@@ -33,7 +33,7 @@ const COMMON = {
     infiniteMeta: "No reward",
     completedStatus: "Completed",
     startMode: "Start",
-    startCompletedDaily: "Review challenge",
+    startCompletedDaily: "View result",
     rewardLabel: "Daily reward",
   },
 };

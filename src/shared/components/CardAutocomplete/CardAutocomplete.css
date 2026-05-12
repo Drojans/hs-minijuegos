@@ -1,0 +1,83 @@
+.card-autocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.card-autocomplete > label {
+  display: block;
+}
+
+.card-autocomplete-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.card-autocomplete-row input {
+  min-width: 0;
+}
+
+.card-autocomplete-suggestions {
+  position: absolute;
+  z-index: 80;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  display: grid;
+  gap: 7px;
+  max-height: 260px;
+  overflow: auto;
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(240, 207, 130, 0.2);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(91, 151, 255, 0.16), transparent 48%),
+    linear-gradient(180deg, rgba(13, 20, 40, 0.98), rgba(5, 9, 20, 0.98));
+  box-shadow:
+    0 22px 46px rgba(0, 0, 0, 0.44),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+}
+
+.card-autocomplete-suggestions button {
+  min-height: 40px;
+  padding: 10px 12px;
+  border: 1px solid rgba(112, 148, 216, 0.28);
+  border-radius: 12px;
+  color: rgba(247, 236, 212, 0.9);
+  background: linear-gradient(180deg, rgba(22, 30, 58, 0.96), rgba(9, 14, 30, 0.96));
+  font: inherit;
+  font-weight: 850;
+  line-height: 1.15;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease,
+    transform 160ms ease;
+}
+
+.card-autocomplete-suggestions button:hover,
+.card-autocomplete-suggestions button:focus-visible,
+.card-autocomplete-suggestions button.is-active {
+  color: #fff3d3;
+  border-color: rgba(240, 190, 101, 0.62);
+  background:
+    radial-gradient(circle at 12% 50%, rgba(240, 190, 101, 0.18), transparent 38%),
+    linear-gradient(180deg, rgba(40, 54, 94, 0.98), rgba(13, 22, 47, 0.98));
+  outline: none;
+  transform: translateY(-1px);
+}
+
+@media (max-width: 680px) {
+  .card-autocomplete-row {
+    grid-template-columns: 1fr;
+  }
+
+  .card-autocomplete-suggestions {
+    max-height: 220px;
+  }
+}

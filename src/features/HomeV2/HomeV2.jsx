@@ -182,17 +182,21 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
             <strong>{resetTime}</strong>
           </motion.div>
 
-          <motion.div
+          <motion.button
+            type="button"
             className="home-v2-pack-counter"
             aria-live="polite"
+            onClick={() => handleNavigate("/collection")}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.32, delay: 0.04, ease: [0.22, 1, 0.36, 1] }}
           >
-            <span className="home-v2-pack-icon" aria-hidden="true">✦</span>
+            <span className="home-v2-pack-icon" aria-hidden="true">
+              <img src="/ui/rewards/arcane-box-open.png" alt="" draggable="false" />
+            </span>
             <span>{copy.packLabel}</span>
             <strong>{packCount}</strong>
-          </motion.div>
+          </motion.button>
         </div>
 
 

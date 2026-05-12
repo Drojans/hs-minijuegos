@@ -1,3 +1,5 @@
+import CardAutocomplete from "../../../shared/components/CardAutocomplete/CardAutocomplete";
+
 function HiddenCardGuessForm({
   copy,
   query,
@@ -12,28 +14,23 @@ function HiddenCardGuessForm({
 }) {
   return (
     <form className="hidden-card-form" onSubmit={onSubmit}>
-      <label>{copy.inputLabel}</label>
-      <div className="hidden-card-input-row">
-        <input
-          ref={inputRef}
-          value={query}
-          onChange={(event) => onChange(event.target.value)}
-          placeholder={copy.inputPlaceholder}
-          disabled={disabled}
-          autoComplete="off"
-        />
-        <button type="submit" disabled={disabled || !canSubmit}>{copy.submit}</button>
-      </div>
+      <CardAutocomplete
+        id="hidden-card-answer"
+        label={copy.inputLabel}
+        value={query}
+        suggestions={disabled ? [] : suggestions}
+        getSuggestionKey={({ card }) => card.id}
+        getSuggestionLabel={({ label }) => label}
+        onPickSuggestion={({ card }) => onPickSuggestion(card)}
+        onChange={onChange}
+        inputRef={inputRef}
+        placeholder={copy.inputPlaceholder}
+        disabled={disabled}
+        canSubmit={canSubmit}
+        submitLabel={copy.submit}
+        rowClassName="hidden-card-input-row"
+      />
       {message ? <p className="hidden-card-form-message">{message}</p> : null}
-      {!disabled && suggestions.length > 0 ? (
-        <div className="hidden-card-suggestions">
-          {suggestions.map(({ card, label }) => (
-            <button key={card.id} type="button" onClick={() => onPickSuggestion(card)}>
-              {label}
-            </button>
-          ))}
-        </div>
-      ) : null}
     </form>
   );
 }

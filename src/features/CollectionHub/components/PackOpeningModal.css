@@ -1,0 +1,458 @@
+.arcane-box-asset {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: min(100%, 310px);
+  aspect-ratio: 1.8 / 1;
+  margin: 0 auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  filter: drop-shadow(0 24px 28px rgba(0, 0, 0, 0.42));
+  isolation: isolate;
+}
+
+.pack-opening-modal.is-cards {
+  display: grid;
+  align-content: center;
+  width: min(100%, 1540px);
+  min-height: min(78svh, 760px);
+  padding: clamp(14px, 1.8vw, 26px);
+}
+
+.arcane-box-asset.is-interactive {
+  cursor: pointer;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.arcane-box-asset.is-interactive:hover:not(:disabled) {
+  transform: translateY(-3px) scale(1.02);
+  filter: drop-shadow(0 28px 34px rgba(0, 0, 0, 0.48)) brightness(1.08);
+}
+
+.arcane-box-asset:disabled {
+  cursor: default;
+}
+
+.arcane-box-asset-image {
+  grid-area: 1 / 1;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+  pointer-events: none;
+}
+
+.arcane-box-asset.is-opening {
+  animation: arcane-box-opening-shake 0.7s ease-in-out infinite;
+}
+
+.pack-opening-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(81, 217, 213, 0.1), transparent 34%),
+    rgba(4, 7, 14, 0.78);
+  backdrop-filter: blur(11px);
+  animation: pack-opening-fade-in 0.18s ease both;
+}
+
+.pack-opening-modal {
+  position: relative;
+  width: min(100%, 1480px);
+  max-height: min(96svh, 1040px);
+  overflow: auto;
+  border-radius: 34px;
+  border: 1px solid rgba(240, 207, 130, 0.3);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(96, 219, 223, 0.14), transparent 34%),
+    radial-gradient(circle at 50% 100%, rgba(105, 167, 255, 0.1), transparent 32%),
+    linear-gradient(180deg, rgba(19, 26, 41, 0.98), rgba(8, 12, 20, 0.985));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 34px 92px rgba(0, 0, 0, 0.5),
+    0 0 80px rgba(84, 218, 214, 0.12);
+  padding: clamp(22px, 3vw, 34px);
+  isolation: isolate;
+}
+
+.pack-opening-modal::before {
+  content: "";
+  position: absolute;
+  inset: 11px;
+  z-index: -1;
+  border-radius: 26px;
+  border: 1px solid rgba(255, 255, 255, 0.055);
+  pointer-events: none;
+}
+
+.pack-opening-corner {
+  position: absolute;
+  width: 135px;
+  height: 1px;
+  top: 17px;
+  background: linear-gradient(90deg, transparent, rgba(240, 207, 130, 0.34), transparent);
+  pointer-events: none;
+}
+
+.pack-opening-corner-a { left: 24px; }
+.pack-opening-corner-b { right: 24px; }
+
+.pack-opening-head {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  text-align: center;
+}
+
+.pack-opening-head p {
+  margin: 0;
+  color: rgba(240, 207, 130, 0.92);
+  font-size: 0.76rem;
+  font-weight: 950;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pack-opening-head h2 {
+  margin: 0;
+  color: #fff3d8;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2.15rem, 4.4vw, 4.8rem);
+  line-height: 0.92;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.42), 0 18px 30px rgba(0, 0, 0, 0.28);
+}
+
+.pack-opening-head span {
+  max-width: 680px;
+  color: rgba(247, 236, 212, 0.76);
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.pack-opening-head strong {
+  display: inline-grid;
+  place-items: center;
+  min-height: 34px;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: #fff3d8;
+  border: 1px solid rgba(240, 207, 130, 0.22);
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 0.9rem;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+.pack-opening-box-stage {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  gap: 18px;
+  min-height: min(56svh, 510px);
+}
+
+.pack-opening-box-stage .arcane-box-asset {
+  width: min(86vw, 620px);
+}
+
+.pack-opening-start,
+.pack-opening-continue,
+.pack-opening-secondary {
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-weight: 950;
+  cursor: pointer;
+  transition: transform 0.16s ease, filter 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+}
+
+.pack-opening-start,
+.pack-opening-continue {
+  border: 1px solid rgba(63, 114, 226, 0.72);
+  color: #eef4ff;
+  background: linear-gradient(180deg, #4f8ef6, #1d54bc);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 16px 30px rgba(20, 61, 148, 0.24);
+}
+
+.pack-opening-secondary {
+  border: 1px solid rgba(240, 207, 130, 0.24);
+  color: rgba(247, 236, 212, 0.84);
+  background: rgba(255, 255, 255, 0.045);
+}
+
+.pack-opening-start:hover,
+.pack-opening-continue:hover,
+.pack-opening-secondary:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+.pack-opening-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(160px, 220px));
+  justify-content: center;
+  align-items: start;
+  gap: clamp(22px, 1.9vw, 34px) clamp(28px, 2.5vw, 46px);
+  perspective: 1200px;
+}
+
+.pack-reveal-card {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  min-width: 0;
+  animation: pack-card-enter 0.34s ease both;
+  animation-delay: var(--pack-card-delay, 0ms);
+}
+
+.pack-reveal-card-button {
+  position: relative;
+  display: grid;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 0.72;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.18s ease, filter 0.18s ease;
+}
+
+.pack-reveal-card-button:hover:not(:disabled) {
+  transform: translateY(-4px) scale(1.015);
+  filter: brightness(1.08);
+}
+
+.pack-reveal-card-button:disabled {
+  cursor: default;
+}
+
+
+.pack-card-inner {
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.58s cubic-bezier(.2,.75,.2,1.08);
+}
+
+.pack-reveal-card.is-revealed .pack-card-inner {
+  transform: rotateY(180deg);
+}
+
+.pack-card-face {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 24px;
+  backface-visibility: hidden;
+  transform-style: preserve-3d;
+}
+
+.pack-card-back {
+  border: 1px solid rgba(240, 207, 130, 0.28);
+  background:
+    radial-gradient(circle at 50% 36%, rgba(105, 167, 255, 0.36), transparent 23%),
+    radial-gradient(circle at 50% 44%, rgba(240, 207, 130, 0.18), transparent 38%),
+    linear-gradient(145deg, rgba(36, 50, 83, 0.96), rgba(8, 13, 26, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.12),
+    inset 0 0 0 8px rgba(240, 207, 130, 0.05),
+    0 18px 30px rgba(0,0,0,0.36),
+    0 0 34px rgba(105, 167, 255, 0.14);
+}
+
+.pack-card-back::before,
+.pack-card-back::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.pack-card-back::before {
+  inset: 18px;
+  border: 1px solid rgba(240, 207, 130, 0.24);
+}
+
+.pack-card-back::after {
+  width: 58%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(105, 167, 255, 0.26);
+  box-shadow: inset 0 0 18px rgba(105, 167, 255, 0.12), 0 0 24px rgba(105, 167, 255, 0.13);
+}
+
+.pack-card-back-rune {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+  border-radius: 999px;
+  color: #fff3d8;
+  border: 1px solid rgba(240, 207, 130, 0.36);
+  background: rgba(5, 9, 18, 0.54);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 2.5rem;
+  line-height: 1;
+  text-shadow: 0 0 18px rgba(105, 167, 255, 0.52);
+}
+
+.pack-card-front {
+  transform: rotateY(180deg);
+  background: rgba(6, 10, 20, 0.26);
+}
+
+.pack-opened-badge {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  z-index: 2;
+  transform: translateX(-50%);
+  min-height: 28px;
+  padding: 6px 11px 0;
+  border-radius: 999px;
+  color: #17100a;
+  background: linear-gradient(135deg, #f5d782, #d99b30);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  box-shadow: 0 10px 16px rgba(0,0,0,0.28);
+}
+
+.pack-reveal-card.is-copy .pack-opened-badge {
+  color: rgba(247, 236, 212, 0.88);
+  border: 1px solid rgba(240, 207, 130, 0.18);
+  background: rgba(10, 15, 26, 0.78);
+}
+
+.pack-opened-image {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.pack-opened-image img {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 20px rgba(0, 0, 0, 0.48));
+}
+
+.pack-card-caption {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 3px;
+  width: 100%;
+  min-height: 48px;
+  text-align: center;
+}
+
+.pack-card-caption h3 {
+  margin: 0;
+  color: #fff3d8;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(0.92rem, 1vw, 1.12rem);
+  line-height: 1.05;
+}
+
+.pack-card-caption p {
+  margin: 0;
+  color: rgba(247, 236, 212, 0.62);
+  font-size: 0.74rem;
+  font-weight: 800;
+}
+
+.pack-card-caption strong {
+  display: grid;
+  place-items: center;
+  min-width: 34px;
+  height: 24px;
+  border-radius: 999px;
+  color: #17100a;
+  background: linear-gradient(135deg, #f5d782, #d99b30);
+  font-size: 0.76rem;
+  font-weight: 950;
+  box-shadow: 0 8px 14px rgba(0,0,0,0.26);
+}
+
+.pack-opening-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+
+@keyframes pack-opening-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pack-card-enter {
+  from { opacity: 0; transform: translateY(18px) scale(0.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+
+@keyframes arcane-box-opening-shake {
+  0%, 100% { transform: translateY(0) rotate(0deg) scale(1); }
+  20% { transform: translateY(-3px) rotate(-1.4deg) scale(1.01); }
+  42% { transform: translateY(2px) rotate(1.5deg) scale(1.025); }
+  66% { transform: translateY(-2px) rotate(-0.8deg) scale(1.01); }
+}
+
+@media (max-width: 1320px) {
+  .pack-opening-grid {
+    grid-template-columns: repeat(5, minmax(145px, 195px));
+    gap: 20px 28px;
+  }
+}
+
+@media (max-width: 1140px) {
+  .pack-opening-grid {
+    grid-template-columns: repeat(4, minmax(150px, 215px));
+  }
+}
+
+@media (max-width: 860px) {
+  .pack-opening-grid {
+    grid-template-columns: repeat(2, minmax(150px, 220px));
+    gap: 24px;
+  }
+
+  .pack-opening-modal {
+    padding: 18px;
+  }
+
+  .pack-opening-box-stage .arcane-box-asset {
+    width: min(92vw, 460px);
+  }
+}
+
+@media (max-width: 560px) {
+  .pack-opening-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pack-reveal-card-button {
+    max-width: 210px;
+  }
+}

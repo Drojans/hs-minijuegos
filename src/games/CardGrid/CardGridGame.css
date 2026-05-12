@@ -2948,3 +2948,8 @@
 .cg-post-result-actions .cg-primary-button {
   min-width: 220px;
 }
+
+/* Shared card autocomplete */
+.cg-answer-form .card-autocomplete-suggestions {
+  text-align: left;
+}

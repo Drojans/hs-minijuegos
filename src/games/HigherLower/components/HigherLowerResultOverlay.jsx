@@ -1,6 +1,6 @@
 import GameResultOverlay from "../../../shared/components/GameResultOverlay/GameResultOverlay";
 
-function HigherLowerResultOverlay({ copy, result, rewardMessage, onViewResults, onBack }) {
+function HigherLowerResultOverlay({ copy, result, rewardMessage, onViewResults }) {
   const isWon = result === "won";
 
   return (
@@ -11,7 +11,6 @@ function HigherLowerResultOverlay({ copy, result, rewardMessage, onViewResults, 
       text={isWon ? copy.winText : copy.loseText}
       rewardMessage={rewardMessage}
       primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
-      secondaryActions={onBack ? [{ label: copy.backHome, onClick: onBack }] : []}
     />
   );
 }

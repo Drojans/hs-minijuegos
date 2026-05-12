@@ -1,23 +1,5 @@
+import CardAutocomplete from "../../../shared/components/CardAutocomplete/CardAutocomplete";
 import { getCardName } from "../cardGridGameConfig";
-
-function Suggestions({ suggestions, locale, isComplete, onPickSuggestion }) {
-  if (suggestions.length === 0 || isComplete) return null;
-
-  return (
-    <div className="cg-suggestions">
-      {suggestions.map((card) => (
-        <button
-          type="button"
-          key={card.id}
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => onPickSuggestion(getCardName(card, locale))}
-        >
-          {getCardName(card, locale)}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function AnswerForm({
   t,
@@ -32,31 +14,21 @@ function AnswerForm({
 }) {
   return (
     <form className="cg-answer-form" onSubmit={onSubmitAnswer}>
-      <label htmlFor="grid-card-answer">{t("grid.cardLabel")}</label>
-      <div className="cg-input-row cg-input-row-single">
-        <input
-          id="grid-card-answer"
-          ref={inputRef}
-          value={answer}
-          onChange={(event) => onAnswerChange(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
-            event.preventDefault();
-            onSubmitAnswer(event);
-          }}
-          placeholder={t("grid.answerPlaceholder")}
-          autoComplete="off"
-          disabled={isComplete}
-        />
-      </div>
-      <p className="cg-enter-hint">{t("grid.enterHint")}</p>
-
-      <Suggestions
-        suggestions={suggestions}
-        locale={locale}
-        isComplete={isComplete}
-        onPickSuggestion={onPickSuggestion}
+      <CardAutocomplete
+        id="grid-card-answer"
+        label={t("grid.cardLabel")}
+        value={answer}
+        suggestions={isComplete ? [] : suggestions}
+        getSuggestionKey={(card) => card.id}
+        getSuggestionLabel={(card) => getCardName(card, locale)}
+        onPickSuggestion={(card) => onPickSuggestion(getCardName(card, locale))}
+        onChange={onAnswerChange}
+        inputRef={inputRef}
+        placeholder={t("grid.answerPlaceholder")}
+        disabled={isComplete}
+        rowClassName="cg-input-row cg-input-row-single"
       />
+      <p className="cg-enter-hint">{t("grid.enterHint")}</p>
     </form>
   );
 }

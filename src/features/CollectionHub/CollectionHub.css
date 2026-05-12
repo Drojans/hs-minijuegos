@@ -992,3 +992,16 @@
     padding: 18px;
   }
 }
+
+/* Arcane box asset v1 */
+.collection-box-panel {
+  grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+}
+
+.collection-box-panel .arcane-box-asset {
+  width: min(100%, 292px);
+}
+
+.collection-box-panel .arcane-box-asset-glow {
+  opacity: 0.42;
+}

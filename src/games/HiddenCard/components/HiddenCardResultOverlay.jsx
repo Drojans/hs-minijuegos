@@ -1,6 +1,6 @@
 import GameResultOverlay from "../../../shared/components/GameResultOverlay/GameResultOverlay";
 
-function HiddenCardResultOverlay({ copy, result, rewardMessage, onViewResults, onBack }) {
+function HiddenCardResultOverlay({ copy, result, rewardMessage, onViewResults }) {
   const isWon = result === "won";
 
   return (
@@ -11,7 +11,6 @@ function HiddenCardResultOverlay({ copy, result, rewardMessage, onViewResults, o
       text={isWon ? copy.winText : copy.loseText}
       rewardMessage={rewardMessage}
       primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
-      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
     />
   );
 }

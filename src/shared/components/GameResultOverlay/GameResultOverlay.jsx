@@ -49,7 +49,6 @@ function GameResultOverlay({
   rewardMessage,
   preview,
   primaryAction,
-  secondaryActions = [],
   icon,
   showConfetti,
   className = "",
@@ -82,9 +81,6 @@ function GameResultOverlay({
 
             <div className="game-result-actions">
               <ActionButton action={primaryAction} variant="primary" />
-              {secondaryActions.map((action, index) => (
-                <ActionButton key={`${action.label}-${index}`} action={action} variant="secondary" />
-              ))}
             </div>
           </div>
 

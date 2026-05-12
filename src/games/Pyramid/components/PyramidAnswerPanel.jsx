@@ -1,5 +1,6 @@
 import { GAME_MODE_IDS } from "../../../shared/gameModes/gameModes";
-import PyramidSuggestions from "./PyramidSuggestions";
+import CardAutocomplete from "../../../shared/components/CardAutocomplete/CardAutocomplete";
+import { getCardName } from "../../../utils/cardLocale";
 
 function PyramidAnswerPanel({
   copy,
@@ -22,16 +23,18 @@ function PyramidAnswerPanel({
 
       {!result && !isReview ? (
         <form className="py-answer-form" onSubmit={onSubmitAnswer}>
-          <input
+          <CardAutocomplete
+            id="pyramid-card-answer"
             value={answer}
-            onChange={(event) => onAnswerChange(event.target.value)}
+            suggestions={suggestions}
+            getSuggestionKey={(card) => card.id}
+            getSuggestionLabel={(card) => getCardName(card, locale)}
+            onPickSuggestion={(card) => onSuggestionPick(getCardName(card, locale))}
+            onChange={onAnswerChange}
             placeholder={copy.cardPlaceholder}
-            autoComplete="off"
+            submitLabel={copy.submit}
+            submitButtonClassName="py-button is-primary"
           />
-          <button type="submit" className="py-button is-primary">
-            {copy.submit}
-          </button>
-          <PyramidSuggestions suggestions={suggestions} locale={locale} onPick={onSuggestionPick} />
         </form>
       ) : null}
 

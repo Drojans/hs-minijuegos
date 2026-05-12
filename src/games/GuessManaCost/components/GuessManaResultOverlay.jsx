@@ -1,6 +1,6 @@
 import GameResultOverlay from "../../../shared/components/GameResultOverlay/GameResultOverlay";
 
-function GuessManaResultOverlay({ copy, isCorrect, cardName, correctCost, rewardMessage, onViewResults, onBack }) {
+function GuessManaResultOverlay({ copy, isCorrect, cardName, correctCost, rewardMessage, onViewResults }) {
   return (
     <GameResultOverlay
       tone={isCorrect ? "success" : "danger"}
@@ -21,7 +21,6 @@ function GuessManaResultOverlay({ copy, isCorrect, cardName, correctCost, reward
         </>
       )}
       primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
-      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
     />
   );
 }
