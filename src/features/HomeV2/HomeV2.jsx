@@ -125,9 +125,12 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
     const disabled = !mode.route || loading;
     const showBadge = mode.kind === "soon";
     const badgeLabel = copy[mode.kind] ?? mode.kind;
-    const rawDailyState = getDailyChallengeState(dailyModeProgress[mode.id]);
+    const isGameMode = mode.group === "games";
+    const rawDailyState = isGameMode
+      ? getDailyChallengeState(dailyModeProgress[mode.id])
+      : DAILY_CHALLENGE_STATES.PENDING;
     const dailyState = rawDailyState === DAILY_CHALLENGE_STATES.PENDING ? null : rawDailyState;
-    const dailyStateLabel = dailyState === "won" ? copy.dailyWon : dailyState === "lost" ? copy.dailyLost : "";
+    const dailyStateLabel = dailyState === "won" ? copy.dailyWon : dailyState === "lost" ? copy.dailyLost : copy.dailyPending;
 
     return (
       <motion.button
@@ -142,11 +145,6 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
         aria-label={dailyStateLabel ? `${mode.title}. ${dailyStateLabel}` : mode.title}
       >
         {showBadge ? <span className={`home-v2-mode-badge is-${mode.kind}`}>{badgeLabel}</span> : null}
-        {dailyState ? (
-          <span className={`home-v2-daily-state-mark is-${dailyState}`} aria-hidden="true">
-            {dailyState === "won" ? "✓" : "×"}
-          </span>
-        ) : null}
         <div className="home-v2-mode-icon" aria-hidden="true">{renderModeIcon(mode)}</div>
         <h3>{mode.title}</h3>
       </motion.button>
