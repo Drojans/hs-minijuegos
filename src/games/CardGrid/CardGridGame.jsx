@@ -2,8 +2,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
+import GamePreparingOverlay from "../../shared/components/GamePreparingOverlay/GamePreparingOverlay";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
+import usePreparationGate from "../../shared/hooks/usePreparationGate";
 import { ARCANE_BOX_ID, CARD_GRID_DAILY_TIME_SECONDS, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
   completeDailyChallenge,
@@ -30,6 +32,7 @@ import {
   TOTAL_CELLS,
   buildConditionPool,
   generateGrid,
+  getCardImage,
   getCardName,
   getCardsByExactName,
   getGridModes,
@@ -97,6 +100,26 @@ function CardGridGame({ cards, onBack }) {
     !resultsMode &&
     typeof timeLeft === "number";
 
+
+  const gridPreparationSources = useMemo(() => {
+    if (!grid) return [];
+
+    const conditionIcons = [...grid.rows, ...grid.columns]
+      .map((condition) => condition.icon)
+      .filter(Boolean);
+    const answerImages = Object.values(answers).map((card) => getCardImage(card, locale));
+
+    return [...conditionIcons, ...answerImages];
+  }, [answers, grid, locale]);
+
+  const isPreparingGrid = usePreparationGate({
+    active: Boolean(selectedMode && grid),
+    sources: gridPreparationSources,
+    resetKey: grid?.id,
+    minDurationMs: 1150,
+    timeoutMs: 2400,
+    fetchPriority: "high",
+  });
 
   const suggestions = useMemo(() => {
     if (suppressSuggestions || normalize(answer).length < 3) return [];
@@ -520,6 +543,22 @@ function CardGridGame({ cards, onBack }) {
         onChangeMode={changeGridMode}
         onStartNewGrid={startNewGrid}
       />
+    );
+  }
+
+  if (isPreparingGrid) {
+    return (
+      <GamePageShell className="cg-page">
+        <GamePreparingOverlay
+          eyebrow={isDailyMode ? copy.dailyChallenge : copy.infiniteChallenge}
+          title={locale === "en" ? "Preparing grid..." : "Preparando grid..."}
+          description={
+            locale === "en"
+              ? "The tavern is setting up the clues and the board."
+              : "La taberna está preparando las pistas y el tablero."
+          }
+        />
+      </GamePageShell>
     );
   }
 

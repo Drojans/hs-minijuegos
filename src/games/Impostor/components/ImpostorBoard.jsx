@@ -1,3 +1,4 @@
+import LoadAwareImage from "../../../shared/components/LoadAwareImage/LoadAwareImage";
 import ImpostorNeutralCard from "../ImpostorNeutralCard";
 import {
   getCardName,
@@ -62,7 +63,7 @@ function ImpostorBoardCard({
         </div>
 
         <div className="im-flip-face im-flip-back">
-          <img
+          <LoadAwareImage
             className={getOriginalCardImageClassName(card)}
             src={getOriginalCardImage(card, locale)}
             alt={getCardName(card, locale)}

@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
+import LoadAwareImage from "../../shared/components/LoadAwareImage/LoadAwareImage";
+import useWarmImageCache from "../../shared/hooks/useWarmImageCache";
 import {
   COLLECTION_UPDATED_EVENT,
   getCollectionStore,
@@ -153,7 +155,7 @@ function DatabaseCardTile({ card, locale, copy, selected, onSelect }) {
       title={cardName}
     >
       <div className="card-db-card-image">
-        {imageSrc ? <img src={imageSrc} alt={cardName} loading="lazy" decoding="async" /> : <span>{copy.noImage}</span>}
+        {imageSrc ? <LoadAwareImage src={imageSrc} alt={cardName} loading="lazy" decoding="async" /> : <span>{copy.noImage}</span>}
       </div>
       <div className="card-db-card-info">
         <h3>{cardName}</h3>
@@ -215,7 +217,7 @@ function CardDetailPanel({ card, locale, copy, onClose }) {
       <button type="button" className="card-db-detail-close" onClick={onClose} aria-label={copy.closeDetail}>×</button>
 
       <div className="card-db-detail-image">
-        {imageSrc ? <img src={imageSrc} alt={cardName} /> : <span>{copy.imageUnavailable}</span>}
+        {imageSrc ? <LoadAwareImage src={imageSrc} alt={cardName} loading="eager" decoding="async" fetchPriority="high" /> : <span>{copy.imageUnavailable}</span>}
       </div>
 
       <div className="card-db-detail-info">
@@ -264,6 +266,14 @@ function CardDatabase({ cards = [], loading = false }) {
     const start = safePageIndex * PAGE_SIZE;
     return filteredCards.slice(start, start + PAGE_SIZE);
   }, [filteredCards, safePageIndex]);
+
+  const currentPageImageSources = useMemo(() => {
+    const sources = currentPageCards.map((card) => getDatabaseImage(card, locale));
+    if (selectedCard) sources.push(getDatabaseImage(selectedCard, locale));
+    return sources;
+  }, [currentPageCards, selectedCard, locale]);
+
+  useWarmImageCache(currentPageImageSources, { fetchPriority: "low" });
 
   const ownedCount = Object.keys(getCollectionStore().cards ?? {}).length;
 

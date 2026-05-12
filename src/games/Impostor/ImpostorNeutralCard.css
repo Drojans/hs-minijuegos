@@ -85,6 +85,30 @@
   transform-origin: center center;
 }
 
+.inc-card-minion-template-overlay.is-neutral-loading .inc-template-overlay-render,
+.inc-card-spell-template-overlay.is-neutral-loading .inc-template-overlay-render,
+.inc-card-weapon-template-overlay.is-neutral-loading .inc-template-overlay-render,
+.inc-card-minion-template-overlay.is-neutral-loading .inc-template-overlay-frame,
+.inc-card-spell-template-overlay.is-neutral-loading .inc-template-overlay-frame,
+.inc-card-weapon-template-overlay.is-neutral-loading .inc-template-overlay-frame {
+  opacity: 0;
+}
+
+.inc-card-minion-template-overlay.is-neutral-ready .inc-template-overlay-render,
+.inc-card-spell-template-overlay.is-neutral-ready .inc-template-overlay-render,
+.inc-card-weapon-template-overlay.is-neutral-ready .inc-template-overlay-render,
+.inc-card-minion-template-overlay.is-neutral-ready .inc-template-overlay-frame,
+.inc-card-spell-template-overlay.is-neutral-ready .inc-template-overlay-frame,
+.inc-card-weapon-template-overlay.is-neutral-ready .inc-template-overlay-frame {
+  opacity: 1;
+}
+
+.inc-card-minion-template-overlay .inc-template-overlay-frame,
+.inc-card-spell-template-overlay .inc-template-overlay-frame,
+.inc-card-weapon-template-overlay .inc-template-overlay-frame {
+  transition: opacity 0.12s ease;
+}
+
 .inc-card-minion-template-overlay .inc-template-overlay-fallback,
 .inc-card-spell-template-overlay .inc-template-overlay-fallback,
 .inc-card-weapon-template-overlay .inc-template-overlay-fallback {

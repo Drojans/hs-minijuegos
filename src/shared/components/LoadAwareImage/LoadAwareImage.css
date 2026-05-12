@@ -1,0 +1,98 @@
+.hs-load-aware-image {
+  opacity: 0;
+  transition: opacity 0.22s ease, transform 0.16s ease, filter 0.16s ease;
+}
+
+.hs-load-aware-image.is-loaded {
+  opacity: 1;
+}
+
+.hs-load-aware-image.is-error {
+  opacity: 0.18;
+}
+
+@keyframes hs-image-cache-shimmer {
+  0% { transform: translateX(-110%); }
+  100% { transform: translateX(110%); }
+}
+
+.card-db-card-image,
+.card-db-detail-image,
+.collection-card-image,
+.collection-opened-image,
+.guess-v3-card-frame,
+.hidden-card-image-frame,
+.hl-full-card-preview,
+.cg-solved-card-frame,
+.py-slot.is-filled,
+.im-flip-back,
+.inc-card-shell {
+  position: relative;
+  isolation: isolate;
+}
+
+.card-db-card-image::before,
+.card-db-detail-image::before,
+.collection-card-image::before,
+.collection-opened-image::before,
+.guess-v3-card-frame::before,
+.hidden-card-image-frame::before,
+.hl-full-card-preview::before,
+.cg-solved-card-frame::before,
+.py-slot.is-filled::before,
+.im-flip-back::before,
+.inc-card-shell::before {
+  content: "";
+  position: absolute;
+  inset: 10%;
+  z-index: 0;
+  border-radius: 18px;
+  opacity: 0.62;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.10), transparent),
+    radial-gradient(circle at 50% 22%, rgba(105, 167, 255, 0.18), transparent 46%),
+    linear-gradient(180deg, rgba(33, 43, 61, 0.68), rgba(8, 12, 22, 0.86));
+  background-size: 220% 100%, 100% 100%, 100% 100%;
+  animation: hs-image-cache-shimmer 1.25s ease-in-out infinite;
+  transition: opacity 0.24s ease;
+}
+
+.card-db-card-image:has(.hs-load-aware-image.is-loaded)::before,
+.card-db-detail-image:has(.hs-load-aware-image.is-loaded)::before,
+.collection-card-image:has(.hs-load-aware-image.is-loaded)::before,
+.collection-opened-image:has(.hs-load-aware-image.is-loaded)::before,
+.guess-v3-card-frame:has(.hs-load-aware-image.is-loaded)::before,
+.hidden-card-image-frame:has(.hs-load-aware-image.is-loaded)::before,
+.hl-full-card-preview:has(.hs-load-aware-image.is-loaded)::before,
+.cg-solved-card-frame:has(.hs-load-aware-image.is-loaded)::before,
+.py-slot.is-filled:has(.hs-load-aware-image.is-loaded)::before,
+.im-flip-back:has(.hs-load-aware-image.is-loaded)::before,
+.inc-card-shell:has(.hs-load-aware-image.is-loaded)::before {
+  opacity: 0;
+  animation: none;
+}
+
+.card-db-card-image > .hs-load-aware-image,
+.card-db-detail-image > .hs-load-aware-image,
+.collection-card-image > .hs-load-aware-image,
+.collection-opened-image > .hs-load-aware-image,
+.guess-v3-card-frame > .hs-load-aware-image,
+.hidden-card-image-frame > .hs-load-aware-image,
+.hl-full-card-preview > .hs-load-aware-image,
+.cg-solved-card-frame > .hs-load-aware-image,
+.py-slot.is-filled > .hs-load-aware-image {
+  position: relative;
+  z-index: 1;
+}
+
+.inc-card-shell::before {
+  inset: 11% 15% 15%;
+  border-radius: 999px 999px 24px 24px;
+  z-index: 0;
+}
+
+.im-flip-back::before {
+  inset: 8% 11%;
+  border-radius: 18px;
+}

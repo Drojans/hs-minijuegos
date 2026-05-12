@@ -1,3 +1,6 @@
+import { useEffect, useMemo, useState } from "react";
+import LoadAwareImage from "../../shared/components/LoadAwareImage/LoadAwareImage";
+import { warmImages } from "../../shared/images/imageCache";
 import {
   getAdaptedImage,
   getCardName,
@@ -27,7 +30,7 @@ const OVERLAY_BY_TYPE = {
   },
 };
 
-function getNeutralRender(card, locale) {
+export function getNeutralRender(card, locale) {
   return (
     getAdaptedImage(card, locale) ||
     getGameImage(card, locale) ||
@@ -44,25 +47,55 @@ function getOverlayConfig(card) {
   return OVERLAY_BY_TYPE[card?.type] ?? OVERLAY_BY_TYPE.MINION;
 }
 
+export function getNeutralOverlaySource(card) {
+  return getOverlayConfig(card).overlaySrc;
+}
+
+export function getNeutralCardImageSources(card, locale) {
+  return [getNeutralRender(card, locale), getNeutralOverlaySource(card)].filter(Boolean);
+}
+
 function ImpostorNeutralCard({ card, locale = "es" }) {
   const cardName = getCardName(card, locale);
   const renderSrc = getNeutralRender(card, locale);
   const overlayConfig = getOverlayConfig(card);
+  const overlaySrc = overlayConfig.overlaySrc;
   const legendaryClass = isLegendaryCard(card) ? ` ${overlayConfig.legendaryClass}` : "";
+  const preloadSources = useMemo(
+    () => [renderSrc, overlaySrc].filter(Boolean),
+    [renderSrc, overlaySrc]
+  );
+  const [isCompositeReady, setIsCompositeReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setIsCompositeReady(false);
+
+    warmImages(preloadSources, { fetchPriority: "high", decoding: "async" }).then(() => {
+      if (!cancelled) {
+        setIsCompositeReady(true);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [preloadSources]);
 
   return (
     <div
-      className={`inc-card-shell ${overlayConfig.shellClass}${legendaryClass}`}
+      className={`inc-card-shell ${overlayConfig.shellClass}${legendaryClass} ${isCompositeReady ? "is-neutral-ready" : "is-neutral-loading"}`}
       title={cardName}
       aria-label={cardName}
     >
       {renderSrc ? (
-        <img
+        <LoadAwareImage
           className="inc-template-overlay-render"
           src={renderSrc}
           alt=""
           loading="eager"
-          decoding="sync"
+          decoding="async"
+          fetchPriority="high"
         />
       ) : (
         <div className="inc-template-overlay-fallback">
@@ -72,7 +105,7 @@ function ImpostorNeutralCard({ card, locale = "es" }) {
 
       <img
         className="inc-template-overlay-frame"
-        src={overlayConfig.overlaySrc}
+        src={overlaySrc}
         alt=""
         aria-hidden="true"
         loading="eager"

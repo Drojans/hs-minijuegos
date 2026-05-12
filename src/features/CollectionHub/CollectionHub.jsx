@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
+import LoadAwareImage from "../../shared/components/LoadAwareImage/LoadAwareImage";
+import useWarmImageCache from "../../shared/hooks/useWarmImageCache";
 import { getCardName, getDetailImage, getGameImage, getThumbImage, translateCardClass, translateCardRarity } from "../../utils/cardLocale";
 import {
   COLLECTION_UPDATED_EVENT,
@@ -184,7 +186,7 @@ function CollectionCardTile({ card, entry, locale, copy }) {
   return (
     <article className={`collection-card-tile ${unlocked ? "is-owned" : "is-locked"}`} title={cardName}>
       <div className="collection-card-image">
-        {imageSrc ? <img src={imageSrc} alt={cardName} loading="lazy" /> : <span>{copy.noImage}</span>}
+        {imageSrc ? <LoadAwareImage src={imageSrc} alt={cardName} loading="lazy" decoding="async" /> : <span>{copy.noImage}</span>}
       </div>
 
       <div className="collection-card-info">
@@ -209,7 +211,7 @@ function OpenedCardTile({ result, locale, copy }) {
     <article className={`collection-opened-card ${result.isNew ? "is-new" : "is-copy"}`}>
       <span className="collection-opened-badge">{result.isNew ? copy.newCard : copy.repeatedCard}</span>
       <div className="collection-opened-image">
-        {imageSrc ? <img src={imageSrc} alt={cardName} /> : <span>{copy.noImage}</span>}
+        {imageSrc ? <LoadAwareImage src={imageSrc} alt={cardName} loading="eager" decoding="async" fetchPriority="high" /> : <span>{copy.noImage}</span>}
       </div>
       <h3>{cardName}</h3>
       <p>{translateCardRarity(result.card.rarity, locale)}</p>
@@ -327,6 +329,13 @@ function CollectionHub({ cards = [], loading = false }) {
   const pageCount = Math.max(1, Math.ceil(filteredCards.length / PAGE_SIZE));
   const safePageIndex = Math.min(pageIndex, pageCount - 1);
   const currentPageCards = filteredCards.slice(safePageIndex * PAGE_SIZE, safePageIndex * PAGE_SIZE + PAGE_SIZE);
+  const openingImageSources = opening?.results?.map((result) => getCollectionImage(result.card, locale)) ?? [];
+  const currentPageImageSources = [
+    ...currentPageCards.map((card) => getCollectionImage(card, locale)),
+    ...openingImageSources,
+  ];
+
+  useWarmImageCache(currentPageImageSources, { fetchPriority: "low" });
 
   const uniqueOwned = Object.values(ownedEntries).filter(Boolean).length;
   const totalCopies = Object.values(ownedEntries).reduce((total, entry) => total + (Number(entry?.count) || 0), 0);

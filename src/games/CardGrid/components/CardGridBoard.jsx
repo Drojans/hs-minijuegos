@@ -1,3 +1,4 @@
+import LoadAwareImage from "../../../shared/components/LoadAwareImage/LoadAwareImage";
 import { getCardImage, getCardName } from "../cardGridGameConfig";
 import { getGridCellKey } from "../cardGridState";
 
@@ -47,12 +48,13 @@ function SolvedCard({ card, locale }) {
 
   return (
     <div className="cg-solved-card-frame">
-      <img
+      <LoadAwareImage
         className="cg-solved-card-image"
         src={imageSrc}
         alt={getCardName(card, locale)}
-        loading="lazy"
+        loading="eager"
         decoding="async"
+        fetchPriority="high"
       />
     </div>
   );

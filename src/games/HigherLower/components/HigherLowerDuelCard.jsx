@@ -1,3 +1,4 @@
+import LoadAwareImage from "../../../shared/components/LoadAwareImage/LoadAwareImage";
 import { getCardName } from "../../../utils/cardLocale";
 import ImpostorNeutralCard from "../../Impostor/ImpostorNeutralCard";
 import { getFullHigherLowerCardImage } from "../higherLowerConfig";
@@ -24,7 +25,7 @@ function HigherLowerDuelCard({ side, card, locale, copy, disabled, feedback, onC
     >
       {isRevealed ? (
         <div className="hl-full-card-preview" aria-hidden="true">
-          {imageSrc ? <img src={imageSrc} alt="" /> : <span>{name}</span>}
+          {imageSrc ? <LoadAwareImage src={imageSrc} alt="" loading="eager" decoding="async" fetchPriority="high" /> : <span>{name}</span>}
         </div>
       ) : (
         <div className="hl-neutral-card-preview" aria-hidden="true">

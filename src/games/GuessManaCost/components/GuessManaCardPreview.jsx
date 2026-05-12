@@ -1,9 +1,11 @@
+import LoadAwareImage from "../../../shared/components/LoadAwareImage/LoadAwareImage";
+
 function GuessManaCardPreview({ imageSrc, cardName, imageFailed, onImageError, copy, hideManaCover = false }) {
   return (
     <section className="guess-v3-card-wrap">
       <div className="guess-v3-card-frame">
         {!imageFailed ? (
-          <img
+          <LoadAwareImage
             src={imageSrc}
             alt={cardName}
             loading="eager"

@@ -2,9 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
+import GamePreparingOverlay from "../../shared/components/GamePreparingOverlay/GamePreparingOverlay";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
+import usePreparationGate from "../../shared/hooks/usePreparationGate";
 import {
   completeDailyChallenge,
   getDailyGameProgress,
@@ -15,6 +17,7 @@ import {
 import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
 import ImpostorActionBar from "./components/ImpostorActionBar";
 import ImpostorBoard from "./components/ImpostorBoard";
+import { getNeutralCardImageSources } from "./ImpostorNeutralCard";
 import ImpostorMessagePanel from "./components/ImpostorMessagePanel";
 import ImpostorResultOverlay from "./components/ImpostorResultOverlay";
 import { getImpostorCopy } from "./impostorCopy";
@@ -25,6 +28,7 @@ import {
   createRoundFromConditions,
   getCardImage,
   getCardName,
+  getOriginalCardImage,
   isAllowedType,
   preloadRoundImages,
 } from "./impostorGameConfig";
@@ -80,6 +84,25 @@ function ImpostorGame({ cards, onBack }) {
     if (!roundData) return;
     preloadRoundImages(roundData, locale, "high");
   }, [roundData, locale]);
+
+  const roundImageSources = useMemo(() => {
+    if (!roundData?.cards?.length) return [];
+
+    return roundData.cards.flatMap((card) => [
+      getCardImage(card, locale),
+      getOriginalCardImage(card, locale),
+      ...getNeutralCardImageSources(card, locale),
+    ]);
+  }, [roundData, locale]);
+
+  const isPreparingRound = usePreparationGate({
+    active: Boolean(selectedMode && roundData),
+    sources: roundImageSources,
+    resetKey: roundData?.id,
+    minDurationMs: 1300,
+    timeoutMs: 3200,
+    fetchPriority: "high",
+  });
 
   function revealAllCards(cardsToReveal = roundData?.cards ?? []) {
     setRevealedIds(new Set(cardsToReveal.map((card) => card.id)));
@@ -249,6 +272,22 @@ function ImpostorGame({ cards, onBack }) {
 
   if (!roundData) {
     return <ImpostorMessagePanel copy={copy} title={copy.loading} onBack={onBack} />;
+  }
+
+  if (isPreparingRound) {
+    return (
+      <GamePageShell className="im-page">
+        <GamePreparingOverlay
+          eyebrow={selectedMode === GAME_MODE_IDS.DAILY ? copy.dailyChallenge : copy.infiniteChallenge}
+          title={locale === "en" ? "Shuffling cards..." : "Barajando cartas..."}
+          description={
+            locale === "en"
+              ? "The tavern is preparing this Impostor round."
+              : "La taberna está preparando esta ronda de Impostor."
+          }
+        />
+      </GamePageShell>
+    );
   }
 
   const foundCount = foundCorrectIds.size;

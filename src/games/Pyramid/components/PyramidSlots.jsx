@@ -1,3 +1,4 @@
+import LoadAwareImage from "../../../shared/components/LoadAwareImage/LoadAwareImage";
 import { getCardName } from "../../../utils/cardLocale";
 import { PYRAMID_TARGET_COUNT, getCardImage } from "../pyramidGameConfig";
 
@@ -17,7 +18,7 @@ function PyramidSlots({ foundCards, locale }) {
               <div key={absoluteIndex} className={`py-slot ${card ? "is-filled" : ""}`}>
                 {card ? (
                   <>
-                    <img src={getCardImage(card, locale)} alt={cardName} />
+                    <LoadAwareImage src={getCardImage(card, locale)} alt={cardName} loading="eager" decoding="async" />
                     <span>{cardName}</span>
                   </>
                 ) : (
