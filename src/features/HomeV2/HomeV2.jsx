@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import { getArcaneBoxCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
 import { COLLECTION_UPDATED_EVENT, getOwnedCardCount } from "../../shared/collection/collectionStore";
 import { DAILY_MODE_GAME_IDS_BY_HOME_MODE } from "../../shared/config/gameRules";
@@ -157,32 +156,6 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
         <span className="home-v2-glow home-v2-glow-a" />
         <span className="home-v2-glow home-v2-glow-b" />
       </div>
-
-      <header className="home-v2-header">
-        <nav className="home-v2-nav" aria-label="Principal">
-          <button type="button" className="is-active" onClick={() => handleNavigate("/")}>{copy.navMinigames}</button>
-          <button type="button" onClick={() => handleNavigate("/cards")}>{copy.navCards}</button>
-          <button type="button" onClick={() => handleNavigate("/collection")}>{copy.navCollection}</button>
-        </nav>
-
-        <button
-          type="button"
-          className="home-v2-brand"
-          onClick={() => handleNavigate("/")}
-          aria-label="Hearthdle"
-        >
-          <img className="home-v2-brand-mug is-left" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-          <span>Hearthdle</span>
-          <img className="home-v2-brand-mug" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-        </button>
-
-        <div className="home-v2-actions">
-          <LanguageToggle compact className="home-v2-language" />
-          <button type="button" className="home-v2-profile-button" onClick={() => handleNavigate("/player")}>
-            {copy.profileLabel}
-          </button>
-        </div>
-      </header>
 
       <section className="home-v2-shell" aria-label={copy.navMinigames}>
         <div className="home-v2-status-row">

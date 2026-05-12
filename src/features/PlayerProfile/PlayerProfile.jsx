@@ -1,6 +1,5 @@
 
 import { useEffect, useMemo, useState } from "react";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import { ARCANE_BOX_ID, DAILY_MODE_GAME_IDS_BY_HOME_MODE } from "../../shared/config/gameRules";
 import { getEligibleCollectionCards } from "../../shared/packs/packOpening";
@@ -151,32 +150,6 @@ function safeStringify(value) {
   return JSON.stringify(value, null, 2);
 }
 
-function PlayerHeader({ copy, onNavigate }) {
-  function go(path) {
-    onNavigate?.(path);
-  }
-
-  return (
-    <header className="player-profile-header">
-      <nav className="player-profile-nav" aria-label="Principal">
-        <button type="button" onClick={() => go("/")}>{copy.navMinigames}</button>
-        <button type="button" onClick={() => go("/cards")}>{copy.navCards}</button>
-        <button type="button" onClick={() => go("/collection")}>{copy.navCollection}</button>
-      </nav>
-
-      <button type="button" className="player-profile-brand" onClick={() => go("/")} aria-label="Hearthdle">
-        <img className="player-profile-brand-mug is-left" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="player-profile-brand-mug" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-      </button>
-
-      <div className="player-profile-actions">
-        <LanguageToggle compact className="player-profile-language" />
-      </div>
-    </header>
-  );
-}
-
 function StatCard({ label, value, hint }) {
   return (
     <div className="player-profile-stat">
@@ -187,7 +160,7 @@ function StatCard({ label, value, hint }) {
   );
 }
 
-function PlayerProfile({ cards = [], loading = false, onNavigate }) {
+function PlayerProfile({ cards = [], loading = false }) {
   const { locale } = useLanguage();
   const copy = COPY[locale] ?? COPY.es;
   const todayKey = useMemo(() => getTodayKey(), []);
@@ -328,7 +301,6 @@ function PlayerProfile({ cards = [], loading = false, onNavigate }) {
         <span className="player-profile-glow player-profile-glow-b" />
       </div>
 
-      <PlayerHeader copy={copy} onNavigate={onNavigate} />
 
       <section className="player-profile-shell">
         <section className="player-profile-hero">

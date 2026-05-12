@@ -18,6 +18,30 @@ function StepIcon({ icon, iconSrc, className = "" }) {
   );
 }
 
+function getLegacySteps(copy) {
+  return [
+    {
+      icon: copy.stepHiddenIcon ?? "?",
+      iconSrc: copy.stepHiddenIconSrc,
+      title: copy.stepHiddenTitle,
+      text: copy.stepHiddenText,
+    },
+    {
+      icon: copy.stepChooseIcon,
+      iconSrc: copy.stepChooseIconSrc,
+      iconClassName: copy.stepChooseIconSrc ? "is-crystal" : "",
+      title: copy.stepChooseTitle,
+      text: copy.stepChooseText,
+    },
+    {
+      icon: copy.stepModesIcon ?? "⚔",
+      iconSrc: copy.stepModesIconSrc,
+      title: copy.stepModesTitle,
+      text: copy.stepModesText,
+    },
+  ].filter((step) => step.title || step.text);
+}
+
 function GameModeSelect({
   copy,
   title,
@@ -31,11 +55,15 @@ function GameModeSelect({
       {
         id: GAME_MODE_IDS.DAILY,
         title: copy.dailyTitle,
+        description: dailyCompleted ? copy.dailyCompletedDescription ?? copy.dailyDescription : copy.dailyDescription,
+        meta: dailyCompleted ? copy.completedStatus : copy.dailyMeta,
         ariaLabel: dailyCompleted ? `${copy.dailyTitle}. ${copy.completedStatus}` : copy.dailyTitle,
       },
       {
         id: GAME_MODE_IDS.INFINITE,
         title: copy.infiniteTitle,
+        description: copy.infiniteDescription,
+        meta: copy.infiniteMeta,
         ariaLabel: copy.infiniteTitle,
       },
     ],
@@ -44,18 +72,33 @@ function GameModeSelect({
 
   const [selectedModeId, setSelectedModeId] = useState(modes[0]?.id ?? GAME_MODE_IDS.DAILY);
   const selectedMode = modes.find((mode) => mode.id === selectedModeId) ?? modes[0];
+  const steps = copy.steps?.length ? copy.steps : getLegacySteps(copy);
+  const resolvedTitle = title ?? copy.title;
+  const resolvedPreviewSrc = previewSrc ?? copy.previewSrc;
+  const resolvedPreviewAlt = previewAlt ?? copy.exampleLabel ?? "";
+  const startLabel = selectedMode.id === GAME_MODE_IDS.DAILY && dailyCompleted
+    ? copy.startCompletedDaily ?? copy.startMode
+    : copy.startMode;
 
   return (
     <div className="game-mode-modal-backdrop">
-      <section className="game-mode-modal" aria-modal="true" aria-label={title} role="dialog">
+      <section className="game-mode-modal" aria-modal="true" aria-label={resolvedTitle} role="dialog">
         <header className="game-mode-modal-head">
-          <h1>{title}</h1>
+          <p className="game-mode-modal-kicker">{copy.modeEyebrow ?? copy.modeSelectorLabel}</p>
+          <h1>{resolvedTitle}</h1>
+          {copy.description ? <p className="game-mode-modal-description">{copy.description}</p> : null}
+          {copy.dailyRewardText ? (
+            <div className="game-mode-reward-pill" aria-label={`${copy.rewardLabel}: ${copy.dailyRewardText}`}>
+              <span>{copy.rewardLabel}</span>
+              <strong>{copy.dailyRewardText}</strong>
+            </div>
+          ) : null}
         </header>
 
         <div className="game-mode-modal-layout">
           <aside className="game-mode-modal-visual" aria-label={copy.exampleLabel}>
             <div className="game-mode-preview-frame">
-              {previewSrc ? <img src={previewSrc} alt={previewAlt ?? ""} /> : <div className="game-mode-preview-placeholder" />}
+              {resolvedPreviewSrc ? <img src={resolvedPreviewSrc} alt={resolvedPreviewAlt} /> : <div className="game-mode-preview-placeholder" />}
             </div>
           </aside>
 
@@ -68,33 +111,19 @@ function GameModeSelect({
               </div>
 
               <div className="game-mode-steps">
-                <article className="game-mode-step">
-                  <StepIcon icon={copy.stepHiddenIcon ?? "?"} iconSrc={copy.stepHiddenIconSrc} />
-                  <div>
-                    <h3>{copy.stepHiddenTitle}</h3>
-                    <p>{copy.stepHiddenText}</p>
-                  </div>
-                </article>
-
-                <article className="game-mode-step">
-                  <StepIcon
-                    icon={copy.stepChooseIcon ?? null}
-                    iconSrc={copy.stepChooseIconSrc ?? "/ui/games/guess-mana-v3/mana-crystal.png"}
-                    className="is-crystal"
-                  />
-                  <div>
-                    <h3>{copy.stepChooseTitle}</h3>
-                    <p>{copy.stepChooseText}</p>
-                  </div>
-                </article>
-
-                <article className="game-mode-step">
-                  <StepIcon icon={copy.stepModesIcon ?? "⚔"} iconSrc={copy.stepModesIconSrc} />
-                  <div>
-                    <h3>{copy.stepModesTitle}</h3>
-                    <p>{copy.stepModesText}</p>
-                  </div>
-                </article>
+                {steps.map((step, index) => (
+                  <article className="game-mode-step" key={`${step.title ?? "step"}-${index}`}>
+                    <StepIcon
+                      icon={step.icon ?? "?"}
+                      iconSrc={step.iconSrc}
+                      className={step.iconClassName ?? ""}
+                    />
+                    <div>
+                      {step.title ? <h3>{step.title}</h3> : null}
+                      {step.text ? <p>{step.text}</p> : null}
+                    </div>
+                  </article>
+                ))}
               </div>
             </section>
 
@@ -111,7 +140,9 @@ function GameModeSelect({
                     className={`game-mode-option-card ${selectedMode.id === mode.id ? "is-selected" : ""}`}
                     onClick={() => setSelectedModeId(mode.id)}
                   >
-                    <span>{mode.title}</span>
+                    <span className="game-mode-option-title">{mode.title}</span>
+                    {mode.description ? <small>{mode.description}</small> : null}
+                    {mode.meta ? <em>{mode.meta}</em> : null}
                   </button>
                 ))}
               </div>
@@ -122,7 +153,7 @@ function GameModeSelect({
               className="game-mode-select-start"
               onClick={() => onSelectMode(selectedMode.id)}
             >
-              {copy.startMode}
+              {startLabel}
             </button>
           </div>
         </div>

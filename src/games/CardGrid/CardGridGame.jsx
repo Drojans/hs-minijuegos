@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, CARD_GRID_DAILY_TIME_SECONDS, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -32,28 +32,7 @@ const CARD_GRID_GAME_ID = GAME_IDS.CARD_GRID;
 
 const CARD_GRID_COPY = {
   es: {
-    navMinigames: "Minijuegos",
-    navCards: "Base de datos",
-    navCollection: "Colección",
-    title: "Grid de cartas",
     progressLabel: "Progreso",
-    exampleLabel: "Ejemplo del minijuego Grid de cartas",
-    howToPlayTitle: "Cómo se juega",
-    stepHiddenIcon: "3×3",
-    stepHiddenTitle: "Cruza fila y columna",
-    stepHiddenText: "Cada casilla mezcla dos condiciones. Busca una carta que cumpla las dos a la vez.",
-    stepChooseIcon: "+",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Escribe la carta",
-    stepChooseText: "Selecciona una casilla, escribe el nombre y pulsa Enter para colocarla en el grid.",
-    stepModesIcon: "⚔",
-    stepModesTitle: "Dos formas de jugar",
-    stepModesText: "Reto diario para la cuadrícula del día o modo infinito para practicar sin parar.",
-    modeSelectorLabel: "Selecciona modo",
-    dailyTitle: "Reto diario",
-    infiniteTitle: "Modo infinito",
-    completedStatus: "Completado",
-    startMode: "Empezar",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
     dailyRewardEarned: "Has ganado 1 caja arcana.",
@@ -63,28 +42,7 @@ const CARD_GRID_COPY = {
     backHome: "Volver",
   },
   en: {
-    navMinigames: "Minigames",
-    navCards: "Card database",
-    navCollection: "Collection",
-    title: "Card grid",
     progressLabel: "Progress",
-    exampleLabel: "Card Grid minigame example",
-    howToPlayTitle: "How to play",
-    stepHiddenIcon: "3×3",
-    stepHiddenTitle: "Match row and column",
-    stepHiddenText: "Each cell combines two conditions. Find one card that satisfies both at once.",
-    stepChooseIcon: "+",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Type the card",
-    stepChooseText: "Select a cell, type the card name and press Enter to place it in the grid.",
-    stepModesIcon: "⚔",
-    stepModesTitle: "Two ways to play",
-    stepModesText: "Daily challenge for today's grid or infinite mode to practice without limits.",
-    modeSelectorLabel: "Select mode",
-    dailyTitle: "Daily challenge",
-    infiniteTitle: "Infinite mode",
-    completedStatus: "Completed",
-    startMode: "Start",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
     dailyRewardEarned: "You earned 1 arcane box.",
@@ -138,34 +96,6 @@ function DailyTimer({ copy, timeLeft }) {
   );
 }
 
-function GameHeader({ copy, onBack }) {
-  return (
-    <header className="cg-v2-header">
-      <nav className="cg-v2-nav" aria-label="Principal">
-        <button type="button" className="is-active" onClick={onBack}>
-          {copy.navMinigames}
-        </button>
-        <button type="button" disabled>
-          {copy.navCards}
-        </button>
-        <button type="button" disabled>
-          {copy.navCollection}
-        </button>
-      </nav>
-
-      <button type="button" className="cg-v2-brand" onClick={onBack} aria-label="Hearthdle">
-        <img className="cg-v2-brand-mug is-left" src="/ui/home-v2/header-mug-cropped.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="cg-v2-brand-mug" src="/ui/home-v2/header-mug-cropped.png" alt="" />
-      </button>
-
-      <div className="cg-v2-actions">
-        <LanguageToggle compact className="cg-v2-language" />
-      </div>
-    </header>
-  );
-}
-
 function ConditionContent({ condition }) {
   if (condition.icon) {
     return (
@@ -204,7 +134,6 @@ function ConditionContent({ condition }) {
 }
 
 function EmptyState({
-  copy,
   t,
   cards,
   gridMode,
@@ -216,7 +145,6 @@ function EmptyState({
 }) {
   return (
     <main className="cg-page">
-      <GameHeader copy={copy} onBack={onBack} />
       <section className="cg-shell">
         <section className="cg-empty">
         <button type="button" className="cg-secondary-button" onClick={onBack}>
@@ -502,6 +430,7 @@ function BottomControls({
 function CardGridGame({ cards, onBack }) {
   const { locale, t } = useLanguage();
   const copy = useCardGridCopy(locale);
+  const introCopy = useMemo(() => getGameIntroCopy(CARD_GRID_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
   const [gridMode, setGridMode] = useState("easy");
   const [selectedMode, setSelectedMode] = useState(null);
@@ -964,7 +893,6 @@ function CardGridGame({ cards, onBack }) {
   if (!cards.length) {
     return (
       <EmptyState
-        copy={copy}
         t={t}
         cards={cards}
         gridMode={gridMode}
@@ -980,14 +908,10 @@ function CardGridGame({ cards, onBack }) {
   if (!selectedMode) {
     return (
       <main className="cg-page">
-        <GameHeader copy={copy} onBack={onBack} />
         <section className="cg-shell is-mode-select">
           <GameModeSelect
-            copy={copy}
-            title={copy.title}
+            copy={introCopy}
             dailyCompleted={dailyProgress.completed}
-            previewSrc="/ui/games/card-grid-v2/mode-example.svg"
-            previewAlt={copy.exampleLabel}
             onSelectMode={startMode}
           />
         </section>
@@ -998,7 +922,6 @@ function CardGridGame({ cards, onBack }) {
   if (!grid) {
     return (
       <EmptyState
-        copy={copy}
         t={t}
         cards={cards}
         gridMode={gridMode}
@@ -1013,7 +936,6 @@ function CardGridGame({ cards, onBack }) {
 
   return (
     <main className={`cg-page ${resultsMode ? `is-results-${resultsMode}` : ""}`}>
-      <GameHeader copy={copy} onBack={onBack} />
       <section className="cg-shell">
         <DailyTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
         <section className="cg-layout cg-layout-single">
@@ -1055,8 +977,7 @@ function CardGridGame({ cards, onBack }) {
       {endOverlay ? (
         <GridResultOverlay
           t={t}
-          copy={copy}
-          result={endOverlay}
+            result={endOverlay}
           rewardMessage={rewardMessage}
           onViewResults={viewEndResults}
           onBack={returnToModes}

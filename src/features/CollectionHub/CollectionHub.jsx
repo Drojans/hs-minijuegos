@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import { getCardName, getDetailImage, getGameImage, getThumbImage, translateCardClass, translateCardRarity } from "../../utils/cardLocale";
 import {
@@ -165,28 +164,6 @@ function sortCollectionCards(cards, locale, sortMode = "default") {
   });
 }
 
-function CollectionHeader({ copy, onNavigate }) {
-  return (
-    <header className="collection-header">
-      <nav className="collection-nav" aria-label="Principal">
-        <button type="button" onClick={() => onNavigate?.("/")}>{copy.navMinigames}</button>
-        <button type="button" onClick={() => onNavigate?.("/cards")}>{copy.navCards}</button>
-        <button type="button" className="is-active" onClick={() => onNavigate?.("/collection")}>{copy.navCollection}</button>
-      </nav>
-
-      <button type="button" className="collection-brand" onClick={() => onNavigate?.("/")} aria-label="Hearthdle">
-        <img className="collection-brand-mug is-left" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="collection-brand-mug" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-      </button>
-
-      <div className="collection-actions">
-        <LanguageToggle compact className="collection-language" />
-      </div>
-    </header>
-  );
-}
-
 function ArcaneBoxVisual({ isOpening = false }) {
   return (
     <div className={`collection-arcane-box ${isOpening ? "is-opening" : ""}`} aria-hidden="true">
@@ -288,7 +265,7 @@ function BoxOpeningModal({ copy, locale, opening, onClose, onOpenAnother, canOpe
   );
 }
 
-function CollectionHub({ cards = [], loading = false, onNavigate }) {
+function CollectionHub({ cards = [], loading = false }) {
   const { locale } = useLanguage();
   const copy = COPY[locale] ?? COPY.es;
   const [boxCount, setBoxCount] = useState(() => getArcaneBoxCount(BOX_ID));
@@ -417,7 +394,6 @@ function CollectionHub({ cards = [], loading = false, onNavigate }) {
         <span className="collection-glow collection-glow-b" />
       </div>
 
-      <CollectionHeader copy={copy} onNavigate={onNavigate} />
 
       <section className="collection-shell">
         <header className="collection-hero">

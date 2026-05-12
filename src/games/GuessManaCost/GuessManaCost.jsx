@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -27,36 +27,7 @@ const GUESS_MANA_GAME_ID = GAME_IDS.GUESS_MANA;
 
 const LOCAL_COPY = {
   es: {
-    navMinigames: "Minijuegos",
-    navCards: "Base de datos",
-    navCollection: "Colección",
     backHome: "Volver a minijuegos",
-    modeEyebrow: "Modo de juego",
-    modeSelectTitle: "Adivina el coste",
-    modeSelectDescription:
-      "Observa la carta con el coste de maná oculto y elige cuánto crees que cuesta antes de confirmar.",
-    dailyTitle: "Reto diario",
-    dailyDescription: "La partida fija de hoy.",
-    dailyCompleted: "Ya jugaste el reto de hoy. Puedes volver a verlo cuando quieras.",
-    dailyCompletedRewardClaimed:
-      "Ya jugaste el reto de hoy. Puedes volver a verlo cuando quieras.",
-    dailyMeta: "",
-    infiniteTitle: "Modo infinito",
-    infiniteDescription: "Juega sin límite.",
-    infiniteMeta: "",
-    rewardStatus: "Da recompensa",
-    noRewardStatus: "Sin recompensa",
-    completedStatus: "Completado",
-    howToPlayTitle: "Cómo se juega",
-    stepHiddenTitle: "El coste está oculto",
-    stepHiddenText: "La gema de maná aparece tapada. Mira la carta, lee sus pistas y tira de memoria para adivinar el coste.",
-    stepChooseTitle: "Elige un cristal",
-    stepChooseText: "Selecciona un coste del 0 al 10. La fila se ilumina al pasar por encima y confirmar bloquea tu respuesta.",
-    stepModesTitle: "Dos formas de jugar",
-    stepModesText: "Reto diario para la carta del día o modo infinito para practicar sin parar.",
-    exampleLabel: "Ejemplo visual del minijuego",
-    modeSelectorLabel: "Selecciona modo",
-    startMode: "Empezar",
     resultKicker: "Resultado",
     dailyRewardEarned: "Has ganado 1 caja arcana.",
     dailyRewardAlreadyClaimed: "Reto diario completado. Hoy ya tenías esta recompensa.",
@@ -77,36 +48,7 @@ const LOCAL_COPY = {
     noImage: "Sin imagen",
   },
   en: {
-    navMinigames: "Minigames",
-    navCards: "Card database",
-    navCollection: "Collection",
     backHome: "Back to minigames",
-    modeEyebrow: "Game mode",
-    modeSelectTitle: "Guess the Cost",
-    modeSelectDescription:
-      "Look at the card with its mana cost hidden and choose how much you think it costs before confirming.",
-    dailyTitle: "Daily challenge",
-    dailyDescription: "Today’s fixed run.",
-    dailyCompleted: "You already played today’s challenge. You can jump back in to review it.",
-    dailyCompletedRewardClaimed:
-      "You already played today’s challenge. You can jump back in to review it.",
-    dailyMeta: "",
-    infiniteTitle: "Infinite mode",
-    infiniteDescription: "Play without limits.",
-    infiniteMeta: "",
-    rewardStatus: "Reward",
-    noRewardStatus: "No reward",
-    completedStatus: "Completed",
-    howToPlayTitle: "How to play",
-    stepHiddenTitle: "The cost is hidden",
-    stepHiddenText: "The mana gem is covered. Look at the card, read the clues and use your memory to guess the cost.",
-    stepChooseTitle: "Pick a crystal",
-    stepChooseText: "Choose a cost from 0 to 10. The row lights up on hover and confirm locks your answer.",
-    stepModesTitle: "Two ways to play",
-    stepModesText: "Daily challenge for today’s card or infinite mode to practise without stopping.",
-    exampleLabel: "Visual example of the minigame",
-    modeSelectorLabel: "Select mode",
-    startMode: "Start",
     resultKicker: "Result",
     dailyRewardEarned: "You earned 1 arcane box.",
     dailyRewardAlreadyClaimed: "Daily challenge completed. You already had today’s reward.",
@@ -130,34 +72,6 @@ const LOCAL_COPY = {
 
 function useGuessManaCopy(locale) {
   return LOCAL_COPY[locale] ?? LOCAL_COPY.es;
-}
-
-function GameHeader({ copy, onBack }) {
-  return (
-    <header className="guess-v3-header">
-      <nav className="guess-v3-nav" aria-label="Principal">
-        <button type="button" className="is-active" onClick={onBack}>
-          {copy.navMinigames}
-        </button>
-        <button type="button" disabled>
-          {copy.navCards}
-        </button>
-        <button type="button" disabled>
-          {copy.navCollection}
-        </button>
-      </nav>
-
-      <button type="button" className="guess-v3-brand" onClick={onBack} aria-label="Hearthdle">
-        <img className="guess-v3-brand-mug is-left" src="/ui/home-v2/header-mug-cropped.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="guess-v3-brand-mug" src="/ui/home-v2/header-mug-cropped.png" alt="" />
-      </button>
-
-      <div className="guess-v3-actions">
-        <LanguageToggle compact className="guess-v3-language" />
-      </div>
-    </header>
-  );
 }
 
 function CardPreview({ imageSrc, cardName, imageFailed, onImageError, copy, hideManaCover = false }) {
@@ -279,7 +193,6 @@ function ResultOverlay({ copy, isCorrect, cardName, correctCost, rewardMessage, 
 function EmptyState({ copy, title, onBack }) {
   return (
     <main className="guess-v3-page">
-      <GameHeader copy={copy} onBack={onBack} />
       <section className="guess-v3-shell">
         <section className="guess-v3-empty-state">
           <h2>{title}</h2>
@@ -295,6 +208,7 @@ function EmptyState({ copy, title, onBack }) {
 function GuessManaCost({ cards = [], onBack }) {
   const { locale } = useLanguage();
   const copy = useGuessManaCopy(locale);
+  const introCopy = useMemo(() => getGameIntroCopy(GUESS_MANA_GAME_ID, locale), [locale]);
   const showLayoutEditor =
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("layoutEditor") === "1";
@@ -436,14 +350,10 @@ function GuessManaCost({ cards = [], onBack }) {
   if (!selectedMode) {
     return (
       <main className="guess-v3-page">
-        <GameHeader copy={copy} onBack={onBack} />
         <section className="guess-v3-shell is-mode-select">
           <GameModeSelect
-            copy={copy}
-            title={copy.modeSelectTitle}
+            copy={introCopy}
             dailyCompleted={dailyProgress.completed}
-            previewSrc="/ui/games/guess-mana-v3/mode-example.png"
-            previewAlt={copy.exampleLabel}
             onSelectMode={startMode}
           />
         </section>
@@ -464,7 +374,6 @@ function GuessManaCost({ cards = [], onBack }) {
 
   return (
     <main className="guess-v3-page">
-      <GameHeader copy={copy} onBack={onBack} />
 
       <section className="guess-v3-shell">
         <div className="guess-v3-mode-pill">

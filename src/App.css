@@ -50,3 +50,14 @@ button {
 .app-page {
   width: 100%;
 }
+
+.app-shell {
+  min-height: 100svh;
+  width: 100%;
+  background: #070a11;
+}
+
+.app-page {
+  width: 100%;
+  min-height: calc(100svh - var(--site-header-height, 76px));
+}

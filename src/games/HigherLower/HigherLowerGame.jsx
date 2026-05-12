@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import ImpostorNeutralCard from "../Impostor/ImpostorNeutralCard";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import {
@@ -37,27 +37,6 @@ const HIGHER_LOWER_GAME_ID = GAME_IDS.HIGHER_LOWER;
 
 const COPY = {
   es: {
-    navMinigames: "Minijuegos",
-    navCards: "Base de datos",
-    navCollection: "Colección",
-    title: "Mayor o menor",
-    exampleLabel: "Ejemplo del minijuego Mayor o menor",
-    howToPlayTitle: "Cómo se juega",
-    stepHiddenIcon: "VS",
-    stepHiddenTitle: "Dos cartas, una pregunta",
-    stepHiddenText: "Compara las dos cartas y elige cuál cumple mejor la condición que aparece en el centro.",
-    stepChooseIcon: "↕",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "La pregunta cambia",
-    stepChooseText: "Puede ser coste, ataque, vida, rareza, antigüedad, texto, mecánicas y más.",
-    stepModesIcon: "✓",
-    stepModesTitle: "Encadena aciertos",
-    stepModesText: "Si hay empate, cuenta como acierto. En diario necesitas encadenar 10 fases sin fallar.",
-    modeSelectorLabel: "Selecciona modo",
-    dailyTitle: "Reto diario",
-    infiniteTitle: "Modo infinito",
-    completedStatus: "Completado",
-    startMode: "Empezar",
     resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
@@ -89,27 +68,6 @@ const COPY = {
     dailyReview: "Reto diario revisado",
   },
   en: {
-    navMinigames: "Minigames",
-    navCards: "Card database",
-    navCollection: "Collection",
-    title: "Higher or Lower",
-    exampleLabel: "Higher or Lower minigame example",
-    howToPlayTitle: "How to play",
-    stepHiddenIcon: "VS",
-    stepHiddenTitle: "Two cards, one question",
-    stepHiddenText: "Compare both cards and choose which one best matches the condition in the middle.",
-    stepChooseIcon: "↕",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "The question changes",
-    stepChooseText: "It can ask about cost, Attack, Health, rarity, age, text, mechanics, and more.",
-    stepModesIcon: "✓",
-    stepModesTitle: "Chain correct picks",
-    stepModesText: "Ties count as correct. In daily mode you need to chain 10 correct phases without missing.",
-    modeSelectorLabel: "Select mode",
-    dailyTitle: "Daily challenge",
-    infiniteTitle: "Infinite mode",
-    completedStatus: "Completed",
-    startMode: "Start",
     resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
@@ -150,32 +108,9 @@ function getFullCardImage(card, locale) {
   return getDetailImage(card, locale) || getGameImage(card, locale) || getThumbImage(card, locale);
 }
 
-function GameHeader({ copy, onBack }) {
-  return (
-    <header className="hl-header">
-      <nav className="hl-nav" aria-label="Principal">
-        <button type="button" className="is-active" onClick={onBack}>{copy.navMinigames}</button>
-        <button type="button" disabled>{copy.navCards}</button>
-        <button type="button" disabled>{copy.navCollection}</button>
-      </nav>
-
-      <button type="button" className="hl-brand" onClick={onBack} aria-label="Hearthdle">
-        <img className="hl-brand-mug is-left" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="hl-brand-mug" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-      </button>
-
-      <div className="hl-actions">
-        <LanguageToggle compact className="hl-language" />
-      </div>
-    </header>
-  );
-}
-
 function MessagePanel({ copy, title, onBack }) {
   return (
     <main className="hl-page">
-      <GameHeader copy={copy} onBack={onBack} />
       <section className="hl-shell">
         <div className="hl-message-panel">
           <h2>{title}</h2>
@@ -283,6 +218,7 @@ function ResultsPanel({ copy, history, locale, onNext, isReview }) {
 function HigherLowerGame({ cards = [], onBack }) {
   const { locale } = useLanguage();
   const copy = useCopy(locale);
+  const introCopy = useMemo(() => getGameIntroCopy(HIGHER_LOWER_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
   const playableCards = useMemo(() => cards.filter((card) => isPlayableHigherLowerCard(card, locale)), [cards, locale]);
   const dailyRun = useMemo(
@@ -517,14 +453,10 @@ function HigherLowerGame({ cards = [], onBack }) {
   if (!selectedMode) {
     return (
       <main className="hl-page">
-        <GameHeader copy={copy} onBack={onBack} />
         <section className="hl-shell is-mode-select">
           <GameModeSelect
-            copy={copy}
-            title={copy.title}
+            copy={introCopy}
             dailyCompleted={dailyProgress.completed}
-            previewSrc="/ui/games/higher-lower/mode-example.svg"
-            previewAlt={copy.exampleLabel}
             onSelectMode={startMode}
           />
         </section>
@@ -544,7 +476,6 @@ function HigherLowerGame({ cards = [], onBack }) {
 
   return (
     <main className="hl-page">
-      <GameHeader copy={copy} onBack={handleBack} />
 
       <section className="hl-shell">
         <div className="hl-topbar">

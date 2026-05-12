@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import {
   COLLECTION_UPDATED_EVENT,
   getCollectionStore,
@@ -37,37 +36,6 @@ function getDatabaseImage(card, locale) {
 
 function formatText(template, values = {}) {
   return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template);
-}
-
-function DatabaseHeader({ copy, onNavigate, onBack }) {
-  function go(path) {
-    if (onNavigate) {
-      onNavigate(path);
-      return;
-    }
-
-    if (path === "/") onBack?.();
-  }
-
-  return (
-    <header className="card-db-header">
-      <nav className="card-db-nav" aria-label="Principal">
-        <button type="button" onClick={() => go("/")}>{copy.navMinigames}</button>
-        <button type="button" className="is-active" onClick={() => go("/cards")}>{copy.navCards}</button>
-        <button type="button" onClick={() => go("/collection")}>{copy.navCollection}</button>
-      </nav>
-
-      <button type="button" className="card-db-brand" onClick={() => go("/")} aria-label="Hearthdle">
-        <img className="card-db-brand-mug is-left" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="card-db-brand-mug" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-      </button>
-
-      <div className="card-db-actions">
-        <LanguageToggle compact className="card-db-language" />
-      </div>
-    </header>
-  );
 }
 
 function DatabaseHero({ copy, totalCards, ownedCount, loading }) {
@@ -277,7 +245,7 @@ function CardDetailPanel({ card, locale, copy, onClose }) {
   );
 }
 
-function CardDatabase({ cards = [], loading = false, onNavigate, onBack }) {
+function CardDatabase({ cards = [], loading = false }) {
   const { locale } = useLanguage();
   const copy = getDatabaseCopy(locale);
   const [filters, setFilters] = useState(() => createInitialFilters());
@@ -338,7 +306,6 @@ function CardDatabase({ cards = [], loading = false, onNavigate, onBack }) {
         <span className="card-db-glow card-db-glow-b" />
       </div>
 
-      <DatabaseHeader copy={copy} onNavigate={onNavigate} onBack={onBack} />
 
       <section className="card-db-shell">
         <DatabaseHero copy={copy} totalCards={cards.length} ownedCount={ownedCount} loading={loading} />

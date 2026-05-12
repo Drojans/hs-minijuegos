@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import {
   ARCANE_BOX_ID,
@@ -35,27 +35,6 @@ const HIDDEN_CARD_GAME_ID = GAME_IDS.HIDDEN_CARD;
 
 const COPY = {
   es: {
-    navMinigames: "Minijuegos",
-    navCards: "Base de datos",
-    navCollection: "Colección",
-    title: "La Carta Oculta",
-    exampleLabel: "Ejemplo del minijuego La Carta Oculta",
-    howToPlayTitle: "Cómo se juega",
-    stepHiddenIcon: "?",
-    stepHiddenTitle: "Una carta misteriosa",
-    stepHiddenText: "La carta empieza borrosa y tapada. Observa la silueta, el arte y las pistas que se van revelando.",
-    stepChooseIcon: "⌕",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Escribe el nombre",
-    stepChooseText: "Tienes 5 intentos. Usa el buscador para escribir o elegir la carta que crees que es.",
-    stepModesIcon: "✦",
-    stepModesTitle: "Pistas progresivas",
-    stepModesText: "Cada fallo revela más información: coste, tipo, clase, rareza y pistas del nombre.",
-    modeSelectorLabel: "Selecciona modo",
-    dailyTitle: "Reto diario",
-    infiniteTitle: "Modo infinito",
-    completedStatus: "Completado",
-    startMode: "Empezar",
     resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
@@ -93,27 +72,6 @@ const COPY = {
     invalidGuess: "Elige una carta válida de la lista antes de probar.",
   },
   en: {
-    navMinigames: "Minigames",
-    navCards: "Card database",
-    navCollection: "Collection",
-    title: "The Hidden Card",
-    exampleLabel: "The Hidden Card minigame example",
-    howToPlayTitle: "How to play",
-    stepHiddenIcon: "?",
-    stepHiddenTitle: "One mysterious card",
-    stepHiddenText: "The card starts blurred and covered. Watch its silhouette, art, and the clues that unlock over time.",
-    stepChooseIcon: "⌕",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Type the name",
-    stepChooseText: "You have 5 attempts. Use search to type or pick the card you think it is.",
-    stepModesIcon: "✦",
-    stepModesTitle: "Progressive clues",
-    stepModesText: "Each miss reveals more information: cost, type, class, rarity, and name clues.",
-    modeSelectorLabel: "Select mode",
-    dailyTitle: "Daily challenge",
-    infiniteTitle: "Infinite mode",
-    completedStatus: "Completed",
-    startMode: "Start",
     resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
@@ -156,32 +114,9 @@ function useCopy(locale) {
   return COPY[locale] ?? COPY.es;
 }
 
-function GameHeader({ copy, onBack }) {
-  return (
-    <header className="hidden-card-header">
-      <nav className="hidden-card-nav" aria-label="Principal">
-        <button type="button" className="is-active" onClick={onBack}>{copy.navMinigames}</button>
-        <button type="button" disabled>{copy.navCards}</button>
-        <button type="button" disabled>{copy.navCollection}</button>
-      </nav>
-
-      <button type="button" className="hidden-card-brand" onClick={onBack} aria-label="Hearthdle">
-        <img className="hidden-card-brand-mug is-left" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="hidden-card-brand-mug" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-      </button>
-
-      <div className="hidden-card-actions">
-        <LanguageToggle compact className="hidden-card-language" />
-      </div>
-    </header>
-  );
-}
-
 function MessagePanel({ copy, title, onBack }) {
   return (
     <main className="hidden-card-page">
-      <GameHeader copy={copy} onBack={onBack} />
       <section className="hidden-card-shell">
         <div className="hidden-card-message-panel">
           <h2>{title}</h2>
@@ -304,6 +239,7 @@ function serializeGuesses(guesses = []) {
 function HiddenCardGame({ cards = [], onBack }) {
   const { locale } = useLanguage();
   const copy = useCopy(locale);
+  const introCopy = useMemo(() => getGameIntroCopy(HIDDEN_CARD_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
   const inputRef = useRef(null);
 
@@ -527,14 +463,10 @@ function HiddenCardGame({ cards = [], onBack }) {
   if (!selectedMode) {
     return (
       <main className="hidden-card-page">
-        <GameHeader copy={copy} onBack={onBack} />
         <section className="hidden-card-shell is-mode-select">
           <GameModeSelect
-            copy={copy}
-            title={copy.title}
+            copy={introCopy}
             dailyCompleted={dailyProgress.completed}
-            previewSrc="/ui/games/hidden-card/mode-example.svg"
-            previewAlt={copy.exampleLabel}
             onSelectMode={startMode}
           />
         </section>
@@ -552,7 +484,6 @@ function HiddenCardGame({ cards = [], onBack }) {
 
   return (
     <main className="hidden-card-page">
-      <GameHeader copy={copy} onBack={handleBack} />
 
       <section className="hidden-card-shell">
         <div className="hidden-card-topbar">

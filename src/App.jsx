@@ -10,6 +10,7 @@ import CardDatabasePage from "./pages/CardDatabasePage";
 import CollectionPage from "./pages/CollectionPage";
 import PlayerProfilePage from "./pages/PlayerProfilePage";
 import { useCardsData } from "./hooks/useCardsData";
+import SiteHeader from "./shared/components/SiteHeader/SiteHeader";
 import "./App.css";
 
 const APP_ROUTES = {
@@ -60,37 +61,55 @@ function App() {
     navigate("/");
   }, [navigate]);
 
+  let page;
+
   switch (pathname) {
     case "/guess-mana":
-      return <GuessManaPage cards={cards} onBack={goHome} />;
+      page = <GuessManaPage cards={cards} onBack={goHome} />;
+      break;
 
     case "/impostor":
-      return <ImpostorPage cards={cards} onBack={goHome} />;
+      page = <ImpostorPage cards={cards} onBack={goHome} />;
+      break;
 
     case "/grid":
-      return <CardGridPage cards={cards} onBack={goHome} />;
+      page = <CardGridPage cards={cards} onBack={goHome} />;
+      break;
 
     case "/pyramid":
-      return <PyramidPage cards={cards} onBack={goHome} />;
+      page = <PyramidPage cards={cards} onBack={goHome} />;
+      break;
 
     case "/higher-lower":
-      return <HigherLowerPage cards={cards} onBack={goHome} />;
+      page = <HigherLowerPage cards={cards} onBack={goHome} />;
+      break;
 
     case "/hidden-card":
-      return <HiddenCardPage cards={cards} onBack={goHome} />;
+      page = <HiddenCardPage cards={cards} onBack={goHome} />;
+      break;
 
     case "/cards":
-      return <CardDatabasePage cards={cards} loading={loading} onNavigate={navigate} onBack={goHome} />;
+      page = <CardDatabasePage cards={cards} loading={loading} />;
+      break;
 
     case "/collection":
-      return <CollectionPage cards={cards} loading={loading} onNavigate={navigate} />;
+      page = <CollectionPage cards={cards} loading={loading} />;
+      break;
 
     case "/player":
-      return <PlayerProfilePage cards={cards} loading={loading} onNavigate={navigate} />;
+      page = <PlayerProfilePage cards={cards} loading={loading} />;
+      break;
 
     default:
-      return <HomePage cards={cards} loading={loading} onNavigate={navigate} />;
+      page = <HomePage cards={cards} loading={loading} onNavigate={navigate} />;
   }
+
+  return (
+    <div className="app-shell">
+      <SiteHeader pathname={pathname} onNavigate={navigate} />
+      <div className="app-page">{page}</div>
+    </div>
+  );
 }
 
 export default App;

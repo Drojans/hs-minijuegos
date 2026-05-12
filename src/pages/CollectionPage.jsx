@@ -1,7 +1,7 @@
 import CollectionHub from "../features/CollectionHub/CollectionHub";
 
-function CollectionPage({ cards, loading, onNavigate }) {
-  return <CollectionHub cards={cards} loading={loading} onNavigate={onNavigate} />;
+function CollectionPage({ cards, loading }) {
+  return <CollectionHub cards={cards} loading={loading} />;
 }
 
 export default CollectionPage;

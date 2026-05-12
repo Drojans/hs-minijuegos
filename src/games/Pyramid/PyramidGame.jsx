@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -31,27 +31,6 @@ const PYRAMID_GAME_ID = GAME_IDS.PYRAMID;
 
 const COPY = {
   es: {
-    navMinigames: "Minijuegos",
-    navCards: "Base de datos",
-    navCollection: "Colección",
-    title: "La Pirámide",
-    exampleLabel: "Ejemplo del minijuego La Pirámide",
-    howToPlayTitle: "Cómo se juega",
-    stepHiddenIcon: "10",
-    stepHiddenTitle: "Hay una categoría",
-    stepHiddenText: "Te damos una condición. Escribe cartas que encajen para llenar los huecos de la pirámide.",
-    stepChooseIcon: "✎",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Escribe cartas válidas",
-    stepChooseText: "Cada acierto ocupa un hueco. No puedes repetir carta dentro de la misma pirámide.",
-    stepModesIcon: "⌛",
-    stepModesTitle: "Completa a tiempo",
-    stepModesText: "El reto diario tiene 120 segundos. En infinito puedes practicar sin recompensa.",
-    modeSelectorLabel: "Selecciona modo",
-    dailyTitle: "Reto diario",
-    infiniteTitle: "Modo infinito",
-    completedStatus: "Completado",
-    startMode: "Empezar",
     resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
@@ -79,27 +58,6 @@ const COPY = {
     resultsHint: "Resultados de la categoría",
   },
   en: {
-    navMinigames: "Minigames",
-    navCards: "Card database",
-    navCollection: "Collection",
-    title: "The Pyramid",
-    exampleLabel: "The Pyramid minigame example",
-    howToPlayTitle: "How to play",
-    stepHiddenIcon: "10",
-    stepHiddenTitle: "There is a category",
-    stepHiddenText: "You get one condition. Type cards that match it to fill the pyramid slots.",
-    stepChooseIcon: "✎",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Type valid cards",
-    stepChooseText: "Every correct answer fills one slot. You cannot repeat a card in the same pyramid.",
-    stepModesIcon: "⌛",
-    stepModesTitle: "Complete it in time",
-    stepModesText: "Daily challenge has 120 seconds. Infinite mode is free practice with no reward.",
-    modeSelectorLabel: "Select mode",
-    dailyTitle: "Daily challenge",
-    infiniteTitle: "Infinite mode",
-    completedStatus: "Completed",
-    startMode: "Start",
     resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
@@ -136,32 +94,9 @@ function formatText(template, values = {}) {
   return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template);
 }
 
-function GameHeader({ copy, onBack }) {
-  return (
-    <header className="py-header">
-      <nav className="py-nav" aria-label="Principal">
-        <button type="button" className="is-active" onClick={onBack}>{copy.navMinigames}</button>
-        <button type="button" disabled>{copy.navCards}</button>
-        <button type="button" disabled>{copy.navCollection}</button>
-      </nav>
-
-      <button type="button" className="py-brand" onClick={onBack} aria-label="Hearthdle">
-        <img className="py-brand-mug is-left" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="py-brand-mug" src="/ui/book/prop-right-mug-cartoon.png" alt="" />
-      </button>
-
-      <div className="py-actions">
-        <LanguageToggle compact className="py-language" />
-      </div>
-    </header>
-  );
-}
-
 function MessagePanel({ copy, title, onBack }) {
   return (
     <main className="py-page">
-      <GameHeader copy={copy} onBack={onBack} />
       <section className="py-shell">
         <div className="py-message-panel">
           <h2>{title}</h2>
@@ -240,6 +175,7 @@ function ResultOverlay({ copy, result, selectedMode, onViewResults, onBack }) {
 function PyramidGame({ cards = [], onBack }) {
   const { locale } = useLanguage();
   const copy = useCopy(locale);
+  const introCopy = useMemo(() => getGameIntroCopy(PYRAMID_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
   const playableCards = useMemo(() => cards.filter((card) => isPlayablePyramidCard(card, locale)), [cards, locale]);
   const categories = useMemo(() => buildPyramidCategories(cards, locale), [cards, locale]);
@@ -459,14 +395,10 @@ function PyramidGame({ cards = [], onBack }) {
   if (!selectedMode) {
     return (
       <main className="py-page">
-        <GameHeader copy={copy} onBack={onBack} />
         <section className="py-shell is-mode-select">
           <GameModeSelect
-            copy={copy}
-            title={copy.title}
+            copy={introCopy}
             dailyCompleted={dailyProgress.completed}
-            previewSrc="/ui/games/pyramid/mode-example.svg"
-            previewAlt={copy.exampleLabel}
             onSelectMode={startMode}
           />
         </section>
@@ -484,7 +416,6 @@ function PyramidGame({ cards = [], onBack }) {
 
   return (
     <main className="py-page">
-      <GameHeader copy={copy} onBack={handleBack} />
 
       <section className="py-shell">
         <div className="py-topbar">

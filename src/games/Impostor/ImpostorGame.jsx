@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
 import {
@@ -34,27 +34,6 @@ const IMPOSTOR_GAME_ID = GAME_IDS.IMPOSTOR;
 
 const IMPOSTOR_COPY = {
   es: {
-    navMinigames: "Minijuegos",
-    navCards: "Base de datos",
-    navCollection: "Colección",
-    title: "Encuentra el impostor",
-    exampleLabel: "Ejemplo del minijuego Encuentra el impostor",
-    howToPlayTitle: "Cómo se juega",
-    stepHiddenIcon: "?",
-    stepHiddenTitle: "Hay una categoría",
-    stepHiddenText: "Todas las cartas buenas cumplen la categoría del día. Lee bien el objetivo antes de elegir.",
-    stepChooseIcon: "✓",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Encuentra las correctas",
-    stepChooseText: "Selecciona las cartas que encajan. Cada acierto se descubre y te acerca al objetivo.",
-    stepModesIcon: "×",
-    stepModesTitle: "Evita al impostor",
-    stepModesText: "Si eliges una carta que no cumple la categoría, la ronda termina y se revelan los resultados.",
-    modeSelectorLabel: "Selecciona modo",
-    dailyTitle: "Reto diario",
-    infiniteTitle: "Modo infinito",
-    completedStatus: "Completado",
-    startMode: "Empezar",
     resultKicker: "Resultado",
     dailyChallenge: "Reto diario",
     infiniteChallenge: "Modo infinito",
@@ -83,27 +62,6 @@ const IMPOSTOR_COPY = {
     impostorMark: "Impostor",
   },
   en: {
-    navMinigames: "Minigames",
-    navCards: "Card database",
-    navCollection: "Collection",
-    title: "Find the Impostor",
-    exampleLabel: "Find the Impostor minigame example",
-    howToPlayTitle: "How to play",
-    stepHiddenIcon: "?",
-    stepHiddenTitle: "There is a category",
-    stepHiddenText: "Every good card matches the daily category. Read the target before you pick.",
-    stepChooseIcon: "✓",
-    stepChooseIconSrc: "",
-    stepChooseTitle: "Find the correct ones",
-    stepChooseText: "Select the cards that fit. Every correct pick is revealed and gets you closer.",
-    stepModesIcon: "×",
-    stepModesTitle: "Avoid the impostor",
-    stepModesText: "Pick a card that does not match and the round ends with the results revealed.",
-    modeSelectorLabel: "Select mode",
-    dailyTitle: "Daily challenge",
-    infiniteTitle: "Infinite mode",
-    completedStatus: "Completed",
-    startMode: "Start",
     resultKicker: "Result",
     dailyChallenge: "Daily challenge",
     infiniteChallenge: "Infinite mode",
@@ -137,38 +95,9 @@ function useImpostorCopy(locale) {
   return IMPOSTOR_COPY[locale] ?? IMPOSTOR_COPY.es;
 }
 
-function GameHeader({ copy, onBack }) {
-  return (
-    <header className="im-v2-header">
-      <nav className="im-v2-nav" aria-label="Principal">
-        <button type="button" className="is-active" onClick={onBack}>
-          {copy.navMinigames}
-        </button>
-        <button type="button" disabled>
-          {copy.navCards}
-        </button>
-        <button type="button" disabled>
-          {copy.navCollection}
-        </button>
-      </nav>
-
-      <button type="button" className="im-v2-brand" onClick={onBack} aria-label="Hearthdle">
-        <img className="im-v2-brand-mug is-left" src="/ui/home-v2/header-mug-cropped.png" alt="" />
-        <span>Hearthdle</span>
-        <img className="im-v2-brand-mug" src="/ui/home-v2/header-mug-cropped.png" alt="" />
-      </button>
-
-      <div className="im-v2-actions">
-        <LanguageToggle compact className="im-v2-language" />
-      </div>
-    </header>
-  );
-}
-
 function MessagePanel({ copy, title, onBack }) {
   return (
     <main className="im-page">
-      <GameHeader copy={copy} onBack={onBack} />
       <section className="im-shell">
         <section className="im-message-panel">
           <h1>{title}</h1>
@@ -323,6 +252,7 @@ function ResultOverlay({
 function ImpostorGame({ cards, onBack }) {
   const { locale, t: translate } = useLanguage();
   const copy = useImpostorCopy(locale);
+  const introCopy = useMemo(() => getGameIntroCopy(IMPOSTOR_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
 
   const playableCards = useMemo(() => {
@@ -508,14 +438,10 @@ function ImpostorGame({ cards, onBack }) {
   if (!selectedMode) {
     return (
       <main className="im-page">
-        <GameHeader copy={copy} onBack={onBack} />
         <section className="im-shell is-mode-select">
           <GameModeSelect
-            copy={copy}
-            title={copy.title}
+            copy={introCopy}
             dailyCompleted={dailyProgress.completed}
-            previewSrc="/ui/games/impostor-v2/mode-example.svg"
-            previewAlt={copy.exampleLabel}
             onSelectMode={startMode}
           />
         </section>
@@ -535,7 +461,6 @@ function ImpostorGame({ cards, onBack }) {
 
   return (
     <main className="im-page">
-      <GameHeader copy={copy} onBack={onBack} />
 
       <section className="im-shell">
         <div className="im-v2-mode-pill">
