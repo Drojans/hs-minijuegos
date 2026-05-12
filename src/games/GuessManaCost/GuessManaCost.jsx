@@ -3,6 +3,7 @@ import { useLanguage } from "../../i18n/LanguageProvider";
 import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
@@ -192,7 +193,7 @@ function ResultOverlay({ copy, isCorrect, cardName, correctCost, rewardMessage, 
 
 function EmptyState({ copy, title, onBack }) {
   return (
-    <main className="guess-v3-page">
+    <GamePageShell className="guess-v3-page">
       <section className="guess-v3-shell">
         <section className="guess-v3-empty-state">
           <h2>{title}</h2>
@@ -201,7 +202,7 @@ function EmptyState({ copy, title, onBack }) {
           </button>
         </section>
       </section>
-    </main>
+    </GamePageShell>
   );
 }
 
@@ -349,7 +350,7 @@ function GuessManaCost({ cards = [], onBack }) {
 
   if (!selectedMode) {
     return (
-      <main className="guess-v3-page">
+      <GamePageShell className="guess-v3-page">
         <section className="guess-v3-shell is-mode-select">
           <GameModeSelect
             copy={introCopy}
@@ -358,7 +359,7 @@ function GuessManaCost({ cards = [], onBack }) {
           />
         </section>
         {showLayoutEditor ? <GuessManaLayoutEditor /> : null}
-      </main>
+      </GamePageShell>
     );
   }
 
@@ -373,7 +374,7 @@ function GuessManaCost({ cards = [], onBack }) {
   const displayedCrystalValue = hasAnswered ? selectedCost : pendingCost;
 
   return (
-    <main className="guess-v3-page">
+    <GamePageShell className="guess-v3-page">
 
       <section className="guess-v3-shell">
         <div className="guess-v3-mode-pill">
@@ -447,7 +448,7 @@ function GuessManaCost({ cards = [], onBack }) {
       ) : null}
 
       {showLayoutEditor ? <GuessManaLayoutEditor /> : null}
-    </main>
+    </GamePageShell>
   );
 }
 

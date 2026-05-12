@@ -265,7 +265,7 @@ function CardDatabase({ cards = [], loading = false }) {
     return filteredCards.slice(start, start + PAGE_SIZE);
   }, [filteredCards, safePageIndex]);
 
-  const ownedCount = useMemo(() => Object.keys(getCollectionStore().cards ?? {}).length, [cards, locale]);
+  const ownedCount = Object.keys(getCollectionStore().cards ?? {}).length;
 
   useEffect(() => {
     setPageIndex(0);

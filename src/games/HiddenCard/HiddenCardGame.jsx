@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import {
@@ -116,14 +117,14 @@ function useCopy(locale) {
 
 function MessagePanel({ copy, title, onBack }) {
   return (
-    <main className="hidden-card-page">
+    <GamePageShell className="hidden-card-page">
       <section className="hidden-card-shell">
         <div className="hidden-card-message-panel">
           <h2>{title}</h2>
           <button type="button" className="hidden-card-button is-secondary" onClick={onBack}>{copy.backHome}</button>
         </div>
       </section>
-    </main>
+    </GamePageShell>
   );
 }
 
@@ -462,7 +463,7 @@ function HiddenCardGame({ cards = [], onBack }) {
 
   if (!selectedMode) {
     return (
-      <main className="hidden-card-page">
+      <GamePageShell className="hidden-card-page">
         <section className="hidden-card-shell is-mode-select">
           <GameModeSelect
             copy={introCopy}
@@ -470,7 +471,7 @@ function HiddenCardGame({ cards = [], onBack }) {
             onSelectMode={startMode}
           />
         </section>
-      </main>
+      </GamePageShell>
     );
   }
 
@@ -483,7 +484,7 @@ function HiddenCardGame({ cards = [], onBack }) {
   const isRevealed = showResults || isReview;
 
   return (
-    <main className="hidden-card-page">
+    <GamePageShell className="hidden-card-page">
 
       <section className="hidden-card-shell">
         <div className="hidden-card-topbar">
@@ -543,7 +544,7 @@ function HiddenCardGame({ cards = [], onBack }) {
           onBack={onBack}
         />
       ) : null}
-    </main>
+    </GamePageShell>
   );
 }
 

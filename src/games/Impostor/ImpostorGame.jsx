@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
@@ -58,8 +59,6 @@ const IMPOSTOR_COPY = {
     viewResults: "Ver resultados",
     playAgain: "Otra partida",
     allFound: "Has encontrado todas las cartas correctas.",
-    correctMark: "Correcta",
-    impostorMark: "Impostor",
   },
   en: {
     resultKicker: "Result",
@@ -86,8 +85,6 @@ const IMPOSTOR_COPY = {
     viewResults: "View results",
     playAgain: "Another game",
     allFound: "You found every correct card.",
-    correctMark: "Correct",
-    impostorMark: "Impostor",
   },
 };
 
@@ -97,7 +94,7 @@ function useImpostorCopy(locale) {
 
 function MessagePanel({ copy, title, onBack }) {
   return (
-    <main className="im-page">
+    <GamePageShell className="im-page">
       <section className="im-shell">
         <section className="im-message-panel">
           <h1>{title}</h1>
@@ -106,7 +103,7 @@ function MessagePanel({ copy, title, onBack }) {
           </button>
         </section>
       </section>
-    </main>
+    </GamePageShell>
   );
 }
 
@@ -437,7 +434,7 @@ function ImpostorGame({ cards, onBack }) {
 
   if (!selectedMode) {
     return (
-      <main className="im-page">
+      <GamePageShell className="im-page">
         <section className="im-shell is-mode-select">
           <GameModeSelect
             copy={introCopy}
@@ -445,7 +442,7 @@ function ImpostorGame({ cards, onBack }) {
             onSelectMode={startMode}
           />
         </section>
-      </main>
+      </GamePageShell>
     );
   }
 
@@ -460,7 +457,7 @@ function ImpostorGame({ cards, onBack }) {
     : "";
 
   return (
-    <main className="im-page">
+    <GamePageShell className="im-page">
 
       <section className="im-shell">
         <div className="im-v2-mode-pill">
@@ -514,7 +511,7 @@ function ImpostorGame({ cards, onBack }) {
           onShowResults={() => setShowResultOverlay(false)}
         />
       ) : null}
-    </main>
+    </GamePageShell>
   );
 }
 export default ImpostorGame;

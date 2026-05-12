@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import ImpostorNeutralCard from "../Impostor/ImpostorNeutralCard";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
@@ -110,14 +111,14 @@ function getFullCardImage(card, locale) {
 
 function MessagePanel({ copy, title, onBack }) {
   return (
-    <main className="hl-page">
+    <GamePageShell className="hl-page">
       <section className="hl-shell">
         <div className="hl-message-panel">
           <h2>{title}</h2>
           <button type="button" className="hl-button is-secondary" onClick={onBack}>{copy.backHome}</button>
         </div>
       </section>
-    </main>
+    </GamePageShell>
   );
 }
 
@@ -452,7 +453,7 @@ function HigherLowerGame({ cards = [], onBack }) {
 
   if (!selectedMode) {
     return (
-      <main className="hl-page">
+      <GamePageShell className="hl-page">
         <section className="hl-shell is-mode-select">
           <GameModeSelect
             copy={introCopy}
@@ -460,7 +461,7 @@ function HigherLowerGame({ cards = [], onBack }) {
             onSelectMode={startMode}
           />
         </section>
-      </main>
+      </GamePageShell>
     );
   }
 
@@ -475,7 +476,7 @@ function HigherLowerGame({ cards = [], onBack }) {
   const revealedResult = (showResults || isReview) ? history[history.length - 1] : null;
 
   return (
-    <main className="hl-page">
+    <GamePageShell className="hl-page">
 
       <section className="hl-shell">
         <div className="hl-topbar">
@@ -542,7 +543,7 @@ function HigherLowerGame({ cards = [], onBack }) {
           onBack={onBack}
         />
       ) : null}
-    </main>
+    </GamePageShell>
   );
 }
 

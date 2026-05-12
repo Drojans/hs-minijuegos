@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, CARD_GRID_DAILY_TIME_SECONDS, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
@@ -144,7 +145,7 @@ function EmptyState({
   onStartNewGrid,
 }) {
   return (
-    <main className="cg-page">
+    <GamePageShell className="cg-page">
       <section className="cg-shell">
         <section className="cg-empty">
         <button type="button" className="cg-secondary-button" onClick={onBack}>
@@ -181,7 +182,7 @@ function EmptyState({
         ) : null}
         </section>
       </section>
-    </main>
+    </GamePageShell>
   );
 }
 
@@ -907,7 +908,7 @@ function CardGridGame({ cards, onBack }) {
 
   if (!selectedMode) {
     return (
-      <main className="cg-page">
+      <GamePageShell className="cg-page">
         <section className="cg-shell is-mode-select">
           <GameModeSelect
             copy={introCopy}
@@ -915,7 +916,7 @@ function CardGridGame({ cards, onBack }) {
             onSelectMode={startMode}
           />
         </section>
-      </main>
+      </GamePageShell>
     );
   }
 
@@ -935,11 +936,12 @@ function CardGridGame({ cards, onBack }) {
   }
 
   return (
-    <main className={`cg-page ${resultsMode ? `is-results-${resultsMode}` : ""}`}>
+    <GamePageShell className={`cg-page ${resultsMode ? `is-results-${resultsMode}` : ""}`}>
       <section className="cg-shell">
         <DailyTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
         <section className="cg-layout cg-layout-single">
           <GridBoard
+            grid={grid}
             answers={answers}
             revealedCells={revealedCells}
             selectedCell={selectedCell}
@@ -983,7 +985,7 @@ function CardGridGame({ cards, onBack }) {
           onBack={returnToModes}
         />
       ) : null}
-    </main>
+    </GamePageShell>
   );
 }
 

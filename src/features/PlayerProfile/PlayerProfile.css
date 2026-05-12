@@ -82,103 +82,6 @@
   background: radial-gradient(circle, rgba(217, 164, 65, 0.18), transparent 67%);
 }
 
-.player-profile-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 18px;
-  width: 100%;
-  min-height: 66px;
-  padding: 8px clamp(16px, 4vw, 46px);
-  background: linear-gradient(180deg, rgba(15, 19, 29, 0.96), rgba(11, 14, 22, 0.84));
-  border-bottom: 1px solid rgba(217, 164, 65, 0.16);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(18px);
-}
-
-.player-profile-brand,
-.player-profile-nav button {
-  font: inherit;
-}
-
-.player-profile-brand {
-  justify-self: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: var(--player-gold-soft);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.8rem);
-  line-height: 0.9;
-  letter-spacing: -0.045em;
-  text-shadow: 0 2px 0 rgba(66, 32, 7, 0.85), 0 12px 26px rgba(0, 0, 0, 0.38), 0 0 20px rgba(217, 164, 65, 0.1);
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.player-profile-brand::before,
-.player-profile-brand::after {
-  content: "";
-  width: 34px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(240, 207, 130, 0.62), transparent);
-  opacity: 0.65;
-}
-
-.player-profile-brand-mug {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.34));
-  opacity: 0.95;
-}
-
-.player-profile-brand-mug.is-left {
-  transform: scaleX(-1);
-}
-
-.player-profile-nav {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.player-profile-nav button {
-  border: 0;
-  border-radius: 999px;
-  padding: 8px 12px;
-  color: rgba(247, 236, 212, 0.72);
-  background: transparent;
-  font-size: 0.86rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: color 0.16s ease, background 0.16s ease, transform 0.16s ease;
-}
-
-.player-profile-nav button:hover {
-  color: var(--player-text);
-  transform: translateY(-1px);
-}
-
-.player-profile-actions {
-  justify-self: end;
-}
-
-.player-profile-language.language-toggle {
-  min-width: auto;
-  padding: 4px;
-  border-color: rgba(240, 207, 130, 0.14);
-  background: rgba(255, 255, 255, 0.035);
-}
 
 .player-profile-shell {
   width: min(100% - 32px, 1320px);
@@ -487,15 +390,9 @@
     grid-template-columns: 1fr;
   }
 
-  .player-profile-header {
-    grid-template-columns: 1fr;
-    justify-items: center;
-  }
+  
 
-  .player-profile-nav,
-  .player-profile-actions {
-    justify-self: center;
-  }
+  
 }
 
 @media (max-width: 640px) {
@@ -517,9 +414,5 @@
     min-height: 44px;
   }
 
-  .player-profile-brand-mug,
-  .player-profile-brand::before,
-  .player-profile-brand::after {
-    display: none;
-  }
+  
 }

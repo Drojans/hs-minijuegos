@@ -81,166 +81,13 @@
   background: radial-gradient(circle, rgba(217, 164, 65, 0.18), transparent 67%);
 }
 
-.home-v2-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  align-items: center;
-  gap: 18px;
-  width: 100%;
-  min-height: 66px;
-  padding: 8px clamp(16px, 4vw, 46px);
-  background: linear-gradient(180deg, rgba(15, 19, 29, 0.96), rgba(11, 14, 22, 0.84));
-  border-bottom: 1px solid rgba(217, 164, 65, 0.16);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
-  backdrop-filter: blur(18px);
-}
 
-.home-v2-brand,
-.home-v2-nav button,
-.home-v2-icon-button,
-.home-v2-mode-card {
+.home-v2-mode-card{
   font: inherit;
 }
 
-.home-v2-brand {
-  justify-self: center;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  color: var(--home-v2-gold-soft);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(2rem, 3vw, 2.8rem);
-  line-height: 0.9;
-  letter-spacing: -0.045em;
-  text-shadow:
-    0 2px 0 rgba(66, 32, 7, 0.85),
-    0 12px 26px rgba(0, 0, 0, 0.38),
-    0 0 20px rgba(217, 164, 65, 0.1);
-  cursor: pointer;
-  white-space: nowrap;
-}
 
-.home-v2-brand::before,
-.home-v2-brand::after {
-  content: "";
-  width: 34px;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(240, 207, 130, 0.62), transparent);
-  opacity: 0.65;
-}
-
-.home-v2-brand-mug {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.34));
-  opacity: 0.95;
-}
-
-.home-v2-brand-mug.is-left {
-  transform: scaleX(-1);
-}
-
-.home-v2-nav {
-  justify-self: start;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-width: 0;
-}
-
-.home-v2-nav button {
-  border: 0;
-  border-radius: 999px;
-  padding: 8px 12px;
-  color: rgba(247, 236, 212, 0.72);
-  background: transparent;
-  font-size: 0.86rem;
-  font-weight: 800;
-  cursor: pointer;
-  transition: color 0.16s ease, background 0.16s ease, transform 0.16s ease;
-}
-
-.home-v2-nav button:hover:not(:disabled) {
-  color: var(--home-v2-text);
-  transform: translateY(-1px);
-}
-
-.home-v2-nav button.is-active {
-  color: var(--home-v2-gold-soft);
-  background: rgba(217, 164, 65, 0.1);
-  box-shadow: inset 0 0 0 1px rgba(217, 164, 65, 0.18);
-}
-
-.home-v2-nav button:disabled {
-  cursor: not-allowed;
-  color: rgba(247, 236, 212, 0.38);
-}
-
-.home-v2-actions {
-  justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-}
-
-.home-v2-language.language-toggle {
-  min-width: auto;
-  padding: 4px;
-  border-color: rgba(240, 207, 130, 0.14);
-  background: rgba(255, 255, 255, 0.035);
-}
-
-.home-v2-language .language-toggle-options {
-  gap: 4px;
-}
-
-.home-v2-language.language-toggle.is-compact .language-toggle-button {
-  padding: 6px 9px;
-  border-color: transparent;
-  background: transparent;
-  color: rgba(247, 236, 212, 0.72);
-  font-size: 0.78rem;
-  box-shadow: none;
-}
-
-.home-v2-language.language-toggle.is-compact .language-toggle-button.is-active {
-  color: #14100a;
-  background: linear-gradient(135deg, #f5d782, #d99b30);
-  border-color: transparent;
-}
-
-.home-v2-icon-button {
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(240, 207, 130, 0.18);
-  border-radius: 999px;
-  color: var(--home-v2-gold-soft);
-  background: rgba(255, 255, 255, 0.04);
-  cursor: pointer;
-  font-weight: 900;
-  transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
-}
-
-.home-v2-icon-button:hover {
-  transform: translateY(-1px);
-  border-color: rgba(240, 207, 130, 0.38);
-  background: rgba(255, 255, 255, 0.07);
-}
-
-.home-v2-brand:focus-visible,
-.home-v2-nav button:focus-visible,
-.home-v2-icon-button:focus-visible,
-.home-v2-mode-card:focus-visible {
+.home-v2-mode-card:focus-visible{
   outline: 3px solid rgba(105, 167, 255, 0.42);
   outline-offset: 3px;
 }
@@ -484,34 +331,15 @@
 }
 
 @media (max-width: 980px) {
-  .home-v2-header {
-    grid-template-columns: 1fr auto;
-    grid-template-areas:
-      "brand actions"
-      "nav nav";
-    gap: 8px 12px;
-    min-height: auto;
-  }
+  
 
-  .home-v2-brand {
-    grid-area: brand;
-    justify-self: start;
-  }
+  
 
-  .home-v2-nav {
-    grid-area: nav;
-    justify-self: center;
-    width: min(100%, 520px);
-    justify-content: center;
-  }
+  
 
-  .home-v2-nav button {
-    flex: 1;
-  }
+  
 
-  .home-v2-actions {
-    grid-area: actions;
-  }
+  
 
   .home-v2-mode-grid.is-games,
   .home-v2-mode-grid.is-library {
@@ -520,13 +348,6 @@
   }
 }
 
-@media (max-width: 860px) {
-  .home-v2-brand::before,
-  .home-v2-brand::after,
-  .home-v2-brand-mug {
-    display: none;
-  }
-}
 
 @media (max-width: 680px) {
   .home-v2-bg::before {
@@ -534,33 +355,17 @@
     border-radius: 22px;
   }
 
-  .home-v2-header {
-    padding: 10px 12px;
-  }
+  
 
-  .home-v2-brand {
-    font-size: 1.55rem;
-  }
+  
 
-  .home-v2-actions {
-    gap: 6px;
-  }
+  
 
-  .home-v2-icon-button {
-    display: none;
-  }
+  
 
-  .home-v2-nav {
-    overflow-x: auto;
-    justify-content: flex-start;
-    border-radius: 18px;
-  }
+  
 
-  .home-v2-nav button {
-    flex: 0 0 auto;
-    padding-inline: 12px;
-    white-space: nowrap;
-  }
+  
 
   .home-v2-shell {
     width: min(100% - 22px, 1180px);
@@ -606,13 +411,9 @@
 }
 
 @media (max-height: 720px) and (min-width: 981px) {
-  .home-v2-header {
-    min-height: 58px;
-  }
+  
 
-  .home-v2-brand {
-    font-size: clamp(1.8rem, 2.7vw, 2.25rem);
-  }
+  
 
   .home-v2-shell {
     padding-top: 12px;
@@ -746,212 +547,7 @@
 }
 
 /* Home progress panel: daily challenges + collection snapshot */
-.home-v2-progress-panel {
-  width: min(100%, 860px);
-  display: grid;
-  grid-template-columns: minmax(150px, 210px) minmax(0, 1fr);
-  gap: 12px;
-  margin: 0 auto clamp(12px, 2vh, 18px);
-  padding: 10px;
-  border-radius: 22px;
-  border: 1px solid rgba(240, 207, 130, 0.14);
-  background:
-    radial-gradient(circle at 10% 0%, rgba(217, 164, 65, 0.12), transparent 34%),
-    radial-gradient(circle at 88% 0%, rgba(105, 167, 255, 0.1), transparent 34%),
-    rgba(8, 13, 24, 0.58);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 16px 38px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-}
 
-.home-v2-progress-summary {
-  display: grid;
-  align-content: center;
-  justify-items: center;
-  gap: 4px;
-  min-height: 72px;
-  border: 1px solid rgba(217, 164, 65, 0.2);
-  border-radius: 18px;
-  color: var(--home-v2-text);
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.015)),
-    rgba(19, 25, 39, 0.76);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
-  cursor: pointer;
-  font: inherit;
-  transition: transform 0.16s ease, border-color 0.16s ease, filter 0.16s ease;
-}
-
-.home-v2-progress-summary:hover {
-  transform: translateY(-2px);
-  border-color: rgba(240, 207, 130, 0.38);
-  filter: brightness(1.05);
-}
-
-.home-v2-progress-summary span,
-.home-v2-daily-progress-head span,
-.home-v2-daily-chip strong {
-  color: var(--home-v2-gold-soft);
-  font-size: 0.66rem;
-  font-weight: 950;
-  letter-spacing: 0.11em;
-  text-transform: uppercase;
-}
-
-.home-v2-progress-summary strong {
-  color: var(--home-v2-text);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.42rem;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.home-v2-daily-progress {
-  display: grid;
-  gap: 8px;
-  min-width: 0;
-}
-
-.home-v2-daily-progress-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 0 4px;
-}
-
-.home-v2-daily-progress-head strong {
-  color: var(--home-v2-text);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.12rem;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-}
-
-.home-v2-daily-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.home-v2-daily-chip {
-  min-width: 0;
-  min-height: 48px;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  grid-template-areas:
-    "icon name"
-    "icon status";
-  align-items: center;
-  column-gap: 9px;
-  row-gap: 1px;
-  padding: 7px 9px;
-  border: 1px solid rgba(240, 207, 130, 0.16);
-  border-radius: 16px;
-  color: var(--home-v2-text);
-  background:
-    radial-gradient(circle at 90% 0%, var(--daily-glow, rgba(105, 167, 255, 0.1)), transparent 42%),
-    rgba(17, 23, 37, 0.78);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.045);
-  font: inherit;
-  text-align: left;
-  cursor: pointer;
-  transition: transform 0.16s ease, border-color 0.16s ease, filter 0.16s ease;
-}
-
-.home-v2-daily-chip:hover {
-  transform: translateY(-2px);
-  border-color: rgba(240, 207, 130, 0.34);
-  filter: brightness(1.05);
-}
-
-.home-v2-daily-chip.is-blue { --daily-glow: rgba(105, 167, 255, 0.16); }
-.home-v2-daily-chip.is-violet { --daily-glow: rgba(170, 124, 255, 0.16); }
-.home-v2-daily-chip.is-gold { --daily-glow: rgba(240, 207, 130, 0.16); }
-
-.home-v2-daily-chip.is-completed {
-  border-color: rgba(124, 228, 146, 0.28);
-  background:
-    radial-gradient(circle at 90% 0%, rgba(124, 228, 146, 0.12), transparent 42%),
-    rgba(15, 31, 27, 0.78);
-}
-
-.home-v2-daily-icon {
-  grid-area: icon;
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  color: #140f08;
-  background: linear-gradient(135deg, #f5d782, #d99b30);
-  box-shadow: 0 0 16px rgba(217, 164, 65, 0.18);
-  font-size: 0.88rem;
-  font-weight: 950;
-}
-
-.home-v2-daily-chip.is-completed .home-v2-daily-icon {
-  background: linear-gradient(135deg, #98f4ae, #35c96d);
-}
-
-.home-v2-daily-name {
-  grid-area: name;
-  min-width: 0;
-  overflow: hidden;
-  color: var(--home-v2-text);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1rem;
-  line-height: 1;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.home-v2-daily-chip strong {
-  grid-area: status;
-  color: rgba(247, 236, 212, 0.62);
-  font-size: 0.58rem;
-}
-
-.home-v2-daily-chip.is-completed strong {
-  color: rgba(124, 228, 146, 0.92);
-}
-
-@media (max-width: 880px) {
-  .home-v2-progress-panel {
-    grid-template-columns: 1fr;
-    width: 100%;
-  }
-
-  .home-v2-daily-list {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-height: 720px) and (min-width: 981px) {
-  .home-v2-progress-panel {
-    margin-bottom: 10px;
-    padding: 8px;
-  }
-
-  .home-v2-progress-summary {
-    min-height: 60px;
-  }
-
-  .home-v2-daily-chip {
-    min-height: 42px;
-    padding-block: 5px;
-  }
-
-  .home-v2-daily-icon {
-    width: 26px;
-    height: 26px;
-  }
-
-  .home-v2-daily-name {
-    font-size: 0.92rem;
-  }
-}
 
 /* Home daily-status card pass: collection remains in top row, daily chips removed */
 .home-v2-status-row {
@@ -1053,38 +649,6 @@
     drop-shadow(0 0 16px rgba(124, 228, 146, 0.22));
 }
 
-.home-v2-daily-state-mark {
-  position: absolute;
-  z-index: 4;
-  left: 50%;
-  top: 48%;
-  display: grid;
-  place-items: center;
-  width: 54px;
-  height: 54px;
-  border-radius: 999px;
-  transform: translate(-50%, -50%);
-  color: #100d0a;
-  font-size: 2.3rem;
-  font-weight: 1000;
-  line-height: 1;
-  text-shadow: 0 1px 0 rgba(255,255,255,0.18);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.24),
-    0 0 0 1px rgba(255,255,255,0.11),
-    0 16px 34px rgba(0,0,0,0.32),
-    0 0 42px var(--daily-result-glow);
-  pointer-events: none;
-}
-
-.home-v2-daily-state-mark.is-won {
-  background: linear-gradient(135deg, #9cfab2, #2ed46d);
-}
-
-.home-v2-daily-state-mark.is-lost {
-  color: #18080a;
-  background: linear-gradient(135deg, #ff6e86, #c4123b);
-}
 
 .home-v2-mode-card:hover:not(:disabled).is-daily-won,
 .home-v2-mode-card:focus-visible.is-daily-won {
@@ -1112,26 +676,6 @@
   }
 }
 
-
-.home-v2-profile-button {
-  border: 1px solid rgba(240, 207, 130, 0.16);
-  border-radius: 999px;
-  padding: 8px 12px;
-  color: rgba(247, 236, 212, 0.78);
-  background: rgba(255, 255, 255, 0.04);
-  font: inherit;
-  font-size: 0.84rem;
-  font-weight: 900;
-  cursor: pointer;
-  transition: color 0.16s ease, border-color 0.16s ease, transform 0.16s ease, background 0.16s ease;
-}
-
-.home-v2-profile-button:hover {
-  color: var(--hs-text);
-  border-color: rgba(240, 207, 130, 0.34);
-  background: rgba(217, 164, 65, 0.1);
-  transform: translateY(-1px);
-}
 
 /* Pyramid mode: four daily cards on desktop */
 @media (min-width: 981px) {
@@ -1251,46 +795,6 @@
   font-size: clamp(1.08rem, 1.35vw, 1.35rem);
 }
 
-.home-v2-card-state {
-  position: absolute;
-  z-index: 5;
-  top: 10px;
-  left: 10px;
-  min-height: 24px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(240, 207, 130, 0.18);
-  color: rgba(247, 236, 212, 0.72);
-  background: rgba(9, 14, 25, 0.72);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 18px rgba(0,0,0,0.18);
-  font-size: 0.62rem;
-  font-weight: 950;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  pointer-events: none;
-}
-
-.home-v2-card-state.is-won {
-  color: rgba(194, 255, 206, 0.96);
-  border-color: rgba(124, 228, 146, 0.34);
-  background: rgba(16, 44, 32, 0.82);
-}
-
-.home-v2-card-state.is-lost {
-  color: rgba(255, 194, 203, 0.96);
-  border-color: rgba(255, 89, 112, 0.32);
-  background: rgba(55, 18, 29, 0.82);
-}
-
-.home-v2-daily-state-mark {
-  top: 50%;
-  width: 48px;
-  height: 48px;
-  font-size: 2rem;
-}
 
 @media (min-width: 981px) {
   .home-v2-shell {
@@ -1303,9 +807,7 @@
 }
 
 @media (max-height: 760px) and (min-width: 981px) {
-  .home-v2-header {
-    min-height: 58px;
-  }
+  
 
   .home-v2-shell {
     padding-top: 10px;
@@ -1456,19 +958,7 @@
 }
 
 /* Home icon pass: new mode icons + larger desktop cards/header */
-.home-v2-header {
-  min-height: 76px;
-  padding-block: 10px;
-}
 
-.home-v2-brand {
-  font-size: clamp(2.15rem, 3.15vw, 3rem);
-}
-
-.home-v2-brand-mug {
-  width: 46px;
-  height: 46px;
-}
 
 .home-v2-shell {
   width: min(100% - 52px, 1320px);
@@ -1551,19 +1041,11 @@
 }
 
 @media (max-height: 820px) and (min-width: 981px) {
-  .home-v2-header {
-    min-height: 68px;
-    padding-block: 8px;
-  }
+  
 
-  .home-v2-brand {
-    font-size: clamp(1.95rem, 2.85vw, 2.55rem);
-  }
+  
 
-  .home-v2-brand-mug {
-    width: 40px;
-    height: 40px;
-  }
+  
 
   .home-v2-shell {
     width: min(100% - 44px, 1260px);
@@ -1627,10 +1109,7 @@
 }
 
 /* Home status visual cleanup: state lives in the card glow, not in labels/badges */
-.home-v2-card-state,
-.home-v2-daily-state-mark {
-  display: none !important;
-}
+
 
 .home-v2-mode-card.is-daily-won .home-v2-mode-icon img,
 .home-v2-mode-card.is-daily-lost .home-v2-mode-icon img {

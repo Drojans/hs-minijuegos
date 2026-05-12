@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import { getArcaneBoxCount, REWARDS_UPDATED_EVENT } from "../../shared/rewards/rewardStore";
 import { COLLECTION_UPDATED_EVENT, getOwnedCardCount } from "../../shared/collection/collectionStore";
@@ -34,16 +34,16 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
   const copy = HOME_V2_COPY[locale] ?? HOME_V2_COPY.es;
   const todayKey = useMemo(() => getTodayKey(), []);
 
-  function readDailyModeProgress() {
+  const readDailyModeProgress = useCallback(() => {
     return Object.fromEntries(
       Object.entries(DAILY_MODE_GAME_IDS_BY_HOME_MODE).map(([modeId, gameId]) => [
         modeId,
         getDailyGameProgress(gameId, todayKey),
       ]),
     );
-  }
+  }, [todayKey]);
 
-  const [dailyModeProgress, setDailyModeProgress] = useState(readDailyModeProgress);
+  const [dailyModeProgress, setDailyModeProgress] = useState(() => readDailyModeProgress());
   const [ownedCardCount, setOwnedCardCount] = useState(() => getOwnedCardCount());
 
   const collectibleCardCount = useMemo(() => getEligibleCollectionCards(cards).length, [cards]);
@@ -91,7 +91,7 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
       window.removeEventListener("storage", syncHomeProgress);
       window.removeEventListener("focus", syncHomeProgress);
     };
-  }, [todayKey]);
+  }, [readDailyModeProgress]);
 
   const modes = useMemo(
     () =>

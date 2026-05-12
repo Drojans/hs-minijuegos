@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
+import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
@@ -96,14 +97,14 @@ function formatText(template, values = {}) {
 
 function MessagePanel({ copy, title, onBack }) {
   return (
-    <main className="py-page">
+    <GamePageShell className="py-page">
       <section className="py-shell">
         <div className="py-message-panel">
           <h2>{title}</h2>
           <button type="button" className="py-button is-secondary" onClick={onBack}>{copy.backHome}</button>
         </div>
       </section>
-    </main>
+    </GamePageShell>
   );
 }
 
@@ -203,6 +204,25 @@ function PyramidGame({ cards = [], onBack }) {
     setDailyProgress(getDailyGameProgress(PYRAMID_GAME_ID, todayKey));
   }, [todayKey]);
 
+  const markDailyLost = useCallback((cardsFound = foundCards, showOverlay = true) => {
+    saveDailyChallengeResult(PYRAMID_GAME_ID, todayKey, {
+      completed: true,
+      completedAt: new Date().toISOString(),
+      lastWasWon: false,
+      lastWasCorrect: false,
+      lastCategoryId: category?.id,
+      lastFoundCardIds: cardsFound.map((card) => card.id),
+    });
+    setDailyProgress(getDailyGameProgress(PYRAMID_GAME_ID, todayKey));
+    setResult("lost");
+    setShowResultOverlay(showOverlay);
+  }, [category?.id, foundCards, todayKey]);
+
+  const failDailyByTime = useCallback(() => {
+    if (result || selectedMode !== GAME_MODE_IDS.DAILY || dailyProgress.completed) return;
+    markDailyLost(foundCards, true);
+  }, [dailyProgress.completed, foundCards, markDailyLost, result, selectedMode]);
+
   useEffect(() => {
     if (selectedMode !== GAME_MODE_IDS.DAILY || result || dailyProgress.completed) return;
 
@@ -218,7 +238,7 @@ function PyramidGame({ cards = [], onBack }) {
     }, 1000);
 
     return () => window.clearInterval(intervalId);
-  }, [selectedMode, result, dailyProgress.completed]);
+  }, [selectedMode, result, dailyProgress.completed, failDailyByTime]);
 
   function normalizeInput(value) {
     return String(value ?? "").trim();
@@ -320,25 +340,6 @@ function PyramidGame({ cards = [], onBack }) {
     setDailyProgress(getDailyGameProgress(PYRAMID_GAME_ID, todayKey));
   }
 
-  function markDailyLost(cardsFound = foundCards, showOverlay = true) {
-    saveDailyChallengeResult(PYRAMID_GAME_ID, todayKey, {
-      completed: true,
-      completedAt: new Date().toISOString(),
-      lastWasWon: false,
-      lastWasCorrect: false,
-      lastCategoryId: category?.id,
-      lastFoundCardIds: cardsFound.map((card) => card.id),
-    });
-    setDailyProgress(getDailyGameProgress(PYRAMID_GAME_ID, todayKey));
-    setResult("lost");
-    setShowResultOverlay(showOverlay);
-  }
-
-  function failDailyByTime() {
-    if (result || selectedMode !== GAME_MODE_IDS.DAILY || dailyProgress.completed) return;
-    markDailyLost(foundCards, true);
-  }
-
   function submitAnswer(event) {
     event.preventDefault();
     if (result || !category) return;
@@ -394,7 +395,7 @@ function PyramidGame({ cards = [], onBack }) {
 
   if (!selectedMode) {
     return (
-      <main className="py-page">
+      <GamePageShell className="py-page">
         <section className="py-shell is-mode-select">
           <GameModeSelect
             copy={introCopy}
@@ -402,7 +403,7 @@ function PyramidGame({ cards = [], onBack }) {
             onSelectMode={startMode}
           />
         </section>
-      </main>
+      </GamePageShell>
     );
   }
 
@@ -415,7 +416,7 @@ function PyramidGame({ cards = [], onBack }) {
   const categoryLabel = getCategoryLabel(category, locale);
 
   return (
-    <main className="py-page">
+    <GamePageShell className="py-page">
 
       <section className="py-shell">
         <div className="py-topbar">
@@ -474,7 +475,7 @@ function PyramidGame({ cards = [], onBack }) {
           onBack={handleBack}
         />
       ) : null}
-    </main>
+    </GamePageShell>
   );
 }
 

@@ -279,7 +279,7 @@ function CollectionHub({ cards = [], loading = false }) {
   const [opening, setOpening] = useState(null);
 
   const eligibleCards = useMemo(() => getEligibleCollectionCards(cards), [cards]);
-  const ownedEntries = collectionStore.cards ?? {};
+  const ownedEntries = useMemo(() => collectionStore.cards ?? {}, [collectionStore.cards]);
 
   const classOptions = useMemo(() => {
     return [...new Set(eligibleCards.map((card) => card.cardClass).filter(Boolean))].sort((a, b) => {
