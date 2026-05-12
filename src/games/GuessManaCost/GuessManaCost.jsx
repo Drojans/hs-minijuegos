@@ -2,11 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GuessManaLayoutEditor from "../../dev/GuessManaLayoutEditor";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
-import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
-import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
+import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import {
   completeDailyChallenge,
   getDailyGameProgress,
@@ -16,203 +15,31 @@ import {
 } from "../../shared/progress/dailyProgress";
 import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
 import { getCardName } from "../../utils/cardLocale";
+import GuessManaEmptyState from "./components/GuessManaEmptyState";
+import GuessManaResultOverlay from "./components/GuessManaResultOverlay";
+import GuessManaStage from "./components/GuessManaStage";
+import { getGuessManaCopy } from "./guessManaCopy";
 import {
   getGuessManaCardImage,
   getNextRandomCard,
   isPlayableGuessManaCard,
-  MANA_VALUES,
 } from "./guessManaConfig";
 import "./GuessManaCost.css";
 
 const GUESS_MANA_GAME_ID = GAME_IDS.GUESS_MANA;
 
-const LOCAL_COPY = {
-  es: {
-    backHome: "Volver a minijuegos",
-    resultKicker: "Resultado",
-    dailyRewardEarned: "Has ganado 1 caja arcana.",
-    dailyRewardAlreadyClaimed: "Reto diario completado. Hoy ya tenías esta recompensa.",
-    dailyChallenge: "Reto diario",
-    infiniteChallenge: "Modo infinito",
-    chooseCost: "Elige un coste",
-    selectedCost: "Coste seleccionado",
-    chooseFirst: "Selecciona una opción para continuar.",
-    confirmCost: "Confirmar coste",
-    playAgain: "Otra carta",
-    viewResults: "Ver resultados",
-    correct: "¡Correcto!",
-    wrong: "No era ese.",
-    resultCostBefore: "cuesta",
-    resultCostAfter: "de maná.",
-    loadingGame: "Preparando carta...",
-    noCards: "No hay cartas disponibles.",
-    noImage: "Sin imagen",
-  },
-  en: {
-    backHome: "Back to minigames",
-    resultKicker: "Result",
-    dailyRewardEarned: "You earned 1 arcane box.",
-    dailyRewardAlreadyClaimed: "Daily challenge completed. You already had today’s reward.",
-    dailyChallenge: "Daily challenge",
-    infiniteChallenge: "Infinite mode",
-    chooseCost: "Choose a cost",
-    selectedCost: "Selected cost",
-    chooseFirst: "Select an option to continue.",
-    confirmCost: "Confirm cost",
-    playAgain: "Another card",
-    viewResults: "View results",
-    correct: "Correct!",
-    wrong: "Not that one.",
-    resultCostBefore: "costs",
-    resultCostAfter: "mana.",
-    loadingGame: "Preparing card...",
-    noCards: "No cards available.",
-    noImage: "No image",
-  },
-};
-
-function useGuessManaCopy(locale) {
-  return LOCAL_COPY[locale] ?? LOCAL_COPY.es;
-}
-
-function CardPreview({ imageSrc, cardName, imageFailed, onImageError, copy, hideManaCover = false }) {
+function getLayoutEditorEnabled() {
   return (
-    <section className="guess-v3-card-wrap">
-      <div className="guess-v3-card-frame">
-        {!imageFailed ? (
-          <img
-            src={imageSrc}
-            alt={cardName}
-            loading="eager"
-            decoding="async"
-            fetchPriority="high"
-            onError={onImageError}
-          />
-        ) : (
-          <div className="guess-v3-card-fallback">{copy.noImage}</div>
-        )}
-        {!imageFailed && !hideManaCover ? (
-          <div className="guess-v3-mana-cover-wrap" aria-hidden="true">
-            <img className="guess-v3-mana-cover" src="/ui/games/guess-mana-v3/mana-cover.png" alt="" />
-          </div>
-        ) : null}
-      </div>
-    </section>
-  );
-}
-
-function CrystalDisplay({ value, label, isAnswered, isCorrect }) {
-  return (
-    <div className={`guess-v3-selected-crystal ${isAnswered ? (isCorrect ? "is-correct" : "is-wrong") : ""}`}>
-      <span className="guess-v3-selected-label">{label}</span>
-      <div className="guess-v3-crystal-shell" aria-hidden="true">
-        <img src="/ui/games/guess-mana-v3/mana-crystal.png" alt="" />
-        <strong>{value ?? "?"}</strong>
-      </div>
-    </div>
-  );
-}
-
-function ManaSelector({
-  hasAnswered,
-  pendingCost,
-  selectedCost,
-  correctCost,
-  hoveredCost,
-  onHoverCost,
-  onLeaveCost,
-  onPickCost,
-}) {
-  const manaRows = [MANA_VALUES.slice(0, 6), MANA_VALUES.slice(6)];
-
-  return (
-    <div className="guess-v3-mana-grid" onMouseLeave={onLeaveCost}>
-      {manaRows.map((row, rowIndex) => (
-        <div key={rowIndex} className="guess-v3-mana-row">
-          {row.map((cost) => {
-            const isGlowing = !hasAnswered
-              ? hoveredCost !== null
-                ? cost <= hoveredCost
-                : pendingCost !== null && cost <= pendingCost
-              : false;
-            const classNames = ["guess-v3-mana-button"];
-
-            classNames.push(isGlowing ? "is-on" : "is-off");
-            if (!hasAnswered && pendingCost === cost) classNames.push("is-selected");
-            if (hasAnswered && cost === correctCost) classNames.push("is-correct");
-            if (hasAnswered && cost === selectedCost && cost !== correctCost) classNames.push("is-wrong");
-
-            return (
-              <button
-                key={cost}
-                type="button"
-                className={classNames.join(" ")}
-                onClick={() => onPickCost(cost)}
-                onMouseEnter={() => onHoverCost(cost)}
-                onFocus={() => onHoverCost(cost)}
-                onBlur={onLeaveCost}
-                disabled={hasAnswered}
-                aria-pressed={!hasAnswered && pendingCost === cost}
-              >
-                <img src="/ui/games/guess-mana-v3/mana-crystal.png" alt="" aria-hidden="true" />
-                <span>{cost}</span>
-              </button>
-            );
-          })}
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function ResultOverlay({ copy, isCorrect, cardName, correctCost, rewardMessage, onViewResults, onBack }) {
-  return (
-    <GameResultOverlay
-      tone={isCorrect ? "success" : "danger"}
-      kicker={copy.resultKicker}
-      title={isCorrect ? copy.correct : copy.wrong}
-      rewardMessage={rewardMessage}
-      detail={(
-        <>
-          <strong className="guess-v3-result-card-name">{cardName}</strong>
-          <div className="guess-v3-result-cost-row">
-            <span className="guess-v3-result-cost-line">{copy.resultCostBefore}</span>
-            <div className="guess-v3-result-cost-crystal" aria-hidden="true">
-              <img src="/ui/games/guess-mana-v3/mana-crystal.png" alt="" />
-              <span>{correctCost}</span>
-            </div>
-            <span className="guess-v3-result-cost-line">{copy.resultCostAfter}</span>
-          </div>
-        </>
-      )}
-      primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
-      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
-    />
-  );
-}
-
-function EmptyState({ copy, title, onBack }) {
-  return (
-    <GamePageShell className="guess-v3-page">
-      <section className="guess-v3-shell">
-        <section className="guess-v3-empty-state">
-          <h2>{title}</h2>
-          <button type="button" className="guess-v3-button is-secondary" onClick={onBack}>
-            {copy.backHome}
-          </button>
-        </section>
-      </section>
-    </GamePageShell>
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("layoutEditor") === "1"
   );
 }
 
 function GuessManaCost({ cards = [], onBack }) {
   const { locale } = useLanguage();
-  const copy = useGuessManaCopy(locale);
+  const copy = useMemo(() => getGuessManaCopy(locale), [locale]);
   const introCopy = useMemo(() => getGameIntroCopy(GUESS_MANA_GAME_ID, locale), [locale]);
-  const showLayoutEditor =
-    typeof window !== "undefined" &&
-    new URLSearchParams(window.location.search).get("layoutEditor") === "1";
+  const showLayoutEditor = useMemo(() => getLayoutEditorEnabled(), []);
   const todayKey = useMemo(() => getTodayKey(), []);
 
   const playableCards = useMemo(() => {
@@ -223,6 +50,10 @@ function GuessManaCost({ cards = [], onBack }) {
     return [...playableCards].sort((a, b) => String(a.id).localeCompare(String(b.id)));
   }, [playableCards]);
 
+  const dailyCard = useMemo(() => {
+    return getDailyItem(sortedPlayableCards, GUESS_MANA_GAME_ID, todayKey);
+  }, [sortedPlayableCards, todayKey]);
+
   const [selectedMode, setSelectedMode] = useState(null);
   const [currentCard, setCurrentCard] = useState(null);
   const [pendingCost, setPendingCost] = useState(null);
@@ -232,10 +63,6 @@ function GuessManaCost({ cards = [], onBack }) {
   const [showResultOverlay, setShowResultOverlay] = useState(false);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyGameProgress(GUESS_MANA_GAME_ID, todayKey));
   const [rewardMessage, setRewardMessage] = useState("");
-
-  const dailyCard = useMemo(() => {
-    return getDailyItem(sortedPlayableCards, GUESS_MANA_GAME_ID, todayKey);
-  }, [sortedPlayableCards, todayKey]);
 
   useEffect(() => {
     setDailyProgress(getDailyGameProgress(GUESS_MANA_GAME_ID, todayKey));
@@ -271,6 +98,17 @@ function GuessManaCost({ cards = [], onBack }) {
     resetAnswerState();
   }
 
+  function restoreDailyAnswer(latestDailyProgress, card) {
+    if (
+      latestDailyProgress.completed &&
+      latestDailyProgress.lastCardId === card?.id &&
+      typeof latestDailyProgress.lastSelectedCost === "number"
+    ) {
+      setPendingCost(latestDailyProgress.lastSelectedCost);
+      setSelectedCost(latestDailyProgress.lastSelectedCost);
+    }
+  }
+
   function startMode(modeId) {
     const latestDailyProgress = getDailyGameProgress(GUESS_MANA_GAME_ID, todayKey);
     setDailyProgress(latestDailyProgress);
@@ -279,16 +117,7 @@ function GuessManaCost({ cards = [], onBack }) {
 
     if (modeId === GAME_MODE_IDS.DAILY) {
       setCurrentCard(dailyCard);
-
-      if (
-        latestDailyProgress.completed &&
-        latestDailyProgress.lastCardId === dailyCard?.id &&
-        typeof latestDailyProgress.lastSelectedCost === "number"
-      ) {
-        setPendingCost(latestDailyProgress.lastSelectedCost);
-        setSelectedCost(latestDailyProgress.lastSelectedCost);
-      }
-
+      restoreDailyAnswer(latestDailyProgress, dailyCard);
       return;
     }
 
@@ -302,31 +131,8 @@ function GuessManaCost({ cards = [], onBack }) {
     setDailyProgress(getDailyGameProgress(GUESS_MANA_GAME_ID, todayKey));
   }
 
-  function confirmCost() {
-    if (pendingCost === null || selectedCost !== null) return;
-
-    const nextSelectedCost = pendingCost;
-    const answeredCorrectly = nextSelectedCost === currentCard.cost;
-
-    setSelectedCost(nextSelectedCost);
-    setShowResultOverlay(true);
-
-    if (selectedMode !== GAME_MODE_IDS.DAILY) return;
-
-    completeDailyChallenge(GUESS_MANA_GAME_ID, todayKey);
-    saveDailyChallengeResult(GUESS_MANA_GAME_ID, todayKey, {
-      lastSelectedCost: nextSelectedCost,
-      lastCorrectCost: currentCard.cost,
-      lastCardId: currentCard.id,
-      lastWasCorrect: answeredCorrectly,
-    });
-
+  function grantDailyReward() {
     let latestProgress = getDailyGameProgress(GUESS_MANA_GAME_ID, todayKey);
-
-    if (!answeredCorrectly) {
-      setDailyProgress(latestProgress);
-      return;
-    }
 
     if (!latestProgress.rewardClaimed) {
       addArcaneBoxReward({
@@ -344,8 +150,39 @@ function GuessManaCost({ cards = [], onBack }) {
     setDailyProgress(latestProgress);
   }
 
+  function saveDailyAnswer(nextSelectedCost, answeredCorrectly) {
+    completeDailyChallenge(GUESS_MANA_GAME_ID, todayKey);
+    saveDailyChallengeResult(GUESS_MANA_GAME_ID, todayKey, {
+      lastSelectedCost: nextSelectedCost,
+      lastCorrectCost: currentCard.cost,
+      lastCardId: currentCard.id,
+      lastWasCorrect: answeredCorrectly,
+    });
+
+    if (answeredCorrectly) {
+      grantDailyReward();
+      return;
+    }
+
+    setDailyProgress(getDailyGameProgress(GUESS_MANA_GAME_ID, todayKey));
+  }
+
+  function confirmCost() {
+    if (pendingCost === null || selectedCost !== null) return;
+
+    const nextSelectedCost = pendingCost;
+    const answeredCorrectly = nextSelectedCost === currentCard.cost;
+
+    setSelectedCost(nextSelectedCost);
+    setShowResultOverlay(true);
+
+    if (selectedMode === GAME_MODE_IDS.DAILY) {
+      saveDailyAnswer(nextSelectedCost, answeredCorrectly);
+    }
+  }
+
   if (playableCards.length === 0) {
-    return <EmptyState copy={copy} title={copy.noCards} onBack={onBack} />;
+    return <GuessManaEmptyState copy={copy} title={copy.noCards} onBack={onBack} />;
   }
 
   if (!selectedMode) {
@@ -364,7 +201,7 @@ function GuessManaCost({ cards = [], onBack }) {
   }
 
   if (!currentCard) {
-    return <EmptyState copy={copy} title={copy.loadingGame} onBack={onBack} />;
+    return <GuessManaEmptyState copy={copy} title={copy.loadingGame} onBack={onBack} />;
   }
 
   const hasAnswered = selectedCost !== null;
@@ -372,71 +209,43 @@ function GuessManaCost({ cards = [], onBack }) {
   const currentCardName = getCardName(currentCard, locale);
   const imageSrc = getGuessManaCardImage(currentCard, locale);
   const displayedCrystalValue = hasAnswered ? selectedCost : pendingCost;
+  const isInfiniteMode = selectedMode === GAME_MODE_IDS.INFINITE;
+  const isDailyMode = selectedMode === GAME_MODE_IDS.DAILY;
 
   return (
     <GamePageShell className="guess-v3-page">
-
       <section className="guess-v3-shell">
         <div className="guess-v3-mode-pill">
-          {selectedMode === GAME_MODE_IDS.DAILY ? copy.dailyChallenge : copy.infiniteChallenge}
+          {isDailyMode ? copy.dailyChallenge : copy.infiniteChallenge}
         </div>
 
-        <section className="guess-v3-stage" aria-label={currentCardName}>
-          <CardPreview
-            imageSrc={imageSrc}
-            cardName={currentCardName}
-            imageFailed={imageFailed}
-            onImageError={() => setImageFailed(true)}
-            copy={copy}
-            hideManaCover={hasAnswered}
-          />
-
-          <div className="guess-v3-controls">
-            <CrystalDisplay
-              value={displayedCrystalValue}
-              label={copy.selectedCost}
-              isAnswered={hasAnswered}
-              isCorrect={isCorrect}
-            />
-
-            <p className="guess-v3-selector-title">{copy.chooseCost}</p>
-
-            <ManaSelector
-              hasAnswered={hasAnswered}
-              pendingCost={pendingCost}
-              selectedCost={selectedCost}
-              correctCost={currentCard.cost}
-              hoveredCost={hoveredCost}
-              onHoverCost={setHoveredCost}
-              onLeaveCost={() => setHoveredCost(null)}
-              onPickCost={(cost) => {
-                setPendingCost(cost);
-                setHoveredCost(cost);
-              }}
-            />
-
-            {!hasAnswered ? (
-              <button
-                type="button"
-                className="guess-v3-button is-primary is-confirm"
-                disabled={pendingCost === null}
-                onClick={confirmCost}
-              >
-                {copy.confirmCost}
-              </button>
-            ) : null}
-
-            {hasAnswered && !showResultOverlay && selectedMode === GAME_MODE_IDS.INFINITE ? (
-              <button type="button" className="guess-v3-button is-primary is-confirm" onClick={() => loadCard(currentCard?.id)}>
-                {copy.playAgain}
-              </button>
-            ) : null}
-          </div>
-        </section>
+        <GuessManaStage
+          copy={copy}
+          cardName={currentCardName}
+          imageSrc={imageSrc}
+          imageFailed={imageFailed}
+          onImageError={() => setImageFailed(true)}
+          hasAnswered={hasAnswered}
+          isCorrect={isCorrect}
+          displayedCrystalValue={displayedCrystalValue}
+          pendingCost={pendingCost}
+          selectedCost={selectedCost}
+          correctCost={currentCard.cost}
+          hoveredCost={hoveredCost}
+          onHoverCost={setHoveredCost}
+          onLeaveCost={() => setHoveredCost(null)}
+          onPickCost={(cost) => {
+            setPendingCost(cost);
+            setHoveredCost(cost);
+          }}
+          onConfirmCost={confirmCost}
+          onPlayAgain={() => loadCard(currentCard?.id)}
+          showPlayAgain={hasAnswered && !showResultOverlay && isInfiniteMode}
+        />
       </section>
 
       {showResultOverlay && hasAnswered ? (
-        <ResultOverlay
+        <GuessManaResultOverlay
           copy={copy}
           isCorrect={isCorrect}
           cardName={currentCardName}

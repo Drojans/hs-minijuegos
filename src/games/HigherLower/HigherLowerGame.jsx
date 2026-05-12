@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
-import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
-import ImpostorNeutralCard from "../Impostor/ImpostorNeutralCard";
-import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import {
   ARCANE_BOX_ID,
   DAILY_REWARD_BOX_AMOUNT,
   GAME_IDS,
   HIGHER_LOWER_DAILY_TARGET,
 } from "../../shared/config/gameRules";
+import { GAME_MODE_IDS } from "../../shared/gameModes/gameModes";
 import {
   completeDailyChallenge,
   getDailyGameProgress,
@@ -20,7 +18,11 @@ import {
   saveDailyChallengeResult,
 } from "../../shared/progress/dailyProgress";
 import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
-import { getCardName, getDetailImage, getGameImage, getThumbImage } from "../../utils/cardLocale";
+import HigherLowerDuelStage from "./components/HigherLowerDuelStage";
+import HigherLowerMessagePanel from "./components/HigherLowerMessagePanel";
+import HigherLowerResultOverlay from "./components/HigherLowerResultOverlay";
+import HigherLowerResultsPanel from "./components/HigherLowerResultsPanel";
+import HigherLowerTopbar from "./components/HigherLowerTopbar";
 import {
   createDailyHigherLowerRun,
   createHigherLowerDuel,
@@ -32,193 +34,14 @@ import {
   resolveHigherLowerAnswer,
   serializeHigherLowerHistory,
 } from "./higherLowerConfig";
+import { getHigherLowerCopy } from "./higherLowerCopy";
 import "./HigherLowerGame.css";
 
 const HIGHER_LOWER_GAME_ID = GAME_IDS.HIGHER_LOWER;
 
-const COPY = {
-  es: {
-    resultKicker: "Resultado",
-    dailyChallenge: "Reto diario",
-    infiniteChallenge: "Modo infinito",
-    scoreLabel: "Fases",
-    streakLabel: "Racha",
-    dailyRewardEarned: "Has ganado 1 caja arcana.",
-    dailyRewardAlreadyClaimed: "Reto diario completado. Hoy ya tenías esta recompensa.",
-    chooseLeft: "Elegir izquierda",
-    chooseRight: "Elegir derecha",
-    tieWin: "Empate: cuenta como acierto.",
-    correct: "Correcto",
-    wrong: "Fallaste",
-    winTitle: "¡Racha completada!",
-    winText: "Has acertado 10 duelos de cartas.",
-    loseTitle: "Fin de la partida",
-    loseText: "Has fallado un duelo de cartas.",
-    viewResults: "Ver resultados",
-    playAgain: "Otra partida",
-    backHome: "Volver",
-    noCards: "No hay suficientes cartas para crear duelos.",
-    loading: "Preparando duelo...",
-    resultsTitle: "Resultados",
-    value: "valor",
-    left: "Izquierda",
-    right: "Derecha",
-    tie: "Empate",
-    selected: "Elegiste",
-    correctSide: "Correcta",
-    dailyReview: "Reto diario revisado",
-  },
-  en: {
-    resultKicker: "Result",
-    dailyChallenge: "Daily challenge",
-    infiniteChallenge: "Infinite mode",
-    scoreLabel: "Phases",
-    streakLabel: "Streak",
-    dailyRewardEarned: "You earned 1 arcane box.",
-    dailyRewardAlreadyClaimed: "Daily challenge completed. You already had today’s reward.",
-    chooseLeft: "Choose left",
-    chooseRight: "Choose right",
-    tieWin: "Tie: counts as correct.",
-    correct: "Correct",
-    wrong: "Wrong",
-    winTitle: "Streak complete!",
-    winText: "You got 10 card duels right.",
-    loseTitle: "Game over",
-    loseText: "You missed a card duel.",
-    viewResults: "View results",
-    playAgain: "Another game",
-    backHome: "Back",
-    noCards: "There are not enough cards to create duels.",
-    loading: "Preparing duel...",
-    resultsTitle: "Results",
-    value: "value",
-    left: "Left",
-    right: "Right",
-    tie: "Tie",
-    selected: "Selected",
-    correctSide: "Correct",
-    dailyReview: "Daily review",
-  },
-};
-
-function useCopy(locale) {
-  return COPY[locale] ?? COPY.es;
-}
-
-function getFullCardImage(card, locale) {
-  return getDetailImage(card, locale) || getGameImage(card, locale) || getThumbImage(card, locale);
-}
-
-function MessagePanel({ copy, title, onBack }) {
-  return (
-    <GamePageShell className="hl-page">
-      <section className="hl-shell">
-        <div className="hl-message-panel">
-          <h2>{title}</h2>
-          <button type="button" className="hl-button is-secondary" onClick={onBack}>{copy.backHome}</button>
-        </div>
-      </section>
-    </GamePageShell>
-  );
-}
-
-function DuelCard({ side, card, locale, copy, disabled, feedback, onChoose, revealResult, isNewCard }) {
-  const name = getCardName(card, locale);
-  const imageSrc = getFullCardImage(card, locale);
-  const isFeedbackSide = feedback?.side === side;
-  const feedbackClass = isFeedbackSide ? (feedback.isCorrect ? "is-correct" : "is-wrong") : "";
-  const isRevealed = Boolean(revealResult);
-  const isAnswerSide = isRevealed && (revealResult.correctSide === side || revealResult.isTie);
-  const isWrongSelectedSide = isRevealed && !revealResult.isCorrect && revealResult.selectedSide === side;
-  const revealClass = isRevealed ? "is-revealed" : "";
-  const answerClass = isAnswerSide ? "is-answer-correct" : isWrongSelectedSide ? "is-answer-wrong" : "";
-  const newCardClass = isNewCard && !isRevealed ? "is-new-card" : "";
-
-  return (
-    <button
-      type="button"
-      className={`hl-duel-card is-${side} ${feedbackClass} ${revealClass} ${answerClass} ${newCardClass}`}
-      disabled={disabled}
-      onClick={() => onChoose(side)}
-      aria-label={side === "left" ? copy.chooseLeft : copy.chooseRight}
-    >
-      {isRevealed ? (
-        <div className="hl-full-card-preview" aria-hidden="true">
-          {imageSrc ? <img src={imageSrc} alt="" /> : <span>{name}</span>}
-        </div>
-      ) : (
-        <div className="hl-neutral-card-preview" aria-hidden="true">
-          <ImpostorNeutralCard card={card} locale={locale} />
-        </div>
-      )}
-      <span className="hl-duel-name">{name}</span>
-      {isFeedbackSide ? (
-        <strong className="hl-card-feedback">{feedback.isCorrect ? copy.correct : copy.wrong}</strong>
-      ) : null}
-      {isRevealed && (isAnswerSide || isWrongSelectedSide) ? (
-        <strong className="hl-card-feedback is-reveal-badge">
-          {isAnswerSide ? copy.correctSide : copy.selected}
-        </strong>
-      ) : null}
-    </button>
-  );
-}
-
-function ResultOverlay({ copy, result, rewardMessage, onViewResults, onBack }) {
-  const isWon = result === "won";
-
-  return (
-    <GameResultOverlay
-      tone={isWon ? "success" : "danger"}
-      kicker={copy.resultKicker}
-      title={isWon ? copy.winTitle : copy.loseTitle}
-      text={isWon ? copy.winText : copy.loseText}
-      rewardMessage={rewardMessage}
-      primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
-      secondaryActions={onBack ? [{ label: copy.backHome, onClick: onBack }] : []}
-    />
-  );
-}
-
-function ResultsPanel({ copy, history, locale, onNext, isReview }) {
-  if (!history.length) return null;
-
-  function sideLabel(side) {
-    if (side === "left") return copy.left;
-    if (side === "right") return copy.right;
-    return copy.tie;
-  }
-
-  return (
-    <section className="hl-results-panel">
-      <header>
-        <span>{isReview ? copy.dailyReview : copy.resultsTitle}</span>
-        {onNext ? <button type="button" className="hl-button is-secondary" onClick={onNext}>{copy.playAgain}</button> : null}
-      </header>
-      <div className="hl-results-list">
-        {history.map((item, index) => {
-          const label = getQuestionValueLabel(item.question, locale) || copy.value;
-          return (
-            <article key={`${item.leftCard.id}-${item.rightCard.id}-${index}`} className={`hl-result-row ${item.isCorrect ? "is-correct" : "is-wrong"}`}>
-              <strong>{index + 1}</strong>
-              <div>
-                <p>{getQuestionLabel(item.question, locale)}</p>
-                <small>
-                  {getCardName(item.leftCard, locale)}: {item.leftValue} {label} · {getCardName(item.rightCard, locale)}: {item.rightValue} {label}
-                </small>
-              </div>
-              <span>{item.isTie ? copy.tie : `${copy.selected}: ${sideLabel(item.selectedSide)}`}</span>
-            </article>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
 function HigherLowerGame({ cards = [], onBack }) {
   const { locale } = useLanguage();
-  const copy = useCopy(locale);
+  const copy = getHigherLowerCopy(locale);
   const introCopy = useMemo(() => getGameIntroCopy(HIGHER_LOWER_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
   const playableCards = useMemo(() => cards.filter((card) => isPlayableHigherLowerCard(card, locale)), [cards, locale]);
@@ -244,7 +67,6 @@ function HigherLowerGame({ cards = [], onBack }) {
   useEffect(() => {
     setDailyProgress(getDailyGameProgress(HIGHER_LOWER_GAME_ID, todayKey));
   }, [todayKey]);
-
 
   function clearRoundState() {
     setScore(0);
@@ -339,7 +161,7 @@ function HigherLowerGame({ cards = [], onBack }) {
     completeDailyChallenge(HIGHER_LOWER_GAME_ID, todayKey);
     saveDailyHistory(nextHistory, true, nextScore);
 
-    let latestProgress = getDailyGameProgress(HIGHER_LOWER_GAME_ID, todayKey);
+    const latestProgress = getDailyGameProgress(HIGHER_LOWER_GAME_ID, todayKey);
 
     if (!latestProgress.rewardClaimed) {
       addArcaneBoxReward({
@@ -369,6 +191,30 @@ function HigherLowerGame({ cards = [], onBack }) {
     setShowResultOverlay(showOverlay);
   }
 
+  function advanceDailyRun(nextScore, nextHistory) {
+    const nextRound = dailyRun.rounds[nextScore];
+    if (!nextRound) {
+      setResult("won");
+      setShowResultOverlay(true);
+      markDailyWon(nextHistory, nextScore);
+      return;
+    }
+
+    const anchorCard = newCardSide === "left" ? leftCard : rightCard;
+    const challengerSide = newCardSide === "left" ? "right" : "left";
+    setAnchoredDuel(anchorCard, nextRound.rightCard, nextRound.question, challengerSide);
+  }
+
+  function advanceInfiniteRun() {
+    const anchorCard = newCardSide === "left" ? leftCard : rightCard;
+    const nextDuel = createHigherLowerDuel(playableCards, anchorCard, locale);
+    const challengerSide = newCardSide === "left" ? "right" : "left";
+
+    if (nextDuel) {
+      setAnchoredDuel(anchorCard, nextDuel.rightCard, nextDuel.question, challengerSide);
+    }
+  }
+
   function advanceAfterCorrect(nextScore, nextHistory) {
     if (nextScore >= HIGHER_LOWER_DAILY_TARGET && selectedMode === GAME_MODE_IDS.DAILY) {
       setResult("won");
@@ -378,27 +224,11 @@ function HigherLowerGame({ cards = [], onBack }) {
     }
 
     if (selectedMode === GAME_MODE_IDS.DAILY) {
-      const nextRound = dailyRun.rounds[nextScore];
-      if (!nextRound) {
-        setResult("won");
-        setShowResultOverlay(true);
-        markDailyWon(nextHistory, nextScore);
-        return;
-      }
-
-      const anchorCard = newCardSide === "left" ? leftCard : rightCard;
-      const challengerSide = newCardSide === "left" ? "right" : "left";
-      setAnchoredDuel(anchorCard, nextRound.rightCard, nextRound.question, challengerSide);
+      advanceDailyRun(nextScore, nextHistory);
       return;
     }
 
-    const anchorCard = newCardSide === "left" ? leftCard : rightCard;
-    const nextDuel = createHigherLowerDuel(playableCards, anchorCard, locale);
-    const challengerSide = newCardSide === "left" ? "right" : "left";
-
-    if (nextDuel) {
-      setAnchoredDuel(anchorCard, nextDuel.rightCard, nextDuel.question, challengerSide);
-    }
+    advanceInfiniteRun();
   }
 
   function chooseSide(side) {
@@ -448,7 +278,7 @@ function HigherLowerGame({ cards = [], onBack }) {
   }
 
   if (playableCards.length < 2 || !dailyRun) {
-    return <MessagePanel copy={copy} title={copy.noCards} onBack={onBack} />;
+    return <HigherLowerMessagePanel copy={copy} title={copy.noCards} onBack={onBack} />;
   }
 
   if (!selectedMode) {
@@ -466,7 +296,7 @@ function HigherLowerGame({ cards = [], onBack }) {
   }
 
   if (!leftCard || !rightCard || !question) {
-    return <MessagePanel copy={copy} title={copy.loading} onBack={handleBack} />;
+    return <HigherLowerMessagePanel copy={copy} title={copy.loading} onBack={handleBack} />;
   }
 
   const isDailyMode = selectedMode === GAME_MODE_IDS.DAILY;
@@ -474,53 +304,30 @@ function HigherLowerGame({ cards = [], onBack }) {
   const questionLabel = getQuestionLabel(question, locale);
   const currentValueLabel = getQuestionValueLabel(question, locale) || copy.value;
   const revealedResult = (showResults || isReview) ? history[history.length - 1] : null;
+  const showRevealedState = Boolean(showResults || isReview);
 
   return (
     <GamePageShell className="hl-page">
-
       <section className="hl-shell">
-        <div className="hl-topbar">
-          <div className="hl-mode-pill">{isDailyMode ? copy.dailyChallenge : copy.infiniteChallenge}</div>
-          <div className="hl-score-pill">
-            <span>{isDailyMode ? copy.scoreLabel : copy.streakLabel}</span>
-            <strong>{score}/{isDailyMode ? HIGHER_LOWER_DAILY_TARGET : "∞"}</strong>
-          </div>
-        </div>
+        <HigherLowerTopbar copy={copy} selectedMode={selectedMode} score={score} />
 
-        <section className="hl-duel-stage">
-          <DuelCard
-            side="left"
-            card={leftCard}
-            locale={locale}
-            copy={copy}
-            disabled={Boolean(result || isReview || feedback)}
-            feedback={feedback}
-            revealResult={revealedResult}
-            isNewCard={newCardSide === "left" && !showResults && !isReview}
-            onChoose={chooseSide}
-          />
-
-          <div className="hl-versus-panel">
-            <span>VS</span>
-            <h1>{questionLabel}</h1>
-            <small>{feedback?.isTie ? copy.tieWin : currentValueLabel}</small>
-          </div>
-
-          <DuelCard
-            side="right"
-            card={rightCard}
-            locale={locale}
-            copy={copy}
-            disabled={Boolean(result || isReview || feedback)}
-            feedback={feedback}
-            revealResult={revealedResult}
-            isNewCard={newCardSide === "right" && !showResults && !isReview}
-            onChoose={chooseSide}
-          />
-        </section>
+        <HigherLowerDuelStage
+          copy={copy}
+          currentValueLabel={currentValueLabel}
+          disabled={Boolean(result || isReview || feedback)}
+          feedback={feedback}
+          leftCard={leftCard}
+          locale={locale}
+          newCardSide={newCardSide}
+          onChoose={chooseSide}
+          questionLabel={questionLabel}
+          revealedResult={revealedResult}
+          rightCard={rightCard}
+          showRevealedState={showRevealedState}
+        />
 
         {showResults || isReview ? (
-          <ResultsPanel
+          <HigherLowerResultsPanel
             copy={copy}
             history={history}
             locale={locale}
@@ -531,7 +338,7 @@ function HigherLowerGame({ cards = [], onBack }) {
       </section>
 
       {showResultOverlay && result ? (
-        <ResultOverlay
+        <HigherLowerResultOverlay
           copy={copy}
           result={result}
           rewardMessage={rewardMessage}
@@ -539,7 +346,6 @@ function HigherLowerGame({ cards = [], onBack }) {
             setShowResultOverlay(false);
             setShowResults(true);
           }}
-          onNext={!isDailyMode ? startNextInfiniteRound : null}
           onBack={onBack}
         />
       ) : null}

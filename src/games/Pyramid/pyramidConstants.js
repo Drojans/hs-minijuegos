@@ -1,0 +1,3 @@
+export const PYRAMID_TARGET_COUNT = 10;
+export const PYRAMID_DAILY_TIME_SECONDS = 120;
+export const PYRAMID_EXCLUDED_TYPES = new Set(["HERO", "HERO_POWER"]);

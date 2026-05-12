@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
-import GameResultOverlay from "../../shared/components/GameResultOverlay/GameResultOverlay";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
-import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
+import { GAME_MODE_IDS, getDailyItem } from "../../shared/gameModes/gameModes";
 import {
   completeDailyChallenge,
   getDailyGameProgress,
@@ -14,13 +13,16 @@ import {
   saveDailyChallengeResult,
 } from "../../shared/progress/dailyProgress";
 import { addArcaneBoxReward } from "../../shared/rewards/rewardStore";
-import { getCardName } from "../../utils/cardLocale";
+import PyramidMessagePanel from "./components/PyramidMessagePanel";
+import PyramidResultOverlay from "./components/PyramidResultOverlay";
+import PyramidStage from "./components/PyramidStage";
+import PyramidTopbar from "./components/PyramidTopbar";
+import { getPyramidCopy } from "./pyramidCopy";
 import {
   PYRAMID_DAILY_TIME_SECONDS,
   PYRAMID_TARGET_COUNT,
   buildPyramidCategories,
   findCardByAnswer,
-  getCardImage,
   getCategoryLabel,
   getPyramidSuggestions,
   getRandomCategory,
@@ -30,152 +32,13 @@ import "./PyramidGame.css";
 
 const PYRAMID_GAME_ID = GAME_IDS.PYRAMID;
 
-const COPY = {
-  es: {
-    resultKicker: "Resultado",
-    dailyChallenge: "Reto diario",
-    infiniteChallenge: "Modo infinito",
-    dailyRewardEarned: "Has ganado 1 caja arcana.",
-    dailyRewardAlreadyClaimed: "Pirámide diaria completada. Hoy ya tenías esta recompensa.",
-    category: "Categoría",
-    progress: "Progreso",
-    cardPlaceholder: "Escribe una carta...",
-    submit: "Comprobar",
-    timeLabel: "Tiempo",
-    found: "{count}/10 cartas",
-    wrongCard: "Esa carta no encaja en la categoría.",
-    duplicateCard: "Ya has usado esa carta en esta pirámide.",
-    unknownCard: "No encuentro esa carta.",
-    correctCard: "Correcta.",
-    winTitle: "¡Pirámide completa!",
-    winText: "Has encontrado 10 cartas que cumplen la categoría.",
-    loseTitle: "Se acabó el tiempo",
-    loseText: "La pirámide diaria queda marcada como fallada.",
-    viewResults: "Ver resultados",
-    playAgain: "Otra pirámide",
-    backHome: "Volver",
-    noCards: "No hay suficientes cartas para crear una pirámide.",
-    loading: "Preparando pirámide...",
-    resultsHint: "Resultados de la categoría",
-  },
-  en: {
-    resultKicker: "Result",
-    dailyChallenge: "Daily challenge",
-    infiniteChallenge: "Infinite mode",
-    dailyRewardEarned: "You earned 1 arcane box.",
-    dailyRewardAlreadyClaimed: "Daily pyramid completed. You already had today’s reward.",
-    category: "Category",
-    progress: "Progress",
-    cardPlaceholder: "Type a card...",
-    submit: "Check",
-    timeLabel: "Time",
-    found: "{count}/10 cards",
-    wrongCard: "That card does not match the category.",
-    duplicateCard: "You already used that card in this pyramid.",
-    unknownCard: "I cannot find that card.",
-    correctCard: "Correct.",
-    winTitle: "Pyramid complete!",
-    winText: "You found 10 cards that match the category.",
-    loseTitle: "Time is up",
-    loseText: "The daily pyramid is marked as failed.",
-    viewResults: "View results",
-    playAgain: "Another pyramid",
-    backHome: "Back",
-    noCards: "There are not enough cards to create a pyramid.",
-    loading: "Preparing pyramid...",
-    resultsHint: "Category results",
-  },
-};
-
-function useCopy(locale) {
-  return COPY[locale] ?? COPY.es;
-}
-
-function formatText(template, values = {}) {
-  return Object.entries(values).reduce((text, [key, value]) => text.replaceAll(`{${key}}`, value), template);
-}
-
-function MessagePanel({ copy, title, onBack }) {
-  return (
-    <GamePageShell className="py-page">
-      <section className="py-shell">
-        <div className="py-message-panel">
-          <h2>{title}</h2>
-          <button type="button" className="py-button is-secondary" onClick={onBack}>{copy.backHome}</button>
-        </div>
-      </section>
-    </GamePageShell>
-  );
-}
-
-function PyramidSlots({ foundCards, locale }) {
-  const slots = Array.from({ length: PYRAMID_TARGET_COUNT }, (_, index) => foundCards[index] ?? null);
-  const rows = [slots.slice(0, 1), slots.slice(1, 3), slots.slice(3, 6), slots.slice(6, 10)];
-
-  return (
-    <section className="py-pyramid" aria-label="Pirámide">
-      {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="py-pyramid-row">
-          {row.map((card, slotIndex) => {
-            const absoluteIndex = rows.slice(0, rowIndex).reduce((sum, current) => sum + current.length, 0) + slotIndex;
-            return (
-              <div key={absoluteIndex} className={`py-slot ${card ? "is-filled" : ""}`}>
-                {card ? (
-                  <>
-                    <img src={getCardImage(card, locale)} alt={getCardName(card, locale)} />
-                    <span>{getCardName(card, locale)}</span>
-                  </>
-                ) : (
-                  <strong>{absoluteIndex + 1}</strong>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      ))}
-    </section>
-  );
-}
-
-function Suggestions({ suggestions, locale, onPick }) {
-  if (suggestions.length === 0) return null;
-
-  return (
-    <div className="py-suggestions">
-      {suggestions.map((card) => (
-        <button
-          key={card.id}
-          type="button"
-          onMouseDown={(event) => event.preventDefault()}
-          onClick={() => onPick(getCardName(card, locale))}
-        >
-          {getCardName(card, locale)}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-function ResultOverlay({ copy, result, selectedMode, onViewResults, onBack }) {
-  const isWon = result === "won";
-  const rewardMessage = isWon && selectedMode === GAME_MODE_IDS.DAILY ? copy.dailyRewardEarned : null;
-
-  return (
-    <GameResultOverlay
-      tone={isWon ? "success" : "danger"}
-      kicker={copy.resultKicker}
-      title={isWon ? copy.winTitle : copy.loseTitle}
-      text={isWon ? copy.winText : copy.loseText}
-      rewardMessage={rewardMessage}
-      primaryAction={{ label: copy.viewResults, onClick: onViewResults }}
-      secondaryActions={[{ label: copy.backHome, onClick: onBack }]}
-    />
-  );
+function normalizeInput(value) {
+  return String(value ?? "").trim();
 }
 
 function PyramidGame({ cards = [], onBack }) {
   const { locale } = useLanguage();
-  const copy = useCopy(locale);
+  const copy = getPyramidCopy(locale);
   const introCopy = useMemo(() => getGameIntroCopy(PYRAMID_GAME_ID, locale), [locale]);
   const todayKey = useMemo(() => getTodayKey(), []);
   const playableCards = useMemo(() => cards.filter((card) => isPlayablePyramidCard(card, locale)), [cards, locale]);
@@ -224,7 +87,7 @@ function PyramidGame({ cards = [], onBack }) {
   }, [dailyProgress.completed, foundCards, markDailyLost, result, selectedMode]);
 
   useEffect(() => {
-    if (selectedMode !== GAME_MODE_IDS.DAILY || result || dailyProgress.completed) return;
+    if (selectedMode !== GAME_MODE_IDS.DAILY || result || dailyProgress.completed) return undefined;
 
     const intervalId = window.setInterval(() => {
       setTimeLeft((previous) => {
@@ -238,11 +101,7 @@ function PyramidGame({ cards = [], onBack }) {
     }, 1000);
 
     return () => window.clearInterval(intervalId);
-  }, [selectedMode, result, dailyProgress.completed, failDailyByTime]);
-
-  function normalizeInput(value) {
-    return String(value ?? "").trim();
-  }
+  }, [dailyProgress.completed, failDailyByTime, result, selectedMode]);
 
   function buildResultCards(categoryToUse = category, savedIds = []) {
     const fromSaved = savedIds
@@ -319,7 +178,7 @@ function PyramidGame({ cards = [], onBack }) {
       lastFoundCardIds: nextFoundCards.map((card) => card.id),
     });
 
-    let latestProgress = getDailyGameProgress(PYRAMID_GAME_ID, todayKey);
+    const latestProgress = getDailyGameProgress(PYRAMID_GAME_ID, todayKey);
 
     if (!latestProgress.rewardClaimed) {
       addArcaneBoxReward({
@@ -380,6 +239,11 @@ function PyramidGame({ cards = [], onBack }) {
     }
   }
 
+  function handleAnswerChange(value) {
+    setAnswer(value);
+    setSuppressSuggestions(false);
+  }
+
   function handleSuggestionPick(value) {
     setAnswer(value);
     setSuppressSuggestions(true);
@@ -390,25 +254,21 @@ function PyramidGame({ cards = [], onBack }) {
   }
 
   if (playableCards.length === 0 || categories.length === 0 || !dailyCategory) {
-    return <MessagePanel copy={copy} title={copy.noCards} onBack={onBack} />;
+    return <PyramidMessagePanel copy={copy} title={copy.noCards} onBack={onBack} />;
   }
 
   if (!selectedMode) {
     return (
       <GamePageShell className="py-page">
         <section className="py-shell is-mode-select">
-          <GameModeSelect
-            copy={introCopy}
-            dailyCompleted={dailyProgress.completed}
-            onSelectMode={startMode}
-          />
+          <GameModeSelect copy={introCopy} dailyCompleted={dailyProgress.completed} onSelectMode={startMode} />
         </section>
       </GamePageShell>
     );
   }
 
   if (!category) {
-    return <MessagePanel copy={copy} title={copy.loading} onBack={handleBack} />;
+    return <PyramidMessagePanel copy={copy} title={copy.loading} onBack={handleBack} />;
   }
 
   const isDailyMode = selectedMode === GAME_MODE_IDS.DAILY;
@@ -417,54 +277,36 @@ function PyramidGame({ cards = [], onBack }) {
 
   return (
     <GamePageShell className="py-page">
-
       <section className="py-shell">
-        <div className="py-topbar">
-          <div className="py-mode-pill">{isDailyMode ? copy.dailyChallenge : copy.infiniteChallenge}</div>
-          {isDailyMode ? (
-            <div className={`py-timer ${timeLeft <= 15 && !result && !dailyProgress.completed ? "is-low" : ""}`}>
-              <span>{copy.timeLabel}</span>
-              <strong>{Math.max(0, timeLeft)}s</strong>
-            </div>
-          ) : null}
-        </div>
+        <PyramidTopbar
+          copy={copy}
+          isDailyMode={isDailyMode}
+          timeLeft={timeLeft}
+          result={result}
+          isCompleted={dailyProgress.completed}
+        />
 
-        <section className="py-game-card">
-          <header className="py-category-card">
-            <span>{copy.category}</span>
-            <h1>{categoryLabel}</h1>
-            <p>{formatText(copy.found, { count: Math.min(foundCards.length, PYRAMID_TARGET_COUNT) })}</p>
-          </header>
-
-          <PyramidSlots foundCards={foundCards} locale={locale} />
-
-          <section className="py-answer-panel">
-            {showResults ? <p className="py-results-hint">{copy.resultsHint}</p> : null}
-            {!result && !isReview ? (
-              <form className="py-answer-form" onSubmit={submitAnswer}>
-                <input
-                  value={answer}
-                  onChange={(event) => {
-                    setAnswer(event.target.value);
-                    setSuppressSuggestions(false);
-                  }}
-                  placeholder={copy.cardPlaceholder}
-                  autoComplete="off"
-                />
-                <button type="submit" className="py-button is-primary">{copy.submit}</button>
-                <Suggestions suggestions={suggestions} locale={locale} onPick={handleSuggestionPick} />
-              </form>
-            ) : null}
-            {message && !showResults ? <p className="py-message">{message}</p> : null}
-            {result && !showResultOverlay && selectedMode === GAME_MODE_IDS.INFINITE ? (
-              <button type="button" className="py-button is-primary" onClick={startNextInfiniteRound}>{copy.playAgain}</button>
-            ) : null}
-          </section>
-        </section>
+        <PyramidStage
+          copy={copy}
+          locale={locale}
+          categoryLabel={categoryLabel}
+          foundCards={foundCards}
+          answer={answer}
+          suggestions={suggestions}
+          message={message}
+          result={result}
+          isReview={isReview}
+          showResults={showResults}
+          selectedMode={selectedMode}
+          onAnswerChange={handleAnswerChange}
+          onSubmitAnswer={submitAnswer}
+          onSuggestionPick={handleSuggestionPick}
+          onStartNextInfiniteRound={startNextInfiniteRound}
+        />
       </section>
 
       {showResultOverlay && result ? (
-        <ResultOverlay
+        <PyramidResultOverlay
           copy={copy}
           result={result}
           selectedMode={selectedMode}
