@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import GameModeSelect from "../../shared/components/GameModeSelect/GameModeSelect";
 import GamePageShell from "../../shared/components/GamePageShell/GamePageShell";
+import RarityBadge from "../../shared/components/RarityBadge/RarityBadge";
 import GamePreparingOverlay from "../../shared/components/GamePreparingOverlay/GamePreparingOverlay";
 import { getGameIntroCopy } from "../../shared/config/gameIntroCopy";
 import { ARCANE_BOX_ID, DAILY_REWARD_BOX_AMOUNT, GAME_IDS } from "../../shared/config/gameRules";
@@ -42,6 +43,28 @@ function getInitialDailyProgress(todayKey) {
 function getSelectedCardName(roundData, selectedId, locale) {
   if (!selectedId) return "";
   return getCardName(roundData.cards.find((card) => card.id === selectedId), locale);
+}
+
+function ImpostorConditionTitle({ condition, locale }) {
+  if (condition?.rarity) {
+    return (
+      <h1 className="im-condition-title-with-badge">
+        {locale === "en" ? (
+          <>
+            <RarityBadge rarity={condition.rarity} locale={locale} size="lg" />
+            <span>cards</span>
+          </>
+        ) : (
+          <>
+            <span>Cartas de rareza</span>
+            <RarityBadge rarity={condition.rarity} locale={locale} size="lg" />
+          </>
+        )}
+      </h1>
+    );
+  }
+
+  return <h1>{condition?.title}</h1>;
 }
 
 function ImpostorGame({ cards, onBack }) {
@@ -304,7 +327,7 @@ function ImpostorGame({ cards, onBack }) {
         <section className="im-intro-row" aria-label={copy.category}>
           <div>
             <p className="im-mode-label">{copy.category}</p>
-            <h1>{roundData.condition.title}</h1>
+            <ImpostorConditionTitle condition={roundData.condition} locale={locale} />
           </div>
         </section>
 

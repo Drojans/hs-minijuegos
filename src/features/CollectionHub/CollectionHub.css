@@ -856,6 +856,23 @@
   font-size: 0.76rem;
 }
 
+.collection-card-info .collection-card-meta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: 100%;
+  min-width: 0;
+  flex-wrap: wrap;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.collection-card-info .collection-card-meta > span:not(.rarity-badge) {
+  min-width: 0;
+}
+
 .collection-card-count {
   top: 10px;
   right: 10px;

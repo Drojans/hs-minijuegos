@@ -17,7 +17,8 @@ import PyramidMessagePanel from "./components/PyramidMessagePanel";
 import PyramidResultOverlay from "./components/PyramidResultOverlay";
 import PyramidStage from "./components/PyramidStage";
 import PyramidTopbar from "./components/PyramidTopbar";
-import { getPyramidCopy } from "./pyramidCopy";
+import { formatPyramidText, getPyramidCopy } from "./pyramidCopy";
+import { getCardName } from "../../utils/cardLocale";
 import {
   PYRAMID_DAILY_TIME_SECONDS,
   PYRAMID_TARGET_COUNT,
@@ -50,6 +51,8 @@ function PyramidGame({ cards = [], onBack }) {
   const [foundCards, setFoundCards] = useState([]);
   const [answer, setAnswer] = useState("");
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState("neutral");
+  const [feedbackNonce, setFeedbackNonce] = useState(0);
   const [suppressSuggestions, setSuppressSuggestions] = useState(false);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyGameProgress(PYRAMID_GAME_ID, todayKey));
   const [timeLeft, setTimeLeft] = useState(PYRAMID_DAILY_TIME_SECONDS);
@@ -122,6 +125,8 @@ function PyramidGame({ cards = [], onBack }) {
     setFoundCards([]);
     setAnswer("");
     setMessage("");
+    setMessageTone("neutral");
+    setFeedbackNonce(0);
     setSuppressSuggestions(false);
     setTimeLeft(PYRAMID_DAILY_TIME_SECONDS);
     setResult(null);
@@ -140,6 +145,8 @@ function PyramidGame({ cards = [], onBack }) {
       setTimeLeft(PYRAMID_DAILY_TIME_SECONDS);
       setAnswer("");
       setMessage("");
+      setMessageTone("neutral");
+      setFeedbackNonce(0);
       setSuppressSuggestions(false);
 
       if (latestProgress.completed) {
@@ -199,26 +206,42 @@ function PyramidGame({ cards = [], onBack }) {
     setDailyProgress(getDailyGameProgress(PYRAMID_GAME_ID, todayKey));
   }
 
+  function triggerMessage(nextMessage, tone = "neutral") {
+    setMessage(nextMessage);
+    setMessageTone(tone);
+
+    if (tone === "error") {
+      setFeedbackNonce((current) => current + 1);
+    }
+  }
+
+  function triggerInvalidAnswer(nextMessage) {
+    triggerMessage(nextMessage, "error");
+  }
+
   function submitAnswer(event) {
     event.preventDefault();
     if (result || !category) return;
 
+    const submittedName = answer.trim() || (locale === "en" ? "that card" : "esa carta");
     const selectedCard = findCardByAnswer(playableCards, answer, locale);
 
     if (!selectedCard) {
-      setMessage(copy.unknownCard);
+      triggerInvalidAnswer(formatPyramidText(copy.unknownCard, { name: submittedName }));
       setSuppressSuggestions(false);
       return;
     }
 
+    const selectedCardName = getCardName(selectedCard, locale);
+
     if (usedIds.has(selectedCard.id)) {
-      setMessage(copy.duplicateCard);
+      triggerInvalidAnswer(formatPyramidText(copy.duplicateCard, { name: selectedCardName }));
       setSuppressSuggestions(false);
       return;
     }
 
     if (!category.answerIds.has(selectedCard.id)) {
-      setMessage(copy.wrongCard);
+      triggerInvalidAnswer(formatPyramidText(copy.wrongCard, { name: selectedCardName }));
       setSuppressSuggestions(false);
       return;
     }
@@ -226,7 +249,7 @@ function PyramidGame({ cards = [], onBack }) {
     const nextFoundCards = [...foundCards, selectedCard];
     setFoundCards(nextFoundCards);
     setAnswer("");
-    setMessage(copy.correctCard);
+    triggerMessage(copy.correctCard, "success");
     setSuppressSuggestions(false);
 
     if (nextFoundCards.length >= PYRAMID_TARGET_COUNT) {
@@ -241,11 +264,13 @@ function PyramidGame({ cards = [], onBack }) {
 
   function handleAnswerChange(value) {
     setAnswer(value);
+    setMessageTone("neutral");
     setSuppressSuggestions(false);
   }
 
   function handleSuggestionPick(value) {
     setAnswer(value);
+    setMessageTone("neutral");
     setSuppressSuggestions(true);
   }
 
@@ -294,6 +319,8 @@ function PyramidGame({ cards = [], onBack }) {
           answer={answer}
           suggestions={suggestions}
           message={message}
+          messageTone={messageTone}
+          feedbackNonce={feedbackNonce}
           result={result}
           isReview={isReview}
           showResults={showResults}

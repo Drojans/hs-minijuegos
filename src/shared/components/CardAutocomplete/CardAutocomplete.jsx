@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "./CardAutocomplete.css";
 
 function defaultGetSuggestionKey(suggestion, index) {
@@ -17,6 +17,38 @@ function clampIndex(index, length) {
   return index;
 }
 
+function normalizeAutocompleteText(value = "") {
+  return String(value)
+    .normalize("NFD")
+    .replace(/\p{Diacritic}/gu, "")
+    .replace(/[’']/g, "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    .trim()
+    .toLowerCase();
+}
+
+function scrollOptionIntoView(listElement, optionElement) {
+  if (!listElement || !optionElement) return;
+
+  const extraSpace = 8;
+  const optionTop = optionElement.offsetTop;
+  const optionBottom = optionTop + optionElement.offsetHeight;
+  const visibleTop = listElement.scrollTop;
+  const visibleBottom = visibleTop + listElement.clientHeight;
+
+  if (optionTop < visibleTop) {
+    listElement.scrollTo({ top: Math.max(0, optionTop - extraSpace), behavior: "smooth" });
+    return;
+  }
+
+  if (optionBottom > visibleBottom) {
+    listElement.scrollTo({
+      top: optionBottom - listElement.clientHeight + extraSpace,
+      behavior: "smooth",
+    });
+  }
+}
+
 function CardAutocomplete({
   id,
   label,
@@ -33,49 +65,112 @@ function CardAutocomplete({
   suggestions = [],
   getSuggestionKey = defaultGetSuggestionKey,
   getSuggestionLabel = defaultGetSuggestionLabel,
+  submitOnExactValue = false,
   onChange,
   onPickSuggestion,
+  onRequestSubmit,
 }) {
-  const visibleSuggestions = useMemo(
+  const availableSuggestions = useMemo(
     () => (disabled ? [] : suggestions).filter(Boolean),
     [disabled, suggestions],
   );
   const [activeIndex, setActiveIndex] = useState(-1);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+  const suggestionsListRef = useRef(null);
+  const suggestionButtonRefs = useRef([]);
+
+  const visibleSuggestions = isSuggestionsOpen ? availableSuggestions : [];
 
   useEffect(() => {
-    setActiveIndex(visibleSuggestions.length > 0 ? 0 : -1);
-  }, [value, visibleSuggestions.length]);
+    suggestionButtonRefs.current = suggestionButtonRefs.current.slice(0, availableSuggestions.length);
+
+    if (!isSuggestionsOpen || availableSuggestions.length === 0) {
+      setActiveIndex(-1);
+      return;
+    }
+
+    setActiveIndex((current) => {
+      if (current >= 0 && current < availableSuggestions.length) return current;
+      return 0;
+    });
+  }, [availableSuggestions.length, isSuggestionsOpen, value]);
+
+  useEffect(() => {
+    if (activeIndex < 0) return;
+    scrollOptionIntoView(suggestionsListRef.current, suggestionButtonRefs.current[activeIndex]);
+  }, [activeIndex, visibleSuggestions.length]);
+
+  function openSuggestions() {
+    if (availableSuggestions.length === 0) return;
+    setIsSuggestionsOpen(true);
+  }
+
+  function closeSuggestions() {
+    setIsSuggestionsOpen(false);
+    setActiveIndex(-1);
+  }
 
   function pickSuggestion(suggestion) {
     if (!suggestion) return;
-    setActiveIndex(-1);
+    closeSuggestions();
     onPickSuggestion?.(suggestion);
+  }
+
+  function handleChange(event) {
+    setIsSuggestionsOpen(true);
+    onChange?.(event.target.value);
   }
 
   function handleKeyDown(event) {
     if (event.nativeEvent.isComposing) return;
 
-    if (event.key === "ArrowDown" && visibleSuggestions.length > 0) {
+    if (event.key === "ArrowDown" && availableSuggestions.length > 0) {
       event.preventDefault();
-      setActiveIndex((current) => clampIndex(current + 1, visibleSuggestions.length));
+      setIsSuggestionsOpen(true);
+      setActiveIndex((current) => clampIndex(current + 1, availableSuggestions.length));
       return;
     }
 
-    if (event.key === "ArrowUp" && visibleSuggestions.length > 0) {
+    if (event.key === "ArrowUp" && availableSuggestions.length > 0) {
       event.preventDefault();
-      setActiveIndex((current) => clampIndex(current - 1, visibleSuggestions.length));
+      setIsSuggestionsOpen(true);
+      setActiveIndex((current) => clampIndex(current - 1, availableSuggestions.length));
       return;
     }
 
-    if (event.key === "Enter" && visibleSuggestions.length > 0 && activeIndex >= 0) {
-      event.preventDefault();
-      pickSuggestion(visibleSuggestions[activeIndex]);
-      return;
+    if (event.key === "Enter") {
+      const normalizedValue = normalizeAutocompleteText(value);
+      const hasExactVisibleSuggestion =
+        submitOnExactValue &&
+        normalizedValue &&
+        visibleSuggestions.some((suggestion) =>
+          normalizeAutocompleteText(getSuggestionLabel(suggestion)) === normalizedValue
+        );
+
+      if (onRequestSubmit && hasExactVisibleSuggestion) {
+        event.preventDefault();
+        closeSuggestions();
+        onRequestSubmit(event);
+        return;
+      }
+
+      if (visibleSuggestions.length > 0 && activeIndex >= 0) {
+        event.preventDefault();
+        pickSuggestion(visibleSuggestions[activeIndex]);
+        return;
+      }
+
+      if (onRequestSubmit) {
+        event.preventDefault();
+        closeSuggestions();
+        onRequestSubmit(event);
+        return;
+      }
     }
 
-    if (event.key === "Escape" && visibleSuggestions.length > 0) {
+    if (event.key === "Escape" && isSuggestionsOpen) {
       event.preventDefault();
-      setActiveIndex(-1);
+      closeSuggestions();
     }
   }
 
@@ -91,7 +186,8 @@ function CardAutocomplete({
           ref={inputRef}
           className={inputClassName}
           value={value}
-          onChange={(event) => onChange?.(event.target.value)}
+          onChange={handleChange}
+          onFocus={openSuggestions}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete="off"
@@ -110,7 +206,7 @@ function CardAutocomplete({
       </div>
 
       {visibleSuggestions.length > 0 ? (
-        <div id={listId} className="card-autocomplete-suggestions" role="listbox">
+        <div id={listId} ref={suggestionsListRef} className="card-autocomplete-suggestions" role="listbox">
           {visibleSuggestions.map((suggestion, index) => {
             const labelText = getSuggestionLabel(suggestion);
             const isActive = index === activeIndex;
@@ -119,6 +215,9 @@ function CardAutocomplete({
               <button
                 id={id ? `${id}-suggestion-${index}` : undefined}
                 key={getSuggestionKey(suggestion, index)}
+                ref={(element) => {
+                  suggestionButtonRefs.current[index] = element;
+                }}
                 type="button"
                 role="option"
                 aria-selected={isActive}

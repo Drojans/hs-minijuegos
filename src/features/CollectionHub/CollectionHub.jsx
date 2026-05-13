@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LoadAwareImage from "../../shared/components/LoadAwareImage/LoadAwareImage";
+import RarityBadge from "../../shared/components/RarityBadge/RarityBadge";
 import PackOpeningModal, { ArcaneBoxVisual } from "./components/PackOpeningModal";
 import useWarmImageCache from "../../shared/hooks/useWarmImageCache";
 import { getCardName, getDetailImage, getGameImage, getThumbImage, translateCardClass, translateCardRarity } from "../../utils/cardLocale";
@@ -194,7 +195,7 @@ function CollectionCardTile({ card, entry, locale, copy }) {
 
       <div className="collection-card-info">
         <h3>{cardName}</h3>
-        <p>{translateCardRarity(card.rarity, locale)} · {translateCardClass(card.cardClass, locale)}</p>
+        <p className="collection-card-meta"><RarityBadge rarity={card.rarity} locale={locale} size="sm" /> <span>· {translateCardClass(card.cardClass, locale)}</span></p>
       </div>
 
       {unlocked ? (

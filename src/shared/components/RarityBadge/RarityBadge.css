@@ -1,0 +1,85 @@
+.rarity-badge {
+  --rarity-bg-a: rgba(90, 98, 112, 0.86);
+  --rarity-bg-b: rgba(38, 43, 53, 0.9);
+  --rarity-border: rgba(255, 255, 255, 0.24);
+  --rarity-text: #fff4df;
+  --rarity-glow: rgba(255, 255, 255, 0.08);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.65em;
+  padding: 0.2em 0.68em 0.12em;
+  border: 1px solid var(--rarity-border);
+  border-radius: 999px;
+  color: var(--rarity-text);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), transparent 38%),
+    linear-gradient(135deg, var(--rarity-bg-a), var(--rarity-bg-b));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 0 14px var(--rarity-glow),
+    0 7px 14px rgba(0, 0, 0, 0.18);
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 950;
+  line-height: 1;
+  letter-spacing: 0.015em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.36);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.rarity-badge--sm {
+  min-height: 1.52em;
+  padding: 0.18em 0.58em 0.1em;
+  font-size: 0.72rem;
+}
+
+.rarity-badge--lg {
+  min-height: 1.85em;
+  padding: 0.26em 0.78em 0.16em;
+  font-size: 0.9rem;
+}
+
+.rarity-badge--free {
+  --rarity-bg-a: rgba(30, 34, 43, 0.94);
+  --rarity-bg-b: rgba(5, 7, 12, 0.96);
+  --rarity-border: rgba(255, 255, 255, 0.18);
+  --rarity-text: #f6f2e8;
+  --rarity-glow: rgba(0, 0, 0, 0.08);
+}
+
+.rarity-badge--common {
+  --rarity-bg-a: rgba(238, 237, 225, 0.94);
+  --rarity-bg-b: rgba(150, 154, 162, 0.9);
+  --rarity-border: rgba(255, 255, 255, 0.58);
+  --rarity-text: #1b1d22;
+  --rarity-glow: rgba(238, 237, 225, 0.24);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.32);
+}
+
+.rarity-badge--rare {
+  --rarity-bg-a: rgba(75, 154, 255, 0.96);
+  --rarity-bg-b: rgba(19, 78, 184, 0.92);
+  --rarity-border: rgba(172, 218, 255, 0.58);
+  --rarity-text: #eef8ff;
+  --rarity-glow: rgba(67, 150, 255, 0.26);
+}
+
+.rarity-badge--epic {
+  --rarity-bg-a: rgba(184, 92, 255, 0.96);
+  --rarity-bg-b: rgba(86, 28, 157, 0.94);
+  --rarity-border: rgba(225, 177, 255, 0.58);
+  --rarity-text: #fff2ff;
+  --rarity-glow: rgba(172, 91, 255, 0.3);
+}
+
+.rarity-badge--legendary {
+  --rarity-bg-a: rgba(255, 206, 93, 0.98);
+  --rarity-bg-b: rgba(181, 102, 23, 0.94);
+  --rarity-border: rgba(255, 231, 143, 0.66);
+  --rarity-text: #211204;
+  --rarity-glow: rgba(255, 190, 65, 0.34);
+  text-shadow: 0 1px 0 rgba(255, 235, 170, 0.34);
+}

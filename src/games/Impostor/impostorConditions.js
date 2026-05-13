@@ -285,6 +285,7 @@ function buildRarityConditions(rawConditions, locale, t) {
       id: `rarity-${rarity}`,
       kind: t("impostor.condition.rarityKind"),
       title: t("impostor.condition.rarityTitle", { rarity: translateRarity(rarity, locale) }),
+      rarity,
       description: t("impostor.condition.rarityDescription"),
       poolFilter: () => true,
       test: (card) => card.rarity === rarity,

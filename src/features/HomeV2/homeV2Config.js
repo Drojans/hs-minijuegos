@@ -109,7 +109,7 @@ export const HOME_V2_MODES = [
     accent: "violet",
     kind: "daily",
     es: {
-      title: "La Carta Oculta",
+      title: "La carta oculta",
       description: "Descubre una carta con pistas progresivas.",
       cta: "play",
     },
@@ -147,7 +147,7 @@ export const HOME_V2_MODES = [
     accent: "blue",
     kind: "daily",
     es: {
-      title: "La Pirámide",
+      title: "La pirámide",
       description: "Completa 10 cartas que encajen en la categoría.",
       cta: "play",
     },

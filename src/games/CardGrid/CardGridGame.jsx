@@ -36,7 +36,6 @@ import {
   getCardName,
   getCardsByExactName,
   getGridModes,
-  getNextEmptyCell,
   getSuggestions,
   isPlayableGridCard,
   normalize,
@@ -63,13 +62,16 @@ function CardGridGame({ cards, onBack }) {
   );
 
   const [grid, setGrid] = useState(null);
-  const [selectedCell, setSelectedCell] = useState({ row: 0, column: 0 });
+  const [selectedCell, setSelectedCell] = useState(null);
   const [answers, setAnswers] = useState({});
   const [answer, setAnswer] = useState("");
   const [message, setMessage] = useState("");
+  const [messageTone, setMessageTone] = useState("neutral");
+  const [feedbackNonce, setFeedbackNonce] = useState(0);
   const [mistakes, setMistakes] = useState(0);
   const [revealedCells, setRevealedCells] = useState(new Set());
   const [suppressSuggestions, setSuppressSuggestions] = useState(false);
+  const [pendingPlacement, setPendingPlacement] = useState(null);
   const [endOverlay, setEndOverlay] = useState(null);
   const [resultsMode, setResultsMode] = useState(null);
   const [dailyProgress, setDailyProgress] = useState(() => getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
@@ -84,10 +86,12 @@ function CardGridGame({ cards, onBack }) {
     [answers]
   );
 
+  const usedCardNameKeys = useMemo(
+    () => new Set(Object.values(answers).flatMap((card) => getCardNameKeyValues(card))),
+    [answers, locale]
+  );
+
   const correctCount = Object.keys(answers).length;
-  const selectedKey = getGridCellKey(selectedCell.row, selectedCell.column);
-  const selectedRow = grid?.rows[selectedCell.row];
-  const selectedColumn = grid?.columns[selectedCell.column];
   const isComplete = correctCount >= TOTAL_CELLS;
   const isDailyMode = selectedMode === GAME_MODE_IDS.DAILY;
   const hasConsumedDailyAttempt = isDailyMode && dailyProgress.completed;
@@ -100,6 +104,15 @@ function CardGridGame({ cards, onBack }) {
     !resultsMode &&
     typeof timeLeft === "number";
 
+  function getCardNameKeyValues(card) {
+    return [card?.name, card?.nameEn, getCardName(card, locale)]
+      .map((name) => normalize(name))
+      .filter(Boolean);
+  }
+
+  function getSubmittedFallbackName() {
+    return answer.trim() || (locale === "en" ? "That card" : "Esa carta");
+  }
 
   const gridPreparationSources = useMemo(() => {
     if (!grid) return [];
@@ -122,10 +135,17 @@ function CardGridGame({ cards, onBack }) {
   });
 
   const suggestions = useMemo(() => {
-    if (suppressSuggestions || normalize(answer).length < 3) return [];
+    const normalizedAnswer = normalize(answer);
+    if (suppressSuggestions || normalizedAnswer.length < 3) return [];
 
-    return getSuggestions(playableCards, answer, usedCardIds);
-  }, [playableCards, answer, usedCardIds, suppressSuggestions]);
+    // When the input already is an exact card name, keep the dropdown closed so
+    // Enter submits the answer instead of re-selecting the same suggestion.
+    if (getCardsByExactName(playableCards, answer).length > 0) return [];
+
+    return getSuggestions(playableCards, answer, usedCardIds).filter(
+      (card) => getCardNameKeyValues(card).every((key) => !usedCardNameKeys.has(key))
+    );
+  }, [playableCards, answer, usedCardIds, usedCardNameKeys, suppressSuggestions, locale]);
 
   useEffect(() => {
     setDailyProgress(getDailyGameProgress(CARD_GRID_GAME_ID, todayKey));
@@ -138,9 +158,12 @@ function CardGridGame({ cards, onBack }) {
     setAnswers(restoredAnswers);
     setMistakes(options.mistakes ?? 0);
     setRevealedCells(new Set(options.revealedCells ?? []));
-    setSelectedCell(options.selectedCell ?? { row: 0, column: 0 });
+    setSelectedCell(null);
     setAnswer("");
     setSuppressSuggestions(false);
+    setPendingPlacement(null);
+    setMessageTone("neutral");
+    setFeedbackNonce(0);
     setEndOverlay(null);
     setResultsMode(options.resultsMode ?? null);
     setRewardMessage("");
@@ -179,14 +202,36 @@ function CardGridGame({ cards, onBack }) {
     };
   }
 
+  function triggerMessage(nextMessage, tone = "neutral") {
+    setMessage(nextMessage);
+    setMessageTone(tone);
+
+    if (tone === "error") {
+      setFeedbackNonce((current) => current + 1);
+    }
+  }
+
+  function triggerInvalidAnswer(nextMessage) {
+    triggerMessage(nextMessage, "error");
+    requestAnimationFrame(() => {
+      answerInputRef.current?.focus();
+    });
+  }
+
   function handleAnswerChange(value) {
     setSuppressSuggestions(false);
+    setPendingPlacement(null);
+    setSelectedCell(null);
+    setMessageTone("neutral");
     setAnswer(value);
   }
 
   function handleSuggestionPick(value) {
     setAnswer(value);
     setSuppressSuggestions(true);
+    setPendingPlacement(null);
+    setSelectedCell(null);
+    setMessageTone("neutral");
     requestAnimationFrame(() => {
       answerInputRef.current?.focus();
     });
@@ -311,12 +356,85 @@ function CardGridGame({ cards, onBack }) {
     resetGrid(null, "");
   }
 
-  function moveToNextEmptyCell(nextAnswers) {
-    const nextCell = getNextEmptyCell(selectedKey, nextAnswers);
+  function getOpenPlacementsForCards(candidateCards, currentAnswers = answers) {
+    if (!grid) return [];
 
-    if (nextCell) {
-      setSelectedCell(nextCell);
+    const placementsByKey = new Map();
+
+    candidateCards.forEach((card) => {
+      grid.rows.forEach((row, rowIndex) => {
+        grid.columns.forEach((column, columnIndex) => {
+          const key = getGridCellKey(rowIndex, columnIndex);
+
+          if (currentAnswers[key]) return;
+          if (!row.predicate(card) || !column.predicate(card)) return;
+          if (placementsByKey.has(key)) return;
+
+          placementsByKey.set(key, {
+            key,
+            row: rowIndex,
+            column: columnIndex,
+            rowCondition: row,
+            columnCondition: column,
+            card,
+          });
+        });
+      });
+    });
+
+    return Array.from(placementsByKey.values());
+  }
+
+  function commitPlacement(placement, sourceAnswers = answers) {
+    if (!placement || !grid || sourceAnswers[placement.key]) return;
+
+    const nextAnswers = {
+      ...sourceAnswers,
+      [placement.key]: placement.card,
+    };
+
+    const didCompleteGrid = Object.keys(nextAnswers).length >= TOTAL_CELLS;
+
+    if (selectedMode === GAME_MODE_IDS.DAILY && !didCompleteGrid) {
+      saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
+        inProgress: true,
+        answerIds: serializeAnswerIds(nextAnswers),
+        completedGridMode: gridMode,
+        lastWasCorrect: false,
+        failedReason: null,
+        mistakes,
+      });
     }
+
+    setAnswers(nextAnswers);
+    setAnswer("");
+    setSuppressSuggestions(false);
+    setPendingPlacement(null);
+    setSelectedCell(null);
+
+    if (didCompleteGrid) {
+      if (selectedMode === GAME_MODE_IDS.DAILY) {
+        completeDailyGrid(nextAnswers);
+      }
+
+      triggerMessage("");
+      setEndOverlay("won");
+      setResultsMode(null);
+      return;
+    }
+
+    triggerMessage(t("grid.message.correct", { name: getCardName(placement.card, locale) }), "success");
+  }
+
+  function handleBoardCellPick(cell) {
+    if (!pendingPlacement) return;
+
+    const placement = pendingPlacement.placements.find(
+      (candidate) => candidate.row === cell.row && candidate.column === cell.column
+    );
+
+    if (!placement) return;
+    commitPlacement(placement);
   }
 
   function failDailyGridByTime() {
@@ -419,32 +537,48 @@ function CardGridGame({ cards, onBack }) {
 
     if (!grid || isComplete || hasConsumedDailyAttempt) return;
 
-    if (answers[selectedKey]) {
-      setMessage(t("grid.message.cellCompleted"));
+    const rawAnswer = answer.trim();
+    const submittedName = getSubmittedFallbackName();
+
+    if (!rawAnswer) {
+      setPendingPlacement(null);
+      triggerInvalidAnswer(locale === "en" ? "Type a card name first." : "Escribe primero el nombre de una carta.");
       return;
     }
 
-    const exactMatches = getCardsByExactName(playableCards, answer);
+    const exactMatches = getCardsByExactName(playableCards, rawAnswer);
 
     if (!exactMatches.length) {
-      setMessage(t("grid.message.cardNotFound"));
+      setPendingPlacement(null);
+      triggerInvalidAnswer(t("grid.message.cardNotFound", { name: submittedName }));
       return;
     }
 
-    const unusedMatches = exactMatches.filter((card) => !usedCardIds.has(card.id));
-
-    if (!unusedMatches.length) {
-      setMessage(t("grid.message.cardAlreadyUsed"));
-      return;
-    }
-
-    const validCard = unusedMatches.find(
-      (card) => selectedRow?.predicate(card) && selectedColumn?.predicate(card)
+    const alreadyUsedMatch = exactMatches.find((card) =>
+      usedCardIds.has(card.id) || getCardNameKeyValues(card).some((key) => usedCardNameKeys.has(key))
     );
 
-    if (!validCard) {
+    if (alreadyUsedMatch) {
+      setPendingPlacement(null);
+      triggerInvalidAnswer(
+        t("grid.message.cardAlreadyUsed", { name: getCardName(alreadyUsedMatch, locale) || submittedName })
+      );
+      return;
+    }
+
+    const unusedMatches = exactMatches.filter(
+      (card) =>
+        !usedCardIds.has(card.id) &&
+        getCardNameKeyValues(card).every((key) => !usedCardNameKeys.has(key))
+    );
+
+    const submittedCardName = getCardName(unusedMatches[0] ?? exactMatches[0], locale) || submittedName;
+    const placements = getOpenPlacementsForCards(unusedMatches);
+
+    if (!placements.length) {
       const nextMistakes = mistakes + 1;
       setMistakes(nextMistakes);
+
       if (selectedMode === GAME_MODE_IDS.DAILY) {
         saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
           inProgress: true,
@@ -455,51 +589,31 @@ function CardGridGame({ cards, onBack }) {
           mistakes: nextMistakes,
         });
       }
-      setMessage(
+
+      setPendingPlacement(null);
+      setSelectedCell(null);
+      setSuppressSuggestions(true);
+      triggerInvalidAnswer(
         t("grid.message.wrongCell", {
-          name: getCardName(unusedMatches[0], locale),
-          row: selectedRow?.shortLabel,
-          column: selectedColumn?.shortLabel,
+          name: submittedCardName,
         })
       );
       return;
     }
 
-    const nextAnswers = {
-      ...answers,
-      [selectedKey]: validCard,
-    };
-
-    const didCompleteGrid = Object.keys(nextAnswers).length >= TOTAL_CELLS;
-
-    if (selectedMode === GAME_MODE_IDS.DAILY && !didCompleteGrid) {
-      saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
-        inProgress: true,
-        answerIds: serializeAnswerIds(nextAnswers),
-        completedGridMode: gridMode,
-        lastWasCorrect: false,
-        failedReason: null,
-        mistakes,
-      });
-    }
-
-    setAnswers(nextAnswers);
-    setAnswer("");
-    setSuppressSuggestions(false);
-
-    if (didCompleteGrid) {
-      if (selectedMode === GAME_MODE_IDS.DAILY) {
-        completeDailyGrid(nextAnswers);
-      }
-
-      setMessage("");
-      setEndOverlay("won");
-      setResultsMode(null);
+    if (placements.length > 1) {
+      const pendingCard = placements[0].card;
+      setPendingPlacement({ card: pendingCard, placements });
+      setSelectedCell(null);
+      setSuppressSuggestions(true);
+      triggerMessage(
+        t("grid.message.chooseCell", { name: getCardName(pendingCard, locale) }),
+        "choice"
+      );
       return;
     }
 
-    setMessage(t("grid.message.correct", { name: getCardName(validCard, locale) }));
-    moveToNextEmptyCell(nextAnswers);
+    commitPlacement(placements[0]);
   }
 
   if (!cards.length) {
@@ -572,17 +686,18 @@ function CardGridGame({ cards, onBack }) {
             answers={answers}
             revealedCells={revealedCells}
             selectedCell={selectedCell}
+            pendingPlacements={pendingPlacement?.placements ?? []}
             locale={locale}
             t={t}
-            onSelectCell={setSelectedCell}
+            onSelectCell={handleBoardCellPick}
           />
 
           <CardGridControls
             t={t}
-            selectedRow={selectedRow}
-            selectedColumn={selectedColumn}
-            mistakes={mistakes}
+            pendingPlacement={pendingPlacement}
             message={message}
+            messageTone={messageTone}
+            feedbackNonce={feedbackNonce}
             answer={answer}
             suggestions={suggestions}
             isComplete={isComplete}
@@ -591,6 +706,7 @@ function CardGridGame({ cards, onBack }) {
             onAnswerChange={handleAnswerChange}
             onPickSuggestion={handleSuggestionPick}
             onSubmitAnswer={submitAnswer}
+            onChoosePlacement={commitPlacement}
           />
         </section>
 

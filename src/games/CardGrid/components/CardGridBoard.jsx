@@ -65,6 +65,7 @@ function AnswerCell({
   solvedCard,
   selected,
   revealed,
+  isCandidate,
   rowIndex,
   columnIndex,
   locale,
@@ -76,17 +77,35 @@ function AnswerCell({
       type="button"
       className={`cg-answer-cell ${selected ? "is-selected" : ""} ${
         solvedCard ? "is-solved" : ""
-      } ${revealed ? "is-revealed" : ""}`}
+      } ${revealed ? "is-revealed" : ""} ${isCandidate ? "is-candidate" : ""}`}
       onClick={() => onSelectCell({ row: rowIndex, column: columnIndex })}
       title={solvedCard ? getCardName(solvedCard, locale) : t("grid.emptyCell")}
       data-cell-key={answerKey}
     >
-      {solvedCard ? <SolvedCard card={solvedCard} locale={locale} /> : <span>+</span>}
+      {solvedCard ? (
+        <SolvedCard card={solvedCard} locale={locale} />
+      ) : (
+        <>
+          <span>{isCandidate ? "✓" : "+"}</span>
+          {isCandidate ? <em>{t("grid.placeHere")}</em> : null}
+        </>
+      )}
     </button>
   );
 }
 
-function CardGridBoard({ grid, answers, revealedCells, selectedCell, locale, t, onSelectCell }) {
+function CardGridBoard({
+  grid,
+  answers,
+  revealedCells,
+  selectedCell,
+  pendingPlacements = [],
+  locale,
+  t,
+  onSelectCell,
+}) {
+  const candidateKeys = new Set(pendingPlacements.map((placement) => placement.key));
+
   return (
     <div className="cg-board-panel">
       <div className="cg-board" role="grid" aria-label={t("grid.title")}>
@@ -110,8 +129,9 @@ function CardGridBoard({ grid, answers, revealedCells, selectedCell, locale, t, 
               const answerKey = getGridCellKey(rowIndex, columnIndex);
               const solvedCard = answers[answerKey];
               const selected =
-                selectedCell.row === rowIndex && selectedCell.column === columnIndex;
+                selectedCell?.row === rowIndex && selectedCell?.column === columnIndex;
               const revealed = revealedCells.has(answerKey);
+              const isCandidate = candidateKeys.has(answerKey);
 
               return (
                 <AnswerCell
@@ -120,6 +140,7 @@ function CardGridBoard({ grid, answers, revealedCells, selectedCell, locale, t, 
                   solvedCard={solvedCard}
                   selected={selected}
                   revealed={revealed}
+                  isCandidate={isCandidate}
                   rowIndex={rowIndex}
                   columnIndex={columnIndex}
                   locale={locale}

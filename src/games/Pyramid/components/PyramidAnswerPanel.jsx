@@ -12,6 +12,8 @@ function PyramidAnswerPanel({
   answer,
   suggestions,
   message,
+  messageTone,
+  feedbackNonce,
   onAnswerChange,
   onSubmitAnswer,
   onSuggestionPick,
@@ -38,7 +40,11 @@ function PyramidAnswerPanel({
         </form>
       ) : null}
 
-      {message && !showResults ? <p className="py-message">{message}</p> : null}
+      {message && !showResults ? (
+        <p key={`${messageTone}-${feedbackNonce}-${message}`} className={`py-message ${messageTone ? `is-${messageTone}` : ""}`}>
+          {message}
+        </p>
+      ) : null}
 
       {result && !showResults && selectedMode === GAME_MODE_IDS.INFINITE ? (
         <button type="button" className="py-button is-primary" onClick={onStartNextInfiniteRound}>

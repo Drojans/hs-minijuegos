@@ -1,3 +1,4 @@
+import RarityBadge from "../../../shared/components/RarityBadge/RarityBadge";
 import { getHiddenCardHints } from "../hiddenCardConfig";
 
 function HiddenCardHintList({ copy, card, locale, revealLevel }) {
@@ -6,7 +7,7 @@ function HiddenCardHintList({ copy, card, locale, revealLevel }) {
     { key: "cost", label: copy.hintCost, value: hints.cost, unlocked: revealLevel >= 1 },
     { key: "type", label: copy.hintType, value: hints.type, unlocked: revealLevel >= 2 },
     { key: "class", label: copy.hintClass, value: hints.class, unlocked: revealLevel >= 2 },
-    { key: "rarity", label: copy.hintRarity, value: hints.rarity, unlocked: revealLevel >= 3 },
+    { key: "rarity", label: copy.hintRarity, value: hints.rarity, rarity: card?.rarity, unlocked: revealLevel >= 3 },
     {
       key: "name",
       label: copy.hintName,
@@ -23,7 +24,11 @@ function HiddenCardHintList({ copy, card, locale, revealLevel }) {
         {items.map((item) => (
           <div key={item.key} className={`hidden-card-hint ${item.unlocked ? "is-unlocked" : ""}`}>
             <span>{item.label}</span>
-            <strong>{item.unlocked ? item.value : "?"}</strong>
+            <strong>
+              {item.unlocked ? (
+                item.key === "rarity" ? <RarityBadge rarity={item.rarity} locale={locale} /> : item.value
+              ) : "?"}
+            </strong>
           </div>
         ))}
       </div>

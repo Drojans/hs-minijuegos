@@ -314,3 +314,39 @@
 .py-answer-form .card-autocomplete {
   grid-column: 1 / -1;
 }
+
+/* ==========================================================
+   PYRAMID V2 ERROR FEEDBACK
+   ========================================================== */
+.py-message {
+  padding: 9px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(240, 207, 130, 0.16);
+  background: rgba(5, 10, 20, 0.54);
+  text-align: center;
+}
+
+.py-message.is-error {
+  color: #ffd7d7;
+  border-color: rgba(255, 106, 106, 0.45);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 106, 106, 0.12), transparent 46%),
+    rgba(38, 12, 18, 0.78);
+  animation: py-feedback-shake 0.34s ease both;
+}
+
+.py-message.is-success {
+  color: #d9ffe7;
+  border-color: rgba(103, 255, 184, 0.34);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(103, 255, 184, 0.09), transparent 46%),
+    rgba(7, 28, 22, 0.58);
+}
+
+@keyframes py-feedback-shake {
+  0%, 100% { transform: translateX(0); }
+  18% { transform: translateX(-7px); }
+  36% { transform: translateX(6px); }
+  54% { transform: translateX(-4px); }
+  72% { transform: translateX(3px); }
+}

@@ -190,8 +190,15 @@
 }
 
 .hidden-card-hint strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
   font-size: 0.98rem;
   line-height: 1.18;
+}
+
+.hidden-card-hint strong .rarity-badge {
+  font-size: 0.8rem;
 }
 
 .hidden-card-form {

@@ -68,9 +68,9 @@ const COPY = {
     guessMana: "Adivina el coste",
     impostor: "Encuentra el impostor",
     grid: "Grid de cartas",
-    pyramid: "La Pirámide",
+    pyramid: "La pirámide",
     higherLower: "Mayor o menor",
-    hiddenCard: "La Carta Oculta",
+    hiddenCard: "La carta oculta",
   },
   en: {
     navMinigames: "Minigames",

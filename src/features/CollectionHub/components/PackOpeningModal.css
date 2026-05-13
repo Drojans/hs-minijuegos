@@ -14,10 +14,13 @@
 
 .pack-opening-modal.is-cards {
   display: grid;
-  align-content: center;
+  align-content: start;
   width: min(100%, 1540px);
-  min-height: min(78svh, 760px);
-  padding: clamp(14px, 1.8vw, 26px);
+  min-height: 0;
+  max-height: calc(100svh - clamp(20px, 2.4vw, 34px));
+  padding: clamp(10px, 1.25vw, 18px);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
 }
 
 .arcane-box-asset.is-interactive {
@@ -37,12 +40,20 @@
 .arcane-box-asset-image {
   grid-area: 1 / 1;
   position: relative;
-  z-index: 1;
   width: 100%;
   height: auto;
   object-fit: contain;
   user-select: none;
   pointer-events: none;
+}
+
+.arcane-box-asset-image.is-base {
+  z-index: 1;
+}
+
+.arcane-box-asset-image.is-phase {
+  z-index: 2;
+  animation: arcane-box-phase-in 0.16s ease both;
 }
 
 .arcane-box-asset.is-opening {
@@ -52,10 +63,12 @@
 .pack-opening-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 90;
-  display: grid;
-  place-items: center;
-  padding: 22px;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(14px, 2vw, 22px);
+  overflow: auto;
   background:
     radial-gradient(circle at 50% 48%, rgba(81, 217, 213, 0.1), transparent 34%),
     rgba(4, 7, 14, 0.78);
@@ -63,10 +76,15 @@
   animation: pack-opening-fade-in 0.18s ease both;
 }
 
+.pack-opening-backdrop.is-cards {
+  align-items: flex-start;
+  padding: clamp(10px, 1.2vw, 17px);
+}
+
 .pack-opening-modal {
   position: relative;
   width: min(100%, 1480px);
-  max-height: min(96svh, 1040px);
+  max-height: calc(100svh - clamp(28px, 4vw, 44px));
   overflow: auto;
   border-radius: 34px;
   border: 1px solid rgba(240, 207, 130, 0.3);
@@ -201,6 +219,28 @@
   align-items: start;
   gap: clamp(22px, 1.9vw, 34px) clamp(28px, 2.5vw, 46px);
   perspective: 1200px;
+}
+
+.pack-opening-modal.is-cards .pack-opening-grid {
+  grid-template-columns: repeat(5, minmax(136px, 190px));
+  gap: clamp(12px, 1.35vw, 20px) clamp(20px, 1.8vw, 32px);
+}
+
+.pack-opening-modal.is-cards .pack-reveal-card {
+  gap: 6px;
+}
+
+.pack-opening-modal.is-cards .pack-reveal-card-button {
+  max-width: clamp(150px, 10.4vw, 190px);
+}
+
+.pack-opening-modal.is-cards .pack-card-caption {
+  min-height: 40px;
+  gap: 2px;
+}
+
+.pack-opening-modal.is-cards .pack-opening-actions {
+  margin-top: 10px;
 }
 
 .pack-reveal-card {
@@ -373,6 +413,10 @@
 }
 
 .pack-card-caption p {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 22px;
   margin: 0;
   color: rgba(247, 236, 212, 0.62);
   font-size: 0.74rem;
@@ -409,6 +453,11 @@
 @keyframes pack-card-enter {
   from { opacity: 0; transform: translateY(18px) scale(0.94); }
   to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes arcane-box-phase-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 
@@ -454,5 +503,33 @@
 
   .pack-reveal-card-button {
     max-width: 210px;
+  }
+}
+
+
+/* Ajuste específico del modal de apertura: las 10 cartas deben arrancar desde arriba y caber
+   completas en pantallas de escritorio, sin quedar tapadas por el header ni cortadas. */
+@media (min-width: 1141px) {
+  .pack-opening-modal.is-cards .pack-opening-grid {
+    grid-template-columns: repeat(5, minmax(136px, 190px));
+  }
+}
+
+@media (max-height: 820px) and (min-width: 1141px) {
+  .pack-opening-modal.is-cards .pack-opening-grid {
+    grid-template-columns: repeat(5, minmax(126px, 176px));
+    gap: 10px 22px;
+  }
+
+  .pack-opening-modal.is-cards .pack-reveal-card-button {
+    max-width: 176px;
+  }
+
+  .pack-opening-modal.is-cards .pack-card-caption h3 {
+    font-size: 0.95rem;
+  }
+
+  .pack-opening-modal.is-cards .pack-card-caption p {
+    min-height: 20px;
   }
 }

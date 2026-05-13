@@ -141,9 +141,9 @@ const GAME_INTRO_COPY = {
 
   [GAME_IDS.HIDDEN_CARD]: {
     es: {
-      title: "La Carta Oculta",
+      title: "La carta oculta",
       description: "Adivina una carta misteriosa a partir de su imagen tapada y pistas progresivas.",
-      exampleLabel: "Ejemplo visual del minijuego La Carta Oculta",
+      exampleLabel: "Ejemplo visual del minijuego La carta oculta",
       previewSrc: "/ui/games/hidden-card/mode-example.svg",
       steps: [
         {

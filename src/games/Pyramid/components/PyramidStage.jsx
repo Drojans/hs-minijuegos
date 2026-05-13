@@ -10,6 +10,8 @@ function PyramidStage({
   answer,
   suggestions,
   message,
+  messageTone,
+  feedbackNonce,
   result,
   isReview,
   showResults,
@@ -35,6 +37,8 @@ function PyramidStage({
         answer={answer}
         suggestions={suggestions}
         message={message}
+        messageTone={messageTone}
+        feedbackNonce={feedbackNonce}
         onAnswerChange={onAnswerChange}
         onSubmitAnswer={onSubmitAnswer}
         onSuggestionPick={onSuggestionPick}

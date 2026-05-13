@@ -1,5 +1,7 @@
+import { createPortal } from "react-dom";
 import LoadAwareImage from "../../../shared/components/LoadAwareImage/LoadAwareImage";
-import { getCardName, getDetailImage, getGameImage, getThumbImage, translateCardRarity } from "../../../utils/cardLocale";
+import RarityBadge from "../../../shared/components/RarityBadge/RarityBadge";
+import { getCardName, getDetailImage, getGameImage, getThumbImage } from "../../../utils/cardLocale";
 import "./PackOpeningModal.css";
 
 const BOX_ASSETS = {
@@ -22,6 +24,7 @@ function getRarityKey(rarity) {
 
 export function ArcaneBoxVisual({ phase = "closed", interactive = false, disabled = false, onClick, label }) {
   const imageSrc = phase === "open" ? BOX_ASSETS.open : phase === "opening" ? BOX_ASSETS.opening : BOX_ASSETS.closed;
+  const hasPhaseImage = phase !== "closed";
   const Tag = interactive ? "button" : "div";
 
   return (
@@ -33,7 +36,22 @@ export function ArcaneBoxVisual({ phase = "closed", interactive = false, disable
       aria-label={interactive ? label : undefined}
       aria-hidden={interactive ? undefined : "true"}
     >
-      <img className="arcane-box-asset-image" src={imageSrc} alt="" aria-hidden="true" />
+      <img
+        className="arcane-box-asset-image is-base"
+        src={BOX_ASSETS.closed}
+        alt=""
+        aria-hidden="true"
+        draggable="false"
+      />
+      {hasPhaseImage ? (
+        <img
+          className="arcane-box-asset-image is-phase"
+          src={imageSrc}
+          alt=""
+          aria-hidden="true"
+          draggable="false"
+        />
+      ) : null}
     </Tag>
   );
 }
@@ -74,7 +92,7 @@ function PackCardReveal({ result, index, locale, copy, revealed, onReveal }) {
 
       <div className="pack-card-caption" aria-hidden={!revealed}>
         <h3>{revealed ? cardName : copy.hiddenCard}</h3>
-        <p>{revealed ? translateCardRarity(result.card.rarity, locale) : copy.clickToReveal}</p>
+        <p>{revealed ? <RarityBadge rarity={result.card.rarity} locale={locale} size="sm" /> : copy.clickToReveal}</p>
         {revealed && !result.isNew ? <strong>{formatCopy(copy.copyCount, { count: result.count })}</strong> : null}
       </div>
     </article>
@@ -117,8 +135,8 @@ function PackOpeningModal({ copy, locale, opening, onStartOpening, onRevealCard,
   const stageText = getStageText(copy, opening, revealedCount, totalCards);
   const showCards = opening.phase === "cards";
 
-  return (
-    <div className="pack-opening-backdrop" role="presentation">
+  const modal = (
+    <div className={`pack-opening-backdrop is-${opening.phase}`} role="presentation">
       <section
         className={`pack-opening-modal is-${opening.phase}`}
         role="dialog"
@@ -180,6 +198,8 @@ function PackOpeningModal({ copy, locale, opening, onStartOpening, onRevealCard,
       </section>
     </div>
   );
+
+  return typeof document === "undefined" ? modal : createPortal(modal, document.body);
 }
 
 export default PackOpeningModal;

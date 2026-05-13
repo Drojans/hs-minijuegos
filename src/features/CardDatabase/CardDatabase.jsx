@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLanguage } from "../../i18n/LanguageProvider";
 import LoadAwareImage from "../../shared/components/LoadAwareImage/LoadAwareImage";
+import RarityBadge from "../../shared/components/RarityBadge/RarityBadge";
 import useWarmImageCache from "../../shared/hooks/useWarmImageCache";
 import {
   COLLECTION_UPDATED_EVENT,
@@ -159,7 +160,7 @@ function DatabaseCardTile({ card, locale, copy, selected, onSelect }) {
       </div>
       <div className="card-db-card-info">
         <h3>{cardName}</h3>
-        <p>{translateCardRarity(card.rarity, locale)} · {translateCardClass(card.cardClass, locale)}</p>
+        <p className="card-db-card-meta"><RarityBadge rarity={card.rarity} locale={locale} size="sm" /> <span>· {translateCardClass(card.cardClass, locale)}</span></p>
       </div>
       {owned ? <strong className="card-db-owned-badge">{formatText(copy.copyCount, { count: entry.count ?? 1 })}</strong> : null}
     </button>
@@ -181,7 +182,7 @@ function DetailTags({ card, locale }) {
     <div className="card-db-detail-tags">
       <span>{translateCardClass(card.cardClass, locale)}</span>
       <span>{translateCardType(card.type, locale)}</span>
-      <span>{translateCardRarity(card.rarity, locale)}</span>
+      <RarityBadge rarity={card.rarity} locale={locale} />
     </div>
   );
 }
