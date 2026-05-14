@@ -516,3 +516,109 @@
 .im-post-result-actions .im-primary-button {
   min-width: 220px;
 }
+
+/* ==========================================================
+   IMPOSTOR FIT-SCREEN PASS
+   ========================================================== */
+.app-shell.is-fit-screen-route .im-page {
+  height: calc(100svh - var(--site-header-height, 76px));
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .im-shell:not(.is-mode-select) {
+  height: 100%;
+  padding: clamp(6px, 1.1vh, 10px) 0 clamp(8px, 1.2vh, 12px);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  align-items: stretch;
+}
+
+.app-shell.is-fit-screen-route .im-v2-mode-pill {
+  margin-bottom: 4px;
+  padding: 5px 12px;
+  font-size: 0.7rem;
+}
+
+.app-shell.is-fit-screen-route .im-intro-row {
+  margin-bottom: clamp(5px, 1vh, 9px);
+}
+
+.app-shell.is-fit-screen-route .im-mode-label {
+  font-size: 0.66rem;
+}
+
+.app-shell.is-fit-screen-route .im-intro-row h1 {
+  margin-top: 2px;
+  font-size: clamp(1.65rem, 4.8vh, 3.25rem);
+}
+
+.app-shell.is-fit-screen-route .im-board-panel {
+  min-height: 0;
+  padding: clamp(10px, 1.6vh, 16px) 14px;
+  display: grid;
+  align-items: center;
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .im-board-grid {
+  min-height: 0;
+  gap: clamp(10px, 1.4vw, 22px);
+}
+
+.app-shell.is-fit-screen-route .im-card {
+  min-height: clamp(220px, calc(100svh - var(--site-header-height, 76px) - 255px), 300px);
+}
+
+.app-shell.is-fit-screen-route .im-board-grid .inc-card-shell {
+  max-width: min(100%, clamp(155px, 12vw, 202px));
+}
+
+.app-shell.is-fit-screen-route .im-action-bar {
+  margin-top: clamp(8px, 1.4vh, 14px);
+  gap: 10px;
+}
+
+.app-shell.is-fit-screen-route .im-found-counter,
+.app-shell.is-fit-screen-route .im-selected-card-pill {
+  min-height: 46px;
+  padding: 8px 14px;
+}
+
+.app-shell.is-fit-screen-route .im-found-counter strong {
+  font-size: 1.3rem;
+}
+
+.app-shell.is-fit-screen-route .im-selected-card-pill strong {
+  font-size: 0.98rem;
+}
+
+.app-shell.is-fit-screen-route .im-primary-button,
+.app-shell.is-fit-screen-route .im-secondary-button {
+  min-height: 40px;
+}
+
+.app-shell.is-fit-screen-route .im-post-result-actions {
+  margin-top: 8px;
+}
+
+@media (max-height: 760px) and (min-width: 981px) {
+  .app-shell.is-fit-screen-route .im-card {
+    min-height: clamp(198px, calc(100svh - var(--site-header-height, 62px) - 232px), 270px);
+  }
+
+  .app-shell.is-fit-screen-route .im-board-grid .inc-card-shell {
+    max-width: min(100%, 180px);
+  }
+
+  .app-shell.is-fit-screen-route .im-board-panel {
+    padding-block: 10px;
+  }
+}
+
+@media (max-width: 980px) {
+  .app-shell.is-fit-screen-route .im-page,
+  .app-shell.is-fit-screen-route .im-shell:not(.is-mode-select) {
+    height: auto;
+    overflow: visible;
+  }
+}

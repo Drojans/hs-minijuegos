@@ -2,13 +2,26 @@ import GameResultOverlay from "../../../shared/components/GameResultOverlay/Game
 
 function CardGridResultOverlay({ t, result, rewardMessage, onViewResults }) {
   const isWon = result === "won";
+  const isSurrender = result === "surrender";
+
+  const title = isWon
+    ? t("grid.resultVictoryTitle")
+    : isSurrender
+      ? t("grid.resultSurrenderTitle")
+      : t("grid.resultTimeTitle");
+
+  const text = isWon
+    ? t("grid.resultVictoryText")
+    : isSurrender
+      ? t("grid.resultSurrenderText")
+      : t("grid.resultTimeText");
 
   return (
     <GameResultOverlay
       tone={isWon ? "success" : "danger"}
       kicker={t("grid.resultKicker")}
-      title={isWon ? t("grid.resultVictoryTitle") : t("grid.resultTimeTitle")}
-      text={isWon ? t("grid.resultVictoryText") : t("grid.resultTimeText")}
+      title={title}
+      text={text}
       rewardMessage={rewardMessage}
       primaryAction={{ label: t("grid.viewResults"), onClick: onViewResults }}
     />

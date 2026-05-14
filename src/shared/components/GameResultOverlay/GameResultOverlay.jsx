@@ -77,7 +77,14 @@ function GameResultOverlay({
             <h2>{title}</h2>
             {text ? <p className="game-result-text">{text}</p> : null}
             {detail ? <div className="game-result-detail">{detail}</div> : null}
-            {rewardMessage ? <p className="game-result-reward">{rewardMessage}</p> : null}
+            {rewardMessage ? (
+              <div className="game-result-reward">
+                <p className="game-result-reward-text">{rewardMessage}</p>
+                <span className="game-result-reward-icon" aria-hidden="true">
+                  <img src="/ui/rewards/arcane-box-open.png" alt="" draggable="false" />
+                </span>
+              </div>
+            ) : null}
 
             <div className="game-result-actions">
               <ActionButton action={primaryAction} variant="primary" />

@@ -1,4 +1,4 @@
-﻿export const SUPPORTED_LOCALES = ["es", "en"];
+export const SUPPORTED_LOCALES = ["es", "en"];
 export const DEFAULT_LOCALE = "es";
 
 export const LOCALE_LABELS = {
@@ -87,6 +87,7 @@ export const translations = {
     "grid.answerPlaceholder": "Escribe el nombre de la carta",
     "grid.tryAnswer": "Probar",
     "grid.enterHint": "Pulsa Enter para comprobar. No hace falta elegir casilla antes.",
+    "grid.surrender": "Rendirse",
     "grid.revealAnswer": "Me rindo: revelar respuesta",
     "grid.completed": "Grid completado",
     "grid.resultKicker": "Resultado",
@@ -94,8 +95,11 @@ export const translations = {
     "grid.resultVictoryText": "Has completado todas las casillas.",
     "grid.resultTimeTitle": "Se acabó el tiempo",
     "grid.resultTimeText": "Revisa el grid y las respuestas reveladas.",
+    "grid.resultSurrenderTitle": "Te has rendido",
+    "grid.resultSurrenderText": "El grid se da por perdido. Revisa las respuestas reveladas.",
     "grid.viewResults": "Ver resultados",
     "grid.playAgain": "Otra cuadrícula",
+    "grid.revealOtherAnswers": "Revelar otras respuestas",
     "grid.mistakes": "Errores: {mistakes}",
     "grid.newGrid": "Nueva cuadrícula",
     "grid.retry": "Reintentar cuadrícula",
@@ -109,6 +113,8 @@ export const translations = {
     "grid.message.cardNotFound": "No encuentro {name}. Prueba una pista o escribe el nombre completo.",
     "grid.message.cardAlreadyUsed": "{name} ya se ha usado en otra casilla.",
     "grid.message.wrongCell": "{name} no cumple las condiciones de ninguna casilla libre.",
+    "grid.message.surrendered": "Te has rendido. Revisa las respuestas reveladas.",
+    "grid.message.revealedAlternatives": "Mostrando otras respuestas posibles para las casillas reveladas.",
     "grid.submit": "Comprobar",
     "grid.message.correct": "Correcto: {name}.",
     "grid.message.chooseCell": "{name} cumple varias casillas. Elige dónde colocarla.",
@@ -283,6 +289,7 @@ export const translations = {
     "grid.answerPlaceholder": "Type the card name",
     "grid.tryAnswer": "Try",
     "grid.enterHint": "Press Enter to check. You do not need to choose a cell first.",
+    "grid.surrender": "Surrender",
     "grid.revealAnswer": "Give up: reveal answer",
     "grid.completed": "Grid completed!",
     "grid.resultKicker": "Result",
@@ -290,8 +297,11 @@ export const translations = {
     "grid.resultVictoryText": "You completed every cell.",
     "grid.resultTimeTitle": "Time is up",
     "grid.resultTimeText": "Review the grid and the revealed answers.",
+    "grid.resultSurrenderTitle": "You surrendered",
+    "grid.resultSurrenderText": "The grid is marked as lost. Review the revealed answers.",
     "grid.viewResults": "View results",
     "grid.playAgain": "Another grid",
+    "grid.revealOtherAnswers": "Reveal other answers",
     "grid.mistakes": "Mistakes: {mistakes}",
     "grid.newGrid": "New grid",
     "grid.retry": "Retry grid",
@@ -305,6 +315,8 @@ export const translations = {
     "grid.message.cardNotFound": "I cannot find {name}. Try a hint or type the full name.",
     "grid.message.cardAlreadyUsed": "{name} has already been used in another cell.",
     "grid.message.wrongCell": "{name} does not match any open cell conditions.",
+    "grid.message.surrendered": "You surrendered. Review the revealed answers.",
+    "grid.message.revealedAlternatives": "Showing other possible answers for the revealed cells.",
     "grid.submit": "Check",
     "grid.message.correct": "Correct: {name}.",
     "grid.message.chooseCell": "{name} matches several cells. Choose where to place it.",
@@ -402,7 +414,14 @@ export const translations = {
 };
 
 export function normalizeLocale(locale) {
-  return SUPPORTED_LOCALES.includes(locale) ? locale : DEFAULT_LOCALE;
+  const normalizedLocale = String(locale ?? "").trim().toLowerCase();
+
+  if (SUPPORTED_LOCALES.includes(normalizedLocale)) {
+    return normalizedLocale;
+  }
+
+  const baseLocale = normalizedLocale.split(/[-_]/)[0];
+  return SUPPORTED_LOCALES.includes(baseLocale) ? baseLocale : DEFAULT_LOCALE;
 }
 
 export function translate(locale, key, values = {}) {

@@ -133,6 +133,7 @@ function CardGridControls({
   onPickSuggestion,
   onSubmitAnswer,
   onChoosePlacement,
+  onSurrender,
 }) {
   const shouldShowMessage = messageTone !== "error" && (Boolean(message) || isComplete);
 
@@ -158,6 +159,15 @@ function CardGridControls({
         onPickSuggestion={onPickSuggestion}
         onSubmitAnswer={onSubmitAnswer}
       />
+
+      <button
+        type="button"
+        className="cg-surrender-button"
+        onClick={onSurrender}
+        disabled={isComplete}
+      >
+        {t("grid.surrender")}
+      </button>
 
       {shouldShowMessage ? (
         <div

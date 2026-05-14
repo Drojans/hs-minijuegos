@@ -2,20 +2,24 @@ import LoadAwareImage from "../../../shared/components/LoadAwareImage/LoadAwareI
 import { getCardName } from "../../../utils/cardLocale";
 import { PYRAMID_TARGET_COUNT, getCardImage } from "../pyramidGameConfig";
 
+const SLOTS_PER_ROW = 5;
+
 function PyramidSlots({ foundCards, locale }) {
   const slots = Array.from({ length: PYRAMID_TARGET_COUNT }, (_, index) => foundCards[index] ?? null);
-  const rows = [slots.slice(0, 1), slots.slice(1, 3), slots.slice(3, 6), slots.slice(6, 10)];
+  const rows = Array.from({ length: Math.ceil(PYRAMID_TARGET_COUNT / SLOTS_PER_ROW) }, (_, rowIndex) =>
+    slots.slice(rowIndex * SLOTS_PER_ROW, rowIndex * SLOTS_PER_ROW + SLOTS_PER_ROW),
+  );
 
   return (
-    <section className="py-pyramid" aria-label="Pirámide">
+    <section className="py-category-board" aria-label="Cartas de la categoría">
       {rows.map((row, rowIndex) => (
-        <div key={rowIndex} className="py-pyramid-row">
+        <div key={rowIndex} className="py-category-board-row">
           {row.map((card, slotIndex) => {
-            const absoluteIndex = rows.slice(0, rowIndex).reduce((sum, current) => sum + current.length, 0) + slotIndex;
+            const absoluteIndex = rowIndex * SLOTS_PER_ROW + slotIndex;
             const cardName = card ? getCardName(card, locale) : "";
 
             return (
-              <div key={absoluteIndex} className={`py-slot ${card ? "is-filled" : ""}`}>
+              <div key={absoluteIndex} className={`py-category-slot ${card ? "is-filled" : ""}`}>
                 {card ? (
                   <>
                     <LoadAwareImage src={getCardImage(card, locale)} alt={cardName} loading="eager" decoding="async" />

@@ -349,3 +349,133 @@
     width: 100%;
   }
 }
+
+/* ==========================================================
+   HIDDEN CARD FIT-SCREEN PASS
+   ========================================================== */
+.app-shell.is-fit-screen-route .hidden-card-page {
+  height: calc(100svh - var(--site-header-height, 76px));
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-shell:not(.is-mode-select) {
+  height: 100%;
+  padding: clamp(8px, 1.4vh, 14px) 0 clamp(8px, 1.2vh, 12px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: stretch;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-topbar {
+  margin-bottom: clamp(7px, 1.2vh, 12px);
+}
+
+.app-shell.is-fit-screen-route .hidden-card-mode-pill,
+.app-shell.is-fit-screen-route .hidden-card-score-pill {
+  min-height: 34px;
+  padding: 0 13px;
+  font-size: 0.8rem;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-stage {
+  min-height: 0;
+  grid-template-columns: minmax(250px, 0.72fr) minmax(360px, 1fr);
+  gap: clamp(14px, 2.3vw, 30px);
+  align-items: stretch;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-preview,
+.app-shell.is-fit-screen-route .hidden-card-side-panel {
+  min-height: 0;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-preview {
+  gap: 8px;
+  padding: clamp(14px, 2vh, 20px);
+  align-content: center;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-image-frame {
+  width: min(100%, clamp(220px, 38vh, 330px));
+  min-height: 0;
+  height: clamp(300px, calc(100svh - var(--site-header-height, 76px) - 160px), 450px);
+}
+
+.app-shell.is-fit-screen-route .hidden-card-real-name {
+  padding: 6px 13px;
+  font-size: 1.08rem;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-side-panel {
+  padding: clamp(14px, 2vh, 20px);
+  gap: clamp(9px, 1.4vh, 14px);
+  align-content: start;
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-hints {
+  gap: 8px;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-hint-grid {
+  gap: 8px;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-hint {
+  min-height: clamp(50px, 8.2vh, 66px);
+  padding: 8px 10px;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-hint strong {
+  font-size: 0.88rem;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-input-row input,
+.app-shell.is-fit-screen-route .hidden-card-input-row button,
+.app-shell.is-fit-screen-route .hidden-card-button {
+  min-height: 44px;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-suggestions {
+  max-height: clamp(110px, 20vh, 198px);
+}
+
+.app-shell.is-fit-screen-route .hidden-card-guesses {
+  gap: 7px;
+}
+
+.app-shell.is-fit-screen-route .hidden-card-guesses span {
+  padding: 5px 8px;
+  font-size: 0.78rem;
+}
+
+@media (max-height: 760px) and (min-width: 901px) {
+  .app-shell.is-fit-screen-route .hidden-card-shell:not(.is-mode-select) {
+    padding-top: 7px;
+  }
+
+  .app-shell.is-fit-screen-route .hidden-card-image-frame {
+    height: calc(100svh - var(--site-header-height, 76px) - 140px);
+  }
+
+  .app-shell.is-fit-screen-route .hidden-card-side-panel {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+
+  .app-shell.is-fit-screen-route .hidden-card-hint {
+    min-height: 48px;
+  }
+
+  .app-shell.is-fit-screen-route .hidden-card-form {
+    gap: 7px;
+  }
+}
+
+@media (max-width: 900px) {
+  .app-shell.is-fit-screen-route .hidden-card-page,
+  .app-shell.is-fit-screen-route .hidden-card-shell:not(.is-mode-select) {
+    height: auto;
+    overflow: visible;
+  }
+}

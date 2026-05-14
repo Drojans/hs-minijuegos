@@ -38,3 +38,10 @@
   position: relative;
   z-index: 1;
 }
+
+/* Fit-screen minigame pages */
+.app-shell.is-fit-screen-route .game-page-shell {
+  height: calc(100svh - var(--site-header-height, 76px));
+  min-height: 0;
+  overflow: hidden;
+}

@@ -6,6 +6,7 @@ import { DAILY_MODE_GAME_IDS_BY_HOME_MODE } from "../../shared/config/gameRules"
 import { getEligibleCollectionCards } from "../../shared/packs/packOpening";
 import { DAILY_CHALLENGE_STATES, DAILY_PROGRESS_UPDATED_EVENT, getDailyChallengeState, getDailyGameProgress, getTodayKey } from "../../shared/progress/dailyProgress";
 import { useLanguage } from "../../i18n/LanguageProvider";
+import { normalizeLocale } from "../../i18n/translations";
 import { HOME_V2_COPY, HOME_V2_MODES } from "./homeV2Config";
 import "./HomeV2.css";
 
@@ -29,9 +30,10 @@ function getTimeUntilNextLocalMidnight() {
 
 function HomeV2({ cards = [], loading = false, onNavigate }) {
   const { locale } = useLanguage();
+  const activeLocale = normalizeLocale(locale);
   const [resetTime, setResetTime] = useState(() => getTimeUntilNextLocalMidnight());
   const [packCount, setPackCount] = useState(() => getArcaneBoxCount());
-  const copy = HOME_V2_COPY[locale] ?? HOME_V2_COPY.es;
+  const copy = HOME_V2_COPY[activeLocale] ?? HOME_V2_COPY.es;
   const todayKey = useMemo(() => getTodayKey(), []);
 
   const readDailyModeProgress = useCallback(() => {
@@ -97,10 +99,10 @@ function HomeV2({ cards = [], loading = false, onNavigate }) {
     () =>
       HOME_V2_MODES.map((mode) => ({
         ...mode,
-        title: mode[locale]?.title ?? mode.es.title,
-        ctaKey: mode[locale]?.cta ?? mode.es.cta,
+        title: mode[activeLocale]?.title ?? mode.es.title,
+        ctaKey: mode[activeLocale]?.cta ?? mode.es.cta,
       })),
-    [locale]
+    [activeLocale]
   );
 
   const gameModes = useMemo(() => modes.filter((mode) => mode.group === "games"), [modes]);

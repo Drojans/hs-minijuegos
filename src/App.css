@@ -106,3 +106,46 @@ button {
     transform: rotate(360deg);
   }
 }
+
+/* ==========================================================
+   FIT SCREEN ROUTES
+   Home + minigames should behave like single-screen views.
+   Long data pages (database / collection / profile) keep normal scroll.
+   ========================================================== */
+html.is-fit-screen-route,
+body.is-fit-screen-route {
+  height: 100%;
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route {
+  height: 100svh;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .app-page {
+  height: calc(100svh - var(--site-header-height, 76px));
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .game-page-shell,
+.app-shell.is-fit-screen-route .home-v2-page {
+  height: calc(100svh - var(--site-header-height, 76px));
+  min-height: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 980px) {
+  html.is-fit-screen-route,
+  body.is-fit-screen-route,
+  .app-shell.is-fit-screen-route,
+  .app-shell.is-fit-screen-route .app-page,
+  .app-shell.is-fit-screen-route .game-page-shell,
+  .app-shell.is-fit-screen-route .home-v2-page {
+    height: auto;
+    min-height: 100svh;
+    overflow-y: auto;
+  }
+}

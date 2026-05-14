@@ -246,3 +246,30 @@
   background: transparent;
   box-shadow: none;
 }
+
+/* Slightly tighter header on laptop-height screens so fit-screen game views
+   have more vertical space without changing the normal data pages. */
+@media (max-height: 760px) and (min-width: 981px) {
+  :root {
+    --site-header-height: 62px;
+  }
+
+  .site-header {
+    padding-block: 6px;
+  }
+
+  .site-header__brand {
+    font-size: clamp(1.75rem, 2.55vw, 2.25rem);
+  }
+
+  .site-header__brand-mug {
+    width: 34px;
+    height: 34px;
+  }
+
+  .site-header__nav button,
+  .site-header__profile-button {
+    padding-block: 6px;
+    font-size: 0.8rem;
+  }
+}

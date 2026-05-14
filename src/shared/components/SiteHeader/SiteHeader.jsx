@@ -1,4 +1,5 @@
 import { useLanguage } from "../../../i18n/LanguageProvider";
+import { normalizeLocale } from "../../../i18n/translations";
 import LanguageToggle from "../LanguageToggle/LanguageToggle";
 import "./SiteHeader.css";
 
@@ -27,7 +28,8 @@ function getActiveSection(pathname) {
 
 export default function SiteHeader({ pathname = "/", onNavigate }) {
   const { locale } = useLanguage();
-  const copy = SITE_HEADER_COPY[locale] ?? SITE_HEADER_COPY.es;
+  const activeLocale = normalizeLocale(locale);
+  const copy = SITE_HEADER_COPY[activeLocale] ?? SITE_HEADER_COPY.es;
   const activeSection = getActiveSection(pathname);
 
   function go(path) {

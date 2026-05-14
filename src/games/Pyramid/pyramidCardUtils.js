@@ -34,15 +34,42 @@ export function findCardByAnswer(cards, answer, locale = "es") {
   }) ?? null;
 }
 
+function getSuggestionNameKey(card, locale = "es") {
+  const localizedName = normalizePyramidAnswer(getCardName(card, locale));
+  const spanishName = normalizePyramidAnswer(card?.name);
+  const englishName = normalizePyramidAnswer(card?.nameEn);
+
+  return [localizedName, spanishName, englishName].filter(Boolean).join("|");
+}
+
 export function getPyramidSuggestions(cards, answer, usedIds = new Set(), locale = "es") {
   const normalizedAnswer = normalizePyramidAnswer(answer);
   if (normalizedAnswer.length < 2) return [];
 
-  return cards
-    .filter((card) => !usedIds.has(card.id))
-    .filter((card) => {
-      const names = [card.name, card.nameEn, getCardName(card, locale)];
-      return names.some((name) => normalizePyramidAnswer(name).includes(normalizedAnswer));
-    })
-    .slice(0, 8);
+  const usedNameKeys = new Set(
+    cards
+      .filter((card) => usedIds.has(card.id))
+      .map((card) => getSuggestionNameKey(card, locale))
+      .filter(Boolean),
+  );
+  const seenNameKeys = new Set();
+  const suggestions = [];
+
+  for (const card of cards) {
+    if (!card || usedIds.has(card.id)) continue;
+
+    const nameKey = getSuggestionNameKey(card, locale);
+    if (!nameKey || usedNameKeys.has(nameKey) || seenNameKeys.has(nameKey)) continue;
+
+    const names = [card.name, card.nameEn, getCardName(card, locale)];
+    const matchesAnswer = names.some((name) => normalizePyramidAnswer(name).includes(normalizedAnswer));
+    if (!matchesAnswer) continue;
+
+    seenNameKeys.add(nameKey);
+    suggestions.push(card);
+
+    if (suggestions.length >= 8) break;
+  }
+
+  return suggestions;
 }

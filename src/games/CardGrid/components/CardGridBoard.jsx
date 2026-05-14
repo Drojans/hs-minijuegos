@@ -72,12 +72,16 @@ function AnswerCell({
   t,
   onSelectCell,
 }) {
+  const solvedByPlayer = Boolean(solvedCard && !revealed);
+
   return (
     <button
       type="button"
       className={`cg-answer-cell ${selected ? "is-selected" : ""} ${
         solvedCard ? "is-solved" : ""
-      } ${revealed ? "is-revealed" : ""} ${isCandidate ? "is-candidate" : ""}`}
+      } ${solvedByPlayer ? "is-player-solved" : ""} ${
+        revealed ? "is-revealed" : ""
+      } ${isCandidate ? "is-candidate" : ""}`}
       onClick={() => onSelectCell({ row: rowIndex, column: columnIndex })}
       title={solvedCard ? getCardName(solvedCard, locale) : t("grid.emptyCell")}
       data-cell-key={answerKey}

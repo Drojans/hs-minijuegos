@@ -3188,3 +3188,339 @@
   font-size: 0.82rem;
   font-weight: 800;
 }
+
+
+/* GRID V19: surrender button */
+.cg-surrender-button {
+  width: 100%;
+  min-height: 44px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 106, 131, 0.36);
+  color: #ffe6e9;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 106, 131, 0.14), transparent 54%),
+    linear-gradient(180deg, rgba(78, 24, 34, 0.95), rgba(34, 12, 20, 0.96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 12px 28px rgba(0, 0, 0, 0.24);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: transform 0.16s ease, filter 0.16s ease, border-color 0.16s ease, opacity 0.16s ease;
+}
+
+.cg-surrender-button:hover:not(:disabled),
+.cg-surrender-button:focus-visible:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.08);
+  border-color: rgba(255, 106, 131, 0.68);
+  outline: none;
+}
+
+.cg-surrender-button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.cg-page.is-results-surrender .cg-answer-cell.is-solved,
+.cg-page.is-results-surrender .cg-answer-cell.is-revealed {
+  border-color: rgba(255, 106, 131, 0.78) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 106, 131, 0.2),
+    0 0 18px rgba(255, 106, 131, 0.22),
+    0 0 34px rgba(255, 106, 131, 0.08) !important;
+}
+
+/* GRID: distinguish player answers from revealed answers on failed results */
+.cg-page.is-results-time .cg-answer-cell.is-player-solved,
+.cg-page.is-results-surrender .cg-answer-cell.is-player-solved {
+  border-color: rgba(124, 255, 158, 0.94) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(124, 255, 158, 0.14), transparent 46%),
+    linear-gradient(180deg, rgba(12, 34, 24, 0.92), rgba(7, 14, 12, 0.94)) !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(124, 255, 158, 0.28),
+    0 0 22px rgba(124, 255, 158, 0.32),
+    0 0 46px rgba(124, 255, 158, 0.16) !important;
+}
+
+.cg-page.is-results-time .cg-answer-cell.is-player-solved .cg-solved-card-frame > img.cg-solved-card-image,
+.cg-page.is-results-surrender .cg-answer-cell.is-player-solved .cg-solved-card-frame > img.cg-solved-card-image {
+  filter:
+    drop-shadow(0 12px 18px rgba(0, 0, 0, 0.5))
+    drop-shadow(0 0 16px rgba(124, 255, 158, 0.24)) !important;
+}
+
+.cg-page.is-results-time .cg-answer-cell.is-revealed,
+.cg-page.is-results-surrender .cg-answer-cell.is-revealed {
+  border-color: rgba(255, 106, 131, 0.88) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 106, 131, 0.13), transparent 46%),
+    linear-gradient(180deg, rgba(38, 12, 20, 0.92), rgba(15, 7, 11, 0.94)) !important;
+  box-shadow:
+    inset 0 0 0 2px rgba(255, 106, 131, 0.24),
+    0 0 22px rgba(255, 106, 131, 0.30),
+    0 0 46px rgba(255, 106, 131, 0.14) !important;
+}
+
+/* GRID: refresh revealed answer alternatives */
+.cg-post-result-actions {
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cg-post-result-actions .cg-refresh-revealed-button,
+.cg-post-result-actions .cg-primary-button {
+  min-width: 220px;
+}
+
+.cg-refresh-revealed-button {
+  color: #f7edd8;
+  border-color: rgba(118, 169, 255, 0.48);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(118, 169, 255, 0.18), transparent 54%),
+    linear-gradient(180deg, rgba(28, 50, 96, 0.94), rgba(10, 18, 42, 0.96));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 12px 28px rgba(0, 0, 0, 0.24),
+    0 0 22px rgba(118, 169, 255, 0.12);
+}
+
+.cg-refresh-revealed-button:hover:not(:disabled),
+.cg-refresh-revealed-button:focus-visible:not(:disabled) {
+  border-color: rgba(135, 190, 255, 0.78);
+  outline: none;
+}
+
+/* ==========================================================
+   CARD GRID FIT-SCREEN PASS
+   Board + side controls are kept inside one viewport on desktop/laptop.
+   ========================================================== */
+.app-shell.is-fit-screen-route .cg-page {
+  height: calc(100svh - var(--site-header-height, 76px));
+  min-height: 0;
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .cg-shell {
+  height: 100%;
+  width: min(100% - 28px, 1380px);
+  padding: clamp(6px, 1vh, 10px) 0 clamp(6px, 1vh, 10px) !important;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  align-items: start;
+}
+
+.app-shell.is-fit-screen-route .cg-daily-timer {
+  min-height: 32px;
+  padding: 5px 14px;
+  margin-bottom: clamp(6px, 0.9vh, 9px);
+}
+
+.app-shell.is-fit-screen-route .cg-daily-timer strong {
+  font-size: 1.08rem;
+}
+
+.app-shell.is-fit-screen-route .cg-layout-single {
+  min-height: 0;
+  height: 100%;
+  grid-template-columns: minmax(0, max-content) minmax(320px, 390px) !important;
+  gap: clamp(18px, 2.2vw, 34px) !important;
+  align-items: start !important;
+  justify-content: center !important;
+  overflow: visible;
+}
+
+.app-shell.is-fit-screen-route .cg-board-panel {
+  max-width: none !important;
+  min-height: 0;
+}
+
+.app-shell.is-fit-screen-route .cg-board {
+  --cg-fit-cell-h: clamp(170px, calc((100svh - var(--site-header-height, 76px) - 128px) / 3), 220px);
+  --cg-fit-cell-w: clamp(168px, 10.8vw, 210px);
+  --cg-fit-header-h: clamp(50px, calc(var(--cg-fit-cell-h) * 0.28), 62px);
+  --cg-fit-left-w: clamp(68px, calc(var(--cg-fit-cell-w) * 0.42), 84px);
+  grid-template-columns: var(--cg-fit-left-w) repeat(3, var(--cg-fit-cell-w)) !important;
+  grid-template-rows: var(--cg-fit-header-h) repeat(3, var(--cg-fit-cell-h)) !important;
+  gap: clamp(7px, 0.9vh, 10px) !important;
+  max-width: none !important;
+  width: auto !important;
+  min-height: 0 !important;
+  justify-content: start !important;
+}
+
+.app-shell.is-fit-screen-route .cg-page.is-results-time .cg-board,
+.app-shell.is-fit-screen-route .cg-page.is-results-surrender .cg-board,
+.app-shell.is-fit-screen-route .cg-page.is-results-won .cg-board {
+  --cg-fit-cell-h: clamp(160px, calc((100svh - var(--site-header-height, 76px) - 178px) / 3), 210px);
+}
+
+.app-shell.is-fit-screen-route .cg-corner-cell {
+  min-height: var(--cg-fit-header-h) !important;
+}
+
+.app-shell.is-fit-screen-route .cg-answer-cell {
+  min-height: var(--cg-fit-cell-h) !important;
+}
+
+.app-shell.is-fit-screen-route .cg-condition-icon-frame,
+.app-shell.is-fit-screen-route .cg-column-cell .cg-condition-icon-frame,
+.app-shell.is-fit-screen-route .cg-row-cell .cg-condition-icon-frame {
+  width: clamp(48px, 7.2vh, 64px) !important;
+  height: clamp(48px, 7.2vh, 64px) !important;
+  min-width: clamp(48px, 7.2vh, 64px) !important;
+  min-height: clamp(48px, 7.2vh, 64px) !important;
+}
+
+.app-shell.is-fit-screen-route .cg-condition-icon-frame > img.cg-condition-icon,
+.app-shell.is-fit-screen-route .cg-column-cell .cg-condition-icon-frame > img.cg-condition-icon,
+.app-shell.is-fit-screen-route .cg-row-cell .cg-condition-icon-frame > img.cg-condition-icon {
+  width: clamp(42px, 6.4vh, 58px) !important;
+  height: clamp(42px, 6.4vh, 58px) !important;
+  max-width: clamp(42px, 6.4vh, 58px) !important;
+  max-height: clamp(42px, 6.4vh, 58px) !important;
+}
+
+.app-shell.is-fit-screen-route .cg-answer-cell > span {
+  width: clamp(40px, 6vh, 52px) !important;
+  height: clamp(40px, 6vh, 52px) !important;
+}
+
+.app-shell.is-fit-screen-route .cg-solved-card-frame {
+  inset: 5px 7px !important;
+}
+
+.app-shell.is-fit-screen-route .cg-answer-cell .cg-solved-card-frame > img.cg-solved-card-image {
+  height: 97% !important;
+  max-height: 97% !important;
+  max-width: 97% !important;
+}
+
+.app-shell.is-fit-screen-route .cg-bottom-controls {
+  max-width: 390px !important;
+  width: 100% !important;
+  gap: clamp(9px, 1.2vh, 14px) !important;
+  align-self: start !important;
+}
+
+.app-shell.is-fit-screen-route .cg-selection-summary {
+  padding: 10px 12px !important;
+  gap: 8px !important;
+}
+
+.app-shell.is-fit-screen-route .cg-selection-chip {
+  min-height: 42px !important;
+  padding: 8px 11px !important;
+}
+
+.app-shell.is-fit-screen-route .cg-selection-chip-icon {
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.app-shell.is-fit-screen-route .cg-selection-chip span {
+  font-size: 0.95rem !important;
+}
+
+.app-shell.is-fit-screen-route .cg-selection-join {
+  font-size: 1.18rem !important;
+}
+
+.app-shell.is-fit-screen-route .cg-answer-form {
+  padding: clamp(12px, 1.6vh, 16px) !important;
+}
+
+.app-shell.is-fit-screen-route .cg-answer-form label {
+  font-size: 0.72rem !important;
+  margin-bottom: 6px !important;
+}
+
+.app-shell.is-fit-screen-route .cg-answer-form input {
+  min-height: clamp(42px, 5.6vh, 52px) !important;
+  font-size: 0.98rem !important;
+}
+
+.app-shell.is-fit-screen-route .cg-enter-hint {
+  margin-top: 7px !important;
+  font-size: 0.8rem !important;
+}
+
+.app-shell.is-fit-screen-route .cg-suggestions {
+  max-height: clamp(128px, 27vh, 260px) !important;
+  margin-top: 8px !important;
+  padding: 7px !important;
+  gap: 6px !important;
+}
+
+.app-shell.is-fit-screen-route .cg-suggestions button {
+  min-height: 38px !important;
+  padding: 9px 11px !important;
+  font-size: 0.94rem !important;
+}
+
+.app-shell.is-fit-screen-route .cg-input-feedback {
+  margin-top: 8px;
+  padding: 9px 10px;
+}
+
+.app-shell.is-fit-screen-route .cg-surrender-button {
+  min-height: 40px;
+}
+
+.app-shell.is-fit-screen-route .cg-post-result-actions {
+  margin-top: 6px;
+  gap: 8px;
+}
+
+.app-shell.is-fit-screen-route .cg-post-result-actions .cg-refresh-revealed-button,
+.app-shell.is-fit-screen-route .cg-post-result-actions .cg-primary-button {
+  min-height: 40px;
+  min-width: 200px;
+  padding-inline: 16px;
+}
+
+@media (max-height: 760px) and (min-width: 1181px) {
+  .app-shell.is-fit-screen-route .cg-shell {
+    width: min(100% - 22px, 1260px);
+    padding-top: 5px !important;
+    padding-bottom: 5px !important;
+  }
+
+  .app-shell.is-fit-screen-route .cg-layout-single {
+    gap: 20px !important;
+  }
+
+  .app-shell.is-fit-screen-route .cg-board {
+    --cg-fit-cell-h: clamp(154px, calc((100svh - var(--site-header-height, 62px) - 126px) / 3), 196px);
+    --cg-fit-cell-w: clamp(150px, 10vw, 184px);
+  }
+
+  .app-shell.is-fit-screen-route .cg-page.is-results-time .cg-board,
+  .app-shell.is-fit-screen-route .cg-page.is-results-surrender .cg-board,
+  .app-shell.is-fit-screen-route .cg-page.is-results-won .cg-board {
+    --cg-fit-cell-h: clamp(146px, calc((100svh - var(--site-header-height, 62px) - 170px) / 3), 185px);
+  }
+
+  .app-shell.is-fit-screen-route .cg-bottom-controls {
+    max-width: 360px !important;
+  }
+
+  .app-shell.is-fit-screen-route .cg-selection-summary {
+    padding: 8px 10px !important;
+  }
+
+  .app-shell.is-fit-screen-route .cg-answer-form {
+    padding: 12px !important;
+  }
+}
+
+@media (max-width: 1180px) {
+  .app-shell.is-fit-screen-route .cg-page,
+  .app-shell.is-fit-screen-route .cg-shell {
+    height: auto;
+    overflow: visible;
+  }
+}

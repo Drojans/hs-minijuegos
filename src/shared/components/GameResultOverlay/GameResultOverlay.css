@@ -169,14 +169,55 @@
 }
 
 .game-result-reward {
-  margin: 0;
-  padding: 9px 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 218, 126, 0.24);
+  margin: 2px 0 0;
+  min-width: min(100%, 260px);
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 20px 14px;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 218, 126, 0.3);
   color: #ffe0a0;
-  background: rgba(255, 187, 72, 0.08);
-  font-size: 0.95rem;
-  font-weight: 920;
+  background:
+    radial-gradient(circle at 50% 82%, rgba(95, 205, 238, 0.18), transparent 58px),
+    radial-gradient(circle at 50% 10%, rgba(255, 218, 126, 0.12), transparent 72px),
+    rgba(255, 187, 72, 0.08);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 14px 30px rgba(0,0,0,0.24);
+}
+
+.game-result-reward-text {
+  margin: 0;
+  color: #ffe0a0;
+  font-size: 1rem;
+  line-height: 1.2;
+  font-weight: 950;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.28);
+}
+
+.game-result-reward-icon {
+  width: 136px;
+  height: 112px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.game-result-reward-icon img {
+  display: block;
+  width: 136px;
+  height: 136px;
+  object-fit: contain;
+  transform: none;
+  filter: drop-shadow(0 12px 14px rgba(0,0,0,0.46));
 }
 
 .game-result-actions {
@@ -303,5 +344,87 @@
   .game-result-actions,
   .game-result-button {
     width: 100%;
+  }
+}
+
+/* ==========================================================
+   FIT-SCREEN RESULT MODALS
+   Result overlays stay inside the viewport without body/page scroll.
+   ========================================================== */
+.app-shell.is-fit-screen-route ~ .game-result-backdrop,
+.game-result-backdrop {
+  padding: clamp(10px, 2.2vh, 24px);
+}
+
+.game-result-card {
+  max-height: calc(100svh - 24px);
+}
+
+.game-result-layout {
+  padding: clamp(16px, 3vh, 28px);
+  gap: clamp(12px, 2vh, 22px);
+}
+
+.game-result-copy {
+  gap: clamp(7px, 1.3vh, 12px);
+}
+
+.game-result-icon {
+  width: clamp(54px, 8vh, 74px);
+  height: clamp(54px, 8vh, 74px);
+}
+
+.game-result-icon span {
+  font-size: clamp(1.9rem, 4vh, 2.6rem);
+}
+
+.game-result-card h2 {
+  font-size: clamp(2.05rem, 6vh, 3.7rem);
+}
+
+.game-result-text {
+  font-size: clamp(0.92rem, 1.7vh, 1.08rem);
+  line-height: 1.28;
+}
+
+.game-result-reward {
+  padding: 8px 16px 10px;
+  gap: 4px;
+}
+
+.game-result-reward-icon {
+  width: clamp(98px, 14vh, 136px);
+  height: clamp(76px, 11vh, 112px);
+}
+
+.game-result-reward-icon img {
+  width: clamp(98px, 14vh, 136px);
+  height: clamp(98px, 14vh, 136px);
+}
+
+.game-result-button {
+  min-height: clamp(42px, 5.6vh, 50px);
+}
+
+.game-result-preview img {
+  width: min(100%, clamp(160px, 27vh, 245px));
+  max-height: calc(100svh - 112px);
+}
+
+@media (max-height: 760px) and (min-width: 761px) {
+  .game-result-card.has-preview {
+    width: min(100%, 780px);
+  }
+
+  .game-result-card.has-preview .game-result-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(150px, 210px);
+  }
+
+  .game-result-layout {
+    padding: 16px 22px;
+  }
+
+  .game-result-reward-text {
+    font-size: 0.92rem;
   }
 }

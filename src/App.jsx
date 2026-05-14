@@ -29,6 +29,16 @@ const APP_ROUTES = {
   "/player": "player",
 };
 
+const FIT_SCREEN_ROUTES = new Set([
+  "/",
+  "/guess-mana",
+  "/impostor",
+  "/grid",
+  "/pyramid",
+  "/higher-lower",
+  "/hidden-card",
+]);
+
 function normalizePath(pathname) {
   const path = pathname === "/" ? "/" : pathname.replace(/\/$/, "");
   return APP_ROUTES[path] ? path : "/";
@@ -53,6 +63,7 @@ function App() {
     dismissNotice: dismissDailyRolloverNotice,
   } = useDailyRollover();
   const [pathname, setPathname] = useState(() => normalizePath(window.location.pathname));
+  const isFitScreenRoute = FIT_SCREEN_ROUTES.has(pathname);
 
   useEffect(() => {
     function syncPathname() {
@@ -65,6 +76,16 @@ function App() {
       window.removeEventListener("popstate", syncPathname);
     };
   }, []);
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("is-fit-screen-route", isFitScreenRoute);
+    document.body.classList.toggle("is-fit-screen-route", isFitScreenRoute);
+
+    return () => {
+      document.documentElement.classList.remove("is-fit-screen-route");
+      document.body.classList.remove("is-fit-screen-route");
+    };
+  }, [isFitScreenRoute]);
 
   const navigate = useCallback((path) => {
     const nextPath = normalizePath(path);
@@ -124,7 +145,7 @@ function App() {
   }
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell route-${APP_ROUTES[pathname]} ${isFitScreenRoute ? "is-fit-screen-route" : ""}`}>
       <SiteHeader pathname={pathname} onNavigate={navigate} />
       <div className="app-page" key={dailyDateKey}>
         <Suspense fallback={<AppRouteFallback />}>{page}</Suspense>

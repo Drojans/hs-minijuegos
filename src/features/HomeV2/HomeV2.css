@@ -1197,3 +1197,115 @@
     drop-shadow(0 16px 22px rgba(0, 0, 0, 0.46))
     drop-shadow(0 0 14px rgba(255, 76, 104, 0.14));
 }
+
+/* ==========================================================
+   HOME FIT-SCREEN PASS
+   Keeps the full home menu visible inside the viewport on desktop/laptop.
+   ========================================================== */
+.app-shell.is-fit-screen-route .home-v2-page {
+  height: calc(100svh - var(--site-header-height, 76px));
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  align-items: center;
+}
+
+.app-shell.is-fit-screen-route .home-v2-shell {
+  width: min(100% - 42px, 1240px);
+  max-height: 100%;
+  padding: clamp(8px, 1.4vh, 14px) 0 clamp(10px, 1.6vh, 16px);
+}
+
+.app-shell.is-fit-screen-route .home-v2-status-row {
+  margin-bottom: clamp(8px, 1.35vh, 12px);
+}
+
+.app-shell.is-fit-screen-route .home-v2-section-label {
+  margin-bottom: clamp(7px, 1.2vh, 10px);
+}
+
+.app-shell.is-fit-screen-route .home-v2-modes-section + .home-v2-modes-section {
+  margin-top: clamp(14px, 2.2vh, 26px);
+}
+
+.app-shell.is-fit-screen-route .home-v2-mode-grid.is-games,
+.app-shell.is-fit-screen-route .home-v2-mode-grid.is-library {
+  gap: clamp(12px, 1.45vw, 22px);
+}
+
+.app-shell.is-fit-screen-route .home-v2-mode-card {
+  min-height: clamp(132px, 19vh, 172px);
+  padding: clamp(10px, 1.4vh, 14px) 16px;
+}
+
+.app-shell.is-fit-screen-route .home-v2-mode-card .home-v2-mode-icon {
+  min-height: clamp(70px, 11.5vh, 98px);
+  margin-bottom: 6px;
+}
+
+.app-shell.is-fit-screen-route .home-v2-mode-icon img {
+  width: clamp(84px, 12vh, 120px);
+  height: clamp(84px, 12vh, 120px);
+}
+
+.app-shell.is-fit-screen-route .home-v2-mode-card h3 {
+  font-size: clamp(1rem, 1.28vw, 1.34rem);
+}
+
+.app-shell.is-fit-screen-route .home-v2-mode-grid.is-library .home-v2-mode-card {
+  min-height: clamp(82px, 13vh, 116px);
+  grid-template-columns: clamp(58px, 8vh, 80px) minmax(0, 1fr);
+}
+
+.app-shell.is-fit-screen-route .home-v2-mode-grid.is-library .home-v2-mode-icon,
+.app-shell.is-fit-screen-route .home-v2-mode-grid.is-library .home-v2-mode-icon img {
+  width: clamp(54px, 7.5vh, 74px);
+  height: clamp(54px, 7.5vh, 74px);
+  min-height: clamp(54px, 7.5vh, 74px);
+}
+
+@media (max-height: 780px) and (min-width: 981px) {
+  .app-shell.is-fit-screen-route .home-v2-shell {
+    width: min(100% - 36px, 1180px);
+    padding-block: 8px 10px;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-mode-grid.is-games,
+  .app-shell.is-fit-screen-route .home-v2-mode-grid.is-library {
+    gap: 12px;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-modes-section + .home-v2-modes-section {
+    margin-top: 14px;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-section-label h2 {
+    font-size: 1.05rem;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-mode-card {
+    min-height: 126px;
+    padding-block: 9px;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-mode-card .home-v2-mode-icon {
+    min-height: 64px;
+    margin-bottom: 4px;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-mode-icon img {
+    width: 82px;
+    height: 82px;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-mode-grid.is-library .home-v2-mode-card {
+    min-height: 74px;
+  }
+
+  .app-shell.is-fit-screen-route .home-v2-mode-grid.is-library .home-v2-mode-icon,
+  .app-shell.is-fit-screen-route .home-v2-mode-grid.is-library .home-v2-mode-icon img {
+    width: 52px;
+    height: 52px;
+    min-height: 52px;
+  }
+}

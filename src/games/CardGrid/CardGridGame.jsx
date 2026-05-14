@@ -22,6 +22,7 @@ import CardGridResultOverlay from "./components/CardGridResultOverlay";
 import CardGridTimer from "./components/CardGridTimer";
 import { getCardGridCopy } from "./cardGridCopy";
 import {
+  buildRefreshedRevealedAnswerState,
   buildRevealedAnswerState,
   getDailyGridSeed,
   getGridCellKey,
@@ -103,6 +104,10 @@ function CardGridGame({ cards, onBack }) {
     !endOverlay &&
     !resultsMode &&
     typeof timeLeft === "number";
+  const canRefreshRevealedAnswers =
+    !endOverlay &&
+    (resultsMode === "surrender" || resultsMode === "time") &&
+    revealedCells.size > 0;
 
   function getCardNameKeyValues(card) {
     return [card?.name, card?.nameEn, getCardName(card, locale)]
@@ -184,12 +189,23 @@ function CardGridGame({ cards, onBack }) {
 
     const restoredAnswers = restoreAnswersFromIds(latestProgress.answerIds, playableCards);
 
+    const storedRevealedCells = Array.isArray(latestProgress.revealedCellKeys)
+      ? latestProgress.revealedCellKeys.filter((key) => restoredAnswers[key])
+      : null;
+
     if (latestProgress.lastWasCorrect) {
-      const restoredKeys = Object.keys(restoredAnswers);
       return {
         answers: restoredAnswers,
-        revealedCells: restoredKeys,
+        revealedCells: storedRevealedCells ?? [],
         resultsMode: "won",
+      };
+    }
+
+    if (storedRevealedCells) {
+      return {
+        answers: restoredAnswers,
+        revealedCells: storedRevealedCells,
+        resultsMode: latestProgress.failedReason === "surrender" ? "surrender" : "time",
       };
     }
 
@@ -198,7 +214,7 @@ function CardGridGame({ cards, onBack }) {
     return {
       answers: revealedState.answers,
       revealedCells: Array.from(revealedState.revealedCells),
-      resultsMode: latestProgress.failedReason === "time" ? "time" : "time",
+      resultsMode: latestProgress.failedReason === "surrender" ? "surrender" : "time",
     };
   }
 
@@ -247,6 +263,20 @@ function CardGridGame({ cards, onBack }) {
     return revealedState;
   }
 
+  function refreshRevealedAnswers() {
+    if (!grid || !revealedCells.size) return;
+
+    const refreshedState = buildRefreshedRevealedAnswerState({
+      answers,
+      grid,
+      revealedCells,
+    });
+
+    setAnswers(refreshedState.answers);
+    setRevealedCells(refreshedState.revealedCells);
+    triggerMessage(t("grid.message.revealedAlternatives"), "neutral");
+  }
+
   function finalizeDailyGridFailure(reason = "exit", snapshot = latestDailyRunRef.current) {
     if (!snapshot?.grid || snapshot.selectedMode !== GAME_MODE_IDS.DAILY || snapshot.dailyProgress?.completed) return null;
     if (didFinalizeDailyRef.current) return null;
@@ -265,6 +295,7 @@ function CardGridGame({ cards, onBack }) {
       rewardClaimed: false,
       inProgress: false,
       answerIds: serializeAnswerIds(revealedState.answers),
+      revealedCellKeys: Array.from(revealedState.revealedCells),
       completedGridMode: snapshot.gridMode,
       lastWasCorrect: false,
       failedReason: reason,
@@ -276,7 +307,7 @@ function CardGridGame({ cards, onBack }) {
   }
 
   function viewEndResults() {
-    if (endOverlay === "time") {
+    if (endOverlay && endOverlay !== "won") {
       revealAllPendingAnswers();
     }
 
@@ -302,6 +333,7 @@ function CardGridGame({ cards, onBack }) {
         inProgress: true,
         startedAt: new Date().toISOString(),
         answerIds: {},
+        revealedCellKeys: [],
         completedGridMode: gridMode,
         lastWasCorrect: false,
         failedReason: null,
@@ -318,15 +350,16 @@ function CardGridGame({ cards, onBack }) {
     createNewGrid(false, selectedMode);
     // createNewGrid depends on current state by design; keep explicit deps to avoid
     // regenerating more often than the previous implementation.
+    // Important: do not depend on locale/t/conditionPool here. Switching language
+    // should only swap visible text/card images, not rebuild the board or lose
+    // which cells were solved by the player.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     cards.length,
     playableCards,
-    conditionPool,
     modeConfig.minCandidatesPerCell,
     gridMode,
     selectedMode,
-    t,
   ]);
 
   function returnToModes() {
@@ -399,6 +432,7 @@ function CardGridGame({ cards, onBack }) {
       saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
         inProgress: true,
         answerIds: serializeAnswerIds(nextAnswers),
+        revealedCellKeys: Array.from(revealedCells),
         completedGridMode: gridMode,
         lastWasCorrect: false,
         failedReason: null,
@@ -449,6 +483,30 @@ function CardGridGame({ cards, onBack }) {
     setMessage(copy.dailyTimeExpiredMessage);
     setRewardMessage("");
     setEndOverlay("time");
+    setResultsMode(null);
+  }
+
+  function surrenderGrid() {
+    if (!grid || isComplete || endOverlay || resultsMode) return;
+
+    const revealedState =
+      selectedMode === GAME_MODE_IDS.DAILY
+        ? finalizeDailyGridFailure("surrender")
+        : buildRevealedAnswerState({ answers, grid, revealedCells });
+
+    if (!revealedState) return;
+
+    setAnswers(revealedState.answers);
+    setRevealedCells(revealedState.revealedCells);
+    setTimeLeft(0);
+    setAnswer("");
+    setSuppressSuggestions(true);
+    setPendingPlacement(null);
+    setSelectedCell(null);
+    setMessage(t("grid.message.surrendered"));
+    setMessageTone("neutral");
+    setRewardMessage("");
+    setEndOverlay("surrender");
     setResultsMode(null);
   }
 
@@ -507,6 +565,7 @@ function CardGridGame({ cards, onBack }) {
     didFinalizeDailyRef.current = true;
     saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
       answerIds: serializeAnswerIds(nextAnswers),
+      revealedCellKeys: [],
       completedGridMode: gridMode,
       lastWasCorrect: true,
       failedReason: null,
@@ -583,6 +642,7 @@ function CardGridGame({ cards, onBack }) {
         saveDailyChallengeResult(CARD_GRID_GAME_ID, todayKey, {
           inProgress: true,
           answerIds: serializeAnswerIds(answers),
+          revealedCellKeys: Array.from(revealedCells),
           completedGridMode: gridMode,
           lastWasCorrect: false,
           failedReason: null,
@@ -707,14 +767,22 @@ function CardGridGame({ cards, onBack }) {
             onPickSuggestion={handleSuggestionPick}
             onSubmitAnswer={submitAnswer}
             onChoosePlacement={commitPlacement}
+            onSurrender={surrenderGrid}
           />
         </section>
 
-        {selectedMode === GAME_MODE_IDS.INFINITE && resultsMode && !endOverlay ? (
+        {resultsMode && !endOverlay ? (
           <div className="cg-post-result-actions">
-            <button type="button" className="cg-primary-button" onClick={startNewGrid}>
-              {t("grid.playAgain")}
-            </button>
+            {canRefreshRevealedAnswers ? (
+              <button type="button" className="cg-secondary-button cg-refresh-revealed-button" onClick={refreshRevealedAnswers}>
+                {t("grid.revealOtherAnswers")}
+              </button>
+            ) : null}
+            {selectedMode === GAME_MODE_IDS.INFINITE ? (
+              <button type="button" className="cg-primary-button" onClick={startNewGrid}>
+                {t("grid.playAgain")}
+              </button>
+            ) : null}
           </div>
         ) : null}
       </section>

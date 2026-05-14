@@ -642,3 +642,105 @@
 }
 
 
+
+/* ==========================================================
+   GUESS MANA FIT-SCREEN PASS
+   ========================================================== */
+.app-shell.is-fit-screen-route .guess-v3-page {
+  height: calc(100svh - var(--site-header-height, 76px));
+  overflow: hidden;
+}
+
+.app-shell.is-fit-screen-route .guess-v3-shell:not(.is-mode-select) {
+  height: 100%;
+  max-height: 100%;
+  padding: clamp(6px, 1vh, 10px) 0 clamp(8px, 1.1vh, 12px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: center;
+}
+
+.app-shell.is-fit-screen-route .guess-v3-mode-pill {
+  margin-bottom: clamp(4px, 0.8vh, 8px);
+  padding: 6px 14px;
+  font-size: 0.96rem;
+}
+
+.app-shell.is-fit-screen-route .guess-v3-stage {
+  min-height: 0;
+  gap: clamp(2px, 0.8vh, 6px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-card-frame {
+  width: min(100%, clamp(210px, 30vh, 310px));
+  min-height: clamp(295px, 47vh, 396px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-card-frame img {
+  width: min(100%, clamp(190px, 29vh, 252px));
+}
+
+.app-shell.is-fit-screen-route .guess-v3-card-fallback {
+  width: min(100%, clamp(190px, 29vh, 252px));
+  min-height: clamp(280px, 44vh, 360px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-mana-cover-wrap {
+  width: clamp(72px, 11.5vh, 98px);
+  height: clamp(72px, 11.5vh, 98px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-controls {
+  gap: clamp(6px, 1vh, 10px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-selected-label,
+.app-shell.is-fit-screen-route .guess-v3-selector-title {
+  padding: 6px 13px;
+  font-size: 1.05rem;
+}
+
+.app-shell.is-fit-screen-route .guess-v3-crystal-shell {
+  width: clamp(92px, 15vh, 132px);
+  height: clamp(92px, 15vh, 132px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-crystal-shell strong {
+  font-size: clamp(2.55rem, 6.2vh, 3.55rem);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-mana-grid {
+  gap: clamp(4px, 0.8vh, 8px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-mana-row {
+  gap: clamp(3px, 0.6vh, 7px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-mana-button {
+  width: clamp(54px, 8vh, 68px);
+  height: clamp(54px, 8vh, 68px);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-mana-button span {
+  font-size: clamp(1.75rem, 4vh, 2.28rem);
+}
+
+.app-shell.is-fit-screen-route .guess-v3-button {
+  min-height: clamp(40px, 5.4vh, 48px);
+}
+
+@media (max-height: 760px) and (min-width: 701px) {
+  .app-shell.is-fit-screen-route .guess-v3-card-frame {
+    min-height: 286px;
+  }
+
+  .app-shell.is-fit-screen-route .guess-v3-card-frame img {
+    width: 196px;
+  }
+
+  .app-shell.is-fit-screen-route .guess-v3-mana-button {
+    width: 54px;
+    height: 54px;
+  }
+}
