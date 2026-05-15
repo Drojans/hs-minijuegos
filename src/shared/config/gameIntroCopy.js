@@ -239,20 +239,20 @@ const GAME_INTRO_COPY = {
 
   [GAME_IDS.PYRAMID]: {
     es: {
-      title: "Pirámide de cartas",
-      description: "Completa la pirámide escribiendo cartas válidas para una categoría concreta.",
-      exampleLabel: "Ejemplo visual del minijuego Pirámide de cartas",
+      title: "Diez de Diez",
+      description: "Encuentra diez cartas válidas para una categoría concreta antes de que termine el tiempo.",
+      exampleLabel: "Ejemplo visual del minijuego Diez de Diez",
       previewSrc: "/ui/games/pyramid/mode-example.svg",
       steps: [
         {
           icon: "10",
           title: "Hay una categoría",
-          text: "Te damos una condición. Escribe cartas que encajen para llenar la pirámide.",
+          text: "Te damos una condición. Escribe diez cartas que encajen con ella.",
         },
         {
           icon: "✎",
-          title: "Escribe cartas válidas",
-          text: "Cada acierto ocupa un hueco. No puedes repetir carta dentro de la misma pirámide.",
+          title: "Completa diez huecos",
+          text: "Cada acierto ocupa un hueco del tablero. No puedes repetir carta en el mismo reto.",
         },
         {
           icon: "⌛",
@@ -262,20 +262,20 @@ const GAME_INTRO_COPY = {
       ],
     },
     en: {
-      title: "Card Pyramid",
-      description: "Complete the pyramid by typing valid cards for a specific category.",
-      exampleLabel: "Card Pyramid minigame example",
+      title: "Ten out of Ten",
+      description: "Find ten valid cards for a specific category before time runs out.",
+      exampleLabel: "Ten out of Ten minigame example",
       previewSrc: "/ui/games/pyramid/mode-example.svg",
       steps: [
         {
           icon: "10",
           title: "There is a category",
-          text: "You get one condition. Type cards that match it to fill the pyramid.",
+          text: "You get one condition. Type ten cards that match it.",
         },
         {
           icon: "✎",
-          title: "Type valid cards",
-          text: "Every correct answer fills one slot. You cannot repeat a card in the same pyramid.",
+          title: "Fill ten slots",
+          text: "Every correct answer fills one board slot. You cannot repeat a card in the same challenge.",
         },
         {
           icon: "⌛",
