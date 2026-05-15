@@ -1,14 +1,14 @@
 import { createPortal } from "react-dom";
 import "./GameResultOverlay.css";
 
-function Confetti({ count = 36 }) {
+function Confetti({ count = 34 }) {
   return (
     <div className="game-result-confetti" aria-hidden="true">
       {Array.from({ length: count }).map((_, index) => {
         const angle = (Math.PI * 2 * index) / count;
-        const distance = 128 + (index % 6) * 16;
+        const distance = 120 + (index % 6) * 18;
         const x = Math.cos(angle) * distance;
-        const y = Math.sin(angle) * distance - 18;
+        const y = Math.sin(angle) * distance - 12;
 
         return (
           <span
@@ -16,8 +16,8 @@ function Confetti({ count = 36 }) {
             style={{
               "--x": `${x.toFixed(0)}px`,
               "--y": `${y.toFixed(0)}px`,
-              "--r": `${index * 37}deg`,
-              "--delay": `${(index % 8) * 26}ms`,
+              "--r": `${index * 31}deg`,
+              "--delay": `${(index % 8) * 24}ms`,
             }}
           />
         );
@@ -35,9 +35,17 @@ function ActionButton({ action, variant = "secondary" }) {
       className={`game-result-button is-${action.variant ?? variant}`}
       onClick={action.onClick}
     >
-      {action.label}
+      <span>{action.label}</span>
     </button>
   );
+}
+
+function normalizeRewardMessage(value) {
+  if (!value || typeof value !== "string") return value;
+  const cleaned = value.trim().replace(/[.!?]+$/u, "");
+  if (!cleaned) return "";
+  if (cleaned.startsWith("¡") && cleaned.endsWith("!")) return cleaned;
+  return `¡${cleaned}!`;
 }
 
 function GameResultOverlay({
@@ -52,37 +60,48 @@ function GameResultOverlay({
   icon,
   showConfetti,
   className = "",
+  statusLabel,
 }) {
   const isSuccess = tone === "success" || tone === "correct" || tone === "won";
   const resolvedShowConfetti = showConfetti ?? isSuccess;
-  const resolvedIcon = icon ?? (isSuccess ? "✦" : "!");
+  const hasExplicitlyHiddenIcon = icon === null || icon === false || icon === "";
+  const resolvedIcon = hasExplicitlyHiddenIcon ? null : (icon ?? null);
   const hasPreview = Boolean(preview);
+  const resolvedRewardMessage = normalizeRewardMessage(rewardMessage);
+  const hasReward = Boolean(resolvedRewardMessage);
+  const resolvedStatusLabel = statusLabel ?? (isSuccess ? "Acierto" : "Fallo");
 
   const overlay = (
     <div className="game-result-backdrop" role="presentation">
       <section
-        className={`game-result-card is-${isSuccess ? "success" : "danger"} ${hasPreview ? "has-preview" : ""} ${className}`}
+        className={`game-result-card is-${isSuccess ? "success" : "danger"} ${hasPreview ? "has-preview" : ""} ${hasReward ? "has-reward" : ""} ${className}`}
         role="status"
         aria-live="polite"
       >
         {resolvedShowConfetti ? <Confetti /> : null}
+        <span className="game-result-ambient-glow game-result-ambient-glow-a" aria-hidden="true" />
+        <span className="game-result-ambient-glow game-result-ambient-glow-b" aria-hidden="true" />
 
         <div className="game-result-layout">
           <div className="game-result-copy">
-            <div className="game-result-icon" aria-hidden="true">
-              <span>{resolvedIcon}</span>
-            </div>
+            {resolvedIcon ? (
+              <div className="game-result-icon" aria-hidden="true">
+                <span>{resolvedIcon}</span>
+              </div>
+            ) : null}
 
             {kicker ? <p className="game-result-kicker">{kicker}</p> : null}
+            <p className={`game-result-status-pill is-${isSuccess ? "success" : "danger"}`}>{resolvedStatusLabel}</p>
             <h2>{title}</h2>
             {text ? <p className="game-result-text">{text}</p> : null}
             {detail ? <div className="game-result-detail">{detail}</div> : null}
-            {rewardMessage ? (
-              <div className="game-result-reward">
-                <p className="game-result-reward-text">{rewardMessage}</p>
-                <span className="game-result-reward-icon" aria-hidden="true">
-                  <img src="/ui/rewards/arcane-box-open.png" alt="" draggable="false" />
-                </span>
+
+            {hasReward ? (
+              <div className="game-result-reward-panel">
+                <p className="game-result-reward-label">{resolvedRewardMessage}</p>
+                <div className="game-result-reward-chest" aria-hidden="true">
+                  <img src="/ui/rewards/arcane-box-open.png" alt="" />
+                </div>
               </div>
             ) : null}
 

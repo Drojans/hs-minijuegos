@@ -1,0 +1,330 @@
+/* ==========================================================
+   Hearthdle visual system — Buttons v1
+   Direction: "Taberna arcana ligera", based on proposal B.
+   This is intentionally global so we can test the new button
+   language without refactoring every component yet.
+   ========================================================== */
+
+:root {
+  --hd-button-cream: #fff0ca;
+  --hd-button-cream-muted: rgba(247, 236, 212, 0.82);
+  --hd-button-gold: rgba(239, 198, 119, 0.76);
+  --hd-button-gold-strong: rgba(255, 220, 145, 0.92);
+  --hd-button-bronze: rgba(143, 97, 43, 0.74);
+  --hd-button-blue-edge: rgba(82, 156, 255, 0.46);
+  --hd-button-blue-glow: rgba(63, 126, 232, 0.34);
+  --hd-button-red: rgba(129, 34, 48, 0.96);
+}
+
+/* Primary actions: Comprobar, Jugar, Continuar, Abrir caja, Ver resultados... */
+:where(
+  .game-mode-select-start,
+  .game-result-button.is-primary,
+  .guess-v3-button.is-primary,
+  .hidden-card-input-row button,
+  .hidden-card-button.is-primary,
+  .hl-button.is-primary,
+  .im-primary-button,
+  .cg-primary-button,
+  .py-button.is-primary,
+  .pack-opening-start,
+  .pack-opening-continue,
+  .collection-box-copy button,
+  .app-error-button--primary
+) {
+  position: relative !important;
+  overflow: hidden !important;
+  isolation: isolate !important;
+  border: 1px solid var(--hd-button-gold) !important;
+  border-radius: 10px !important;
+  color: var(--hd-button-cream) !important;
+  background:
+    linear-gradient(90deg, rgba(80, 153, 255, 0.00) 0%, rgba(80, 153, 255, 0.10) 18%, rgba(80, 153, 255, 0.18) 50%, rgba(80, 153, 255, 0.10) 82%, rgba(80, 153, 255, 0.00) 100%),
+    radial-gradient(circle at 50% -120%, rgba(110, 168, 255, 0.28), transparent 58%),
+    radial-gradient(circle at 50% 130%, rgba(33, 90, 190, 0.20), transparent 58%),
+    linear-gradient(180deg, rgba(31, 39, 55, 0.98), rgba(8, 13, 22, 0.98)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 209, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
+    inset 0 0 0 1px rgba(82, 156, 255, 0.14),
+    0 0 0 1px rgba(65, 34, 12, 0.52),
+    0 12px 24px rgba(0, 0, 0, 0.26),
+    0 0 20px rgba(63, 126, 232, 0.12) !important;
+  text-shadow:
+    0 1px 0 rgba(86, 51, 18, 0.85),
+    0 0 12px rgba(255, 221, 151, 0.16) !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.01em !important;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    opacity 160ms ease !important;
+}
+
+/* Refined inner shine and blue edge, implemented as a non-intrusive overlay. */
+:where(
+  .game-mode-select-start,
+  .game-result-button.is-primary,
+  .guess-v3-button.is-primary,
+  .hidden-card-input-row button,
+  .hidden-card-button.is-primary,
+  .hl-button.is-primary,
+  .im-primary-button,
+  .cg-primary-button,
+  .py-button.is-primary,
+  .pack-opening-start,
+  .pack-opening-continue,
+  .collection-box-copy button,
+  .app-error-button--primary
+)::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 2px !important;
+  border-radius: 8px !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(180deg, rgba(255, 245, 215, 0.13), transparent 36%),
+    linear-gradient(90deg, transparent 0%, rgba(80, 153, 255, 0.18) 50%, transparent 100%) !important;
+  opacity: 0.74 !important;
+  z-index: -1 !important;
+}
+
+/* Side jewel impression: subtle, not a full asset. */
+:where(
+  .game-mode-select-start,
+  .game-result-button.is-primary,
+  .guess-v3-button.is-primary,
+  .hidden-card-input-row button,
+  .hidden-card-button.is-primary,
+  .hl-button.is-primary,
+  .im-primary-button,
+  .cg-primary-button,
+  .py-button.is-primary,
+  .pack-opening-start,
+  .pack-opening-continue,
+  .collection-box-copy button,
+  .app-error-button--primary
+)::after {
+  content: "" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  background:
+    radial-gradient(circle at 12px 50%, rgba(92, 178, 255, 0.34), transparent 11px),
+    radial-gradient(circle at calc(100% - 12px) 50%, rgba(92, 178, 255, 0.34), transparent 11px),
+    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%) !important;
+  opacity: 0.55 !important;
+  z-index: -1 !important;
+}
+
+:where(
+  .game-mode-select-start,
+  .game-result-button.is-primary,
+  .guess-v3-button.is-primary,
+  .hidden-card-input-row button,
+  .hidden-card-button.is-primary,
+  .hl-button.is-primary,
+  .im-primary-button,
+  .cg-primary-button,
+  .py-button.is-primary,
+  .pack-opening-start,
+  .pack-opening-continue,
+  .collection-box-copy button,
+  .app-error-button--primary
+):hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  border-color: var(--hd-button-gold-strong) !important;
+  filter: brightness(1.07) saturate(1.05) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 221, 0.24),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.46),
+    inset 0 0 0 1px rgba(105, 167, 255, 0.25),
+    0 0 0 1px rgba(116, 72, 25, 0.58),
+    0 14px 28px rgba(0, 0, 0, 0.28),
+    0 0 26px rgba(63, 126, 232, 0.25) !important;
+}
+
+:where(
+  .game-mode-select-start,
+  .game-result-button.is-primary,
+  .guess-v3-button.is-primary,
+  .hidden-card-input-row button,
+  .hidden-card-button.is-primary,
+  .hl-button.is-primary,
+  .im-primary-button,
+  .cg-primary-button,
+  .py-button.is-primary,
+  .pack-opening-start,
+  .pack-opening-continue,
+  .collection-box-copy button,
+  .app-error-button--primary
+):active:not(:disabled) {
+  transform: translateY(0) scale(0.99) !important;
+  filter: brightness(0.98) !important;
+}
+
+/* Secondary actions: dark tavern button, not bright blue. */
+:where(
+  .game-result-button.is-secondary,
+  .guess-v3-button.is-secondary,
+  .hidden-card-button.is-secondary,
+  .hl-button.is-secondary,
+  .im-secondary-button,
+  .cg-secondary-button,
+  .py-button.is-secondary,
+  .pack-opening-secondary,
+  .game-layout-back-button,
+  .app-error-button--secondary,
+  .player-profile-name-form button,
+  .player-profile-action-row button
+) {
+  border: 1px solid rgba(239, 198, 119, 0.34) !important;
+  border-radius: 10px !important;
+  color: var(--hd-button-cream-muted) !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 216, 135, 0.09), transparent 58%),
+    linear-gradient(180deg, rgba(32, 26, 22, 0.93), rgba(11, 14, 22, 0.95)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 209, 0.09),
+    inset 0 0 0 1px rgba(82, 156, 255, 0.06),
+    0 10px 22px rgba(0, 0, 0, 0.22) !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-weight: 700 !important;
+  transition:
+    transform 160ms ease,
+    filter 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background 160ms ease,
+    opacity 160ms ease !important;
+}
+
+:where(
+  .game-result-button.is-secondary,
+  .guess-v3-button.is-secondary,
+  .hidden-card-button.is-secondary,
+  .hl-button.is-secondary,
+  .im-secondary-button,
+  .cg-secondary-button,
+  .py-button.is-secondary,
+  .pack-opening-secondary,
+  .game-layout-back-button,
+  .app-error-button--secondary,
+  .player-profile-name-form button,
+  .player-profile-action-row button
+):hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  border-color: rgba(255, 220, 145, 0.62) !important;
+  filter: brightness(1.05) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 209, 0.13),
+    inset 0 0 0 1px rgba(82, 156, 255, 0.10),
+    0 12px 24px rgba(0, 0, 0, 0.24),
+    0 0 18px rgba(217, 164, 65, 0.12) !important;
+}
+
+/* Danger actions: same family, red wine. */
+:where(
+  .cg-surrender-button,
+  .game-result-button.is-danger
+) {
+  border: 1px solid rgba(222, 91, 105, 0.48) !important;
+  border-radius: 10px !important;
+  color: #ffe6e9 !important;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 121, 137, 0.15), transparent 58%),
+    linear-gradient(180deg, rgba(90, 28, 40, 0.96), rgba(27, 12, 18, 0.98)) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 209, 0.08),
+    inset 0 0 0 1px rgba(255, 121, 137, 0.08),
+    0 10px 22px rgba(0, 0, 0, 0.24),
+    0 0 18px rgba(217, 79, 99, 0.10) !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-weight: 700 !important;
+}
+
+:where(
+  .cg-surrender-button,
+  .game-result-button.is-danger
+):hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  border-color: rgba(255, 139, 151, 0.72) !important;
+  filter: brightness(1.06) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 244, 209, 0.12),
+    inset 0 0 0 1px rgba(255, 121, 137, 0.13),
+    0 12px 24px rgba(0, 0, 0, 0.25),
+    0 0 24px rgba(217, 79, 99, 0.18) !important;
+}
+
+:where(
+  .game-mode-select-start,
+  .game-result-button,
+  .guess-v3-button,
+  .hidden-card-input-row button,
+  .hidden-card-button,
+  .hl-button,
+  .im-primary-button,
+  .im-secondary-button,
+  .cg-primary-button,
+  .cg-secondary-button,
+  .cg-surrender-button,
+  .py-button,
+  .pack-opening-start,
+  .pack-opening-continue,
+  .pack-opening-secondary,
+  .collection-box-copy button,
+  .app-error-button
+):disabled {
+  cursor: not-allowed !important;
+  opacity: 0.48 !important;
+  filter: grayscale(0.35) saturate(0.68) brightness(0.82) !important;
+  transform: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 8px 18px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Keep compact buttons readable. */
+:where(
+  .card-db-clear-button,
+  .card-db-cost-row button,
+  .card-db-page-controls button,
+  .collection-page-controls button,
+  .collection-filter-pills button
+) {
+  border-color: rgba(239, 198, 119, 0.28) !important;
+  color: rgba(247, 236, 212, 0.82) !important;
+  background:
+    linear-gradient(180deg, rgba(24, 30, 45, 0.84), rgba(8, 11, 18, 0.86)) !important;
+}
+
+:where(
+  .card-db-clear-button,
+  .card-db-cost-row button,
+  .card-db-page-controls button,
+  .collection-page-controls button,
+  .collection-filter-pills button
+):hover:not(:disabled) {
+  border-color: rgba(255, 220, 145, 0.52) !important;
+  filter: brightness(1.05) !important;
+}
+
+
+/* Buttons v2: slightly squarer silhouette, closer to the selected Proposal B. */
+
+
+/* Intro button unification: the intro start button should use the same language as other primary actions. */
+.game-mode-select-start {
+  text-transform: none !important;
+  letter-spacing: 0.01em !important;
+}
+
+.game-mode-select-start::before,
+.game-mode-select-start::after {
+  content: "" !important;
+}

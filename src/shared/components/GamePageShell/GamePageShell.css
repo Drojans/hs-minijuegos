@@ -45,3 +45,24 @@
   min-height: 0;
   overflow: hidden;
 }
+
+/* ==========================================================
+   TABERNA ARCANA LIGERA - SELECTED WARM BACKGROUND
+   Uses the same selected tavern image for all minigames.
+   Slightly darker than Home so gameplay stays readable.
+   ========================================================== */
+.game-page-shell::before {
+  background:
+    linear-gradient(180deg, rgba(5, 7, 12, 0.28), rgba(5, 7, 12, 0.74) 52%, rgba(5, 7, 12, 0.92)),
+    radial-gradient(circle at 50% 10%, rgba(240, 201, 106, 0.1), transparent 29%),
+    url("/ui/backgrounds/tavern-arcane-warm.png") center center / cover no-repeat !important;
+  filter: blur(1.7px) brightness(0.62) saturate(0.92);
+  transform: scale(1.025);
+}
+
+.game-page-shell::after {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(105, 167, 255, 0.09), transparent 30%),
+    radial-gradient(circle at 50% 68%, rgba(217, 164, 65, 0.06), transparent 31%),
+    linear-gradient(180deg, rgba(7, 10, 17, 0.12), rgba(7, 10, 17, 0.78) 62%, rgba(7, 10, 17, 0.94)) !important;
+}

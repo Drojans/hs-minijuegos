@@ -4,6 +4,8 @@ import SiteHeader from "./shared/components/SiteHeader/SiteHeader";
 import DailyRolloverNotice from "./shared/components/DailyRolloverNotice/DailyRolloverNotice";
 import { useDailyRollover } from "./shared/hooks/useDailyRollover";
 import "./App.css";
+import "./styles/hearthdleButtons.css";
+import "./styles/hearthdleInputs.css";
 
 const HomePage = lazy(() => import("./pages/HomePage"));
 const GuessManaPage = lazy(() => import("./pages/GuessManaPage"));

@@ -17,9 +17,11 @@ const COMMON = {
     dailyMeta: "Da recompensa",
     infiniteMeta: "Sin recompensa",
     completedStatus: "Completado",
-    startMode: "Empezar",
-    startCompletedDaily: "Ver resultado",
+    startMode: "JUGAR",
+    startCompletedDaily: "VER RESULTADO",
     rewardLabel: "Recompensa diaria",
+    dailyRewardClaimedMeta: "RECOMPENSA RECOGIDA",
+    dailyRewardLostMeta: "RECOMPENSA PERDIDA",
   },
   en: {
     modeEyebrow: "Game mode",
@@ -32,9 +34,11 @@ const COMMON = {
     dailyMeta: "Reward available",
     infiniteMeta: "No reward",
     completedStatus: "Completed",
-    startMode: "Start",
-    startCompletedDaily: "View result",
+    startMode: "START",
+    startCompletedDaily: "VIEW RESULT",
     rewardLabel: "Daily reward",
+    dailyRewardClaimedMeta: "REWARD CLAIMED",
+    dailyRewardLostMeta: "REWARD MISSED",
   },
 };
 
@@ -190,9 +194,9 @@ const GAME_INTRO_COPY = {
 
   [GAME_IDS.IMPOSTOR]: {
     es: {
-      title: "Hearthstone Impostor",
+      title: "Encuentra el impostor",
       description: "Encuentra las cartas que cumplen la categoría y evita elegir al impostor.",
-      exampleLabel: "Ejemplo visual del minijuego Hearthstone Impostor",
+      exampleLabel: "Ejemplo visual del minijuego Encuentra el impostor",
       previewSrc: "/ui/games/impostor-v2/mode-example.svg",
       steps: [
         {
@@ -213,9 +217,9 @@ const GAME_INTRO_COPY = {
       ],
     },
     en: {
-      title: "Hearthstone Impostor",
+      title: "Find the Impostor",
       description: "Find the cards that match the category and avoid picking the impostor.",
-      exampleLabel: "Hearthstone Impostor minigame example",
+      exampleLabel: "Find the Impostor minigame example",
       previewSrc: "/ui/games/impostor-v2/mode-example.svg",
       steps: [
         {
@@ -336,13 +340,14 @@ const GAME_INTRO_COPY = {
   },
 };
 
-function mergeLocaleCopy(gameCopy, locale = "es") {
+function mergeLocaleCopy(gameId, gameCopy, locale = "es") {
   const common = COMMON[locale] ?? COMMON.es;
   const fallbackCommon = COMMON.es;
   const localized = gameCopy?.[locale] ?? gameCopy?.es ?? {};
   const fallback = gameCopy?.es ?? {};
 
   return {
+    gameId,
     ...fallbackCommon,
     ...common,
     ...fallback,
@@ -352,5 +357,5 @@ function mergeLocaleCopy(gameCopy, locale = "es") {
 }
 
 export function getGameIntroCopy(gameId, locale = "es") {
-  return mergeLocaleCopy(GAME_INTRO_COPY[gameId], locale);
+  return mergeLocaleCopy(gameId, GAME_INTRO_COPY[gameId], locale);
 }

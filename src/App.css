@@ -10,6 +10,27 @@
   font-display: swap;
 }
 
+:root {
+  --hd-bg-deep: #07090f;
+  --hd-bg-warm: #15100b;
+  --hd-panel: #101827;
+  --hd-panel-raised: #172238;
+  --hd-gold: #f0c96a;
+  --hd-gold-muted: #a97935;
+  --hd-text: #f7ecd4;
+  --hd-text-muted: #b9ad98;
+  --hd-blue: #3f7ee8;
+  --hd-blue-glow: #69a7ff;
+  --hd-green: #55d98b;
+  --hd-red: #d94f63;
+  --hd-arcane: #58d7ff;
+  --hd-purple: #9b5cff;
+  --hd-bg-image: url("/ui/backgrounds/tavern-arcane-warm.png");
+
+  /* Alias actuales del proyecto para no romper estilos existentes */
+  --hs-text: var(--hd-text);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -34,7 +55,7 @@ body {
   overflow-y: auto;
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--hs-text);
-  background: #090504;
+  background: var(--hd-bg-deep);
 }
 
 button,
@@ -54,7 +75,12 @@ button {
 .app-shell {
   min-height: 100svh;
   width: 100%;
-  background: #070a11;
+  background:
+    radial-gradient(circle at 50% 8%, rgba(240, 201, 106, 0.11), transparent 34%),
+    radial-gradient(circle at 86% 28%, rgba(88, 215, 255, 0.08), transparent 30%),
+    linear-gradient(180deg, rgba(5, 7, 12, 0.72), rgba(5, 7, 12, 0.58) 44%, rgba(5, 7, 12, 0.86)),
+    var(--hd-bg-image) center center / cover no-repeat fixed,
+    var(--hd-bg-deep);
 }
 
 .app-page {
@@ -70,7 +96,7 @@ button {
   padding: 32px 16px;
   background:
     radial-gradient(circle at top, rgba(255, 205, 128, 0.12), transparent 34%),
-    #070a11;
+    rgba(7, 10, 17, 0.68);
 }
 
 .app-route-loading__card {
@@ -147,5 +173,17 @@ body.is-fit-screen-route {
     height: auto;
     min-height: 100svh;
     overflow-y: auto;
+  }
+}
+
+
+@media (max-width: 980px) {
+  .app-shell {
+    background:
+      radial-gradient(circle at 50% 8%, rgba(240, 201, 106, 0.1), transparent 34%),
+      radial-gradient(circle at 86% 28%, rgba(88, 215, 255, 0.07), transparent 30%),
+      linear-gradient(180deg, rgba(5, 7, 12, 0.76), rgba(5, 7, 12, 0.64) 44%, rgba(5, 7, 12, 0.88)),
+      var(--hd-bg-image) center center / cover no-repeat,
+      var(--hd-bg-deep);
   }
 }
