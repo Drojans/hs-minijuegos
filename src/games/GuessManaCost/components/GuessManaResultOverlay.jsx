@@ -4,7 +4,7 @@ function stripTrailingPeriod(value) {
   return typeof value === "string" ? value.replace(/[.!?]+$/u, "") : value;
 }
 
-function GuessManaResultOverlay({ copy, isCorrect, cardName, correctCost, rewardMessage, onViewResults }) {
+function GuessManaResultOverlay({ copy, isCorrect, cardName, correctCost, locale, rewardMessage, onViewResults }) {
   const rewardLabel = stripTrailingPeriod(rewardMessage);
   const costBefore = stripTrailingPeriod(copy.resultCostBefore);
   const costAfter = stripTrailingPeriod(copy.resultCostAfter);
@@ -15,6 +15,8 @@ function GuessManaResultOverlay({ copy, isCorrect, cardName, correctCost, reward
       kicker={copy.resultKicker}
       title={isCorrect ? copy.correct : copy.wrong}
       rewardMessage={rewardLabel}
+      locale={locale}
+      statusLabel={isCorrect ? (locale === "en" ? "Correct" : "Acierto") : (locale === "en" ? "Wrong" : "Fallo")}
       icon={null}
       detail={(
         <>

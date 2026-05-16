@@ -40,12 +40,23 @@ function ActionButton({ action, variant = "secondary" }) {
   );
 }
 
-function normalizeRewardMessage(value) {
+function cleanResultText(value) {
+  if (typeof value !== "string") return value;
+  return value.trim().replace(/\.+$/u, "");
+}
+
+function normalizeRewardMessage(value, locale = "es") {
   if (!value || typeof value !== "string") return value;
-  const cleaned = value.trim().replace(/[.!?]+$/u, "");
+
+  const cleaned = value
+    .trim()
+    .replace(/^[¡!]+/u, "")
+    .replace(/[.!?]+$/u, "")
+    .trim();
+
   if (!cleaned) return "";
-  if (cleaned.startsWith("¡") && cleaned.endsWith("!")) return cleaned;
-  return `¡${cleaned}!`;
+
+  return locale === "en" ? `${cleaned}!` : `¡${cleaned}!`;
 }
 
 function GameResultOverlay({
@@ -61,15 +72,19 @@ function GameResultOverlay({
   showConfetti,
   className = "",
   statusLabel,
+  locale = "es",
 }) {
   const isSuccess = tone === "success" || tone === "correct" || tone === "won";
   const resolvedShowConfetti = showConfetti ?? isSuccess;
   const hasExplicitlyHiddenIcon = icon === null || icon === false || icon === "";
   const resolvedIcon = hasExplicitlyHiddenIcon ? null : (icon ?? null);
   const hasPreview = Boolean(preview);
-  const resolvedRewardMessage = normalizeRewardMessage(rewardMessage);
+  const resolvedRewardMessage = normalizeRewardMessage(rewardMessage, locale);
   const hasReward = Boolean(resolvedRewardMessage);
-  const resolvedStatusLabel = statusLabel ?? (isSuccess ? "Acierto" : "Fallo");
+  const resolvedStatusLabel = cleanResultText(statusLabel ?? (locale === "en" ? (isSuccess ? "Success" : "Fail") : (isSuccess ? "Acierto" : "Fallo")));
+  const resolvedKicker = cleanResultText(kicker);
+  const resolvedTitle = cleanResultText(title);
+  const resolvedText = cleanResultText(text);
 
   const overlay = (
     <div className="game-result-backdrop" role="presentation">
@@ -90,10 +105,10 @@ function GameResultOverlay({
               </div>
             ) : null}
 
-            {kicker ? <p className="game-result-kicker">{kicker}</p> : null}
+            {resolvedKicker ? <p className="game-result-kicker">{resolvedKicker}</p> : null}
             <p className={`game-result-status-pill is-${isSuccess ? "success" : "danger"}`}>{resolvedStatusLabel}</p>
-            <h2>{title}</h2>
-            {text ? <p className="game-result-text">{text}</p> : null}
+            <h2>{resolvedTitle}</h2>
+            {resolvedText ? <p className="game-result-text">{resolvedText}</p> : null}
             {detail ? <div className="game-result-detail">{detail}</div> : null}
 
             {hasReward ? (

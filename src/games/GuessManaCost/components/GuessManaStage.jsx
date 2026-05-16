@@ -24,24 +24,28 @@ function GuessManaStage({
 }) {
   return (
     <section className="guess-v3-stage" aria-label={cardName}>
-      <GuessManaCardPreview
-        imageSrc={imageSrc}
-        cardName={cardName}
-        imageFailed={imageFailed}
-        onImageError={onImageError}
-        copy={copy}
-        hideManaCover={hasAnswered}
-      />
+      <div className="guess-v3-card-column">
+        <GuessManaCardPreview
+          imageSrc={imageSrc}
+          cardName={cardName}
+          imageFailed={imageFailed}
+          onImageError={onImageError}
+          copy={copy}
+          hideManaCover={hasAnswered}
+        />
 
-      <div className="guess-v3-controls">
         <GuessManaCrystalDisplay
           value={displayedCrystalValue}
           label={copy.selectedCost}
           isAnswered={hasAnswered}
           isCorrect={isCorrect}
         />
+      </div>
 
-        <p className="guess-v3-selector-title">{copy.chooseCost}</p>
+      <aside className="guess-v3-controls" aria-labelledby="guess-v3-cost-title">
+        <p id="guess-v3-cost-title" className="guess-v3-selector-title">
+          {copy.chooseCost}
+        </p>
 
         <GuessManaSelector
           hasAnswered={hasAnswered}
@@ -70,7 +74,7 @@ function GuessManaStage({
             {copy.playAgain}
           </button>
         ) : null}
-      </div>
+      </aside>
     </section>
   );
 }

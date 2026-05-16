@@ -1,6 +1,6 @@
 import GameResultOverlay from "../../../shared/components/GameResultOverlay/GameResultOverlay";
 
-function CardGridResultOverlay({ t, result, rewardMessage, onViewResults }) {
+function CardGridResultOverlay({ t, result, rewardMessage, locale, onViewResults }) {
   const isWon = result === "won";
   const isSurrender = result === "surrender";
 
@@ -16,6 +16,10 @@ function CardGridResultOverlay({ t, result, rewardMessage, onViewResults }) {
       ? t("grid.resultSurrenderText")
       : t("grid.resultTimeText");
 
+  const statusLabel = locale === "en"
+    ? (isWon ? "Completed" : isSurrender ? "Surrendered" : "Time up")
+    : (isWon ? "Completado" : isSurrender ? "Rendido" : "Tiempo agotado");
+
   return (
     <GameResultOverlay
       tone={isWon ? "success" : "danger"}
@@ -23,6 +27,8 @@ function CardGridResultOverlay({ t, result, rewardMessage, onViewResults }) {
       title={title}
       text={text}
       rewardMessage={rewardMessage}
+      locale={locale}
+      statusLabel={statusLabel}
       primaryAction={{ label: t("grid.viewResults"), onClick: onViewResults }}
     />
   );

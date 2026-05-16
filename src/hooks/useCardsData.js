@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { dedupeCardsByIdentity } from "../shared/cards/cardIdentity";
+import { applyCardBalanceOverrides } from "../shared/cards/cardBalanceOverrides";
 import { migrateCollectionCardAliases } from "../shared/collection/collectionStore";
 
 const CARDS_URL = "/data/cards.multilang.generated.json";
@@ -29,7 +30,8 @@ export function useCardsData() {
           throw new Error(`${CARDS_URL} no contiene un array de cartas.`);
         }
 
-        const uniqueCards = dedupeCardsByIdentity(data);
+        const balancedData = applyCardBalanceOverrides(data);
+        const uniqueCards = dedupeCardsByIdentity(balancedData);
         migrateCollectionCardAliases(uniqueCards);
 
         if (!cancelled) {

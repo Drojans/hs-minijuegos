@@ -10,7 +10,12 @@ function GuessManaSelector({
   onLeaveCost,
   onPickCost,
 }) {
-  const manaRows = [MANA_VALUES.slice(0, 6), MANA_VALUES.slice(6)];
+  const manaRows = [
+    MANA_VALUES.slice(0, 3),
+    MANA_VALUES.slice(3, 6),
+    MANA_VALUES.slice(6, 9),
+    MANA_VALUES.slice(9),
+  ];
 
   return (
     <div className="guess-v3-mana-grid" onMouseLeave={onLeaveCost}>

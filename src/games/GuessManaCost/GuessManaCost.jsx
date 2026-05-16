@@ -215,15 +215,10 @@ function GuessManaCost({ cards = [], onBack }) {
   const imageSrc = getGuessManaCardImage(currentCard, locale);
   const displayedCrystalValue = hasAnswered ? selectedCost : pendingCost;
   const isInfiniteMode = selectedMode === GAME_MODE_IDS.INFINITE;
-  const isDailyMode = selectedMode === GAME_MODE_IDS.DAILY;
 
   return (
     <GamePageShell className="guess-v3-page">
       <section className="guess-v3-shell">
-        <div className="guess-v3-mode-pill">
-          {isDailyMode ? copy.dailyChallenge : copy.infiniteChallenge}
-        </div>
-
         <GuessManaStage
           copy={copy}
           cardName={currentCardName}
@@ -255,6 +250,8 @@ function GuessManaCost({ cards = [], onBack }) {
           isCorrect={isCorrect}
           cardName={currentCardName}
           correctCost={currentCard.cost}
+          imageSrc={imageSrc}
+          locale={locale}
           rewardMessage={rewardMessage}
           onViewResults={() => setShowResultOverlay(false)}
           onBack={returnToModes}

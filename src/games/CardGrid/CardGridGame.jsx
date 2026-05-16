@@ -67,6 +67,7 @@ function CardGridGame({ cards, onBack }) {
   const [answers, setAnswers] = useState({});
   const [answer, setAnswer] = useState("");
   const [message, setMessage] = useState("");
+  const [messageMeta, setMessageMeta] = useState(null);
   const [messageTone, setMessageTone] = useState("neutral");
   const [feedbackNonce, setFeedbackNonce] = useState(0);
   const [mistakes, setMistakes] = useState(0);
@@ -168,6 +169,7 @@ function CardGridGame({ cards, onBack }) {
     setSuppressSuggestions(false);
     setPendingPlacement(null);
     setMessageTone("neutral");
+    setMessageMeta(null);
     setFeedbackNonce(0);
     setEndOverlay(null);
     setResultsMode(options.resultsMode ?? null);
@@ -218,8 +220,44 @@ function CardGridGame({ cards, onBack }) {
     };
   }
 
-  function triggerMessage(nextMessage, tone = "neutral") {
+  function resolveGridMessage(meta) {
+    if (!meta) return "";
+
+    switch (meta.type) {
+      case "emptyAnswer":
+        return locale === "en" ? "Type a card name first." : "Escribe primero el nombre de una carta.";
+      case "cardNotFound":
+        return t("grid.message.cardNotFound", { name: meta.name });
+      case "cardAlreadyUsed":
+        return t("grid.message.cardAlreadyUsed", {
+          name: getCardName(meta.card, locale) || meta.name,
+        });
+      case "wrongCell":
+        return t("grid.message.wrongCell", {
+          name: getCardName(meta.card, locale) || meta.name,
+        });
+      case "chooseCell":
+        return t("grid.message.chooseCell", {
+          name: getCardName(meta.card, locale) || meta.name,
+        });
+      case "correct":
+        return t("grid.message.correct", {
+          name: getCardName(meta.card, locale) || meta.name,
+        });
+      case "revealedAlternatives":
+        return t("grid.message.revealedAlternatives");
+      case "surrendered":
+        return t("grid.message.surrendered");
+      case "timeExpired":
+        return copy.dailyTimeExpiredMessage;
+      default:
+        return meta.text ?? "";
+    }
+  }
+
+  function triggerMessage(nextMessage, tone = "neutral", meta = null) {
     setMessage(nextMessage);
+    setMessageMeta(meta);
     setMessageTone(tone);
 
     if (tone === "error") {
@@ -227,18 +265,30 @@ function CardGridGame({ cards, onBack }) {
     }
   }
 
-  function triggerInvalidAnswer(nextMessage) {
-    triggerMessage(nextMessage, "error");
+  function triggerLocalizedMessage(meta, tone = "neutral") {
+    triggerMessage(resolveGridMessage(meta), tone, meta);
+  }
+
+  function triggerInvalidAnswer(meta) {
+    triggerLocalizedMessage(meta, "error");
     requestAnimationFrame(() => {
       answerInputRef.current?.focus();
     });
   }
+
+  useEffect(() => {
+    if (!messageMeta) return;
+    setMessage(resolveGridMessage(messageMeta));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [locale, t, copy, messageMeta]);
 
   function handleAnswerChange(value) {
     setSuppressSuggestions(false);
     setPendingPlacement(null);
     setSelectedCell(null);
     setMessageTone("neutral");
+    setMessageMeta(null);
+    setMessage("");
     setAnswer(value);
   }
 
@@ -248,6 +298,8 @@ function CardGridGame({ cards, onBack }) {
     setPendingPlacement(null);
     setSelectedCell(null);
     setMessageTone("neutral");
+    setMessageMeta(null);
+    setMessage("");
     requestAnimationFrame(() => {
       answerInputRef.current?.focus();
     });
@@ -274,7 +326,7 @@ function CardGridGame({ cards, onBack }) {
 
     setAnswers(refreshedState.answers);
     setRevealedCells(refreshedState.revealedCells);
-    triggerMessage(t("grid.message.revealedAlternatives"), "neutral");
+    triggerLocalizedMessage({ type: "revealedAlternatives" }, "neutral");
   }
 
   function finalizeDailyGridFailure(reason = "exit", snapshot = latestDailyRunRef.current) {
@@ -457,7 +509,7 @@ function CardGridGame({ cards, onBack }) {
       return;
     }
 
-    triggerMessage(t("grid.message.correct", { name: getCardName(placement.card, locale) }), "success");
+    triggerLocalizedMessage({ type: "correct", card: placement.card }, "success");
   }
 
   function handleBoardCellPick(cell) {
@@ -480,7 +532,8 @@ function CardGridGame({ cards, onBack }) {
     setAnswers(revealedState.answers);
     setRevealedCells(revealedState.revealedCells);
     setTimeLeft(0);
-    setMessage(copy.dailyTimeExpiredMessage);
+    setMessage(resolveGridMessage({ type: "timeExpired" }));
+    setMessageMeta({ type: "timeExpired" });
     setRewardMessage("");
     setEndOverlay("time");
     setResultsMode(null);
@@ -503,8 +556,7 @@ function CardGridGame({ cards, onBack }) {
     setSuppressSuggestions(true);
     setPendingPlacement(null);
     setSelectedCell(null);
-    setMessage(t("grid.message.surrendered"));
-    setMessageTone("neutral");
+    triggerLocalizedMessage({ type: "surrendered" }, "neutral");
     setRewardMessage("");
     setEndOverlay("surrender");
     setResultsMode(null);
@@ -601,7 +653,7 @@ function CardGridGame({ cards, onBack }) {
 
     if (!rawAnswer) {
       setPendingPlacement(null);
-      triggerInvalidAnswer(locale === "en" ? "Type a card name first." : "Escribe primero el nombre de una carta.");
+      triggerInvalidAnswer({ type: "emptyAnswer" });
       return;
     }
 
@@ -609,7 +661,7 @@ function CardGridGame({ cards, onBack }) {
 
     if (!exactMatches.length) {
       setPendingPlacement(null);
-      triggerInvalidAnswer(t("grid.message.cardNotFound", { name: submittedName }));
+      triggerInvalidAnswer({ type: "cardNotFound", name: submittedName });
       return;
     }
 
@@ -619,9 +671,11 @@ function CardGridGame({ cards, onBack }) {
 
     if (alreadyUsedMatch) {
       setPendingPlacement(null);
-      triggerInvalidAnswer(
-        t("grid.message.cardAlreadyUsed", { name: getCardName(alreadyUsedMatch, locale) || submittedName })
-      );
+      triggerInvalidAnswer({
+        type: "cardAlreadyUsed",
+        card: alreadyUsedMatch,
+        name: submittedName,
+      });
       return;
     }
 
@@ -653,11 +707,11 @@ function CardGridGame({ cards, onBack }) {
       setPendingPlacement(null);
       setSelectedCell(null);
       setSuppressSuggestions(true);
-      triggerInvalidAnswer(
-        t("grid.message.wrongCell", {
-          name: submittedCardName,
-        })
-      );
+      triggerInvalidAnswer({
+        type: "wrongCell",
+        card: unusedMatches[0] ?? exactMatches[0],
+        name: submittedCardName,
+      });
       return;
     }
 
@@ -666,8 +720,8 @@ function CardGridGame({ cards, onBack }) {
       setPendingPlacement({ card: pendingCard, placements });
       setSelectedCell(null);
       setSuppressSuggestions(true);
-      triggerMessage(
-        t("grid.message.chooseCell", { name: getCardName(pendingCard, locale) }),
+      triggerLocalizedMessage(
+        { type: "chooseCell", card: pendingCard },
         "choice"
       );
       return;
@@ -736,55 +790,81 @@ function CardGridGame({ cards, onBack }) {
     );
   }
 
+  const hasResultActions =
+    resultsMode &&
+    !endOverlay &&
+    (canRefreshRevealedAnswers || selectedMode === GAME_MODE_IDS.INFINITE);
+
   return (
     <GamePageShell className={`cg-page ${resultsMode ? `is-results-${resultsMode}` : ""}`}>
       <section className="cg-shell">
-        <CardGridTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
-        <section className="cg-layout cg-layout-single">
-          <CardGridBoard
-            grid={grid}
-            answers={answers}
-            revealedCells={revealedCells}
-            selectedCell={selectedCell}
-            pendingPlacements={pendingPlacement?.placements ?? []}
-            locale={locale}
-            t={t}
-            onSelectCell={handleBoardCellPick}
-          />
-
-          <CardGridControls
-            t={t}
-            pendingPlacement={pendingPlacement}
-            message={message}
-            messageTone={messageTone}
-            feedbackNonce={feedbackNonce}
-            answer={answer}
-            suggestions={suggestions}
-            isComplete={isComplete}
-            locale={locale}
-            inputRef={answerInputRef}
-            onAnswerChange={handleAnswerChange}
-            onPickSuggestion={handleSuggestionPick}
-            onSubmitAnswer={submitAnswer}
-            onChoosePlacement={commitPlacement}
-            onSurrender={surrenderGrid}
-          />
-        </section>
-
-        {resultsMode && !endOverlay ? (
-          <div className="cg-post-result-actions">
-            {canRefreshRevealedAnswers ? (
-              <button type="button" className="cg-secondary-button cg-refresh-revealed-button" onClick={refreshRevealedAnswers}>
-                {t("grid.revealOtherAnswers")}
-              </button>
-            ) : null}
-            {selectedMode === GAME_MODE_IDS.INFINITE ? (
-              <button type="button" className="cg-primary-button" onClick={startNewGrid}>
-                {t("grid.playAgain")}
-              </button>
-            ) : null}
+        <section
+          className={`cg-layout cg-layout-single ${resultsMode ? "is-results-view" : ""} ${
+            hasResultActions ? "has-result-actions" : ""
+          }`.trim()}
+        >
+          <div className="cg-board-column">
+            <CardGridBoard
+              grid={grid}
+              answers={answers}
+              revealedCells={revealedCells}
+              selectedCell={selectedCell}
+              pendingPlacements={pendingPlacement?.placements ?? []}
+              locale={locale}
+              t={t}
+              onSelectCell={handleBoardCellPick}
+            />
           </div>
-        ) : null}
+
+          {!resultsMode ? (
+            <aside className="cg-side-column">
+              <CardGridTimer copy={copy} timeLeft={isDailyMode && !dailyProgress.completed ? timeLeft : null} />
+              <CardGridControls
+                t={t}
+                pendingPlacement={pendingPlacement}
+                message={message}
+                messageTone={messageTone}
+                feedbackNonce={feedbackNonce}
+                answer={answer}
+                suggestions={suggestions}
+                isComplete={isComplete}
+                locale={locale}
+                inputRef={answerInputRef}
+                onAnswerChange={handleAnswerChange}
+                onPickSuggestion={handleSuggestionPick}
+                onSubmitAnswer={submitAnswer}
+                onSurrender={surrenderGrid}
+              />
+            </aside>
+          ) : null}
+
+          {hasResultActions ? (
+            <aside className="cg-side-column cg-results-side-column">
+              <div className="cg-results-actions-panel">
+                <span className="cg-results-actions-kicker">
+                  {locale === "en" ? "Results" : "Resultados"}
+                </span>
+                <p>
+                  {locale === "en"
+                    ? "Review the board or reveal new alternatives."
+                    : "Revisa el tablero o revela nuevas alternativas."}
+                </p>
+                <div className="cg-post-result-actions">
+                  {canRefreshRevealedAnswers ? (
+                    <button type="button" className="cg-secondary-button cg-refresh-revealed-button" onClick={refreshRevealedAnswers}>
+                      {t("grid.revealOtherAnswers")}
+                    </button>
+                  ) : null}
+                  {selectedMode === GAME_MODE_IDS.INFINITE ? (
+                    <button type="button" className="cg-primary-button" onClick={startNewGrid}>
+                      {t("grid.playAgain")}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+            </aside>
+          ) : null}
+        </section>
       </section>
 
       {endOverlay ? (

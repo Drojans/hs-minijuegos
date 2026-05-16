@@ -342,6 +342,7 @@ function HigherLowerGame({ cards = [], onBack }) {
           copy={copy}
           result={result}
           rewardMessage={rewardMessage}
+          locale={locale}
           onViewResults={() => {
             setShowResultOverlay(false);
             setShowResults(true);

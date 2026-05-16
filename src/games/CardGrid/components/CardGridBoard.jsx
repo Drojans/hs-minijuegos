@@ -90,8 +90,9 @@ function AnswerCell({
         <SolvedCard card={solvedCard} locale={locale} />
       ) : (
         <>
-          <span>{isCandidate ? "✓" : "+"}</span>
-          {isCandidate ? <em>{t("grid.placeHere")}</em> : null}
+          <span className={`cg-empty-rune ${isCandidate ? "is-candidate" : ""}`.trim()} aria-hidden="true">
+            <span>{isCandidate ? "✦" : "✦"}</span>
+          </span>
         </>
       )}
     </button>
