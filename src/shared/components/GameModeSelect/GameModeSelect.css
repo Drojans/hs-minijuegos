@@ -1229,3 +1229,205 @@
     margin-top: 14px !important;
   }
 }
+
+/* ==========================================================
+   COZY TAVERN ADVENTURE BOOK REDESIGN (Fase 7 - Simplificada)
+   ========================================================== */
+
+/* Abierto como páginas de libro de pergamino cálido */
+body .game-mode-modal {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 48%, rgba(0, 0, 0, 0.15) 50%, rgba(255, 255, 255, 0.05) 52%),
+    radial-gradient(circle at 50% 15%, #f7ecd2, #e5d1a8) !important;
+  color: #3e2511 !important;
+  border: 5px solid #4a2b16 !important; /* Oak/Leather bound frame */
+  box-shadow:
+    inset 0 0 24px rgba(0, 0, 0, 0.22),
+    0 16px 36px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Quitamos los brillos/bordes futuristas de las esquinas */
+body .game-mode-modal::before {
+  border: 1px solid rgba(74, 43, 22, 0.15) !important;
+  box-shadow: inset 0 0 10px rgba(74, 43, 22, 0.08) !important;
+  border-radius: 12px !important;
+}
+
+body .game-mode-modal::after {
+  display: none !important;
+}
+
+/* Encabezados y textos con tinta mahogany contrastada */
+body .game-mode-modal-head h1 {
+  color: #2b1608 !important;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6) !important;
+}
+
+body .game-mode-title-divider {
+  background:
+    radial-gradient(circle, #8c5b30 0 3px, transparent 4px),
+    linear-gradient(90deg, transparent, rgba(140, 91, 48, 0.35), transparent) center / 100% 1px no-repeat !important;
+}
+
+body .game-mode-section-title h2 {
+  color: #6d4223 !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+body .game-mode-section-title span {
+  background: linear-gradient(90deg, transparent, rgba(109, 66, 35, 0.2), transparent) !important;
+}
+
+/* Lomo central de costura en pantallas grandes */
+@media (min-width: 841px) {
+  .game-mode-rules {
+    border-right: 2.5px dashed rgba(74, 45, 26, 0.16) !important;
+    padding-right: 32px !important;
+  }
+}
+
+/* Pasos de las instrucciones estilo manuscrito limpio */
+body .game-mode-step h3 {
+  color: #3e2511 !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+}
+
+body .game-mode-step p {
+  color: #5d4331 !important;
+}
+
+body .game-mode-step-icon {
+  background: linear-gradient(180deg, #faf3e0, #ebdcc3) !important;
+  border: 1px solid #a88863 !important;
+  color: #5d4331 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 8px rgba(0, 0, 0, 0.08) !important;
+}
+
+body .game-mode-step-icon img {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12)) !important;
+}
+
+body .game-mode-step + .game-mode-step {
+  border-top: 1px solid rgba(140, 91, 48, 0.12) !important;
+}
+
+/* Tarjetas de Selección de Modo como Pergaminos/Madera Clara */
+body .game-mode-option-card {
+  background: linear-gradient(180deg, #fdfaf2, #f5eccf) !important;
+  border: 1px solid #c8b792 !important;
+  color: #3e2511 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+body .game-mode-option-card:hover {
+  border-color: #a8885c !important;
+  background: linear-gradient(180deg, #fbf7e8, #eddcb9) !important;
+}
+
+body .game-mode-option-card.is-selected {
+  background: linear-gradient(180deg, #ebdcb9, #dcc296) !important;
+  border: 2px solid #8e5c33 !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 6px 14px rgba(142, 92, 51, 0.16) !important;
+  animation: none !important;
+}
+
+body .game-mode-option-icon {
+  background: linear-gradient(180deg, #faf3e0, #ebdcc3) !important;
+  border: 1px solid #a88863 !important;
+  color: #8c5b30 !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+body .game-mode-option-card .game-mode-option-title {
+  color: #2b1608 !important;
+}
+
+body .game-mode-option-card em {
+  border: 1px solid rgba(142, 92, 51, 0.22) !important;
+  color: #8c5b30 !important;
+  background: rgba(142, 92, 51, 0.04) !important;
+}
+
+body .game-mode-option-card.is-selected em {
+  border-color: rgba(142, 92, 51, 0.45) !important;
+  color: #5c381c !important;
+  background: rgba(142, 92, 51, 0.08) !important;
+}
+
+/* Cofre de Recompensa Diario Cozy (con brillo de fuego cálido) */
+body .game-mode-reward-pill > .game-mode-reward-label {
+  color: #7b4f28 !important;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+body .game-mode-reward-pill > .game-mode-reward-prize::before {
+  background: radial-gradient(circle, rgba(230, 160, 60, 0.22), transparent 68%) !important;
+}
+
+@keyframes hd-intro-reward-idle {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    filter:
+      drop-shadow(0 0 8px rgba(230, 160, 60, 0.2))
+      drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+  }
+  50% {
+    transform: translateY(-2px) scale(1.025);
+    filter:
+      drop-shadow(0 0 14px rgba(230, 160, 60, 0.35))
+      drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+  }
+}
+
+/* Botón JUGAR diseñado como cápsula de Sello de Cera Roja */
+body .game-mode-select-start {
+  background: radial-gradient(circle at 50% 20%, #cd3a3a, #781717 92%) !important;
+  border: 2px solid #cfa247 !important;
+  color: #fffaf0 !important;
+  border-radius: 12px !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-weight: 700 !important;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+    0 6px 16px rgba(0, 0, 0, 0.3) !important;
+  min-width: min(280px, 100%) !important;
+  width: auto !important;
+  height: 48px !important;
+  aspect-ratio: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-inline: auto !important;
+  padding: 0 32px !important;
+  font-size: 1.15rem !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  animation: none !important;
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+body .game-mode-select-start:hover {
+  filter: brightness(1.1) !important;
+  transform: translateY(-2px) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
+    0 8px 22px rgba(205, 58, 58, 0.25),
+    0 8px 20px rgba(0, 0, 0, 0.35) !important;
+}
+
+body .game-mode-select-start:active {
+  transform: translateY(1px) !important;
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.4),
+    0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
