@@ -8,11 +8,11 @@
 :root {
   --hd-button-cream: #fff0ca;
   --hd-button-cream-muted: rgba(247, 236, 212, 0.82);
-  --hd-button-gold: rgba(239, 198, 119, 0.76);
-  --hd-button-gold-strong: rgba(255, 220, 145, 0.92);
+  --hd-button-gold: rgba(240, 201, 106, 0.76);
+  --hd-button-gold-strong: rgba(255, 224, 150, 0.92);
   --hd-button-bronze: rgba(143, 97, 43, 0.74);
-  --hd-button-blue-edge: rgba(82, 156, 255, 0.46);
-  --hd-button-blue-glow: rgba(63, 126, 232, 0.34);
+  --hd-button-blue-edge: rgba(235, 152, 78, 0.46);
+  --hd-button-blue-glow: rgba(235, 152, 78, 0.22);
   --hd-button-red: rgba(129, 34, 48, 0.96);
 }
 
@@ -39,17 +39,17 @@
   border-radius: 10px !important;
   color: var(--hd-button-cream) !important;
   background:
-    linear-gradient(90deg, rgba(80, 153, 255, 0.00) 0%, rgba(80, 153, 255, 0.10) 18%, rgba(80, 153, 255, 0.18) 50%, rgba(80, 153, 255, 0.10) 82%, rgba(80, 153, 255, 0.00) 100%),
-    radial-gradient(circle at 50% -120%, rgba(110, 168, 255, 0.28), transparent 58%),
-    radial-gradient(circle at 50% 130%, rgba(33, 90, 190, 0.20), transparent 58%),
-    linear-gradient(180deg, rgba(31, 39, 55, 0.98), rgba(8, 13, 22, 0.98)) !important;
+    linear-gradient(90deg, rgba(230, 126, 34, 0.00) 0%, rgba(230, 126, 34, 0.10) 18%, rgba(230, 126, 34, 0.18) 50%, rgba(230, 126, 34, 0.10) 82%, rgba(230, 126, 34, 0.00) 100%),
+    radial-gradient(circle at 50% -120%, rgba(255, 224, 150, 0.38), transparent 58%),
+    radial-gradient(circle at 50% 130%, rgba(120, 30, 10, 0.25), transparent 58%),
+    linear-gradient(180deg, #ae3b00, #730600) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 244, 209, 0.16),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.55),
-    inset 0 0 0 1px rgba(82, 156, 255, 0.14),
+    inset 0 1px 0 rgba(255, 244, 209, 0.24),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.65),
+    inset 0 0 0 1px rgba(240, 201, 106, 0.18),
     0 0 0 1px rgba(65, 34, 12, 0.52),
-    0 12px 24px rgba(0, 0, 0, 0.26),
-    0 0 20px rgba(63, 126, 232, 0.12) !important;
+    0 12px 24px rgba(0, 0, 0, 0.28),
+    0 0 20px rgba(235, 152, 78, 0.15) !important;
   text-shadow:
     0 1px 0 rgba(86, 51, 18, 0.85),
     0 0 12px rgba(255, 221, 151, 0.16) !important;
@@ -87,8 +87,8 @@
   border-radius: 8px !important;
   pointer-events: none !important;
   background:
-    linear-gradient(180deg, rgba(255, 245, 215, 0.13), transparent 36%),
-    linear-gradient(90deg, transparent 0%, rgba(80, 153, 255, 0.18) 50%, transparent 100%) !important;
+    linear-gradient(180deg, rgba(255, 245, 215, 0.16), transparent 36%),
+    linear-gradient(90deg, transparent 0%, rgba(240, 201, 106, 0.18) 50%, transparent 100%) !important;
   opacity: 0.74 !important;
   z-index: -1 !important;
 }
@@ -114,8 +114,8 @@
   inset: 0 !important;
   pointer-events: none !important;
   background:
-    radial-gradient(circle at 12px 50%, rgba(92, 178, 255, 0.34), transparent 11px),
-    radial-gradient(circle at calc(100% - 12px) 50%, rgba(92, 178, 255, 0.34), transparent 11px),
+    radial-gradient(circle at 12px 50%, rgba(255, 201, 106, 0.34), transparent 11px),
+    radial-gradient(circle at calc(100% - 12px) 50%, rgba(255, 201, 106, 0.34), transparent 11px),
     linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.08) 50%, transparent 100%) !important;
   opacity: 0.55 !important;
   z-index: -1 !important;
@@ -140,12 +140,12 @@
   border-color: var(--hd-button-gold-strong) !important;
   filter: brightness(1.07) saturate(1.05) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 248, 221, 0.24),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.46),
-    inset 0 0 0 1px rgba(105, 167, 255, 0.25),
+    inset 0 1px 0 rgba(255, 248, 221, 0.32),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.56),
+    inset 0 0 0 1px rgba(255, 224, 150, 0.25),
     0 0 0 1px rgba(116, 72, 25, 0.58),
     0 14px 28px rgba(0, 0, 0, 0.28),
-    0 0 26px rgba(63, 126, 232, 0.25) !important;
+    0 0 26px rgba(245, 176, 65, 0.3) !important;
 }
 
 :where(
@@ -186,11 +186,11 @@
   border-radius: 10px !important;
   color: var(--hd-button-cream-muted) !important;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 216, 135, 0.09), transparent 58%),
-    linear-gradient(180deg, rgba(32, 26, 22, 0.93), rgba(11, 14, 22, 0.95)) !important;
+    radial-gradient(circle at 50% 0%, rgba(255, 216, 135, 0.12), transparent 58%),
+    linear-gradient(180deg, #3d2214, #22120a) !important;
   box-shadow:
-    inset 0 1px 0 rgba(255, 244, 209, 0.09),
-    inset 0 0 0 1px rgba(82, 156, 255, 0.06),
+    inset 0 1px 0 rgba(255, 244, 209, 0.12),
+    inset 0 0 0 1px rgba(141, 98, 59, 0.12),
     0 10px 22px rgba(0, 0, 0, 0.22) !important;
   font-family: "Belwe HS", Georgia, serif !important;
   font-weight: 700 !important;

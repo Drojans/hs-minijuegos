@@ -5,12 +5,12 @@
    ========================================================== */
 
 :root {
-  --hd-input-bg-top: rgba(22, 28, 43, 0.96);
-  --hd-input-bg-bottom: rgba(7, 10, 18, 0.96);
-  --hd-input-border: rgba(225, 181, 100, 0.34);
-  --hd-input-border-hover: rgba(255, 220, 145, 0.58);
-  --hd-input-focus: rgba(92, 165, 255, 0.58);
-  --hd-input-glow: rgba(63, 126, 232, 0.22);
+  --hd-input-bg-top: #1f110a;
+  --hd-input-bg-bottom: #0e0704;
+  --hd-input-border: rgba(141, 98, 59, 0.6);
+  --hd-input-border-hover: rgba(235, 152, 78, 0.8);
+  --hd-input-focus: #eb984e;
+  --hd-input-glow: rgba(235, 152, 78, 0.25);
   --hd-input-text: #fff0ca;
   --hd-input-muted: rgba(247, 236, 212, 0.52);
   --hd-input-radius: 10px;
@@ -30,12 +30,12 @@
   border: 1px solid var(--hd-input-border) !important;
   border-radius: var(--hd-input-radius) !important;
   background:
-    linear-gradient(90deg, rgba(80, 153, 255, 0.00), rgba(80, 153, 255, 0.07) 50%, rgba(80, 153, 255, 0.00)),
+    linear-gradient(90deg, rgba(235, 152, 78, 0), rgba(235, 152, 78, 0.08) 50%, rgba(235, 152, 78, 0)),
     radial-gradient(circle at 50% 0%, rgba(255, 220, 145, 0.08), transparent 52%),
     linear-gradient(180deg, var(--hd-input-bg-top), var(--hd-input-bg-bottom)) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 244, 209, 0.09),
-    inset 0 0 0 1px rgba(82, 156, 255, 0.07),
+    inset 0 0 0 1px rgba(235, 152, 78, 0.1),
     0 0 0 1px rgba(65, 34, 12, 0.28),
     0 10px 22px rgba(0, 0, 0, 0.20) !important;
   font-weight: 800 !important;
@@ -94,9 +94,9 @@
   border-color: var(--hd-input-focus) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 244, 209, 0.14),
-    inset 0 0 0 1px rgba(105, 167, 255, 0.16),
+    inset 0 0 0 1px rgba(235, 152, 78, 0.2),
     0 0 0 1px rgba(255, 220, 145, 0.25),
-    0 0 0 4px rgba(63, 126, 232, 0.15),
+    0 0 0 4px rgba(235, 152, 78, 0.15),
     0 0 24px var(--hd-input-glow),
     0 12px 24px rgba(0, 0, 0, 0.24) !important;
 }
@@ -118,7 +118,7 @@
 /* Browser dropdown choices cannot be fully themed everywhere, but keep them readable. */
 :where(.card-db-field select, .collection-filter-selects select) option {
   color: #f7ecd4;
-  background: #111827;
+  background: #1c110a;
 }
 
 /* Search inputs: removes browser decorations that can clash with the fantasy frame. */
@@ -160,7 +160,7 @@
   background-image:
     linear-gradient(45deg, transparent 50%, rgba(255, 224, 150, 0.95) 50%),
     linear-gradient(135deg, rgba(255, 224, 150, 0.95) 50%, transparent 50%),
-    radial-gradient(circle at 50% 0%, rgba(105, 167, 255, 0.10), transparent 56%),
+    radial-gradient(circle at 50% 0%, rgba(235, 152, 78, 0.10), transparent 56%),
     linear-gradient(180deg, var(--hd-input-bg-top), var(--hd-input-bg-bottom)) !important;
   background-position:
     calc(100% - 19px) 50%,
@@ -187,7 +187,7 @@
     linear-gradient(45deg, transparent 50%, #ffe9ad 50%),
     linear-gradient(135deg, #ffe9ad 50%, transparent 50%),
     radial-gradient(circle at 50% 0%, rgba(255, 220, 145, 0.12), transparent 56%),
-    linear-gradient(180deg, rgba(25, 33, 52, 0.98), rgba(7, 10, 18, 0.98)) !important;
+    linear-gradient(180deg, rgba(46, 26, 15, 0.98), rgba(14, 7, 4, 0.98)) !important;
 }
 
 :where(
@@ -209,8 +209,8 @@
   background-image:
     linear-gradient(45deg, transparent 50%, #8fc3ff 50%),
     linear-gradient(135deg, #8fc3ff 50%, transparent 50%),
-    radial-gradient(circle at 50% 0%, rgba(105, 167, 255, 0.15), transparent 56%),
-    linear-gradient(180deg, rgba(25, 33, 52, 0.99), rgba(7, 10, 18, 0.99)) !important;
+    radial-gradient(circle at 50% 0%, rgba(235, 152, 78, 0.15), transparent 56%),
+    linear-gradient(180deg, rgba(46, 26, 15, 0.99), rgba(14, 7, 4, 0.99)) !important;
 }
 
 /* Dropdown choices. Browser support varies, but Chromium/Firefox honor most of this. */
@@ -223,7 +223,7 @@
   .player-profile select
 ) option {
   color: #f7ecd4 !important;
-  background-color: #0d1423 !important;
+  background-color: #1a0f0a !important;
   font-weight: 800 !important;
 }
 
@@ -237,7 +237,7 @@
 ) option:checked {
   color: #ffe6a5 !important;
   background:
-    linear-gradient(180deg, #1d2a44, #121b2d) !important;
+    linear-gradient(180deg, #3d2214, #22120a) !important;
 }
 
 :where(
@@ -257,7 +257,7 @@
   .player-profile select
 ) option:focus {
   color: #fff1cf !important;
-  background-color: #1c2b48 !important;
+  background-color: #311c10 !important;
 }
 
 /* Legacy Edge/IE arrow safety, harmless elsewhere. */

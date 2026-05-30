@@ -1,0 +1,976 @@
+.home-v3-page {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: clamp(12px, 3.4vw, 32px) clamp(16px, 4vw, 36px);
+  overflow-y: auto;
+}
+
+/* ==========================================================
+   THE PARCHMENT BOARD
+   ========================================================== */
+.home-v3-board {
+  position: relative;
+  width: min(100%, 900px);
+  padding: clamp(24px, 4.2vw, 38px) clamp(22px, 4vw, 36px);
+  border-radius: 28px;
+  border: 16px solid #2e1a0f;
+  box-shadow:
+    inset 0 0 34px rgba(0, 0, 0, 0.65),
+    0 16px 48px rgba(0, 0, 0, 0.58),
+    0 0 0 2px rgba(240, 201, 106, 0.16);
+  background:
+    radial-gradient(circle at 50% 12%, rgba(255, 246, 225, 0.98), rgba(230, 212, 175, 0.99));
+  color: #2a180f;
+}
+
+.home-v3-board-bezel {
+  position: absolute;
+  inset: -14px;
+  pointer-events: none;
+  border-radius: 20px;
+  border: 2px dashed rgba(240, 201, 106, 0.42);
+}
+
+.home-v3-board-header {
+  margin-bottom: 28px;
+  display: grid;
+  gap: 18px;
+  justify-items: center;
+}
+
+.home-v3-title-container {
+  text-align: center;
+}
+
+.home-v3-title {
+  margin: 0;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2.8rem, 5.2vw, 4.4rem);
+  line-height: 0.92;
+  letter-spacing: -0.045em;
+  color: #2e1a0f;
+  text-shadow:
+    0 2px 0 rgba(245, 230, 195, 0.88),
+    0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.home-v3-separator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-block: 8px 6px;
+  width: 100%;
+  max-width: 220px;
+  margin-inline: auto;
+}
+
+.home-v3-separator-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #8d623b, transparent);
+}
+
+.home-v3-separator-gem {
+  width: 8px;
+  height: 8px;
+  background: #c68936;
+  transform: rotate(45deg);
+  border: 1px solid #2e1a0f;
+  box-shadow: 0 0 6px rgba(245, 176, 65, 0.38);
+}
+
+.home-v3-subtitle {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8d623b;
+}
+
+/* ==========================================================
+   TAVERN DASHBOARD (Individual Wooden Placards)
+   ========================================================== */
+.home-v3-placards-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: stretch;
+  gap: 24px;
+  width: 100%;
+  max-width: 900px;
+  margin-inline: auto;
+  margin-bottom: 28px;
+}
+
+.home-v3-placard {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-radius: 18px;
+  border: 2.5px solid rgba(141, 98, 59, 0.65);
+  background: linear-gradient(180deg, #3d2214, #22120a);
+  color: #f7ecd4;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.42),
+    0 10px 20px rgba(0, 0, 0, 0.35);
+  transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.18s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.18s ease;
+  text-align: left;
+  cursor: default;
+}
+
+/* Golden Inner Stitching */
+.home-v3-placard::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border-radius: 12px;
+  border: 1px dashed rgba(240, 201, 106, 0.22);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Placard-specific background light watermarks */
+.home-v3-placard.is-collection {
+  background:
+    radial-gradient(circle at 85% 50%, rgba(198, 137, 54, 0.14), transparent 65%),
+    radial-gradient(circle at 50% 12%, rgba(255, 245, 218, 0.06), transparent),
+    linear-gradient(180deg, #3d2214, #22120a);
+}
+
+.home-v3-placard.is-timer {
+  background:
+    radial-gradient(circle at 50% 50%, rgba(235, 152, 78, 0.08), transparent 70%),
+    radial-gradient(circle at 50% 12%, rgba(255, 245, 218, 0.06), transparent),
+    linear-gradient(180deg, #3d2214, #22120a);
+}
+
+.home-v3-placard.is-chests {
+  background:
+    radial-gradient(circle at 18% 50%, rgba(235, 152, 78, 0.08), transparent 60%),
+    radial-gradient(circle at 50% 12%, rgba(255, 245, 218, 0.06), transparent),
+    linear-gradient(180deg, #3d2214, #22120a);
+}
+
+.home-v3-placard.is-chests.has-packs {
+  border-color: #eb984e;
+  background:
+    radial-gradient(circle at 18% 50%, rgba(243, 156, 18, 0.22), transparent 65%),
+    radial-gradient(circle at 50% 12%, rgba(255, 245, 218, 0.08), transparent),
+    linear-gradient(180deg, #462817, #2a140b);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.42),
+    0 0 20px rgba(235, 152, 78, 0.3),
+    0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.home-v3-placard.is-chests.has-packs:hover {
+  border-color: #f39c12;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.3),
+    0 0 30px rgba(243, 156, 18, 0.45),
+    0 16px 28px rgba(0, 0, 0, 0.48);
+}
+
+button.home-v3-placard {
+  cursor: pointer;
+}
+
+button.home-v3-placard:hover {
+  transform: translateY(-3px);
+  border-color: rgba(240, 201, 106, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.3),
+    0 16px 28px rgba(0, 0, 0, 0.45),
+    0 0 20px rgba(245, 176, 65, 0.22);
+}
+
+.home-v3-placard-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  z-index: 2;
+}
+
+.home-v3-placard-icon {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.45));
+  transition: transform 0.2s ease;
+  z-index: 2;
+}
+
+button.home-v3-placard:hover .home-v3-placard-icon {
+  transform: scale(1.08) rotate(2deg);
+}
+
+.home-v3-placard-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 2;
+}
+
+/* Chest specific icon scaling override */
+.home-v3-placard.is-chests .home-v3-placard-icon-wrapper {
+  width: 62px;
+  height: 62px;
+}
+
+.home-v3-placard.is-chests .home-v3-placard-icon {
+  width: 54px;
+  height: 54px;
+}
+
+.home-v3-large-title {
+  font-size: 1.25rem !important;
+  font-family: "Belwe HS", Georgia, serif;
+  font-weight: bold;
+  color: #fceecb;
+  text-shadow: 0 2px 3px rgba(0,0,0,0.5);
+  margin: 0;
+  z-index: 2;
+}
+
+.home-v3-placard-text.is-centered {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.home-v3-placard-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 90px;
+  margin: 4px auto 6px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(235, 152, 78, 0.38), transparent);
+  position: relative;
+}
+
+.home-v3-placard-divider-gem {
+  width: 4px;
+  height: 4px;
+  background: #eb984e;
+  transform: rotate(45deg);
+  box-shadow: 0 0 4px #eb984e;
+}
+
+.home-v3-placard.is-timer {
+  justify-content: center;
+  padding-block: 22px;
+}
+
+.home-v3-placard h4 {
+  margin: 0;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: bold;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #ffe082;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.85);
+}
+
+.home-v3-placard-number {
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.65rem;
+  color: #fceecb;
+  line-height: 1.1;
+  text-shadow: 0 2px 3px rgba(0,0,0,0.5);
+  font-weight: bold;
+}
+
+.home-v3-timer-display {
+  display: block;
+  font-family: monospace;
+  font-weight: 900;
+  font-size: 1.75rem;
+  color: #eb984e;
+  text-shadow:
+    0 0 10px rgba(235, 152, 78, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.6);
+  letter-spacing: 0.05em;
+  line-height: 1.1;
+  margin-bottom: 1px;
+}
+
+.home-v3-timer-sub {
+  font-size: 0.62rem;
+  font-weight: 750;
+  color: #cfc2ad;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Circular progress widget for Collection (Decorated & Enlarged) */
+.home-v3-circular-progress {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  margin-left: auto;
+  z-index: 2;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+}
+
+.home-v3-circular-svg {
+  display: block;
+  overflow: visible;
+}
+
+.home-v3-circular-bg {
+  stroke: rgba(0, 0, 0, 0.55);
+}
+
+.home-v3-circular-fill {
+  stroke: #eb984e; /* more vibrant gold/orange progress */
+  filter: drop-shadow(0 0 6px rgba(235, 152, 78, 0.58));
+  transition: stroke-dashoffset 0.62s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.home-v3-circular-text {
+  position: absolute;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.05rem; /* enlarged from 0.9rem */
+  font-weight: bold;
+  color: #fceecb;
+  text-shadow:
+    0 0 4px rgba(240, 201, 106, 0.25),
+    0 2px 3px rgba(0, 0, 0, 0.85);
+}
+
+/* Chest Flat Gold Number Indicator */
+.home-v3-chest-count-flat {
+  display: inline-block;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.85rem;
+  font-weight: bold;
+  background: linear-gradient(180deg, #ffe082, #c68936);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
+  margin-left: auto;
+  z-index: 2;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  flex-shrink: 0;
+}
+
+.home-v3-chest-count-flat.has-packs {
+  background: linear-gradient(180deg, #ffeaa7, #eb984e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 0 8px rgba(235, 152, 78, 0.6)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
+  animation: flat-count-pulse 2s infinite ease-in-out alternate;
+}
+
+@keyframes flat-count-pulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(235, 152, 78, 0.4)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85)); }
+  100% { transform: scale(1.06); filter: drop-shadow(0 0 14px rgba(235, 152, 78, 0.75)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85)); }
+}
+
+.home-v3-placard.is-chests.has-packs .home-v3-placard-icon {
+  animation: chest-bounce 1.6s infinite ease-in-out, chest-glow-pulse 2s infinite ease-in-out alternate;
+}
+
+@keyframes chest-glow-pulse {
+  0% { filter: drop-shadow(0 0 4px rgba(245, 176, 65, 0.4)) drop-shadow(0 4px 6px rgba(0, 0, 0, 0.48)); }
+  100% { filter: drop-shadow(0 0 16px rgba(245, 176, 65, 0.9)) drop-shadow(0 4px 8px rgba(0, 0, 0, 0.48)); }
+}
+
+@keyframes chest-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-6px) scale(1.08) rotate(2deg); filter: drop-shadow(0 6px 10px rgba(245, 176, 65, 0.5)); }
+}
+
+/* ==========================================================
+   MINIGAMES GRID (Square Cards Layout)
+   ========================================================== */
+.home-v3-games-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 32px;
+  padding: 10px; /* Leave space for absolute wax seals */
+}
+
+.home-v3-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 200px;
+  padding: 20px 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(141, 98, 59, 0.42);
+  cursor: pointer;
+  
+  /* Wood texture background */
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 245, 218, 0.08), transparent 48%),
+    linear-gradient(180deg, #3d2518, #2a160d);
+  color: #f7ecd4;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.34),
+    0 8px 16px rgba(0, 0, 0, 0.22);
+  transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.18s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.18s ease;
+}
+
+.home-v3-tile::before {
+  content: "";
+  position: absolute;
+  inset: 2px;
+  border-radius: 15px;
+  border: 1px solid rgba(240, 201, 106, 0.18);
+  pointer-events: none;
+}
+
+.home-v3-tile:hover {
+  transform: translateY(-4px);
+  border-color: rgba(240, 201, 106, 0.65);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.26),
+    0 16px 30px rgba(0, 0, 0, 0.32),
+    0 0 20px rgba(245, 176, 65, 0.18);
+}
+
+.home-v3-tile:active {
+  transform: translateY(-1px);
+}
+
+.home-v3-tile:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Modifiers */
+.home-v3-tile.is-gold {
+  border-color: rgba(240, 201, 106, 0.44);
+  background:
+    radial-gradient(circle at 50% 16%, rgba(255, 245, 218, 0.08), transparent 48%),
+    linear-gradient(180deg, #442a12, #2f1b0a);
+}
+
+/* Square Card Elements */
+.home-v3-tile-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 16px;
+  transition: opacity 0.22s ease, filter 0.22s ease;
+}
+
+.home-v3-icon-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.42));
+  transition: transform 0.2s ease;
+}
+
+.home-v3-tile:hover .home-v3-icon-img {
+  transform: scale(1.06) translateY(-2px);
+}
+
+.home-v3-tile-emoji {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 4px 6px rgba(0,0,0,0.38));
+}
+
+.home-v3-tile-text {
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: opacity 0.22s ease, filter 0.22s ease;
+}
+
+.home-v3-tile-text h3 {
+  margin: 0 0 4px;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.22rem;
+  color: #fceecb;
+  line-height: 1.15;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.62);
+}
+
+.home-v3-tile-text p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #cfc2ad;
+  font-weight: 700;
+  line-height: 1.25;
+  max-width: 100%;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  white-space: normal;
+  text-overflow: ellipsis;
+}
+
+/* ==========================================================
+   DAILY WAX SEALS (Positioned absolutely on top-right by default)
+   ========================================================== */
+.home-v3-tile-status {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  z-index: 5;
+  transition: all 0.22s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.home-v3-seal {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 48% 52% 49% 51% / 51% 48% 52% 49%;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.48),
+    inset 0 1.5px 0.5px rgba(255, 255, 255, 0.22);
+  user-select: none;
+  transition: transform 0.22s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.home-v3-tile:hover .home-v3-seal {
+  transform: scale(1.12) rotate(8deg);
+}
+
+.home-v3-seal-svg {
+  width: 52%;
+  height: 52%;
+  filter: drop-shadow(0 1.5px 1px rgba(0, 0, 0, 0.55));
+  stroke: currentColor;
+}
+
+.home-v3-seal.is-won {
+  background: radial-gradient(circle, #2ecc71, #27ae60);
+  border: 1.5px solid #196f3d;
+  color: #e8f8f5;
+}
+
+.home-v3-seal.is-lost {
+  background: radial-gradient(circle, #e74c3c, #c0392b);
+  border: 1.5px solid #7b241c;
+  color: #fadbd8;
+}
+
+.home-v3-seal.is-pending {
+  background: radial-gradient(circle, #f39c12, #b9770e);
+  border: 1.5px solid #7e5109;
+  color: #fef9e7;
+  opacity: 0.95;
+}
+
+/* ==========================================================
+   COMPLETED STATE OVERLAYS (Won / Lost)
+   Center the seal, blur background elements, and apply green/red radial tints.
+   ========================================================== */
+.home-v3-tile.is-daily-won .home-v3-tile-status,
+.home-v3-tile.is-daily-lost .home-v3-tile-status {
+  top: 50%;
+  right: auto;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.home-v3-tile.is-daily-won .home-v3-seal,
+.home-v3-tile.is-daily-lost .home-v3-seal {
+  width: 66px;
+  height: 66px;
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.65),
+    inset 0 1.5px 0.5px rgba(255, 255, 255, 0.25);
+}
+
+.home-v3-tile.is-daily-won:hover .home-v3-seal,
+.home-v3-tile.is-daily-lost:hover .home-v3-seal {
+  transform: scale(1.10) rotate(6deg);
+}
+
+/* Blur & fade background content when completed (keep text sharp and readable) */
+.home-v3-tile.is-daily-won .home-v3-tile-icon,
+.home-v3-tile.is-daily-lost .home-v3-tile-icon {
+  opacity: 0.12;
+  filter: blur(5px);
+  pointer-events: none;
+}
+
+.home-v3-tile.is-daily-won .home-v3-tile-text,
+.home-v3-tile.is-daily-lost .home-v3-tile-text {
+  opacity: 0.85;
+  filter: none; /* Keep text fully readable! */
+  pointer-events: none;
+}
+
+.home-v3-tile.is-daily-won:hover .home-v3-icon-img,
+.home-v3-tile.is-daily-lost:hover .home-v3-icon-img {
+  transform: none; /* Disable icon motion on hover when completed */
+}
+
+/* Subtle color overlays on card surface */
+.home-v3-tile.is-daily-won::after,
+.home-v3-tile.is-daily-lost::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 17px;
+  pointer-events: none;
+  z-index: 2;
+  transition: border-color 0.16s ease, background 0.16s ease;
+}
+
+.home-v3-tile.is-daily-won::after {
+  background: radial-gradient(circle, rgba(46, 204, 113, 0.22), rgba(46, 204, 113, 0.06));
+  border: 2px solid rgba(46, 204, 113, 0.38);
+}
+
+.home-v3-tile.is-daily-lost::after {
+  background: radial-gradient(circle, rgba(231, 76, 60, 0.22), rgba(231, 76, 60, 0.06));
+  border: 2px solid rgba(231, 76, 60, 0.38);
+}
+
+/* Override card hover highlights when completed */
+.home-v3-tile.is-daily-won:hover,
+.home-v3-tile.is-daily-lost:hover {
+  border-color: rgba(141, 98, 59, 0.42); /* Don't highlight border gold */
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 -4px 0 rgba(0, 0, 0, 0.34),
+    0 8px 16px rgba(0, 0, 0, 0.22); /* Keep normal shadow, no gold glow */
+}
+
+.home-v3-tile.is-daily-won:hover::after {
+  border-color: rgba(46, 204, 113, 0.48);
+  background: radial-gradient(circle, rgba(46, 204, 113, 0.28), rgba(46, 204, 113, 0.08));
+}
+
+.home-v3-tile.is-daily-lost:hover::after {
+  border-color: rgba(231, 76, 60, 0.48);
+  background: radial-gradient(circle, rgba(231, 76, 60, 0.28), rgba(231, 76, 60, 0.08));
+}
+
+/* ==========================================================
+   LIBRARY SECTION (Clean card grid layout)
+   ========================================================== */
+.home-v3-library-section {
+  margin-top: 20px;
+}
+
+.home-v3-library-label {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+  width: 100%;
+}
+
+.home-v3-library-label span {
+  flex: 1;
+  height: 1px;
+  background: #d6bf96;
+  opacity: 0.65;
+}
+
+.home-v3-library-label h3 {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #8d623b;
+}
+
+.home-v3-library-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.home-v3-library-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  justify-content: flex-start;
+  padding: 22px 18px 18px;
+  border-radius: 18px;
+  border: 2px solid rgba(141, 98, 59, 0.45);
+  background: linear-gradient(180deg, #fdfaf2, #f3ebd9);
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: #2a180f;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.25, 1, 0.5, 1), box-shadow 0.18s cubic-bezier(0.25, 1, 0.5, 1), border-color 0.18s ease, background 0.18s ease;
+}
+
+.home-v3-library-card:hover {
+  background: linear-gradient(180deg, #ffffff, #f7f0e2);
+  border-color: rgba(240, 201, 106, 0.9);
+  box-shadow:
+    0 12px 24px rgba(141, 98, 59, 0.18),
+    0 0 15px rgba(240, 201, 106, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  transform: translateY(-4px);
+}
+
+.home-v3-library-card:active {
+  transform: translateY(0);
+}
+
+.home-v3-library-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  margin-bottom: 14px;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
+  transition: transform 0.2s ease;
+}
+
+.home-v3-library-card:hover .home-v3-library-icon {
+  transform: scale(1.08) translateY(-2px);
+}
+
+.home-v3-library-card h4 {
+  margin: 0 0 4px;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.25rem;
+  color: #2a180f;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+.home-v3-library-card p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #5d4838;
+  font-weight: 780;
+  line-height: 1.3;
+  max-width: 100%;
+}
+
+/* ==========================================================
+   RESPONSIVE DESIGN RULES
+   ========================================================== */
+@media (max-width: 640px) {
+  .home-v3-page {
+    padding: 8px;
+  }
+  
+  .home-v3-board {
+    border-radius: 18px;
+    border-width: 8px;
+    padding: 18px 12px;
+  }
+
+  .home-v3-board-bezel {
+    inset: -6px;
+  }
+  
+  .home-v3-title {
+    font-size: 2.35rem;
+  }
+  
+  .home-v3-status-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+
+  .home-v3-status-pill {
+    justify-content: center;
+  }
+
+  .home-v3-games-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    padding: 6px;
+  }
+
+  .home-v3-tile {
+    min-height: 140px;
+    padding: 14px 8px;
+    border-radius: 12px;
+  }
+
+  .home-v3-tile::before {
+    border-radius: 9px;
+  }
+
+  .home-v3-tile-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 6px;
+  }
+
+  .home-v3-tile-text h3 {
+    font-size: 0.9rem;
+  }
+
+  .home-v3-tile-text p {
+    display: none; /* Hide descriptions on mobile grid to keep cards small */
+  }
+
+  .home-v3-tile-status {
+    top: -6px;
+    right: -6px;
+  }
+
+  .home-v3-seal {
+    width: 28px;
+    height: 28px;
+  }
+
+  .home-v3-seal-inner {
+    font-size: 0.86rem;
+  }
+
+  /* Centered won/lost seal adjustments on mobile */
+  .home-v3-tile.is-daily-won .home-v3-seal,
+  .home-v3-tile.is-daily-lost .home-v3-seal {
+    width: 44px;
+    height: 44px;
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.65),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  .home-v3-tile.is-daily-won .home-v3-seal-inner,
+  .home-v3-tile.is-daily-lost .home-v3-seal-inner {
+    font-size: 1.35rem;
+  }
+
+  .home-v3-library-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .home-v3-library-card {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  .home-v3-library-icon {
+    width: 32px;
+    height: 32px;
+    margin-bottom: 0;
+    margin-right: 12px;
+  }
+
+  .home-v3-library-card p {
+    display: none;
+  }
+
+  /* Compact placards on mobile */
+  .home-v3-placards-container {
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+
+  .home-v3-placard {
+    width: 100%;
+    padding: 12px 16px;
+    gap: 10px;
+  }
+
+  .home-v3-placard-icon-wrapper {
+    width: 48px;
+    height: 48px;
+  }
+
+  .home-v3-placard-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .home-v3-placard.is-chests .home-v3-placard-icon-wrapper {
+    width: 52px;
+    height: 52px;
+  }
+
+  .home-v3-placard.is-chests .home-v3-placard-icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  .home-v3-placard h4 {
+    font-size: 0.95rem;
+  }
+
+  .home-v3-chest-glow {
+    width: 76px;
+    height: 76px;
+  }
+
+  .home-v3-placard-number {
+    font-size: 1.25rem;
+  }
+
+  .home-v3-timer-display {
+    font-size: 1.35rem;
+  }
+
+  .home-v3-timer-sub {
+    display: none;
+  }
+
+  .home-v3-circular-progress {
+    width: 48px;
+    height: 48px;
+    margin-left: auto;
+  }
+  
+  .home-v3-circular-text {
+    font-size: 0.8rem;
+  }
+
+  .home-v3-chest-count-flat {
+    font-size: 1.45rem;
+    margin-left: auto;
+  }
+
+  .home-v3-placard.is-collection,
+  .home-v3-placard.is-chests {
+    justify-content: space-between;
+  }
+}

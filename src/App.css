@@ -31,6 +31,49 @@
   --hs-text: var(--hd-text);
 }
 
+/* ==========================================================
+   COZY TAVERN THEME
+   Warm mahogany wood tones, candlelit ambient glows, and amber highlights.
+   ========================================================== */
+body.theme-cozy {
+  --hd-bg-deep: #160c07; /* Dark mahogany wood */
+  --hd-bg-warm: #2c1a11; /* Warm oak brown */
+  --hd-panel: #20130d; /* Tavern wood brown panels */
+  --hd-panel-raised: #2f1d14; /* Warm chocolate active panels */
+  --hd-text: #fdf5e6; /* Warm vanilla cream text */
+  --hd-text-muted: #d0c0b0; /* Soft beige/paper grey */
+  
+  /* Fire/Amber glows instead of arcane space-blue */
+  --hd-gold: #e59866; 
+  --hd-gold-muted: #b87333;
+  --hd-blue: #e67e22; /* Softer, flame copper orange */
+  --hd-blue-glow: #f39c12; /* Bonfire glow */
+  --hd-arcane: #fae5d3;
+  --hd-purple: #d35400; /* Warm brick red */
+  
+  --hd-bg-image: url("/ui/backgrounds/tavern-arcane-warm.png");
+}
+
+body.theme-cozy .app-shell {
+  background:
+    radial-gradient(circle at 50% 8%, rgba(245, 176, 65, 0.22), transparent 34%),
+    radial-gradient(circle at 86% 28%, rgba(245, 137, 65, 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(22, 12, 7, 0.65), rgba(22, 12, 7, 0.55) 44%, rgba(22, 12, 7, 0.88)),
+    var(--hd-bg-image) center center / cover no-repeat fixed,
+    var(--hd-bg-deep);
+}
+
+body.theme-cozy .site-header {
+  background: linear-gradient(180deg, rgba(32, 19, 13, 0.97), rgba(22, 12, 7, 0.88));
+  border-bottom: 1px solid rgba(230, 152, 60, 0.22);
+}
+
+body.theme-cozy .app-route-loading {
+  background:
+    radial-gradient(circle at top, rgba(245, 176, 65, 0.18), transparent 34%),
+    rgba(22, 12, 7, 0.72);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -186,4 +229,520 @@ body.is-fit-screen-route {
       var(--hd-bg-image) center center / cover no-repeat,
       var(--hd-bg-deep);
   }
+}
+
+/* ==========================================================
+   GLOBAL TAVERN THEMING OVERRIDES
+   Overrides all minigames active boards, instruction pages, 
+   and results screen elements with cozy parchment and mahogany wood.
+   ========================================================== */
+
+/* 1. Backdrop Blurs and General Modal Setup */
+body .game-mode-modal-backdrop,
+body .game-result-backdrop {
+  backdrop-filter: blur(12px) brightness(0.6) !important;
+  background: rgba(18, 10, 6, 0.72) !important;
+}
+
+/* Cozy Dark Caoba Wood Boards & Heavy Roble Frames for Main Gameplay Boards */
+body .game-result-card,
+body .guess-v3-controls,
+body .guess-v3-selected-crystal,
+body .hidden-card-preview,
+body .hidden-card-side-panel,
+body .hidden-card-message-panel,
+body .hl-versus-panel,
+body .hl-results-panel,
+body .im-board-panel,
+body .py-game-card,
+body .py-message-panel,
+body .cg-board-panel,
+body .cg-empty {
+  background: radial-gradient(circle at 50% 10%, #3d2318, #1c0e07 88%) !important;
+  border: 7px solid #4a2816 !important;
+  box-shadow: 
+    inset 0 0 0 2px rgba(240, 201, 106, 0.35),
+    0 16px 36px rgba(0, 0, 0, 0.65) !important;
+  color: #fff0ca !important;
+  border-radius: 22px !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7) !important;
+  isolation: isolate;
+}
+
+/* Remove modern blue gradients/overlays & corner decorations */
+body .guess-v3-controls::before,
+body .guess-v3-controls::after,
+body .guess-v3-selected-crystal::before,
+body .guess-v3-selected-crystal::after,
+body .game-result-card::before,
+body .game-result-card::after,
+body .game-result-ambient-glow {
+  display: none !important;
+}
+
+/* 3. Titles and Main Headings on Wood Panels */
+body .game-result-card h2,
+body .guess-v3-controls h2,
+body .guess-v3-controls h3,
+body .guess-v3-controls h4,
+body .guess-v3-selected-crystal h4,
+body .hidden-card-side-panel h2,
+body .hidden-card-side-panel h3,
+body .hidden-card-message-panel h2,
+body .hl-versus-panel h1,
+body .im-board-panel h2,
+body .py-game-card h1,
+body .py-game-card h2,
+body .py-message-panel h2,
+body .cg-board-panel h2,
+body .cg-empty h1 {
+  color: #ffde92 !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* 4. Text Descriptions, Subtitles & Label Elements on Wood Panels */
+body .game-result-text,
+body .game-result-kicker,
+body .guess-v3-controls p,
+body .guess-v3-controls span:not(.game-mode-option-icon),
+body .guess-v3-selected-crystal span,
+body .hidden-card-side-panel p,
+body .hidden-card-side-panel label,
+body .hidden-card-side-panel span:not(.rarity-badge),
+body .hidden-card-message-panel p,
+body .hl-versus-panel p,
+body .hl-versus-panel small,
+body .hl-results-panel span,
+body .hl-results-panel header,
+body .hl-result-row p,
+body .hl-result-row small,
+body .im-board-panel p,
+body .im-board-panel span,
+body .py-game-card p,
+body .py-game-card span,
+body .cg-board-panel p,
+body .cg-board-panel span,
+body .cg-board-panel label,
+body .cg-empty p {
+  color: #ebd3b0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* 5. Instruction Option Selection Cards (Wood Plaques with glow transitions) */
+body .game-mode-option-card {
+  color: #fff0ca !important;
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  border: 1px solid rgba(141, 98, 59, 0.45) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+}
+body .game-mode-option-card:hover {
+  border-color: rgba(235, 152, 78, 0.8) !important;
+  filter: brightness(1.08) !important;
+}
+body .game-mode-option-card.is-selected {
+  border-color: #eb984e !important;
+  background: linear-gradient(180deg, #5c351f, #331b0f) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 15px rgba(235, 152, 78, 0.35),
+    0 8px 18px rgba(0, 0, 0, 0.4) !important;
+}
+body .game-mode-option-card em {
+  color: rgba(247, 236, 212, 0.6) !important;
+}
+body .game-mode-option-card.is-selected em {
+  color: #ffc97a !important;
+}
+
+/* 6. Dual Cards in Higher/Lower (Wooden Tabletop Aesthetics) */
+body .hl-duel-card {
+  background: linear-gradient(180deg, #2a180f, #1b0e07) !important;
+  border: 4px solid #2e1a0f !important;
+  box-shadow: inset 0 0 0 2px rgba(240, 201, 106, 0.25), 0 10px 24px rgba(0, 0, 0, 0.45) !important;
+}
+body .hl-duel-card > span {
+  background: linear-gradient(180deg, #ae3b00, #730600) !important;
+  border-color: #f0c96a !important;
+  color: #fffaf0 !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+}
+
+/* VS indicator in Higher/Lower */
+body .hl-versus-panel > span {
+  background: radial-gradient(circle at 40% 30%, #eb984e, #c0392b) !important;
+  border: 2px solid #fff0ca !important;
+  color: #fffaf0 !important;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.35) !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-weight: 700 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4) !important;
+}
+
+/* Previous Guesses Row in Higher/Lower */
+body .hl-result-row {
+  background: rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(141, 98, 59, 0.35) !important;
+  color: #fff0ca !important;
+}
+body .hl-result-row.is-correct {
+  border-color: rgba(60, 160, 95, 0.6) !important;
+  background: rgba(60, 160, 95, 0.15) !important;
+}
+body .hl-result-row.is-wrong {
+  border-color: rgba(205, 58, 58, 0.6) !important;
+  background: rgba(205, 58, 58, 0.15) !important;
+}
+body .hl-result-row strong {
+  color: #ffde92 !important;
+}
+body .hl-result-row small {
+  color: #ebd3b0 !important;
+}
+
+/* 7. Secondary Wooden Tags & Elements in Active Gameplay */
+body .hidden-card-hint {
+  background: rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid rgba(141, 98, 59, 0.25) !important;
+  color: rgba(247, 236, 212, 0.42) !important;
+}
+body .hidden-card-hint.is-unlocked {
+  border-color: rgba(235, 152, 78, 0.5) !important;
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  color: #fff0ca !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 8px rgba(0,0,0,0.25) !important;
+}
+body .hidden-card-hint.is-unlocked span {
+  color: #eb984e !important;
+}
+body .hidden-card-real-name {
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  border: 1px solid rgba(141, 98, 59, 0.4) !important;
+  color: #fff0ca !important;
+}
+body .im-found-counter,
+body .im-selected-card-pill {
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  border: 1px solid rgba(235, 152, 78, 0.35) !important;
+  color: #fff0ca !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 8px rgba(0,0,0,0.3) !important;
+}
+body .im-found-counter strong,
+body .im-selected-card-pill strong {
+  color: #eb984e !important;
+}
+body .im-found-counter span,
+body .im-selected-card-pill span {
+  color: rgba(247, 236, 212, 0.75) !important;
+}
+
+/* Pyramid game slots */
+body .py-slot {
+  border: 2px solid #2e1a0f !important;
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+body .py-slot.is-filled {
+  border-color: #eb984e !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 10px rgba(0, 0, 0, 0.3) !important;
+}
+body .py-slot strong {
+  color: #ffc97a !important;
+}
+
+/* Card Grid difficulty selectors & board cells */
+body .cg-mode-selector {
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  border: 1px solid rgba(235, 152, 78, 0.3) !important;
+  color: #fff0ca !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+}
+body .cg-mode-selector p {
+  color: rgba(247, 236, 212, 0.72) !important;
+}
+body .cg-mode-selector > span {
+  color: #eb984e !important;
+}
+body .cg-corner-cell,
+body .cg-condition-cell,
+body .cg-answer-cell {
+  border: 2px solid #2e1a0f !important;
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.08), 0 4px 8px rgba(0,0,0,0.3) !important;
+}
+body .cg-condition-cell strong {
+  color: #ffe6a5 !important;
+}
+body .cg-condition-cell span {
+  color: #eb984e !important;
+}
+body .cg-answer-cell > span {
+  background: rgba(235, 152, 78, 0.08) !important;
+  border-color: rgba(235, 152, 78, 0.2) !important;
+  color: #ffe6a5 !important;
+}
+
+/* 8. Wax Seal Status Pills in Game Results Screen */
+body .game-result-status-pill {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: auto !important;
+  padding: 8px 20px !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-weight: 700 !important;
+  font-size: 1.15rem !important;
+  text-transform: uppercase !important;
+  border-radius: 50px !important;
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.35),
+    inset 0 2px 4px rgba(255, 255, 255, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(0,0,0,0.15) !important;
+  color: #fffaf0 !important;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4) !important;
+}
+body .game-result-status-pill.is-success {
+  background: radial-gradient(circle at 40% 30%, #3ca05f, #1b6335 85%) !important;
+}
+body .game-result-status-pill.is-danger {
+  background: radial-gradient(circle at 40% 30%, #cd3a3a, #781717 85%) !important;
+}
+
+/* ==========================================================
+   INSTRUCTIONS MODAL: HOMEV3 BOARD THEME (Parchment + Caoba Wood Frame)
+   ========================================================== */
+
+/* 1. Modal Board Container (Toasted Warm Parchment + 16px Mahogany Wood Frame) */
+body .game-mode-modal {
+  position: relative !important;
+  background: radial-gradient(circle at 50% 12%, #eedcb3, #cdaf7e) !important;
+  border: 16px solid #2e1a0f !important;
+  box-shadow:
+    inset 0 0 34px rgba(0, 0, 0, 0.65),
+    0 16px 48px rgba(0, 0, 0, 0.58),
+    0 0 0 2px rgba(240, 201, 106, 0.16) !important;
+  color: #1a0a03 !important;
+  border-radius: 28px !important;
+  padding: clamp(24px, 3vh, 32px) clamp(24px, 3vw, 42px) !important;
+  isolation: auto !important; /* Allow overlay bezel to layer correctly */
+}
+
+/* Modal Bezel Dashed Line Inside Mahogany Wood Border */
+body .game-mode-modal::before {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  inset: -14px !important;
+  pointer-events: none !important;
+  border-radius: 20px !important;
+  border: 2px dashed rgba(240, 201, 106, 0.42) !important;
+  background: none !important;
+  box-shadow: none !important;
+  z-index: 10 !important;
+}
+body .game-mode-modal::after {
+  display: none !important; /* Hide other default styling lines */
+}
+
+/* 2. Main Title and Headings (High Contrast Mahogany) */
+body .game-mode-modal-head h1 {
+  margin: 0 !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-size: clamp(2.2rem, 4vw, 3.2rem) !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.045em !important;
+  color: #1a0a03 !important;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8),
+    0 2px 4px rgba(0, 0, 0, 0.12) !important;
+}
+
+body .game-mode-modal-description {
+  color: #4a2d1a !important;
+  text-shadow: none !important;
+}
+
+/* Separator gem matching HomeV3 */
+body .game-mode-title-divider {
+  width: 100% !important;
+  max-width: 220px !important;
+  margin: 12px auto 8px !important;
+  height: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  background: none !important;
+}
+body .game-mode-title-divider::before {
+  content: "" !important;
+  flex: 1 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, #8d623b, transparent) !important;
+}
+body .game-mode-title-divider::after {
+  content: "" !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: #c68936 !important;
+  transform: rotate(45deg) !important;
+  border: 1px solid #2e1a0f !important;
+  box-shadow: 0 0 6px rgba(245, 176, 65, 0.38) !important;
+}
+
+body .game-mode-section-title h2 {
+  color: #5c351f !important;
+  font-size: 0.85rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.14em !important;
+  text-shadow: none !important;
+}
+body .game-mode-section-title span {
+  background: linear-gradient(90deg, transparent, #8d623b, transparent) !important;
+}
+
+/* 3. Steps Block: Styled as Dark Wood Placards resting on Parchment */
+body .game-mode-step {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 14px 18px !important;
+  border-radius: 14px !important;
+  border: 2px solid rgba(141, 98, 59, 0.5) !important;
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  color: #f7ecd4 !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.35),
+    0 6px 12px rgba(0, 0, 0, 0.2) !important;
+  margin-bottom: 12px !important;
+  border-top: none !important; /* Remove legacy list separator lines */
+}
+body .game-mode-step::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 5px !important;
+  border-radius: 9px !important;
+  border: 1px dashed rgba(240, 201, 106, 0.15) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+body .game-mode-step h3 {
+  color: #ffde92 !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  font-size: 1.15rem !important;
+  margin: 0 0 4px 0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+body .game-mode-step p {
+  color: #ebd3b0 !important;
+  font-size: 0.9rem !important;
+  margin: 0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Cherry Wood Red Badge for Steps Icon */
+body .game-mode-step-icon {
+  border: 1.5px solid rgba(240, 201, 106, 0.6) !important;
+  background: radial-gradient(circle at 45% 28%, #ae3b00, #730600) !important;
+  color: #fff0ca !important;
+  width: 44px !important;
+  height: 44px !important;
+  font-size: 1.15rem !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  flex-shrink: 0 !important;
+}
+
+/* 4. Options cards: Same style as Dark Wood Placards */
+body .game-mode-option-card {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  padding: 14px 18px !important;
+  border-radius: 14px !important;
+  border: 2px solid rgba(141, 98, 59, 0.5) !important;
+  background: linear-gradient(180deg, #3d2214, #22120a) !important;
+  color: #f7ecd4 !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.35),
+    0 6px 12px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.16s ease, border-color 0.16s ease !important;
+}
+body .game-mode-option-card::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: 5px !important;
+  border-radius: 9px !important;
+  border: 1px dashed rgba(240, 201, 106, 0.15) !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+body .game-mode-option-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(235, 152, 78, 0.8) !important;
+}
+body .game-mode-option-card:active {
+  transform: translateY(1px) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
+    0 4px 8px rgba(0, 0, 0, 0.25) !important;
+}
+body .game-mode-option-card.is-selected {
+  transform: translateY(-2px) !important;
+  border-color: #f0c96a !important;
+  background: linear-gradient(180deg, #ae3b00, #730600) !important;
+  box-shadow: 
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.42),
+    0 0 18px rgba(235, 152, 78, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.3) !important;
+}
+body .game-mode-option-icon {
+  border: 1.5px solid rgba(240, 201, 106, 0.6) !important;
+  background: radial-gradient(circle at 45% 28%, #ae3b00, #730600) !important;
+  color: #fff0ca !important;
+  width: 44px !important;
+  height: 44px !important;
+  font-size: 1.35rem !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3) !important;
+  flex-shrink: 0 !important;
+}
+body .game-mode-option-title {
+  color: #ffde92 !important;
+  font-size: 1.22rem !important;
+  font-family: "Belwe HS", Georgia, serif !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+body .game-mode-option-card em {
+  border-color: rgba(240, 201, 106, 0.35) !important;
+  background: rgba(0, 0, 0, 0.25) !important;
+  color: #ffc97a !important;
+  font-size: 0.65rem !important;
+  padding: 3px 8px !important;
+  text-shadow: none !important;
+}
+body .game-mode-option-card.is-selected em {
+  border-color: rgba(255, 229, 160, 0.48) !important;
+  color: #fff1c6 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+body .game-mode-option-card small {
+  color: #ebd3b0 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Daily reward label high contrast overrides */
+body .game-mode-reward-pill > .game-mode-reward-label {
+  color: #5c351f !important;
+  font-weight: 950 !important;
+  text-shadow: none !important;
+}
+body .game-mode-reward-pill > .game-mode-reward-prize strong {
+  color: #1a0a03 !important;
 }
