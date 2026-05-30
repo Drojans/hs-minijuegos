@@ -1,5 +1,5 @@
 import GameResultOverlay from "../../../shared/components/GameResultOverlay/GameResultOverlay";
-import { getCardName } from "../impostorGameConfig";
+import { getCardName, getCardImage } from "../impostorGameConfig";
 
 function ImpostorResultOverlay({
   copy,
@@ -12,6 +12,7 @@ function ImpostorResultOverlay({
 }) {
   const failedCard = failedCardId ? roundData.cards.find((card) => card.id === failedCardId) : null;
   const failedCardName = failedCard ? getCardName(failedCard, locale) : "";
+  const failedCardImage = failedCard ? getCardImage(failedCard, locale) : null;
   const statusLabel = locale === "en"
     ? (isWon ? "Perfect" : "Impostor")
     : (isWon ? "Perfecto" : "Impostor");
@@ -23,6 +24,7 @@ function ImpostorResultOverlay({
       title={isWon ? copy.winTitle : copy.loseTitle}
       text={isWon ? copy.winText : copy.loseText}
       detail={!isWon && failedCard ? <strong className="im-result-card-name">{failedCardName}</strong> : null}
+      preview={!isWon && failedCardImage ? <img src={failedCardImage} alt={failedCardName} /> : null}
       rewardMessage={rewardMessage}
       locale={locale}
       statusLabel={statusLabel}

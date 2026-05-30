@@ -332,6 +332,7 @@ function HiddenCardGame({ cards = [], onBack }) {
         <HiddenCardResultOverlay
           copy={copy}
           result={result}
+          card={currentCard}
           rewardMessage={rewardMessage}
           locale={locale}
           onViewResults={() => {

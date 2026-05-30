@@ -341,6 +341,7 @@ function HigherLowerGame({ cards = [], onBack }) {
         <HigherLowerResultOverlay
           copy={copy}
           result={result}
+          card={rightCard}
           rewardMessage={rewardMessage}
           locale={locale}
           onViewResults={() => {

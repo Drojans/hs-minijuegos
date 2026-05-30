@@ -1,5 +1,6 @@
 import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { useCardsData } from "./hooks/useCardsData";
+import { useLanguage } from "./i18n/LanguageProvider";
 import SiteHeader from "./shared/components/SiteHeader/SiteHeader";
 import DailyRolloverNotice from "./shared/components/DailyRolloverNotice/DailyRolloverNotice";
 import { useDailyRollover } from "./shared/hooks/useDailyRollover";
@@ -59,6 +60,7 @@ function AppRouteFallback() {
 
 function App() {
   const { cards, loading } = useCardsData();
+  const { locale } = useLanguage();
   const {
     dateKey: dailyDateKey,
     notice: dailyRolloverNotice,
@@ -102,6 +104,21 @@ function App() {
   const goHome = useCallback(() => {
     navigate("/");
   }, [navigate]);
+
+  if (loading) {
+    const loadingText = locale === "en" ? "Loading tavern cards..." : "Cargando cartas de la taberna...";
+    return (
+      <div className={`app-shell route-${APP_ROUTES[pathname]} ${isFitScreenRoute ? "is-fit-screen-route" : ""}`}>
+        <SiteHeader pathname={pathname} onNavigate={navigate} />
+        <main className="app-route-loading" aria-live="polite" aria-busy="true">
+          <div className="app-route-loading__card">
+            <span className="app-route-loading__spinner" aria-hidden="true" />
+            <p>{loadingText}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   let page;
 
