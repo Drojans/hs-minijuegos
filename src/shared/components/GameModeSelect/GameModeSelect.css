@@ -1,3 +1,8 @@
+/* ==========================================================
+   MINIMALIST DARK COZY TAVERN INSTRUCTIONS MODAL
+   ========================================================== */
+
+/* 1. Backdrop */
 .game-mode-modal-backdrop {
   width: 100%;
   min-height: calc(100svh - 92px);
@@ -6,1428 +11,411 @@
   padding: clamp(12px, 2.3vw, 28px);
 }
 
+/* 2. Modal Box */
 .game-mode-modal {
-  --intro-gold: #e8bd62;
-  --intro-gold-soft: #f4d891;
-  --intro-cream: #f7ecd4;
-  --intro-muted: rgba(247, 236, 212, 0.76);
-  --intro-blue: #08101f;
-  --intro-blue-soft: #121e33;
+  /* Colors */
+  --tavern-gold: #d4a359;
+  --tavern-gold-soft: #f4d891;
+  --tavern-cream: #f7ecd4;
+  --tavern-muted: rgba(247, 236, 212, 0.76);
+  --tavern-dark: #120e0a;
+  --tavern-dark-soft: #1c1712;
 
-  width: min(100%, 920px);
-  max-height: min(790px, calc(100svh - 120px));
+  width: min(100%, 780px); /* Clean, focused width */
+  max-height: min(840px, calc(100svh - 120px));
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   position: relative;
   overflow: hidden;
-  padding: clamp(24px, 3vh, 36px) clamp(34px, 4vw, 54px) clamp(22px, 3vh, 32px);
-  border-radius: 22px;
-  border: 1px solid rgba(232, 189, 98, 0.52);
-  color: var(--intro-cream);
+  padding: clamp(24px, 3.5vh, 40px) clamp(28px, 4vw, 48px) clamp(24px, 3vh, 36px);
+  border-radius: 20px;
+  border: 2px solid var(--tavern-gold);
+  color: var(--tavern-cream);
+  
+  /* Rich cozy dark background (gradient with a soft warm fireplace glow in the center) */
   background:
-    radial-gradient(circle at 50% -8%, rgba(241, 203, 112, 0.17), transparent 22%),
-    radial-gradient(circle at 50% 9%, rgba(78, 108, 196, 0.17), transparent 44%),
-    linear-gradient(180deg, rgba(12, 20, 36, 0.975), rgba(4, 8, 16, 0.985));
+    radial-gradient(circle at 50% 30%, rgba(224, 130, 48, 0.12), transparent 50%),
+    linear-gradient(180deg, #18130e 0%, #0c0906 100%);
+  
   box-shadow:
-    inset 0 1px 0 rgba(255, 247, 222, 0.08),
-    inset 0 0 0 1px rgba(72, 114, 188, 0.22),
-    inset 0 -32px 64px rgba(0, 0, 0, 0.28),
-    0 26px 72px rgba(0, 0, 0, 0.56),
-    0 0 42px rgba(34, 87, 157, 0.12);
+    inset 0 0 30px rgba(0, 0, 0, 0.8),
+    0 16px 42px rgba(0, 0, 0, 0.7),
+    0 0 24px rgba(212, 163, 89, 0.1);
+  
   backdrop-filter: blur(8px);
 }
 
-.game-mode-modal::before,
-.game-mode-modal::after {
+/* Elegant, minimalist corner decorations */
+.game-mode-modal::before {
   content: "";
   position: absolute;
-  inset: 8px;
-  pointer-events: none;
-  border-radius: 18px;
-}
-
-.game-mode-modal::before {
-  border: 1px solid rgba(232, 189, 98, 0.34);
-  box-shadow:
-    inset 0 0 24px rgba(86, 123, 210, 0.1),
-    0 0 0 1px rgba(8, 16, 31, 0.74);
-}
-
-.game-mode-modal::after {
-  background:
-    linear-gradient(90deg, rgba(232, 189, 98, 0.48), transparent 18%, transparent 82%, rgba(232, 189, 98, 0.48)) top / 100% 1px no-repeat,
-    linear-gradient(90deg, rgba(232, 189, 98, 0.48), transparent 18%, transparent 82%, rgba(232, 189, 98, 0.48)) bottom / 100% 1px no-repeat,
-    linear-gradient(180deg, rgba(232, 189, 98, 0.48), transparent 18%, transparent 82%, rgba(232, 189, 98, 0.48)) left / 1px 100% no-repeat,
-    linear-gradient(180deg, rgba(232, 189, 98, 0.48), transparent 18%, transparent 82%, rgba(232, 189, 98, 0.48)) right / 1px 100% no-repeat;
-  opacity: 0.78;
-}
-
-.game-mode-modal-emblem {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  z-index: 3;
-  width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  transform: translate(-50%, -12%);
-  border-radius: 999px;
-  border: 1px solid rgba(232, 189, 98, 0.72);
-  color: #ffe7a4;
-  background:
-    radial-gradient(circle at 50% 26%, rgba(128, 102, 255, 0.8), transparent 34%),
-    linear-gradient(180deg, #243054, #08111f 72%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    0 0 0 4px rgba(9, 14, 26, 0.82),
-    0 0 22px rgba(131, 113, 255, 0.38);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.6rem;
-  font-weight: 950;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.48);
-}
-
-.game-mode-modal-head,
-.game-mode-modal-body {
-  position: relative;
-  z-index: 2;
-}
-
-.game-mode-modal-head {
-  width: min(100%, 730px);
-  margin: 0 auto clamp(16px, 2.3vh, 24px);
-  padding-top: 20px;
-  text-align: center;
-}
-
-.game-mode-modal-kicker {
-  margin: 0 0 6px;
-  color: var(--intro-gold-soft);
-  font-size: clamp(0.72rem, 0.92vw, 0.82rem);
-  font-weight: 950;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.game-mode-modal-head h1 {
-  margin: 0;
-  color: var(--intro-cream);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(3rem, 5.6vw, 5.05rem);
-  line-height: 0.9;
-  letter-spacing: -0.045em;
-  white-space: nowrap;
-  text-shadow:
-    0 2px 0 rgba(97, 55, 18, 0.7),
-    0 16px 34px rgba(0, 0, 0, 0.38),
-    0 0 24px rgba(246, 198, 93, 0.18);
-}
-
-.game-mode-modal-head h1.is-long-title {
-  font-size: clamp(2.7rem, 3.9vw, 3.65rem);
-  letter-spacing: -0.055em;
-}
-
-.game-mode-title-divider {
-  width: min(260px, 46%);
-  height: 16px;
-  display: block;
-  margin: 8px auto 6px;
-  background:
-    radial-gradient(circle, rgba(132, 175, 255, 0.95) 0 3px, transparent 4px),
-    linear-gradient(90deg, transparent, rgba(232, 189, 98, 0.54), transparent) center / 100% 1px no-repeat;
-}
-
-.game-mode-modal-description {
-  max-width: 620px;
-  margin: 0 auto;
-  color: var(--intro-muted);
-  font-size: clamp(0.96rem, 1.25vw, 1.08rem);
-  font-weight: 720;
-  line-height: 1.45;
-}
-
-.game-mode-reward-pill {
-  width: fit-content;
-  max-width: 100%;
-  margin: clamp(12px, 1.8vh, 17px) auto 0;
-  display: grid;
-  grid-template-columns: 42px auto;
-  grid-template-areas:
-    "icon label"
-    "icon reward";
-  column-gap: 12px;
-  align-items: center;
-  padding: 8px 24px 9px 12px;
-  border-radius: 999px;
-  border: 1px solid rgba(232, 189, 98, 0.46);
-  background:
-    radial-gradient(circle at 18% 20%, rgba(232, 189, 98, 0.17), transparent 44%),
-    linear-gradient(180deg, rgba(30, 36, 52, 0.9), rgba(7, 11, 18, 0.82));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 12px 26px rgba(0, 0, 0, 0.23);
-  text-align: center;
-}
-
-.game-mode-reward-pill > .game-mode-reward-label {
-  grid-area: label;
-  color: var(--intro-gold-soft);
-  font-size: 0.74rem;
-  font-weight: 950;
-  letter-spacing: 0.12em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize {
-  grid-area: reward;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize img {
-  grid-area: icon;
-  width: 38px;
-  height: 38px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(83, 217, 255, 0.22));
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize strong {
-  color: #fff4cd;
-  font-size: 1rem;
-  font-weight: 950;
-  line-height: 1.1;
-}
-
-.game-mode-modal-body {
-  width: min(100%, 740px);
-  margin: 0 auto;
-  display: grid;
-  gap: clamp(13px, 1.8vh, 18px);
-  align-content: start;
-}
-
-.game-mode-rules {
-  display: grid;
-  gap: clamp(10px, 1.35vh, 14px);
-}
-
-.game-mode-section-title {
-  display: grid;
-  grid-template-columns: minmax(24px, 1fr) auto minmax(24px, 1fr);
-  align-items: center;
-  gap: 14px;
-}
-
-.game-mode-section-title span {
-  height: 1px;
-  background:
-    linear-gradient(90deg, transparent, rgba(232, 189, 98, 0.62), transparent);
-}
-
-.game-mode-section-title h2 {
-  margin: 0;
-  color: var(--intro-gold-soft);
-  font-size: 0.86rem;
-  font-weight: 950;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  white-space: nowrap;
-}
-
-.game-mode-steps {
-  position: relative;
-  display: grid;
-  padding: 2px 16px;
-}
-
-.game-mode-step {
-  display: grid;
-  grid-template-columns: 54px minmax(0, 1fr);
-  gap: 16px;
-  align-items: center;
-  min-height: 64px;
-  padding: 8px 0;
-}
-
-.game-mode-step + .game-mode-step {
-  border-top: 1px solid rgba(232, 189, 98, 0.18);
-}
-
-.game-mode-step-icon {
-  width: 48px;
-  height: 48px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  color: #ffe6a8;
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.28rem;
-  font-weight: 950;
-  border: 1px solid rgba(232, 189, 98, 0.48);
-  background:
-    radial-gradient(circle at 45% 28%, rgba(108, 89, 192, 0.56), transparent 38%),
-    linear-gradient(180deg, rgba(38, 44, 59, 0.96), rgba(8, 12, 19, 0.98));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 12px 24px rgba(0, 0, 0, 0.22);
-}
-
-.game-mode-step-icon img {
-  width: 32px;
-  height: 32px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 10px rgba(74, 180, 255, 0.42));
-}
-
-.game-mode-step h3 {
-  margin: 0 0 3px;
-  color: var(--intro-cream);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(1.14rem, 1.7vw, 1.36rem);
-  line-height: 1;
-}
-
-.game-mode-step p {
-  margin: 0;
-  color: var(--intro-muted);
-  font-size: clamp(0.88rem, 1.12vw, 0.98rem);
-  font-weight: 700;
-  line-height: 1.35;
-}
-
-.game-mode-modal-section {
-  display: grid;
-  gap: 12px;
-}
-
-.game-mode-option-list {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.game-mode-option-card {
-  min-height: 104px;
-  display: grid;
-  grid-template-columns: 62px minmax(0, 1fr);
-  gap: 14px;
-  align-items: center;
-  padding: 16px 18px;
-  border-radius: 16px;
-  border: 1px solid rgba(232, 189, 98, 0.34);
-  color: var(--intro-cream);
-  background:
-    radial-gradient(circle at 10% 18%, rgba(80, 118, 204, 0.17), transparent 40%),
-    linear-gradient(180deg, rgba(17, 25, 39, 0.88), rgba(6, 10, 17, 0.88));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.05),
-    0 12px 26px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  text-align: center;
-  transition:
-    transform 0.16s ease,
-    border-color 0.16s ease,
-    box-shadow 0.16s ease,
-    background 0.16s ease,
-    filter 0.16s ease;
-}
-
-.game-mode-option-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(240, 209, 133, 0.7);
-  filter: brightness(1.06);
-}
-
-.game-mode-option-card.is-selected {
-  transform: translateY(-2px);
-  border-color: rgba(255, 223, 143, 0.96);
-  background:
-    radial-gradient(circle at 10% 18%, rgba(246, 209, 118, 0.2), transparent 42%),
-    radial-gradient(circle at 50% 0%, rgba(84, 125, 221, 0.44), transparent 70%),
-    linear-gradient(180deg, rgba(37, 55, 96, 0.94), rgba(14, 24, 45, 0.94));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.11),
-    0 0 0 1px rgba(255, 223, 143, 0.22),
-    0 0 30px rgba(241, 194, 91, 0.26),
-    0 18px 34px rgba(0, 0, 0, 0.24);
-}
-
-.game-mode-option-icon {
-  width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  border: 1px solid rgba(232, 189, 98, 0.46);
-  color: #ffde92;
-  background:
-    radial-gradient(circle at top, rgba(241, 207, 118, 0.16), transparent 54%),
-    linear-gradient(180deg, rgba(31, 39, 54, 0.98), rgba(7, 11, 18, 0.98));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.85rem;
-  font-weight: 950;
-  line-height: 1;
-}
-
-.game-mode-option-icon.is-daily {
-  font-size: 2rem;
-}
-
-.game-mode-option-icon.is-infinite {
-  font-size: 2.5rem;
-}
-
-.game-mode-option-copy {
-  min-width: 0;
-  display: grid;
-  gap: 4px;
-}
-
-.game-mode-option-title {
-  color: var(--intro-cream);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(1.5rem, 2.2vw, 2rem);
-  line-height: 0.96;
-}
-
-.game-mode-option-card small {
-  color: rgba(247, 236, 212, 0.72);
-  font-size: 0.86rem;
-  font-weight: 720;
-  line-height: 1.25;
-}
-
-.game-mode-option-card em {
-  width: fit-content;
-  margin-top: 2px;
-  padding: 4px 9px;
-  border-radius: 999px;
-  border: 1px solid rgba(232, 189, 98, 0.26);
-  color: rgba(244, 216, 145, 0.9);
-  background: rgba(255, 255, 255, 0.04);
-  font-size: 0.68rem;
-  font-style: normal;
-  font-weight: 950;
-  letter-spacing: 0.09em;
-  line-height: 1;
-  text-transform: uppercase;
-}
-
-.game-mode-option-card.is-selected em {
-  border-color: rgba(255, 229, 160, 0.48);
-  color: #fff1c6;
-  background: rgba(255, 255, 255, 0.075);
-}
-
-.game-mode-select-start {
-  justify-self: center;
-  min-width: min(360px, 100%);
-  min-height: 54px;
-  margin-top: 2px;
-  padding: 0 38px;
-  position: relative;
-  overflow: hidden;
+  inset: 6px;
+  border: 1px solid rgba(212, 163, 89, 0.15);
   border-radius: 14px;
-  border: 1px solid rgba(255, 219, 133, 0.82);
-  color: #fff0c7;
-  background:
-    linear-gradient(90deg, transparent 0 7%, rgba(255, 232, 160, 0.18) 8%, transparent 10% 90%, rgba(255, 232, 160, 0.18) 92%, transparent 93%),
-    radial-gradient(circle at 50% 0%, rgba(119, 91, 255, 0.62), transparent 62%),
-    linear-gradient(180deg, rgba(48, 76, 144, 0.96), rgba(18, 28, 58, 0.98));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.13),
-    inset 0 -9px 18px rgba(0, 0, 0, 0.24),
-    0 0 0 2px rgba(255, 212, 112, 0.1),
-    0 0 30px rgba(111, 88, 255, 0.28),
-    0 14px 28px rgba(0, 0, 0, 0.32);
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.34rem;
-  font-weight: 950;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: transform 0.16s ease, filter 0.16s ease, box-shadow 0.16s ease;
-}
-
-.game-mode-select-start::before,
-.game-mode-select-start::after {
-  content: "✦";
-  position: absolute;
-  top: 50%;
-  transform: translateY(-52%);
-  color: #ffe6a8;
-  font-size: 0.8rem;
-  text-shadow: 0 0 10px rgba(255, 221, 139, 0.85);
   pointer-events: none;
 }
 
-.game-mode-select-start::before {
-  left: 28px;
-}
-
-.game-mode-select-start::after {
-  right: 28px;
-}
-
-.game-mode-select-start:hover {
-  transform: translateY(-2px);
-  filter: brightness(1.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.16),
-    inset 0 -9px 18px rgba(0, 0, 0, 0.2),
-    0 0 0 2px rgba(255, 212, 112, 0.16),
-    0 0 38px rgba(111, 88, 255, 0.38),
-    0 18px 34px rgba(0, 0, 0, 0.36);
-}
-
-.game-mode-select-start:active {
-  transform: translateY(0);
-}
-
-@media (max-height: 830px) and (min-width: 841px) {
-  .game-mode-modal {
-    width: min(100%, 850px);
-    padding-top: 24px;
-    padding-bottom: 22px;
-  }
-
-  .game-mode-modal-head {
-    margin-bottom: 12px;
-    padding-top: 16px;
-  }
-
-  .game-mode-modal-head h1 {
-    font-size: clamp(2.7rem, 4.5vw, 4.25rem);
-  }
-
-  .game-mode-modal-head h1.is-long-title {
-    font-size: clamp(2.35rem, 3.45vw, 3.25rem);
-  }
-
-  .game-mode-title-divider {
-    margin-top: 5px;
-    margin-bottom: 3px;
-  }
-
-  .game-mode-modal-description {
-    font-size: 0.95rem;
-  }
-
-  .game-mode-reward-pill {
-    margin-top: 10px;
-    padding-top: 6px;
-    padding-bottom: 7px;
-  }
-
-  .game-mode-modal-body {
-    gap: 11px;
-  }
-
-  .game-mode-step {
-    min-height: 55px;
-    padding: 6px 0;
-  }
-
-  .game-mode-step-icon {
-    width: 42px;
-    height: 42px;
-  }
-
-  .game-mode-option-card {
-    min-height: 88px;
-    padding: 12px 14px;
-  }
-
-  .game-mode-option-icon {
-    width: 46px;
-    height: 46px;
-  }
-
-  .game-mode-select-start {
-    min-height: 48px;
-    font-size: 1.16rem;
-  }
-}
-
-@media (max-width: 840px) {
-  .game-mode-modal-backdrop {
-    min-height: auto;
-    place-items: start center;
-  }
-
-  .game-mode-modal {
-    max-height: none;
-    padding: 28px 22px 22px;
-  }
-
-  .game-mode-modal-head h1 {
-    font-size: clamp(2.45rem, 10vw, 3.6rem);
-    white-space: normal;
-  }
-
-  .game-mode-modal-head h1.is-long-title {
-    font-size: clamp(2.15rem, 8.5vw, 3.1rem);
-  }
-
-  .game-mode-modal-body {
-    width: 100%;
-  }
-
-  .game-mode-option-list {
-    grid-template-columns: 1fr;
-  }
-
-  .game-mode-option-card {
-    min-height: 92px;
-  }
-}
-
-@media (max-width: 560px) {
-  .game-mode-modal-backdrop {
-    padding: 10px;
-  }
-
-  .game-mode-modal {
-    padding-left: 16px;
-    padding-right: 16px;
-    border-radius: 18px;
-  }
-
-  .game-mode-modal::before,
-  .game-mode-modal::after {
-    inset: 6px;
-    border-radius: 14px;
-  }
-
-  .game-mode-modal-emblem {
-    width: 46px;
-    height: 46px;
-    font-size: 1.32rem;
-  }
-
-  .game-mode-reward-pill {
-    grid-template-columns: 34px auto;
-    padding-right: 16px;
-  }
-
-  .game-mode-reward-pill img {
-    width: 32px;
-    height: 32px;
-  }
-
-  .game-mode-steps {
-    padding: 0;
-  }
-
-  .game-mode-step {
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 10px;
-  }
-
-  .game-mode-step-icon {
-    width: 38px;
-    height: 38px;
-    font-size: 1.05rem;
-  }
-
-  .game-mode-step-icon img {
-    width: 27px;
-    height: 27px;
-  }
-
-  .game-mode-option-card {
-    grid-template-columns: 48px minmax(0, 1fr);
-    gap: 12px;
-  }
-
-  .game-mode-option-icon {
-    width: 44px;
-    height: 44px;
-    font-size: 1.55rem;
-  }
-
-  .game-mode-option-icon.is-infinite {
-    font-size: 2rem;
-  }
-
-  .game-mode-select-start {
-    width: 100%;
-    min-width: 0;
-  }
-}
-
-
-/* ==========================================================
-   Intro redesign v2 tweaks
-   - Removes top emblem/kicker/description space.
-   - Reward uses open chest icon + x1 format.
-   - Start button aligns with global primary button system.
-   ========================================================== */
+/* Hide unused elements from JSX legacy */
 .game-mode-modal-emblem,
 .game-mode-modal-kicker,
 .game-mode-modal-description {
   display: none !important;
 }
 
-.game-mode-modal {
-  padding-top: clamp(18px, 2.4vh, 28px);
-}
-
+/* 3. Header */
 .game-mode-modal-head {
-  padding-top: 0;
-  margin-bottom: clamp(15px, 2vh, 22px);
+  text-align: center;
+  margin-bottom: clamp(16px, 2.5vh, 26px);
+  position: relative;
+  z-index: 2;
 }
 
 .game-mode-modal-head h1 {
-  margin-top: 0;
+  margin: 0 0 8px;
+  color: var(--tavern-cream);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.game-mode-modal-head h1.is-long-title {
+  font-size: clamp(1.8rem, 3.8vw, 2.8rem);
 }
 
 .game-mode-title-divider {
-  margin-top: 10px;
-  margin-bottom: 8px;
-}
-
-.game-mode-reward-pill {
-  grid-template-columns: 1fr;
-  grid-template-areas:
-    "label"
-    "reward";
-  justify-items: center;
-  row-gap: 6px;
-  min-width: min(260px, 100%);
-  padding: 10px 24px 11px;
-  text-align: center;
-}
-
-.game-mode-reward-pill .game-mode-reward-label {
-  grid-area: label;
+  width: min(180px, 30%);
+  height: 2px;
   display: block;
-  color: var(--intro-gold-soft);
-  font-size: 0.72rem;
+  margin: 10px auto 0;
+  background: linear-gradient(90deg, transparent, var(--tavern-gold), transparent);
+}
+
+/* 4. Body Content Layout (Clean, Single Column layout) */
+.game-mode-modal-body {
+  display: grid;
+  gap: clamp(18px, 2.5vh, 28px);
+  align-content: start;
+  overflow-y: auto;
+  padding-right: 4px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Custom Scrollbar for the body */
+.game-mode-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+.game-mode-modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 99px;
+}
+.game-mode-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(212, 163, 89, 0.3);
+  border-radius: 99px;
+}
+.game-mode-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(212, 163, 89, 0.5);
+}
+
+/* Section titles */
+.game-mode-section-title {
+  display: grid;
+  grid-template-columns: minmax(16px, 1fr) auto minmax(16px, 1fr);
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.game-mode-section-title span {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 163, 89, 0.35), transparent);
+}
+
+.game-mode-section-title h2 {
+  margin: 0;
+  color: var(--tavern-gold-soft);
+  font-size: 0.8rem;
   font-weight: 950;
-  letter-spacing: 0.13em;
-  line-height: 1;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 }
 
-.game-mode-reward-prize {
-  grid-area: reward;
-  display: inline-flex;
+/* 5. Steps (Vertical path, very clean and minimalist) */
+.game-mode-steps {
+  display: grid;
+  gap: 12px;
+}
+
+.game-mode-step {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 16px;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize img {
-  width: 46px;
-  height: 46px;
-  object-fit: contain;
-  filter:
-    drop-shadow(0 0 10px rgba(83, 217, 255, 0.22))
-    drop-shadow(0 4px 8px rgba(0, 0, 0, 0.36));
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize strong {
-  color: #fff4cd;
-  font-size: 1.18rem;
-  font-weight: 950;
-  line-height: 1;
-}
-
-/* Keep the intro CTA as a normal primary button, not a separate purple/fancy asset. */
-.game-mode-select-start {
-  min-width: min(360px, 100%);
-  min-height: 48px;
-  padding: 0 34px;
-  font-size: 1rem;
-  letter-spacing: 0.01em;
-  text-transform: none;
-}
-
-.game-mode-select-start::before,
-.game-mode-select-start::after {
-  content: "" !important;
-}
-
-.game-mode-option-card {
+  padding: 12px 16px;
   border-radius: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-@media (max-height: 830px) and (min-width: 841px) {
-  .game-mode-modal {
-    padding-top: 18px;
-  }
-
-  .game-mode-modal-head {
-    padding-top: 0;
-    margin-bottom: 11px;
-  }
-
-  .game-mode-reward-pill {
-    margin-top: 8px;
-    padding: 8px 22px 9px;
-  }
-
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 40px;
-    height: 40px;
-  }
+.game-mode-step:hover {
+  background: rgba(212, 163, 89, 0.03);
+  border-color: rgba(212, 163, 89, 0.12);
 }
 
-@media (max-width: 560px) {
-  .game-mode-reward-pill {
-    min-width: 0;
-    padding-left: 18px;
-    padding-right: 18px;
-  }
-
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 38px;
-    height: 38px;
-  }
+.game-mode-step-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 163, 89, 0.35);
+  background: linear-gradient(180deg, var(--tavern-dark-soft), var(--tavern-dark));
+  color: var(--tavern-gold-soft);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 900;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Ajuste v4: recompensa más legible y panel más coherente con Taberna arcana ligera. */
-.game-mode-modal {
-  background:
-    radial-gradient(circle at 50% -10%, rgba(240, 199, 108, 0.18), transparent 24%),
-    radial-gradient(circle at 72% 22%, rgba(112, 73, 34, 0.13), transparent 32%),
-    radial-gradient(circle at 34% 12%, rgba(75, 121, 210, 0.13), transparent 38%),
-    linear-gradient(180deg, rgba(13, 21, 37, 0.982), rgba(5, 8, 15, 0.99));
+.game-mode-step-icon img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
-.game-mode-reward-pill {
-  min-width: min(285px, 100%);
-  justify-items: center !important;
-  align-items: center !important;
-  text-align: center !important;
-  padding-top: 11px;
-  padding-bottom: 12px;
+.game-mode-step h3 {
+  margin: 0 0 2px;
+  color: var(--tavern-cream);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.2;
 }
 
-.game-mode-reward-pill > .game-mode-reward-label {
-  width: 100%;
-  text-align: center;
+.game-mode-step p {
+  margin: 0;
+  color: var(--tavern-muted);
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
-.game-mode-reward-pill > .game-mode-reward-prize {
-  width: 100%;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+/* 6. Mode Selector options */
+.game-mode-modal-section {
+  display: grid;
   gap: 10px;
 }
 
-.game-mode-reward-pill > .game-mode-reward-prize img {
-  width: 58px !important;
-  height: 58px !important;
-  transform: translateY(1px);
+.game-mode-option-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.game-mode-reward-pill > .game-mode-reward-prize strong {
-  font-size: 1.25rem !important;
-  line-height: 1 !important;
-}
-
-@media (max-height: 830px) and (min-width: 841px) {
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 52px !important;
-    height: 52px !important;
-  }
-}
-
-@media (max-width: 560px) {
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 46px !important;
-    height: 46px !important;
-  }
-}
-
-/* ==========================================================
-   Ajuste v5: modo cards más limpias + microanimaciones.
-   - El texto vuelve a estar alineado a la izquierda.
-   - Se ocultan las descripciones secundarias de los modos.
-   - Hover/selección con brillo más vivo pero contenido.
-   ========================================================== */
 .game-mode-option-card {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  text-align: left !important;
-}
-
-.game-mode-option-copy {
-  justify-items: start;
-  text-align: left !important;
-}
-
-.game-mode-option-title,
-.game-mode-option-card em {
-  text-align: left !important;
-}
-
-.game-mode-option-card small {
-  display: none !important;
-}
-
-.game-mode-option-card::before {
-  content: "";
-  position: absolute;
-  inset: 1px;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: -1;
-  background:
-    linear-gradient(110deg, transparent 0%, transparent 34%, rgba(255, 231, 165, 0.16) 46%, rgba(95, 157, 255, 0.13) 52%, transparent 64%, transparent 100%);
-  transform: translateX(-120%);
-  opacity: 0;
-}
-
-.game-mode-option-card:hover::before,
-.game-mode-option-card.is-selected::before {
-  animation: hd-intro-card-sheen 1.25s ease forwards;
+  min-height: 84px;
+  display: grid;
+  grid-template-columns: 46px minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  background: linear-gradient(180deg, #1b1612, #100c0a);
+  border: 1px solid rgba(212, 163, 89, 0.2);
+  color: var(--tavern-cream);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
 .game-mode-option-card:hover {
-  transform: translateY(-3px) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
-    0 0 0 1px rgba(255, 222, 146, 0.16),
-    0 0 22px rgba(91, 153, 255, 0.16),
-    0 16px 30px rgba(0, 0, 0, 0.28) !important;
+  transform: translateY(-2px);
+  border-color: rgba(212, 163, 89, 0.5);
+  background: linear-gradient(180deg, #241d18, #16100d);
 }
 
 .game-mode-option-card.is-selected {
-  animation: hd-intro-selected-breath 2.8s ease-in-out infinite;
-}
-
-.game-mode-option-card:active {
-  transform: translateY(-1px) scale(0.992) !important;
-}
-
-.game-mode-option-card:focus-visible,
-.game-mode-select-start:focus-visible {
-  outline: none;
+  transform: translateY(-2px);
+  border-color: var(--tavern-gold);
+  background: linear-gradient(180deg, #2a2018, #18110c);
   box-shadow:
-    0 0 0 2px rgba(7, 10, 18, 0.95),
-    0 0 0 4px rgba(255, 221, 143, 0.74),
-    0 0 28px rgba(91, 153, 255, 0.24) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 15px rgba(212, 163, 89, 0.15),
+    0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
-.game-mode-select-start {
-  overflow: hidden !important;
-  isolation: isolate;
+.game-mode-option-icon {
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid rgba(212, 163, 89, 0.3);
+  background: #0f0b08;
+  color: var(--tavern-gold-soft);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 900;
 }
 
-.game-mode-select-start::before {
-  content: "" !important;
-  position: absolute !important;
-  inset: 2px !important;
-  border-radius: 8px !important;
-  pointer-events: none !important;
-  z-index: -1 !important;
-  background:
-    linear-gradient(110deg, transparent 0%, transparent 36%, rgba(255, 230, 168, 0.19) 47%, rgba(91, 153, 255, 0.18) 53%, transparent 66%, transparent 100%) !important;
-  transform: translateX(-125%);
-  opacity: 0;
+.game-mode-option-icon.is-daily {
+  font-size: 1.4rem;
 }
 
-.game-mode-select-start::after {
-  content: "" !important;
-  position: absolute !important;
-  inset: 0 !important;
-  pointer-events: none !important;
-  z-index: -1 !important;
-  opacity: 0.55;
-  background:
-    radial-gradient(circle at 18px 50%, rgba(92, 178, 255, 0.34), transparent 12px),
-    radial-gradient(circle at calc(100% - 18px) 50%, rgba(92, 178, 255, 0.34), transparent 12px) !important;
-}
-
-.game-mode-select-start:hover::before {
-  animation: hd-intro-card-sheen 1.1s ease forwards;
-}
-
-.game-mode-select-start:hover {
-  transform: translateY(-2px) !important;
-  filter: brightness(1.08) saturate(1.04) !important;
-}
-
-@keyframes hd-intro-card-sheen {
-  0% {
-    opacity: 0;
-    transform: translateX(-120%);
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(120%);
-  }
-}
-
-@keyframes hd-intro-selected-breath {
-  0%, 100% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.11),
-      0 0 0 1px rgba(255, 223, 143, 0.22),
-      0 0 24px rgba(241, 194, 91, 0.22),
-      0 18px 34px rgba(0, 0, 0, 0.24);
-  }
-  50% {
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.14),
-      0 0 0 1px rgba(255, 223, 143, 0.32),
-      0 0 34px rgba(241, 194, 91, 0.34),
-      0 20px 38px rgba(0, 0, 0, 0.28);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .game-mode-option-card,
-  .game-mode-option-card::before,
-  .game-mode-select-start::before {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-
-/* ==========================================================
-   Ajuste v6: CTA final, recompensa sin contador y estado diario.
-   - Start text comes from copy: JUGAR / START.
-   - Reward block shows only the open chest, centered and larger.
-   - Mode descriptions are removed in JSX; tags stay as status labels.
-   - Adds a very subtle reward chest glow/float.
-   ========================================================== */
-.game-mode-reward-pill {
-  min-width: min(250px, 100%) !important;
-  row-gap: 7px !important;
-  padding: 12px 26px 13px !important;
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize {
-  width: 100% !important;
-  display: flex !important;
-  justify-content: center !important;
-  align-items: center !important;
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize img {
-  width: 76px !important;
-  height: 76px !important;
-  animation: hd-intro-reward-idle 3.2s ease-in-out infinite;
-}
-
-.game-mode-reward-pill > .game-mode-reward-prize strong {
-  display: none !important;
+.game-mode-option-icon.is-infinite {
+  font-size: 1.6rem;
 }
 
 .game-mode-option-copy {
-  align-content: center;
+  display: grid;
+  gap: 2px;
+  text-align: left;
+}
+
+.game-mode-option-title {
+  color: var(--tavern-cream);
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.1;
 }
 
 .game-mode-option-card em {
-  margin-top: 4px;
+  width: fit-content;
+  padding: 2px 7px;
+  border-radius: 99px;
+  font-size: 0.64rem;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: 1px solid rgba(212, 163, 89, 0.2);
+  color: var(--tavern-gold-soft);
+  background: rgba(212, 163, 89, 0.05);
 }
 
+.game-mode-option-card.is-selected em {
+  border-color: rgba(212, 163, 89, 0.5);
+  background: rgba(212, 163, 89, 0.12);
+  color: #fff;
+}
+
+/* 7. Start / Play Button */
 .game-mode-select-start {
-  text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
-}
-
-@keyframes hd-intro-reward-idle {
-  0%, 100% {
-    transform: translateY(0) scale(1);
-    filter:
-      drop-shadow(0 0 10px rgba(83, 217, 255, 0.18))
-      drop-shadow(0 4px 8px rgba(0, 0, 0, 0.34));
-  }
-  50% {
-    transform: translateY(-2px) scale(1.035);
-    filter:
-      drop-shadow(0 0 16px rgba(83, 217, 255, 0.34))
-      drop-shadow(0 6px 12px rgba(0, 0, 0, 0.38));
-  }
-}
-
-@media (max-height: 830px) and (min-width: 841px) {
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 64px !important;
-    height: 64px !important;
-  }
-}
-
-@media (max-width: 560px) {
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 58px !important;
-    height: 58px !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    animation: none !important;
-  }
-}
-
-/* ==========================================================
-   Ajuste v7: recompensa sin cápsula y marco principal premium.
-   - La recompensa deja de tener caja/pill redondeada.
-   - El modal pasa a tener un marco dorado principal más presente.
-   - Se elimina la sensación de doble borde fino completo.
-   ========================================================== */
-.game-mode-modal {
-  border: 2px solid rgba(232, 189, 98, 0.72) !important;
+  justify-self: center;
+  min-width: min(320px, 100%);
+  height: 50px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 28px;
+  border-radius: 12px;
+  font-family: "Belwe HS", Georgia, serif;
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  
+  /* Hearthstone style dark-red wooden button */
+  background: linear-gradient(180deg, #aa2424 0%, #6e1111 100%);
+  border: 2px solid var(--tavern-gold);
+  color: #fff8eb;
+  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.6);
+  
   box-shadow:
-    inset 0 1px 0 rgba(255, 247, 222, 0.10),
-    inset 0 0 0 1px rgba(255, 224, 150, 0.10),
-    inset 0 -34px 68px rgba(0, 0, 0, 0.30),
-    0 26px 72px rgba(0, 0, 0, 0.58),
-    0 0 0 1px rgba(48, 24, 8, 0.70),
-    0 0 36px rgba(232, 189, 98, 0.12),
-    0 0 42px rgba(34, 87, 157, 0.10) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.25),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+  
+  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-.game-mode-modal::before {
-  inset: 7px !important;
-  border: 1px solid rgba(255, 228, 160, 0.16) !important;
+.game-mode-select-start:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
   box-shadow:
-    inset 0 0 22px rgba(86, 123, 210, 0.08),
-    0 0 0 1px rgba(8, 16, 31, 0.64) !important;
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -3px 0 rgba(0, 0, 0, 0.25),
+    0 0 14px rgba(212, 163, 89, 0.3),
+    0 8px 18px rgba(0, 0, 0, 0.5);
 }
 
-.game-mode-modal::after {
-  inset: 11px !important;
-  opacity: 0.95 !important;
-  background:
-    linear-gradient(90deg, rgba(255, 223, 143, 0.80) 0 58px, transparent 58px calc(100% - 58px), rgba(255, 223, 143, 0.80) calc(100% - 58px)) top left / 100% 2px no-repeat,
-    linear-gradient(90deg, rgba(255, 223, 143, 0.80) 0 58px, transparent 58px calc(100% - 58px), rgba(255, 223, 143, 0.80) calc(100% - 58px)) bottom left / 100% 2px no-repeat,
-    linear-gradient(180deg, rgba(255, 223, 143, 0.80) 0 58px, transparent 58px calc(100% - 58px), rgba(255, 223, 143, 0.80) calc(100% - 58px)) top left / 2px 100% no-repeat,
-    linear-gradient(180deg, rgba(255, 223, 143, 0.80) 0 58px, transparent 58px calc(100% - 58px), rgba(255, 223, 143, 0.80) calc(100% - 58px)) top right / 2px 100% no-repeat !important;
+.game-mode-select-start:active {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 2px 4px rgba(0, 0, 0, 0.5),
+    0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
+/* 8. Daily Reward styling */
 .game-mode-reward-pill {
-  min-width: 0 !important;
-  margin-top: clamp(12px, 1.8vh, 18px) !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  box-shadow: none !important;
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  grid-template-areas:
-    "label"
-    "reward" !important;
-  justify-items: center !important;
-  row-gap: 7px !important;
+  width: fit-content;
+  margin: 12px auto 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
-.game-mode-reward-pill > .game-mode-reward-label {
-  padding: 0 !important;
-  color: var(--intro-gold-soft) !important;
-  text-shadow: 0 0 12px rgba(232, 189, 98, 0.18) !important;
+.game-mode-reward-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--tavern-gold-soft);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-.game-mode-reward-pill > .game-mode-reward-prize {
-  width: auto !important;
-  min-width: 0 !important;
-  position: relative !important;
-  display: grid !important;
-  place-items: center !important;
+.game-mode-reward-prize {
+  position: relative;
+  display: grid;
+  place-items: center;
 }
 
-.game-mode-reward-pill > .game-mode-reward-prize::before {
+.game-mode-reward-prize::before {
   content: "";
   position: absolute;
-  width: 78px;
-  height: 46px;
-  border-radius: 999px;
-  background: radial-gradient(circle, rgba(82, 210, 255, 0.18), transparent 68%);
-  filter: blur(6px);
-  opacity: 0.75;
+  width: 50px;
+  height: 50px;
+  background: radial-gradient(circle, rgba(212, 163, 89, 0.2), transparent 70%);
+  filter: blur(4px);
   pointer-events: none;
 }
 
-.game-mode-reward-pill > .game-mode-reward-prize img {
-  position: relative !important;
-  z-index: 1 !important;
-  width: 88px !important;
-  height: 88px !important;
+.game-mode-reward-prize img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  position: relative;
+  z-index: 1;
+  animation: hd-reward-float 3s ease-in-out infinite;
 }
 
-@media (max-height: 830px) and (min-width: 841px) {
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 72px !important;
-    height: 72px !important;
-  }
-
-  .game-mode-reward-pill > .game-mode-reward-prize::before {
-    width: 66px;
-    height: 40px;
-  }
-}
-
-@media (max-width: 560px) {
-  .game-mode-reward-pill > .game-mode-reward-prize img {
-    width: 62px !important;
-    height: 62px !important;
-  }
-
-  .game-mode-reward-pill > .game-mode-reward-prize::before {
-    width: 58px;
-    height: 34px;
-  }
-}
-
-/* ==========================================================
-   DESKTOP SPLIT-LAYOUT FOR GAME SELECT MODAL
-   Arranges Rules on the left and Mode Select + Button on the right
-   ========================================================== */
-@media (min-width: 841px) {
-  .game-mode-modal {
-    width: min(100%, 1020px) !important;
-    max-height: none !important;
-  }
-
-  .game-mode-modal-body {
-    grid-template-columns: 1.15fr 0.85fr !important;
-    gap: 36px !important;
-    align-items: start !important;
-    align-content: start !important;
-  }
-
-  .game-mode-rules {
-    grid-column: 1 !important;
-    grid-row: 1 / 3 !important;
-  }
-
-  .game-mode-modal-section {
-    grid-column: 2 !important;
-    grid-row: 1 !important;
-  }
-
-  .game-mode-option-list {
-    grid-template-columns: 1fr !important;
-    gap: 12px !important;
-  }
-
-  .game-mode-select-start {
-    grid-column: 2 !important;
-    grid-row: 2 !important;
-    align-self: end !important;
-    margin-top: 14px !important;
-  }
-}
-
-/* ==========================================================
-   COZY TAVERN ADVENTURE BOOK REDESIGN (Fase 7 - Simplificada)
-   ========================================================== */
-
-/* Abierto como páginas de libro de pergamino cálido */
-body .game-mode-modal {
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.06) 48%, rgba(0, 0, 0, 0.15) 50%, rgba(255, 255, 255, 0.05) 52%),
-    radial-gradient(circle at 50% 15%, #f7ecd2, #e5d1a8) !important;
-  color: #3e2511 !important;
-  border: 5px solid #4a2b16 !important; /* Oak/Leather bound frame */
-  box-shadow:
-    inset 0 0 24px rgba(0, 0, 0, 0.22),
-    0 16px 36px rgba(0, 0, 0, 0.6) !important;
-}
-
-/* Quitamos los brillos/bordes futuristas de las esquinas */
-body .game-mode-modal::before {
-  border: 1px solid rgba(74, 43, 22, 0.15) !important;
-  box-shadow: inset 0 0 10px rgba(74, 43, 22, 0.08) !important;
-  border-radius: 12px !important;
-}
-
-body .game-mode-modal::after {
-  display: none !important;
-}
-
-/* Encabezados y textos con tinta mahogany contrastada */
-body .game-mode-modal-head h1 {
-  color: #2b1608 !important;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.6) !important;
-}
-
-body .game-mode-title-divider {
-  background:
-    radial-gradient(circle, #8c5b30 0 3px, transparent 4px),
-    linear-gradient(90deg, transparent, rgba(140, 91, 48, 0.35), transparent) center / 100% 1px no-repeat !important;
-}
-
-body .game-mode-section-title h2 {
-  color: #6d4223 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-body .game-mode-section-title span {
-  background: linear-gradient(90deg, transparent, rgba(109, 66, 35, 0.2), transparent) !important;
-}
-
-/* Lomo central de costura en pantallas grandes */
-@media (min-width: 841px) {
-  .game-mode-rules {
-    border-right: 2.5px dashed rgba(74, 45, 26, 0.16) !important;
-    padding-right: 32px !important;
-  }
-}
-
-/* Pasos de las instrucciones estilo manuscrito limpio */
-body .game-mode-step h3 {
-  color: #3e2511 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-}
-
-body .game-mode-step p {
-  color: #5d4331 !important;
-}
-
-body .game-mode-step-icon {
-  background: linear-gradient(180deg, #faf3e0, #ebdcc3) !important;
-  border: 1px solid #a88863 !important;
-  color: #5d4331 !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 4px 8px rgba(0, 0, 0, 0.08) !important;
-}
-
-body .game-mode-step-icon img {
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12)) !important;
-}
-
-body .game-mode-step + .game-mode-step {
-  border-top: 1px solid rgba(140, 91, 48, 0.12) !important;
-}
-
-/* Tarjetas de Selección de Modo como Pergaminos/Madera Clara */
-body .game-mode-option-card {
-  background: linear-gradient(180deg, #fdfaf2, #f5eccf) !important;
-  border: 1px solid #c8b792 !important;
-  color: #3e2511 !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    0 4px 10px rgba(0, 0, 0, 0.05) !important;
-}
-
-body .game-mode-option-card:hover {
-  border-color: #a8885c !important;
-  background: linear-gradient(180deg, #fbf7e8, #eddcb9) !important;
-}
-
-body .game-mode-option-card.is-selected {
-  background: linear-gradient(180deg, #ebdcb9, #dcc296) !important;
-  border: 2px solid #8e5c33 !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    0 6px 14px rgba(142, 92, 51, 0.16) !important;
-  animation: none !important;
-}
-
-body .game-mode-option-icon {
-  background: linear-gradient(180deg, #faf3e0, #ebdcc3) !important;
-  border: 1px solid #a88863 !important;
-  color: #8c5b30 !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-body .game-mode-option-card .game-mode-option-title {
-  color: #2b1608 !important;
-}
-
-body .game-mode-option-card em {
-  border: 1px solid rgba(142, 92, 51, 0.22) !important;
-  color: #8c5b30 !important;
-  background: rgba(142, 92, 51, 0.04) !important;
-}
-
-body .game-mode-option-card.is-selected em {
-  border-color: rgba(142, 92, 51, 0.45) !important;
-  color: #5c381c !important;
-  background: rgba(142, 92, 51, 0.08) !important;
-}
-
-/* Cofre de Recompensa Diario Cozy (con brillo de fuego cálido) */
-body .game-mode-reward-pill > .game-mode-reward-label {
-  color: #7b4f28 !important;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) !important;
-}
-
-body .game-mode-reward-pill > .game-mode-reward-prize::before {
-  background: radial-gradient(circle, rgba(230, 160, 60, 0.22), transparent 68%) !important;
-}
-
-@keyframes hd-intro-reward-idle {
+@keyframes hd-reward-float {
   0%, 100% {
-    transform: translateY(0) scale(1);
-    filter:
-      drop-shadow(0 0 8px rgba(230, 160, 60, 0.2))
-      drop-shadow(0 3px 6px rgba(0, 0, 0, 0.15));
+    transform: translateY(0);
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
   }
   50% {
-    transform: translateY(-2px) scale(1.025);
-    filter:
-      drop-shadow(0 0 14px rgba(230, 160, 60, 0.35))
-      drop-shadow(0 5px 10px rgba(0, 0, 0, 0.2));
+    transform: translateY(-3px);
+    filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.4)) brightness(1.05);
   }
 }
 
-/* Botón JUGAR diseñado como cápsula de Sello de Cera Roja */
-body .game-mode-select-start {
-  background: radial-gradient(circle at 50% 20%, #cd3a3a, #781717 92%) !important;
-  border: 2px solid #cfa247 !important;
-  color: #fffaf0 !important;
-  border-radius: 12px !important;
-  font-family: "Belwe HS", Georgia, serif !important;
-  font-weight: 700 !important;
-  text-shadow: 0 2px 3px rgba(0, 0, 0, 0.5) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.3),
-    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
-    0 6px 16px rgba(0, 0, 0, 0.3) !important;
-  min-width: min(280px, 100%) !important;
-  width: auto !important;
-  height: 48px !important;
-  aspect-ratio: auto !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin-inline: auto !important;
-  padding: 0 32px !important;
-  font-size: 1.15rem !important;
-  text-transform: uppercase !important;
-  cursor: pointer !important;
-  animation: none !important;
-  transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease !important;
+/* 9. Media Queries */
+@media (max-width: 768px) {
+  .game-mode-option-list {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .game-mode-modal {
+    padding: 24px 20px;
+  }
+  
+  .game-mode-step {
+    padding: 10px 12px;
+    gap: 12px;
+  }
 }
-
-body .game-mode-select-start:hover {
-  filter: brightness(1.1) !important;
-  transform: translateY(-2px) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.35),
-    inset 0 -4px 0 rgba(0, 0, 0, 0.2),
-    0 8px 22px rgba(205, 58, 58, 0.25),
-    0 8px 20px rgba(0, 0, 0, 0.35) !important;
-}
-
-body .game-mode-select-start:active {
-  transform: translateY(1px) !important;
-  box-shadow:
-    inset 0 2px 4px rgba(0, 0, 0, 0.4),
-    0 2px 4px rgba(0, 0, 0, 0.2) !important;
-}
-
