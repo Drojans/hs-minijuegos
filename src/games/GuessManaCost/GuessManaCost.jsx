@@ -25,8 +25,6 @@ import {
 } from "./guessManaConfig";
 import "./GuessManaCost.css";
 
-const GuessManaLayoutEditor = lazy(() => import("../../dev/GuessManaLayoutEditor"));
-
 const GUESS_MANA_GAME_ID = GAME_IDS.GUESS_MANA;
 
 function getLayoutEditorEnabled() {
@@ -196,11 +194,6 @@ function GuessManaCost({ cards = [], onBack }) {
             onSelectMode={startMode}
           />
         </section>
-        {showLayoutEditor ? (
-          <Suspense fallback={null}>
-            <GuessManaLayoutEditor />
-          </Suspense>
-        ) : null}
       </GamePageShell>
     );
   }
@@ -256,12 +249,6 @@ function GuessManaCost({ cards = [], onBack }) {
           onViewResults={() => setShowResultOverlay(false)}
           onBack={returnToModes}
         />
-      ) : null}
-
-      {showLayoutEditor ? (
-        <Suspense fallback={null}>
-          <GuessManaLayoutEditor />
-        </Suspense>
       ) : null}
     </GamePageShell>
   );

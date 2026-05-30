@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { motion } from "motion/react";
 import LanguageToggle from "../../shared/components/LanguageToggle/LanguageToggle";
 import { useLanguage } from "../../i18n/LanguageProvider";
-import LayoutEditor from "../../dev/LayoutEditor";
 import {
   BOOK_HOME_COPY,
   HOME_MODE_CONFIG,
@@ -237,8 +236,6 @@ function HomeBook({ loading = false, onNavigate }) {
           </motion.p>
         </section>
       </motion.section>
-
-      {showLayoutEditor ? <LayoutEditor /> : null}
     </main>
   );
 }

@@ -329,31 +329,7 @@ body .cg-empty p {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6) !important;
 }
 
-/* 5. Instruction Option Selection Cards (Wood Plaques with glow transitions) */
-body .game-mode-option-card {
-  color: #fff0ca !important;
-  background: linear-gradient(180deg, #3d2214, #22120a) !important;
-  border: 1px solid rgba(141, 98, 59, 0.45) !important;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 4px 10px rgba(0, 0, 0, 0.3) !important;
-}
-body .game-mode-option-card:hover {
-  border-color: rgba(235, 152, 78, 0.8) !important;
-  filter: brightness(1.08) !important;
-}
-body .game-mode-option-card.is-selected {
-  border-color: #eb984e !important;
-  background: linear-gradient(180deg, #5c351f, #331b0f) !important;
-  box-shadow: 
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 15px rgba(235, 152, 78, 0.35),
-    0 8px 18px rgba(0, 0, 0, 0.4) !important;
-}
-body .game-mode-option-card em {
-  color: rgba(247, 236, 212, 0.6) !important;
-}
-body .game-mode-option-card.is-selected em {
-  color: #ffc97a !important;
-}
+
 
 /* 6. Dual Cards in Higher/Lower (Wooden Tabletop Aesthetics) */
 body .hl-duel-card {
