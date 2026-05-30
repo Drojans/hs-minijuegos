@@ -1,33 +1,5 @@
-export function getOppositeLocale(locale) {
+﻿export function getOppositeLocale(locale) {
   return locale === "en" ? "es" : "en";
-}
-
-// CDN fallback: cuando las imágenes locales no están disponibles (e.g. Vercel),
-// usa la CDN pública de HearthstoneJSON.
-const HSJSON_CDN = "https://art.hearthstonejson.com/v1";
-
-const LOCALE_TO_HSJSON = {
-  es: "esES",
-  en: "enUS",
-};
-
-/**
- * Convierte una ruta local de imagen a una URL de la CDN de HearthstoneJSON.
- * El tipo "thumb" y "game" usan renders completos (con marco).
- * El tipo "adapted" usa solo el arte (tile), sin marco.
- */
-function toCdnUrl(localPath, cardId, locale) {
-  if (!localPath?.startsWith("/card-images/") || !cardId) return localPath;
-
-  const isAdapted = localPath.includes("/adapted/");
-  const lang = LOCALE_TO_HSJSON[locale] ?? "enUS";
-
-  if (isAdapted) {
-    // Arte solo (sin marco de carta)
-    return `${HSJSON_CDN}/tiles/${cardId}.webp`;
-  }
-  // Carta renderizada completa con marco
-  return `${HSJSON_CDN}/render/latest/${lang}/256x/${cardId}.png`;
 }
 
 const IMAGE_VARIANT_ALIASES = {
@@ -50,8 +22,8 @@ function getLocalizedImage(card, imageType, locale) {
     if (!localizedImages) continue;
 
     for (const alias of aliases) {
-      const rawPath = localizedImages[alias];
-      if (rawPath) return toCdnUrl(rawPath, card.id, localeKey);
+      const imagePath = localizedImages[alias];
+      if (imagePath) return imagePath;
     }
   }
 
