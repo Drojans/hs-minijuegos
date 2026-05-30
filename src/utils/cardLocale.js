@@ -1,5 +1,20 @@
-﻿export function getOppositeLocale(locale) {
+export function getOppositeLocale(locale) {
   return locale === "en" ? "es" : "en";
+}
+
+// URL pública del bucket Cloudflare R2 con las imágenes de cartas
+const R2_PUBLIC_BASE = "https://pub-3ca88372108d48dd9463987ff842b8c8.r2.dev";
+const LOCAL_IMAGES_PREFIX = "/card-images/";
+
+/**
+ * Si la ruta de imagen es local (/card-images/...), la reescribe a la URL de R2.
+ * En localhost, si el servidor tiene las imágenes locales las servirá igual.
+ * En Vercel (sin imágenes locales), cargará desde R2 automáticamente.
+ */
+function toR2Url(imagePath) {
+  if (!imagePath || !imagePath.startsWith(LOCAL_IMAGES_PREFIX)) return imagePath;
+  const relativePath = imagePath.slice(LOCAL_IMAGES_PREFIX.length);
+  return `${R2_PUBLIC_BASE}/${relativePath}`;
 }
 
 const IMAGE_VARIANT_ALIASES = {
@@ -23,7 +38,7 @@ function getLocalizedImage(card, imageType, locale) {
 
     for (const alias of aliases) {
       const imagePath = localizedImages[alias];
-      if (imagePath) return imagePath;
+      if (imagePath) return toR2Url(imagePath);
     }
   }
 
