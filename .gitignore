@@ -56,3 +56,9 @@ public/data/normalized-renders-report.json
 # Local audit exports
 hs-minijuegos-audit/
 hs-minijuegos-audit.zip
+
+# Archives / backups (no deben ir al repo nunca)
+*.zip
+*.rar
+*.7z
+*.tar.gz
