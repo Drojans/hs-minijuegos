@@ -1,14 +1,3 @@
-@font-face {
-  font-family: "Belwe HS";
-  src:
-    local("Belwe Bold"),
-    local("Belwe Bd BT"),
-    local("Belwe BT Bold"),
-    url("/fonts/Belwe%20Bold.otf") format("opentype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
 
 .inc-card-shell {
   position: relative;
