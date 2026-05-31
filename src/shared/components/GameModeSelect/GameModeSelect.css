@@ -8,7 +8,8 @@
   min-height: calc(100svh - 92px);
   display: grid;
   place-items: center;
-  padding: clamp(12px, 2.3vw, 28px);
+  padding: clamp(16px, 2.3vw, 36px);
+  overflow-y: auto; /* Let the backdrop handle scrolling if the viewport is small */
 }
 
 /* 2. Modal Box */
@@ -22,15 +23,14 @@
   --tavern-dark-soft: #1c1712;
 
   width: min(100%, 780px); /* Clean, focused width */
-  max-height: min(840px, calc(100svh - 120px));
-  display: grid;
-  grid-template-rows: auto minmax(0, 1fr);
   position: relative;
-  overflow: hidden;
-  padding: clamp(24px, 3.5vh, 40px) clamp(28px, 4vw, 48px) clamp(24px, 3vh, 36px);
+  overflow: visible; /* Let children render completely without clipping */
+  padding: clamp(20px, 3vh, 32px) clamp(24px, 3.5vw, 40px);
   border-radius: 20px;
   border: 2px solid var(--tavern-gold);
   color: var(--tavern-cream);
+  display: flex;
+  flex-direction: column;
   
   /* Rich cozy dark background (gradient with a soft warm fireplace glow in the center) */
   background:
@@ -65,39 +65,39 @@
 /* 3. Header */
 .game-mode-modal-head {
   text-align: center;
-  margin-bottom: clamp(16px, 2.5vh, 26px);
+  margin-bottom: clamp(14px, 2.2vh, 22px);
   position: relative;
   z-index: 2;
 }
 
 .game-mode-modal-head h1 {
-  margin: 0 0 8px;
+  margin: 0 0 6px;
   color: var(--tavern-cream);
   font-family: "Belwe HS", Georgia, serif;
-  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  font-size: clamp(2.1rem, 4.2vw, 3.2rem);
   letter-spacing: -0.02em;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
 }
 
 .game-mode-modal-head h1.is-long-title {
-  font-size: clamp(1.8rem, 3.8vw, 2.8rem);
+  font-size: clamp(1.7rem, 3.5vw, 2.6rem);
 }
 
 .game-mode-title-divider {
-  width: min(180px, 30%);
+  width: min(160px, 25%);
   height: 2px;
   display: block;
-  margin: 10px auto 0;
+  margin: 8px auto 0;
   background: linear-gradient(90deg, transparent, var(--tavern-gold), transparent);
 }
 
 /* 4. Body Content Layout (Clean, Single Column layout) */
 .game-mode-modal-body {
   display: grid;
-  gap: clamp(18px, 2.5vh, 28px);
+  gap: clamp(14px, 2vh, 20px); /* Tighter spacing to fit without overflow */
   align-content: start;
-  overflow-y: auto;
-  padding-right: 4px;
+  overflow-y: visible; /* Prevent any internal scrollbar */
+  padding-right: 0;
   position: relative;
   z-index: 2;
 }
