@@ -124,16 +124,13 @@
 }
 
 .im-card.is-selected {
-  transform: translateY(-11px);
+  transform: translateY(-8px);
 }
 
 .im-card.is-selected .inc-card-shell {
   border-color: transparent;
-  filter:
-    drop-shadow(0 24px 34px rgba(0, 0, 0, 0.36))
-    drop-shadow(0 0 28px rgba(255, 211, 96, 0.34))
-    drop-shadow(0 0 12px rgba(255, 226, 146, 0.30));
-  transform: translateY(-2px) scale(1.045);
+  filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.45));
+  transform: scale(1.02);
 }
 
 .im-card.is-found-correct .inc-card-shell,

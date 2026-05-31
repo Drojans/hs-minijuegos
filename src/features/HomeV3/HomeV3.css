@@ -363,33 +363,49 @@ button.home-v3-placard:hover .home-v3-placard-icon {
     0 2px 3px rgba(0, 0, 0, 0.85);
 }
 
-/* Chest Flat Gold Number Indicator */
-.home-v3-chest-count-flat {
-  display: inline-block;
-  font-family: "Belwe HS", Georgia, serif;
-  font-size: 1.85rem;
-  font-weight: bold;
-  background: linear-gradient(180deg, #ffe082, #c68936);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
+/* Chest circular progress styling & glows */
+.home-v3-circular-progress.is-chests {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
   margin-left: auto;
   z-index: 2;
-  transition: transform 0.2s ease, filter 0.2s ease;
-  flex-shrink: 0;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
 }
 
-.home-v3-chest-count-flat.has-packs {
-  background: linear-gradient(180deg, #ffeaa7, #eb984e);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 8px rgba(235, 152, 78, 0.6)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85));
-  animation: flat-count-pulse 2s infinite ease-in-out alternate;
+.home-v3-chests-glow-ring {
+  stroke: #eb984e;
+  filter: drop-shadow(0 0 4px #eb984e);
+  animation: chest-ring-pulse 2s infinite ease-in-out alternate;
 }
 
-@keyframes flat-count-pulse {
-  0% { transform: scale(1); filter: drop-shadow(0 0 6px rgba(235, 152, 78, 0.4)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85)); }
-  100% { transform: scale(1.06); filter: drop-shadow(0 0 14px rgba(235, 152, 78, 0.75)) drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85)); }
+.home-v3-circular-text.has-packs {
+  color: #ffeaa7 !important;
+  text-shadow: 
+    0 0 8px rgba(235, 152, 78, 0.8),
+    0 2px 3px rgba(0, 0, 0, 0.95);
+  animation: chest-text-scale 2s infinite ease-in-out alternate;
+}
+
+@keyframes chest-ring-pulse {
+  0% {
+    opacity: 0.55;
+    stroke: rgba(235, 152, 78, 0.45);
+  }
+  100% {
+    opacity: 1;
+    stroke: rgba(235, 152, 78, 0.9);
+    filter: drop-shadow(0 0 8px rgba(235, 152, 78, 0.75));
+  }
+}
+
+@keyframes chest-text-scale {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
 }
 
 .home-v3-placard.is-chests.has-packs .home-v3-placard-icon {

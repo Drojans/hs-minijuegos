@@ -310,8 +310,55 @@ function HomeV3({ cards = [], loading = false, onNavigate }) {
           <div className="home-v3-placard-text">
             <h4>{copy.packLabel}</h4>
           </div>
-          <div className={`home-v3-chest-count-flat ${packCount > 0 ? "has-packs" : ""}`}>
-            x{packCount}
+          <div className="home-v3-circular-progress is-chests">
+            <svg width="60" height="60" viewBox="0 0 60 60" className="home-v3-circular-svg">
+              {/* Outer decorative line (glows if packs > 0) */}
+              <circle 
+                cx="30" 
+                cy="30" 
+                r="27" 
+                fill="none" 
+                stroke={packCount > 0 ? "rgba(235, 152, 78, 0.45)" : "rgba(240, 201, 106, 0.32)"} 
+                strokeWidth="1.2" 
+                className={packCount > 0 ? "home-v3-chests-glow-ring" : ""}
+              />
+              {/* Main background track */}
+              <circle 
+                className="home-v3-circular-bg" 
+                cx="30" 
+                cy="30" 
+                r="23" 
+                fill="none" 
+                stroke="rgba(0, 0, 0, 0.55)" 
+                strokeWidth="5" 
+              />
+              {/* Progress fill */}
+              <circle 
+                className={`home-v3-circular-fill ${packCount > 0 ? "has-packs" : "is-empty"}`} 
+                cx="30" 
+                cy="30" 
+                r="23" 
+                fill="none" 
+                stroke={packCount > 0 ? "#eb984e" : "rgba(240, 201, 106, 0.15)"} 
+                strokeWidth="5" 
+                strokeDasharray="144.5" 
+                strokeDashoffset={packCount > 0 ? 0 : 144.5}
+                strokeLinecap="round"
+                transform="rotate(-90 30 30)"
+              />
+              {/* Inner accent ring */}
+              <circle 
+                cx="30" 
+                cy="30" 
+                r="19" 
+                fill="none" 
+                stroke="rgba(240, 201, 106, 0.18)" 
+                strokeWidth="1" 
+              />
+            </svg>
+            <span className={`home-v3-circular-text ${packCount > 0 ? "has-packs" : ""}`}>
+              {packCount}
+            </span>
           </div>
         </button>
       </div>

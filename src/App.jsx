@@ -3,6 +3,7 @@ import { useCardsData } from "./hooks/useCardsData";
 import { useLanguage } from "./i18n/LanguageProvider";
 import SiteHeader from "./shared/components/SiteHeader/SiteHeader";
 import DailyRolloverNotice from "./shared/components/DailyRolloverNotice/DailyRolloverNotice";
+import WelcomeModal from "./shared/components/WelcomeModal/WelcomeModal";
 import { useDailyRollover } from "./shared/hooks/useDailyRollover";
 import "./App.css";
 import "./styles/hearthdleButtons.css";
@@ -15,7 +16,6 @@ const CardGridPage = lazy(() => import("./pages/CardGridPage"));
 const PyramidPage = lazy(() => import("./pages/PyramidPage"));
 const HigherLowerPage = lazy(() => import("./pages/HigherLowerPage"));
 const HiddenCardPage = lazy(() => import("./pages/HiddenCardPage"));
-const CardDatabasePage = lazy(() => import("./pages/CardDatabasePage"));
 const CollectionPage = lazy(() => import("./pages/CollectionPage"));
 const PlayerProfilePage = lazy(() => import("./pages/PlayerProfilePage"));
 
@@ -27,7 +27,6 @@ const APP_ROUTES = {
   "/pyramid": "pyramid",
   "/higher-lower": "higherLower",
   "/hidden-card": "hiddenCard",
-  "/cards": "cards",
   "/collection": "collection",
   "/player": "player",
 };
@@ -68,6 +67,14 @@ function App() {
   } = useDailyRollover();
   const [pathname, setPathname] = useState(() => normalizePath(window.location.pathname));
   const isFitScreenRoute = FIT_SCREEN_ROUTES.has(pathname);
+  const [showWelcome, setShowWelcome] = useState(false);
+
+  useEffect(() => {
+    // Automatically show instructions only on homepage on first visit
+    if (window.location.pathname === "/" && localStorage.getItem("hearthdle_hide_welcome") !== "true") {
+      setShowWelcome(true);
+    }
+  }, []);
 
   useEffect(() => {
     function syncPathname() {
@@ -109,7 +116,7 @@ function App() {
     const loadingText = locale === "en" ? "Loading tavern cards..." : "Cargando cartas de la taberna...";
     return (
       <div className={`app-shell route-${APP_ROUTES[pathname]} ${isFitScreenRoute ? "is-fit-screen-route" : ""}`}>
-        <SiteHeader pathname={pathname} onNavigate={navigate} />
+        <SiteHeader pathname={pathname} onNavigate={navigate} onShowWelcome={() => setShowWelcome(true)} />
         <main className="app-route-loading" aria-live="polite" aria-busy="true">
           <div className="app-route-loading__card">
             <span className="app-route-loading__spinner" aria-hidden="true" />
@@ -147,9 +154,7 @@ function App() {
       page = <HiddenCardPage cards={cards} onBack={goHome} />;
       break;
 
-    case "/cards":
-      page = <CardDatabasePage cards={cards} loading={loading} />;
-      break;
+
 
     case "/collection":
       page = <CollectionPage cards={cards} loading={loading} />;
@@ -165,11 +170,12 @@ function App() {
 
   return (
     <div className={`app-shell route-${APP_ROUTES[pathname]} ${isFitScreenRoute ? "is-fit-screen-route" : ""}`}>
-      <SiteHeader pathname={pathname} onNavigate={navigate} />
+      <SiteHeader pathname={pathname} onNavigate={navigate} onShowWelcome={() => setShowWelcome(true)} />
       <div className="app-page" key={dailyDateKey}>
         <Suspense fallback={<AppRouteFallback />}>{page}</Suspense>
       </div>
       <DailyRolloverNotice notice={dailyRolloverNotice} onDismiss={dismissDailyRolloverNotice} />
+      {showWelcome && <WelcomeModal onClose={() => setShowWelcome(false)} />}
     </div>
   );
 }

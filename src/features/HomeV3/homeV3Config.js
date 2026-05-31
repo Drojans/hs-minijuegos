@@ -1,7 +1,6 @@
 export const HOME_V3_COPY = {
   es: {
     navMinigames: "Minijuegos",
-    navCards: "Base de datos",
     navCollection: "Colección",
     infoLabel: "Información",
     profileLabel: "Perfil",
@@ -22,10 +21,19 @@ export const HOME_V3_COPY = {
     dailyWon: "¡Completado!",
     dailyLost: "¡Fallado!",
     dailyPending: "Pendiente",
+    welcomeTitle: "¡Bienvenido a la Taberna!",
+    welcomeSubtitle: "Tu rincón de minijuegos de Hearthstone",
+    welcomeMinigamesTitle: "Minijuegos Diarios",
+    welcomeMinigamesDesc: "Diviértete con 6 modos de juego: adivina costes, compara estadísticas, completa la cuadrícula y más.",
+    welcomeDailyTitle: "Retos y Cofres",
+    welcomeDailyDesc: "Completa el reto de cada minijuego diariamente para conseguir cofres arcanos de recompensa.",
+    welcomeCollectionTitle: "Tu Álbum y Colección",
+    welcomeCollectionDesc: "Abre tus cofres en la Colección para desbloquear y coleccionar todas las cartas.",
+    welcomeDontShow: "No volver a mostrar esta bienvenida",
+    welcomeAccept: "Entrar a la Taberna",
   },
   en: {
     navMinigames: "Minigames",
-    navCards: "Card Database",
     navCollection: "Collection",
     infoLabel: "Information",
     profileLabel: "Profile",
@@ -51,6 +59,16 @@ export const HOME_V3_COPY = {
     dailyWon: "Completed!",
     dailyLost: "Failed!",
     dailyPending: "Pending",
+    welcomeTitle: "Welcome to the Tavern!",
+    welcomeSubtitle: "Your corner for Hearthstone minigames",
+    welcomeMinigamesTitle: "Daily Minigames",
+    welcomeMinigamesDesc: "Have fun with 6 game modes: guess costs, compare stats, complete grids, and more.",
+    welcomeDailyTitle: "Challenges & Chests",
+    welcomeDailyDesc: "Complete each game's daily challenge to earn arcane chests as rewards.",
+    welcomeCollectionTitle: "Your Album & Collection",
+    welcomeCollectionDesc: "Open your chests in the Collection to unlock and collect every card.",
+    welcomeDontShow: "Don't show this welcome again",
+    welcomeAccept: "Enter the Tavern",
   },
 };
 
@@ -149,22 +167,6 @@ export const HOME_V3_MODES = [
     en: {
       title: "Card Grid",
       description: "Complete the 3x3 cell grid",
-    },
-  },
-  {
-    id: "cards",
-    group: "library",
-    route: "/cards",
-    iconSrc: "/ui/home-v2-icons/icon-mode-database.png",
-    accent: "emerald",
-    kind: "available",
-    es: {
-      title: "Base de datos",
-      description: "Filtra y consulta todas las cartas",
-    },
-    en: {
-      title: "Card Database",
-      description: "Browse and filter every card",
     },
   },
   {
